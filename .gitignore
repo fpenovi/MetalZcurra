@@ -1,2 +1,30 @@
-# Binarios de C
+# Python Imports:
+*.pyc
+
+# C Binary Files:
+*.d
 *.o
+
+# Tmp Files:
+*~
+
+# Java Files:
+*.class
+*.jar
+
+# IntelliJ Trash Files:
+.idea/
+out/
+*.iml
+
+# Eclipse Trash Files:
+bin/
+.metadata/
+*.classpath
+*.project
+*.settings
+
+# Ant Build Files:
+/build
+/libs
+.ant-targets-build.xml
