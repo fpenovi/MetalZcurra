@@ -19,3 +19,8 @@ servidor :
 
 cliente :
 	$(CC) cliente.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o cliente
+
+clean : servidor cliente
+	rm servidor
+	rm cliente
+
