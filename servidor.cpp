@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 
             printf("Mensaje recibido del cliente: %s", buffer);
 
-            bytesEscritos = write(sockNewFileDescrpt, "Llego tu msj OK!", 16);
+            bytesEscritos = write(sockNewFileDescrpt,"\xE2\x9C\x93\n", 7);
 
             if (bytesEscritos < 0) {
                 perror("ERROR --> No se pudo responder al cliente");
@@ -103,6 +103,5 @@ int main(int argc, char** argv) {
         }
 
     }
-
     return 0;
 }
