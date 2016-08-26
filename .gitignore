@@ -28,3 +28,7 @@ bin/
 /build
 /libs
 .ant-targets-build.xml
+
+# Ejecutables
+cliente
+servidor
