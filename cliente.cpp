@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
             perror("ERROR --> escribiendo al socket");
             exit(1);
         }
-
+        if (buffer[0]=='*' ) break;
         // Leo la respuesta escrita por el servidor en el FD
         bzero(buffer, 256);
         bytesLeidos = read(sockFileDescrpt, buffer, 255);
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
             exit(1);
         }
     }
-
+    close(sockFileDescrpt);
     printf("%s\n", buffer);
     exit(0);
     return 0;

@@ -85,8 +85,10 @@ int main(int argc, char** argv) {
             }
 
 
-            if (bytesLeidos == 0)
+            if (bytesLeidos == 0) {
                 printf("No hay mas para leer\n");
+                break;
+            }
 
 
             printf("Mensaje recibido del cliente: %s", buffer);
