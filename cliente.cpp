@@ -53,26 +53,28 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
+    while (true) {
 
-    printf("Escriba un mensaje para enviar al servidor: ");
-    bzero(buffer, 256);
-    fgets(buffer, 255, stdin);
+        printf("Escriba un mensaje para enviar al servidor: ");
+        bzero(buffer, 256);
+        fgets(buffer, 255, stdin);
 
-    // Mando mensaje al servidor
-    bytesEscritos = write(sockFileDescrpt, buffer, strlen(buffer));
+        // Mando mensaje al servidor
+        bytesEscritos = write(sockFileDescrpt, buffer, strlen(buffer));
 
-    if (bytesEscritos < 0) {
-        perror("ERROR --> escribiendo al socket");
-        exit(1);
-    }
+        if (bytesEscritos < 0) {
+            perror("ERROR --> escribiendo al socket");
+            exit(1);
+        }
 
-    // Leo la respuesta escrita por el servidor en el FD
-    bzero(buffer, 256);
-    bytesLeidos = read(sockFileDescrpt, buffer, 255);
+        // Leo la respuesta escrita por el servidor en el FD
+        bzero(buffer, 256);
+        bytesLeidos = read(sockFileDescrpt, buffer, 255);
 
-    if (bytesLeidos < 0) {
-        perror("ERROR --> leyendo de socket");
-        exit(1);
+        if (bytesLeidos < 0) {
+            perror("ERROR --> leyendo de socket");
+            exit(1);
+        }
     }
 
     printf("%s\n", buffer);

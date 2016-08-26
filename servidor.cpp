@@ -73,27 +73,31 @@ int main(int argc, char** argv) {
         }
 
 
-        // Inicializo el buffer de mensajes
-        bzero(buffer, TAM_BUFFER);
-        bytesLeidos = read(sockNewFileDescrpt, buffer, TAM_BUFFER - 1);
+        while (true) {
 
-        if (bytesLeidos < 0) {
-            perror("ERROR --> Lectura fallida\n");
-            exit(1);
-        }
+            // Inicializo el buffer de mensajes
+            bzero(buffer, TAM_BUFFER);
+            bytesLeidos = read(sockNewFileDescrpt, buffer, TAM_BUFFER - 1);
 
-
-        if (bytesLeidos == 0)
-            printf("No hay mas para leer\n");
+            if (bytesLeidos < 0) {
+                perror("ERROR --> Lectura fallida\n");
+                exit(1);
+            }
 
 
-        printf("Mensaje recibido del cliente: %s", buffer);
+            if (bytesLeidos == 0)
+                printf("No hay mas para leer\n");
 
-        bytesEscritos = write(sockNewFileDescrpt, "Llego tu msj OK!", 16);
 
-        if (bytesEscritos < 0) {
-            perror("ERROR --> No se pudo responder al cliente");
-            exit(1);
+            printf("Mensaje recibido del cliente: %s", buffer);
+
+            bytesEscritos = write(sockNewFileDescrpt, "Llego tu msj OK!", 16);
+
+            if (bytesEscritos < 0) {
+                perror("ERROR --> No se pudo responder al cliente");
+                exit(1);
+            }
+
         }
 
     }
