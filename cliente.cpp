@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
         // Leo la respuesta escrita por el servidor en el FD
         bzero(buffer, 256);
         bytesLeidos = read(sockFileDescrpt, buffer, 255);
-
+        printf("%s", buffer);
         if (bytesLeidos < 0) {
             perror("ERROR --> leyendo de socket");
             exit(1);

@@ -40,7 +40,7 @@ void* procesarMensajes(void* arg) {
         }
 
         printf("Mensaje recibido del cliente: %s", buffer);
-        bytesEscritos = write(sockNewFileDescrpt, "Llego tu msj OK!", 16);
+        bytesEscritos = write(sockNewFileDescrpt,"\xE2\x9C\x93\n", 7);
 
         if (bytesEscritos < 0) {
             perror("ERROR --> No se pudo responder al cliente");
@@ -83,14 +83,14 @@ int main(int argc, char** argv) {
 
 
     // Aviso al SO que asocie el programa al socket creado
-    if (bind(sockFileDescrpt, (const sockaddr*) &serv_addr, sizeof(serv_addr)) < 0) {
+    if (bind(sockFileDescrpt, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         perror("ERROR --> No se pudo hacer bind\n");
         close(sockFileDescrpt);
         exit(1);
     }
 
     // Comienza a escuchar a los clientes que se quieren conectar y los va encolando
-    if (listen(sockFileDescrpt, MAX_CLIENTS) < 0 ) {
+    if (listen(sockFileDescrpt, MAX_CLIENTS) < 0) {
         perror("ERROR --> Falla en listen\n");
         close(sockFileDescrpt);
         exit(1);
@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
     while (serverOn) {
 
         // Se crea el nuevo file descriptor para el cliente que se conecta
-        sockNewFileDescrpt = accept(sockFileDescrpt, (sockaddr*) &cli_addr, &pesoCliente);
+        sockNewFileDescrpt = accept(sockFileDescrpt, (sockaddr *) &cli_addr, &pesoCliente);
         fileDescriptors.sockNewFileDescrpt = sockNewFileDescrpt;
 
         if (sockNewFileDescrpt < 0) {
@@ -122,14 +122,13 @@ int main(int argc, char** argv) {
         }
 
         // Cuando el cliente es aceptado, creo un nuevo thread
-        if (pthread_create(&clientes[threadActual], &attr, procesarMensajes, &fileDescriptors) != 0 ) {
+        if (pthread_create(&clientes[threadActual], &attr, procesarMensajes, &fileDescriptors) != 0) {
             perror("ERROR --> Creación de thread fallida\n");
             close(sockNewFileDescrpt);      // Rechazar este cliente
             continue;
         }
 
         threadActual++;
-
     }
 
     close(sockFileDescrpt);
