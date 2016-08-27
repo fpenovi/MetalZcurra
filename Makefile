@@ -9,7 +9,7 @@ CC = g++
 COMPILER_FLAGS = -std=c++11
 
 #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lpthread
+LINKER_FLAGS = -pthread
 
 
 all : servidor cliente
