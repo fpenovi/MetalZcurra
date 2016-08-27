@@ -27,7 +27,7 @@ void* procesarMensajes(void* arg) {
     while (true) {
 
         bzero(buffer, TAM_BUFFER);      // Inicializo el buffer de mensajes
-        bytesLeidos = read(sockNewFileDescrpt, buffer, TAM_BUFFER - 1);
+        bytesLeidos = read(sockNewFileDescrpt, buffer, TAM_BUFFER);
 
         if (bytesLeidos < 0) {
             perror("ERROR --> Lectura fallida\n");
@@ -101,13 +101,14 @@ int main(int argc, char** argv) {
     printf("Presione * para salir\n");
     pesoCliente = sizeof(cli_addr);
 
-    bool serverOn = true;
     pthread_t clientes[MAX_CLIENTS];
 
     pthread_attr_t attr;                // Variables para crear un thread detached
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
     int threadActual = 0;
+
+    bool serverOn = true;
 
     while (serverOn) {
 

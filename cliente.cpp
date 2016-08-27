@@ -7,6 +7,8 @@
 
 using namespace std;
 
+#define TAM_BUFFER 256
+
 
 int main(int argc, char** argv) {
     int sockFileDescrpt, numPuerto;
@@ -14,10 +16,10 @@ int main(int argc, char** argv) {
     struct sockaddr_in serv_addr;
     struct hostent* server;
 
-    char buffer[256];
+    char buffer[TAM_BUFFER];
 
     if (argc < 3) {
-        fprintf(stderr,"Modo de Uso: %s IP-hostname puerto\n", argv[0]);
+        fprintf(stderr, "Modo de Uso: %s IP-hostname puerto\n", argv[0]);
         exit(0);
     }
 
@@ -36,6 +38,7 @@ int main(int argc, char** argv) {
 
     if (server == NULL) {
         fprintf(stderr,"ERROR --> no existe ese host\n");
+        close(sockFileDescrpt);
         exit(0);
     }
 
@@ -50,34 +53,41 @@ int main(int argc, char** argv) {
     // Conecto con el servidor
     if (connect(sockFileDescrpt, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
         perror("ERROR --> conectando");
+        close(sockFileDescrpt);
         exit(1);
     }
+
+    printf("Conectado al servidor, presione * para desconectarse\n");
 
     while (true) {
 
         printf("Escriba un mensaje para enviar al servidor: ");
-        bzero(buffer, 256);
-        fgets(buffer, 255, stdin);
+        bzero(buffer, TAM_BUFFER);
+        fgets(buffer, TAM_BUFFER, stdin);
+
+        if (strlen(buffer)-1 < 2 && buffer[0] == '*' )
+            break;
 
         // Mando mensaje al servidor
-        bytesEscritos = write(sockFileDescrpt, buffer, strlen(buffer));
+        bytesEscritos = write(sockFileDescrpt, buffer, TAM_BUFFER);
 
         if (bytesEscritos < 0) {
             perror("ERROR --> escribiendo al socket");
+            close(sockFileDescrpt);
             exit(1);
         }
-        if (buffer[0]=='*' ) break;
+
         // Leo la respuesta escrita por el servidor en el FD
-        bzero(buffer, 256);
-        bytesLeidos = read(sockFileDescrpt, buffer, 255);
+        bzero(buffer, TAM_BUFFER);
+        bytesLeidos = read(sockFileDescrpt, buffer, TAM_BUFFER);
         printf("%s", buffer);
+
         if (bytesLeidos < 0) {
             perror("ERROR --> leyendo de socket");
             exit(1);
         }
     }
+
     close(sockFileDescrpt);
-    printf("%s\n", buffer);
     exit(0);
-    return 0;
 }
