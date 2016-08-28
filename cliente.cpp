@@ -20,21 +20,29 @@ int main(int argc, char** argv) {
 
 
     while (true){
-        char *linea;
+        char *linea = NULL;
         size_t tam_buf = 0;
-        size_t res;
-
+        size_t res = 0;
 
         printf("1 : Conectarse\n");
         printf("2 : Salir\n");
         res = getline(&linea,&tam_buf,stdin);
-
-        if (linea[0] == '1')
-            break;
-        else if (linea[0] == '2')
-            exit(EXIT_SUCCESS);
-        else
+        if (res == -1){
+            perror("Error en getline\n");
+            free(linea);
             continue;
+        }
+
+        if (linea[0] == '1') {
+            free(linea);
+            break;
+        }
+        else if (linea[0] == '2') {
+            free(linea);
+            exit(EXIT_SUCCESS);
+        }
+        free(linea);
+
     }
 
     if (argc < 3) {
