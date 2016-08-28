@@ -18,6 +18,25 @@ int main(int argc, char** argv) {
 
     char buffer[TAM_BUFFER];
 
+
+    while (true){
+        char *linea;
+        size_t tam_buf = 0;
+        size_t res;
+
+
+        printf("1 : Conectarse\n");
+        printf("2 : Salir\n");
+        res = getline(&linea,&tam_buf,stdin);
+
+        if (linea[0] == '1')
+            break;
+        else if (linea[0] == '2')
+            exit(EXIT_SUCCESS);
+        else
+            continue;
+    }
+
     if (argc < 3) {
         fprintf(stderr, "Modo de Uso: %s IP-hostname puerto\n", argv[0]);
         exit(0);
