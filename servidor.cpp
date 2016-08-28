@@ -13,8 +13,8 @@ using namespace std;
 
 typedef struct {
     int sockFileDescrpt;
-    int sockNewFileDescrpt;
-} FD_t;
+    pthread_t* thread;
+} cliente_t;
 
 
 void* procesarMensajes(void* arg) {
@@ -22,7 +22,8 @@ void* procesarMensajes(void* arg) {
     char buffer[TAM_BUFFER];    // array para los mensajes
     ssize_t bytesLeidos;
     ssize_t bytesEscritos;
-    int sockNewFileDescrpt = ((FD_t*) arg)->sockNewFileDescrpt;
+    int sockNewFileDescrpt = ((cliente_t*) arg)->sockFileDescrpt;
+    pthread_t* thread = ((cliente_t*) arg)->thread;
 
     while (true) {
 
@@ -49,6 +50,8 @@ void* procesarMensajes(void* arg) {
     }
 
     close(sockNewFileDescrpt);
+    free(arg);
+    free(thread);
     return NULL;
 }
 
@@ -59,17 +62,15 @@ int main(int argc, char** argv) {
     socklen_t pesoCliente;
     unsigned short int numPuerto;
     struct sockaddr_in serv_addr, cli_addr;
-    FD_t fileDescriptors;
+    cliente_t* cliente;
 
     // Inicializo los structs con todos los miembros en \0
-    bzero(&fileDescriptors, sizeof(fileDescriptors));
     bzero(&serv_addr, sizeof(serv_addr));
 
     // Llamo a la funcion socket y obtengo un FD
     // AF_INET es para TCP/IP
     // SOCK_STREAM es para orientado a conexion (SOCK_DGRAM su contraparte)
     sockFileDescrpt = socket(AF_INET, SOCK_STREAM, 0);
-    fileDescriptors.sockFileDescrpt = sockFileDescrpt;
 
     if (sockFileDescrpt < 0) {
         perror("ERROR --> No se pudo abrir socket\n");
@@ -101,12 +102,10 @@ int main(int argc, char** argv) {
     printf("Presione * para salir\n");
     pesoCliente = sizeof(cli_addr);
 
-    pthread_t clientes[MAX_CLIENTS];
-
+    pthread_t* thread;      // Threads en los que correran los clientes
     pthread_attr_t attr;                // Variables para crear un thread detached
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    int threadActual = 0;
 
     bool serverOn = true;
 
@@ -114,7 +113,6 @@ int main(int argc, char** argv) {
 
         // Se crea el nuevo file descriptor para el cliente que se conecta
         sockNewFileDescrpt = accept(sockFileDescrpt, (sockaddr *) &cli_addr, &pesoCliente);
-        fileDescriptors.sockNewFileDescrpt = sockNewFileDescrpt;
 
         if (sockNewFileDescrpt < 0) {
             perror("ERROR --> No se pudo aceptar cliente\n");
@@ -122,14 +120,27 @@ int main(int argc, char** argv) {
             exit(1);
         }
 
+        cliente = (cliente_t*) malloc(sizeof(cliente_t));
+
+        if (!cliente)
+            exit(EXIT_FAILURE);
+
+        thread = (pthread_t*) malloc(sizeof(pthread_t));
+
+        if (!thread)
+            exit(EXIT_FAILURE);
+
+        cliente->sockFileDescrpt = sockNewFileDescrpt;
+        cliente->thread = thread;
+
         // Cuando el cliente es aceptado, creo un nuevo thread
-        if (pthread_create(&clientes[threadActual], &attr, procesarMensajes, &fileDescriptors) != 0) {
+        if (pthread_create(thread, &attr, procesarMensajes, cliente) != 0) {
             perror("ERROR --> Creación de thread fallida\n");
             close(sockNewFileDescrpt);      // Rechazar este cliente
+            free(thread);
+            free(cliente);
             continue;
         }
-
-        threadActual++;
     }
 
     close(sockFileDescrpt);
