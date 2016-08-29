@@ -58,19 +58,15 @@ void* procesarMensajes(void* arg) {
 }
 
 //Funcion que crea un hash del archivo (falta ver como devolverlo)
-void cargarUsuarios(FILE* archivo){
+unordered_map<string,string> cargarUsuarios(FILE* archivo,unordered_map<string,string> diccionario){
     char* linea = NULL;
     size_t len = 0;
-    unordered_map<string,string> usuariosMap;
-
     while(getline(&linea, &len, archivo)!= -1){
         string usuario = strtok(linea,",");
         string password = strtok(NULL,",");
-
-        usuariosMap[usuario] = password;
+        diccionario[usuario] = password;
     }
-
-    cout << usuariosMap["francisco"];
+    return diccionario;
 }
 
 int main(int argc, char** argv) {
@@ -81,6 +77,7 @@ int main(int argc, char** argv) {
     struct sockaddr_in serv_addr, cli_addr;
     cliente_t* cliente;
     FILE* listaUsuarios;
+    unordered_map<string,string> usuariosMapVacio;
 
     // Inicializo los structs con todos los miembros en \0
     bzero(&serv_addr, sizeof(serv_addr));
@@ -129,7 +126,7 @@ int main(int argc, char** argv) {
 
     // Aca comienza el parseo del archivo de usuarios
     listaUsuarios = fopen("usuarios.csv", "r");
-    cargarUsuarios(listaUsuarios);
+    unordered_map<string,string> usuariosMap= cargarUsuarios(listaUsuarios,usuariosMapVacio);
     fclose(listaUsuarios);
 
     while (serverOn) {

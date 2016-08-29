@@ -7,7 +7,30 @@
 
 using namespace std;
 
+typedef struct userClave{
+    char* usuario;
+    char* clave;
+}userClave_t;
 
+userClave_t solicitarUserClave(){
+    userClave_t userClave;
+    size_t bytesLeidos;
+        size_t largo = 0;
+
+    printf("Ingrese nombre de usuario:");
+    bytesLeidos = getline(&(userClave.usuario), &largo, stdin);
+    if (bytesLeidos < 0) {
+        perror("ERROR --> Nombre de usuario\n");
+        free(userClave.usuario);
+    }
+    printf("Ingrese clave:");
+    bytesLeidos = getline(&(userClave.clave), &largo, stdin);
+    if (bytesLeidos < 0) {
+        perror("ERROR --> Clave\n");
+        free(userClave.clave);
+    }
+    return userClave;
+}
 void mostrarMenuInicial() {
 
     while (true) {
@@ -84,8 +107,8 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-    printf("Conectado al servidor, presione * para desconectarse\n");
     FILE* respuestaServidor = fdopen(sockFileDescrpt, "r");
+    userClave_t userClaveIngresada = solicitarUserClave();
 
     while (true) {
 
@@ -126,7 +149,6 @@ int main(int argc, char** argv) {
             exit(1);
         }
 
-        printf("%s", linea);
         free(linea);
         linea = NULL;
     }
