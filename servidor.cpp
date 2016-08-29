@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <unordered_map>
 
 
 #define MAX_CLIENTS 5
@@ -14,6 +15,7 @@ using namespace std;
 typedef struct {
     int sockFileDescrpt;
     pthread_t* thread;
+    FILE* listaUsuarios;
 } cliente_t;
 
 
@@ -56,6 +58,21 @@ void* procesarMensajes(void* arg) {
     return NULL;
 }
 
+//Funcion que crea un hash del archivo (falta ver como devolverlo)
+void cargarUsuarios(FILE* archivo){
+    char* linea = NULL;
+    size_t len = 0;
+    unordered_map<string,string> usuariosMap;
+
+    while(getline(&linea, &len, archivo)!= -1){
+        string usuario = strtok(linea,",");
+        string password = strtok(NULL,",");
+
+        usuariosMap[usuario] = password;
+    }
+
+    cout << usuariosMap["francisco"];
+}
 
 int main(int argc, char** argv) {
 
@@ -64,6 +81,7 @@ int main(int argc, char** argv) {
     unsigned short int numPuerto;
     struct sockaddr_in serv_addr, cli_addr;
     cliente_t* cliente;
+    FILE* listaUsuarios;
 
     // Inicializo los structs con todos los miembros en \0
     bzero(&serv_addr, sizeof(serv_addr));
@@ -110,6 +128,10 @@ int main(int argc, char** argv) {
 
     bool serverOn = true;
 
+    listaUsuarios = fopen("usuarios.csv", "r");
+    cargarUsuarios(listaUsuarios);
+    fclose(listaUsuarios);
+
     while (serverOn) {
 
         // Se crea el nuevo file descriptor para el cliente que se conecta
@@ -140,7 +162,6 @@ int main(int argc, char** argv) {
             close(sockNewFileDescrpt);      // Rechazar este cliente
             free(thread);
             free(cliente);
-            continue;
         }
     }
 
