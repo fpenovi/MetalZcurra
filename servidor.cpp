@@ -15,7 +15,6 @@ using namespace std;
 typedef struct {
     int sockFileDescrpt;
     pthread_t* thread;
-    FILE* listaUsuarios;
 } cliente_t;
 
 
@@ -128,6 +127,7 @@ int main(int argc, char** argv) {
 
     bool serverOn = true;
 
+    // Aca comienza el parseo del archivo de usuarios
     listaUsuarios = fopen("usuarios.csv", "r");
     cargarUsuarios(listaUsuarios);
     fclose(listaUsuarios);
