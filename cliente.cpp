@@ -7,48 +7,49 @@
 
 using namespace std;
 
-#define TAM_BUFFER 256
 
+void mostrarMenuInicial() {
 
-int main(int argc, char** argv) {
-    int sockFileDescrpt, numPuerto;
-    ssize_t bytesLeidos, bytesEscritos;
-    struct sockaddr_in serv_addr;
-    struct hostent* server;
+    while (true) {
 
-    char buffer[TAM_BUFFER];
-
-
-    while (true){
-        char *linea = NULL;
+        char* linea = NULL;
         size_t tam_buf = 0;
         size_t res = 0;
 
         printf("1 : Conectarse\n");
         printf("2 : Salir\n");
-        res = getline(&linea,&tam_buf,stdin);
-        if (res == -1){
-            perror("Error en getline\n");
-            free(linea);
-            continue;
+        res = getline(&linea, &tam_buf, stdin);
+
+        if (res == -1) {
+            perror("ERROR --> End of File o error de lectura\n");
         }
 
-        if (linea[0] == '1') {
+        else if (linea[0] == '1') {
             free(linea);
             break;
         }
+
         else if (linea[0] == '2') {
             free(linea);
             exit(EXIT_SUCCESS);
         }
-        free(linea);
 
+        free(linea);
     }
+}
+
+
+int main(int argc, char** argv) {
+    int sockFileDescrpt, numPuerto;
+    struct sockaddr_in serv_addr;
+    struct hostent* server;
 
     if (argc < 3) {
         fprintf(stderr, "Modo de Uso: %s IP-hostname puerto\n", argv[0]);
         exit(0);
     }
+
+    mostrarMenuInicial();
 
     numPuerto = atoi(argv[2]);
 
@@ -69,7 +70,6 @@ int main(int argc, char** argv) {
         exit(0);
     }
 
-
     // Inicializar struct socket
     bzero((char*) &serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
@@ -85,18 +85,31 @@ int main(int argc, char** argv) {
     }
 
     printf("Conectado al servidor, presione * para desconectarse\n");
+    FILE* respuestaServidor = fdopen(sockFileDescrpt, "r");
 
     while (true) {
 
-        printf("Escriba un mensaje para enviar al servidor: ");
-        bzero(buffer, TAM_BUFFER);
-        fgets(buffer, TAM_BUFFER, stdin);
+        ssize_t bytesLeidos, bytesEscritos;
+        char* linea = NULL;
+        size_t len = 0;
 
-        if (strlen(buffer)-1 < 2 && buffer[0] == '*' )
+        printf("Escriba un mensaje para enviar al servidor: ");
+        bytesLeidos = getline(&linea, &len, stdin);
+
+        if (bytesLeidos < 0) {
+            perror("ERROR --> EOF o error en lectura\n");
+            free(linea);
+        }
+
+        if (bytesLeidos-1 < 2 && linea[0] == '*' ) {
+            free(linea);
             break;
+        }
 
         // Mando mensaje al servidor
-        bytesEscritos = write(sockFileDescrpt, buffer, TAM_BUFFER);
+        bytesEscritos = write(sockFileDescrpt, linea, bytesLeidos);
+        free(linea);    // Una vez que mando el mensaje, libero la linea e inicializo en NULL;
+        linea = NULL;
 
         if (bytesEscritos < 0) {
             perror("ERROR --> escribiendo al socket");
@@ -105,16 +118,20 @@ int main(int argc, char** argv) {
         }
 
         // Leo la respuesta escrita por el servidor en el FD
-        bzero(buffer, TAM_BUFFER);
-        bytesLeidos = read(sockFileDescrpt, buffer, TAM_BUFFER);
-        printf("%s", buffer);
+        bytesLeidos = getline(&linea, &len, respuestaServidor);
 
         if (bytesLeidos < 0) {
             perror("ERROR --> leyendo de socket");
+            free(linea);
             exit(1);
         }
+
+        printf("%s", linea);
+        free(linea);
+        linea = NULL;
     }
 
     close(sockFileDescrpt);
+    fclose(respuestaServidor);
     exit(0);
 }

@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#define TAM_BUFFER 256
+
 #define MAX_CLIENTS 5
 
 using namespace std;
@@ -19,28 +19,28 @@ typedef struct {
 
 void* procesarMensajes(void* arg) {
 
-    char buffer[TAM_BUFFER];    // array para los mensajes
+    char* linea;
+    size_t len = 0;
     ssize_t bytesLeidos;
     ssize_t bytesEscritos;
     int sockNewFileDescrpt = ((cliente_t*) arg)->sockFileDescrpt;
     pthread_t* thread = ((cliente_t*) arg)->thread;
+    FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
 
     while (true) {
 
-        bzero(buffer, TAM_BUFFER);      // Inicializo el buffer de mensajes
-        bytesLeidos = read(sockNewFileDescrpt, buffer, TAM_BUFFER);
+        bytesLeidos = getline(&linea, &len, mensajeCliente);
 
         if (bytesLeidos < 0) {
-            perror("ERROR --> Lectura fallida\n");
-            exit(1);
-        }
-
-        if (bytesLeidos == 0) {
-            printf("No hay mas para leer\n");
+            printf("Se desconecto un cliente\n");
+            free(linea);
             break;
         }
 
-        printf("Mensaje recibido del cliente: %s", buffer);
+        printf("Mensaje recibido del cliente: %s", linea);
+        free(linea);
+        linea = NULL;
+
         bytesEscritos = write(sockNewFileDescrpt,"\xE2\x9C\x93\n", 7);
 
         if (bytesEscritos < 0) {
@@ -52,6 +52,7 @@ void* procesarMensajes(void* arg) {
     close(sockNewFileDescrpt);
     free(arg);
     free(thread);
+    fclose(mensajeCliente);
     return NULL;
 }
 
@@ -102,7 +103,7 @@ int main(int argc, char** argv) {
     printf("Presione * para salir\n");
     pesoCliente = sizeof(cli_addr);
 
-    pthread_t* thread;      // Threads en los que correran los clientes
+    pthread_t* thread = NULL;      // Threads en los que correran los clientes
     pthread_attr_t attr;                // Variables para crear un thread detached
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
@@ -143,6 +144,7 @@ int main(int argc, char** argv) {
         }
     }
 
+    pthread_attr_destroy(&attr);
     close(sockFileDescrpt);
     close(sockNewFileDescrpt);
     return 0;
