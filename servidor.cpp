@@ -41,7 +41,7 @@ void* procesarMensajes(void* arg) {
         free(linea);
         linea = NULL;
 
-        bytesEscritos = write(sockNewFileDescrpt,"\xE2\x9C\x93\n", 7);
+        bytesEscritos = write(sockNewFileDescrpt,"\xE2\x9C\x93\n", 4);
 
         if (bytesEscritos < 0) {
             perror("ERROR --> No se pudo responder al cliente");
