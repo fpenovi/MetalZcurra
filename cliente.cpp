@@ -125,10 +125,6 @@ int main(int argc, char** argv) {
     }
 
 
-
-
-
-
     while (true) {
 
         ssize_t bytesLeidos, bytesEscritos;

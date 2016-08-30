@@ -15,8 +15,24 @@ using namespace std;
 typedef struct {
     int sockFileDescrpt;
     pthread_t* thread;
+    char* user=NULL;
+    char* clave=NULL;
 } cliente_t;
 
+bool validarCliente(unordered_map<string,string> map,cliente_t* cliente){
+    /*string strUser(cliente->user);
+    string strClave(cliente->clave);
+    auto search =map.find(strUser);
+    if(search == map.end()){
+        printf("el usuario no existe");
+        return false;
+    }
+    if (map[strUser]== strClave){
+        printf("la clave es incorrecta");
+        return false;
+    }*/
+    return true;
+}
 
 void* procesarMensajes(void* arg) {
 
@@ -29,7 +45,6 @@ void* procesarMensajes(void* arg) {
     FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
 
     while (true) {
-
         bytesLeidos = getline(&linea, &len, mensajeCliente);
 
         if (bytesLeidos < 0) {
@@ -150,8 +165,17 @@ int main(int argc, char** argv) {
         if (!thread)
             exit(EXIT_FAILURE);
 
+        size_t len=0 , bytesLeidos;
         cliente->sockFileDescrpt = sockNewFileDescrpt;
         cliente->thread = thread;
+        FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
+        bytesLeidos = getline(&cliente->user, &len, mensajeCliente);
+        bytesLeidos = getline(&(cliente->clave), &len, mensajeCliente);
+
+
+        if(! validarCliente(usuariosMap,cliente)) exit(1);
+        // es necesario salir de forma elegante , no romper el programa
+        // queda asi de forma parcial .
 
         // Cuando el cliente es aceptado, creo un nuevo thread
         if (pthread_create(thread, &attr, procesarMensajes, cliente) != 0) {
