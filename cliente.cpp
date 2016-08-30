@@ -122,10 +122,15 @@ int main(int argc, char** argv) {
         if (bytesLeidos < 0) {
             perror("ERROR --> EOF o error en lectura\n");
             free(linea);
+            free(userClaveIngresada.clave);
+            free(userClaveIngresada.usuario);
+
         }
 
         if (bytesLeidos-1 < 2 && linea[0] == '*' ) {
             free(linea);
+            free(userClaveIngresada.clave);
+            free(userClaveIngresada.usuario);
             break;
         }
 
