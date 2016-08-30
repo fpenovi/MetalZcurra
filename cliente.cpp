@@ -108,7 +108,26 @@ int main(int argc, char** argv) {
     }
 
     FILE* respuestaServidor = fdopen(sockFileDescrpt, "r");
+
+    /* Manejo el envio de usuario y contrasena al server*/
     userClave_t userClaveIngresada = solicitarUserClave();
+    size_t bytesEsc = write(sockFileDescrpt, userClaveIngresada.usuario, strlen(userClaveIngresada.usuario));
+    if (bytesEsc < 0) {
+        perror("ERROR --> escribiendo al socket");
+        close(sockFileDescrpt);
+        exit(1);
+    }
+    bytesEsc = write(sockFileDescrpt, userClaveIngresada.clave, strlen(userClaveIngresada.clave));
+    if (bytesEsc < 0) {
+        perror("ERROR --> escribiendo al socket");
+        close(sockFileDescrpt);
+        exit(1);
+    }
+
+
+
+
+
 
     while (true) {
 
