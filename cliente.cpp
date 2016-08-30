@@ -8,14 +8,14 @@
 using namespace std;
 
 typedef struct userClave{
-    char* usuario;
-    char* clave;
+    char* usuario=NULL;
+    char* clave=NULL;
 }userClave_t;
 
 userClave_t solicitarUserClave(){
     userClave_t userClave;
-    size_t bytesLeidos;
-        size_t largo = 0;
+    ssize_t bytesLeidos;
+    size_t largo = 0;
 
     printf("Ingrese nombre de usuario:");
     bytesLeidos = getline(&(userClave.usuario), &largo, stdin);
@@ -142,6 +142,7 @@ int main(int argc, char** argv) {
 
         // Leo la respuesta escrita por el servidor en el FD
         bytesLeidos = getline(&linea, &len, respuestaServidor);
+        printf(" %s", linea);
 
         if (bytesLeidos < 0) {
             perror("ERROR --> leyendo de socket");
