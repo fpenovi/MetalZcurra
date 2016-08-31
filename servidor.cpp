@@ -19,7 +19,45 @@ typedef struct {
     char* clave=NULL;
 } cliente_t;
 
-bool validarCliente(unordered_map<string,string> map,cliente_t* cliente){
+
+void iniciarServidor(int* sockFD, unsigned short int numPuerto, sockaddr_in* serv_addr) {
+
+	// Inicializo struct con todos los miembros en \0
+	bzero(serv_addr, sizeof(*serv_addr));
+
+	// Llamo a la funcion socket y obtengo un FD
+	// AF_INET es para TCP/IP
+	// SOCK_STREAM es para orientado a conexion (SOCK_DGRAM su contraparte)
+	*sockFD = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (*sockFD < 0) {
+		perror("ERROR --> No se pudo abrir socket\n");
+		exit(EXIT_FAILURE);
+	}
+
+	serv_addr->sin_family = AF_INET;
+	serv_addr->sin_addr.s_addr = INADDR_ANY;
+	serv_addr->sin_port = htons(numPuerto);  // --> convierte de hostbyte order a network byte order
+
+	// Aviso al SO que asocie el programa al socket creado
+	if (bind(*sockFD, (const sockaddr *) serv_addr, sizeof(*serv_addr)) < 0) {
+		perror("ERROR --> No se pudo hacer bind\n");
+		close(*sockFD);
+		exit(EXIT_FAILURE);
+	}
+
+	// Comienza a escuchar a los clientes que se quieren conectar y los va encolando
+	if (listen(*sockFD, MAX_CLIENTS) < 0) {
+		perror("ERROR --> Falla en listen\n");
+		close(*sockFD);
+		exit(EXIT_FAILURE);
+	}
+
+}
+
+
+bool validarCliente(unordered_map<string, string> map, cliente_t* cliente){
+
     string strUser(cliente->user);
     if (!strUser.empty() && strUser[strUser.length()-1] == '\n'){
         strUser.erase(strUser.length()-1);
@@ -35,6 +73,7 @@ bool validarCliente(unordered_map<string,string> map,cliente_t* cliente){
     }
     return true;
 }
+
 
 void* procesarMensajes(void* arg) {
 
@@ -74,77 +113,54 @@ void* procesarMensajes(void* arg) {
     return NULL;
 }
 
-//Funcion que crea un hash del archivo (falta ver como devolverlo)
-unordered_map<string,string> cargarUsuarios(FILE* archivo){
+
+unordered_map<string, string> cargarUsuarios(string filename) {
+
+	// Ver de usar lectura de archivos para C++ para evitar problemas de memoria dinamica...
+
     char* linea = NULL;
     size_t len = 0;
     unordered_map<string,string> usuariosMap;
-    while(getline(&linea, &len, archivo)!= -1){
+	FILE* archivo = fopen(filename.c_str(), "r");
+
+    while (getline(&linea, &len, archivo)!= -1){
         string usuario = strtok(linea,",");
         string password = strtok(NULL,",");
         usuariosMap[usuario] = password;
     }
+
+	fclose(archivo);
     return usuariosMap;
 }
 
+
 int main(int argc, char** argv) {
+
+	if (argc < 3) {
+		fprintf(stderr, "Modo de Uso: %s <archivo-usuarios> <n° puerto>\n", argv[0]);
+		exit(EXIT_SUCCESS);
+	}
 
     int sockFileDescrpt, sockNewFileDescrpt;
     socklen_t pesoCliente;
     unsigned short int numPuerto;
     struct sockaddr_in serv_addr, cli_addr;
     cliente_t* cliente;
-    FILE* listaUsuarios;
 
-    // Inicializo los structs con todos los miembros en \0
-    bzero(&serv_addr, sizeof(serv_addr));
-
-    // Llamo a la funcion socket y obtengo un FD
-    // AF_INET es para TCP/IP
-    // SOCK_STREAM es para orientado a conexion (SOCK_DGRAM su contraparte)
-    sockFileDescrpt = socket(AF_INET, SOCK_STREAM, 0);
-
-    if (sockFileDescrpt < 0) {
-        perror("ERROR --> No se pudo abrir socket\n");
-        exit(1);
-    }
-
-    numPuerto = 5001;   // Elijo el puerto
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(numPuerto);  // --> convierte de hostbyte order a network byte order
-
-
-    // Aviso al SO que asocie el programa al socket creado
-    if (bind(sockFileDescrpt, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-        perror("ERROR --> No se pudo hacer bind\n");
-        close(sockFileDescrpt);
-        exit(1);
-    }
-
-    // Comienza a escuchar a los clientes que se quieren conectar y los va encolando
-    if (listen(sockFileDescrpt, MAX_CLIENTS) < 0) {
-        perror("ERROR --> Falla en listen\n");
-        close(sockFileDescrpt);
-        exit(1);
-    }
+	numPuerto = (unsigned short) strtoull(argv[2], NULL, 0);	// convierto el string del n° puerto
+    iniciarServidor(&sockFileDescrpt, numPuerto, &serv_addr);
 
     // A partir de acá el servidor espera clientes
-    printf("ESPERANDO CLIENTES...\n");
-    printf("Presione * para salir\n");
-    pesoCliente = sizeof(cli_addr);
+    printf("ESPERANDO CLIENTES...\nPresione * para salir\n");
 
     pthread_t* thread = NULL;      // Threads en los que correran los clientes
     pthread_attr_t attr;                // Variables para crear un thread detached
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-
+	pesoCliente = sizeof(cli_addr);
     bool serverOn = true;
 
-    // Aca comienza el parseo del archivo de usuarios
-    listaUsuarios = fopen("usuarios.csv", "r");
-    unordered_map<string,string> usuariosMap = cargarUsuarios(listaUsuarios);
-    fclose(listaUsuarios);
+    unordered_map<string, string> usuariosMap = cargarUsuarios(argv[1]);
 
     while (serverOn) {
 
