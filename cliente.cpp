@@ -66,6 +66,9 @@ int main(int argc, char** argv) {
     int sockFileDescrpt, numPuerto;
     struct sockaddr_in serv_addr;
     struct hostent* server;
+    char* linea = NULL;
+    size_t len = 0;
+
 
     if (argc < 3) {
         fprintf(stderr, "Modo de Uso: %s IP-hostname puerto\n", argv[0]);
@@ -124,13 +127,23 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
+    size_t bytesLeidos = getline(&linea, &len, respuestaServidor);
+    printf("%s",linea);
+    if(strcmp(linea,"fallo la conexion al sistema.\n")==0) {
+        printf("%s", linea);
+        free(linea);
+        free(userClaveIngresada.clave);
+        free(userClaveIngresada.usuario);
+        close(sockFileDescrpt);
+        fclose(respuestaServidor);
+        exit(0);
+    }
+
 
     while (true) {
-
         ssize_t bytesLeidos, bytesEscritos;
         char* linea = NULL;
         size_t len = 0;
-
         printf("Escriba un mensaje para enviar al servidor: ");
         bytesLeidos = getline(&linea, &len, stdin);
 
@@ -173,7 +186,7 @@ int main(int argc, char** argv) {
         free(linea);
         linea = NULL;
     }
-
+    free(linea);
     close(sockFileDescrpt);
     fclose(respuestaServidor);
     exit(0);

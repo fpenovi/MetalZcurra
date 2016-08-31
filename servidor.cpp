@@ -21,19 +21,16 @@ typedef struct {
 
 bool validarCliente(unordered_map<string,string> map,cliente_t* cliente){
     string strUser(cliente->user);
-    if (!strUser.empty() && strUser[strUser.length()-1] == '\n')
+    if (!strUser.empty() && strUser[strUser.length()-1] == '\n'){
         strUser.erase(strUser.length()-1);
+    }
     string strClave(cliente->clave);
-    if (!strClave.empty() && strClave[strClave.length()-1] == '\n')
-        strClave.erase(strClave.length()-1);
 
     auto it = map.find(strUser);
     if (it == map.end()){
-        printf("el usuario no existe");
         return false;
     }
-    if (map[strUser]== strClave){
-        printf("la clave es incorrecta");
+    if (map[strUser]!= strClave){
         return false;
     }
     return true;
@@ -48,7 +45,7 @@ void* procesarMensajes(void* arg) {
     int sockNewFileDescrpt = ((cliente_t*) arg)->sockFileDescrpt;
     pthread_t* thread = ((cliente_t*) arg)->thread;
     FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
-
+    bytesEscritos = write(sockNewFileDescrpt,"conectado al servidor\n", 30);
     while (true) {
         bytesLeidos = getline(&linea, &len, mensajeCliente);
 
@@ -169,18 +166,23 @@ int main(int argc, char** argv) {
 
         if (!thread)
             exit(EXIT_FAILURE);
-
-        size_t len=0 , bytesLeidos;
+        // valido usuario y clave si funciona permite el acceso
+        // si no, se cierra el servidor tambien .
+        size_t len=0 , bytesLeidos, bytesEscritos;
         cliente->sockFileDescrpt = sockNewFileDescrpt;
         cliente->thread = thread;
         FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
+
         bytesLeidos = getline(&cliente->user, &len, mensajeCliente);
         bytesLeidos = getline(&(cliente->clave), &len, mensajeCliente);
 
+        if(!validarCliente(usuariosMap,cliente)){
+            bytesEscritos = write(sockNewFileDescrpt,"fallo la conexion al sistema.\n", 30);
+            close(sockNewFileDescrpt);
+            free(cliente);
+            break;
 
-        if(! validarCliente(usuariosMap,cliente)) exit(1);
-        // es necesario salir de forma elegante , no romper el programa
-        // queda asi de forma parcial .
+        }
 
         // Cuando el cliente es aceptado, creo un nuevo thread
         if (pthread_create(thread, &attr, procesarMensajes, cliente) != 0) {
@@ -189,6 +191,7 @@ int main(int argc, char** argv) {
             free(thread);
             free(cliente);
         }
+
     }
 
     pthread_attr_destroy(&attr);
