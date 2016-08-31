@@ -180,7 +180,7 @@ int main(int argc, char** argv) {
             bytesEscritos = write(sockNewFileDescrpt,"fallo la conexion al sistema.\n", 30);
             close(sockNewFileDescrpt);
             free(cliente);
-            break;
+            continue;
 
         }
 

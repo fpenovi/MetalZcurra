@@ -31,6 +31,7 @@ userClave_t solicitarUserClave(){
     }
     return userClave;
 }
+
 void mostrarMenuInicial() {
 
     while (true) {
@@ -61,6 +62,14 @@ void mostrarMenuInicial() {
     }
 }
 
+void mandar_a_servidor(int fd,char* linea, int largo){
+    size_t bytesEsc = write(fd, linea, largo);
+    if (bytesEsc < 0) {
+        perror("ERROR --> escribiendo al socket");
+        close(fd);
+        exit(1);
+    }
+}
 
 int main(int argc, char** argv) {
     int sockFileDescrpt, numPuerto;
@@ -114,21 +123,18 @@ int main(int argc, char** argv) {
 
     /* Manejo el envio de usuario y contrasena al server*/
     userClave_t userClaveIngresada = solicitarUserClave();
-    size_t bytesEsc = write(sockFileDescrpt, userClaveIngresada.usuario, strlen(userClaveIngresada.usuario));
-    if (bytesEsc < 0) {
-        perror("ERROR --> escribiendo al socket");
-        close(sockFileDescrpt);
-        exit(1);
-    }
-    bytesEsc = write(sockFileDescrpt, userClaveIngresada.clave, strlen(userClaveIngresada.clave));
-    if (bytesEsc < 0) {
-        perror("ERROR --> escribiendo al socket");
-        close(sockFileDescrpt);
-        exit(1);
-    }
 
+    //mando el usuario al servidor
+    mandar_a_servidor(sockFileDescrpt,userClaveIngresada.usuario,strlen(userClaveIngresada.usuario));
+
+    //mando la clave al servidor
+    mandar_a_servidor(sockFileDescrpt,userClaveIngresada.clave,strlen(userClaveIngresada.clave));
+
+    //ahora lee del servidor si el usuario y contra existen
     size_t bytesLeidos = getline(&linea, &len, respuestaServidor);
     printf("%s",linea);
+
+    //este cmp es re negro
     if(strcmp(linea,"fallo la conexion al sistema.\n")==0) {
         printf("%s", linea);
         free(linea);
@@ -150,11 +156,16 @@ int main(int argc, char** argv) {
         if (bytesLeidos < 0) {
             perror("ERROR --> EOF o error en lectura\n");
             free(linea);
-            free(userClaveIngresada.clave);
-            free(userClaveIngresada.usuario);
+
+            //CUANDO LLEGA ACA??????
+
+
+            //free(userClaveIngresada.clave);
+            //free(userClaveIngresada.usuario);
 
         }
 
+        //si mando '*' entonces sale del programa
         if (bytesLeidos-1 < 2 && linea[0] == '*' ) {
             free(linea);
             free(userClaveIngresada.clave);
@@ -163,15 +174,9 @@ int main(int argc, char** argv) {
         }
 
         // Mando mensaje al servidor
-        bytesEscritos = write(sockFileDescrpt, linea, bytesLeidos);
+        mandar_a_servidor(sockFileDescrpt,linea,bytesLeidos);
         free(linea);    // Una vez que mando el mensaje, libero la linea e inicializo en NULL;
         linea = NULL;
-
-        if (bytesEscritos < 0) {
-            perror("ERROR --> escribiendo al socket");
-            close(sockFileDescrpt);
-            exit(1);
-        }
 
         // Leo la respuesta escrita por el servidor en el FD
         bytesLeidos = getline(&linea, &len, respuestaServidor);
@@ -184,9 +189,10 @@ int main(int argc, char** argv) {
         }
 
         free(linea);
-        linea = NULL;
+        //linea = NULL;
     }
-    free(linea);
+
+    free(linea); //LA UNICA QUE VEZ QUE LLEGA ACA ES CON '*'? YA HAY UN FREE LINEA AHI
     close(sockFileDescrpt);
     fclose(respuestaServidor);
     exit(0);
