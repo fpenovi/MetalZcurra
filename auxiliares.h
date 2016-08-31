@@ -1,0 +1,8 @@
+#ifndef METALZCURRA_AUXILIARES_H
+#define METALZCURRA_AUXILIARES_H
+
+
+char* chomp(char* str);
+
+
+#endif //METALZCURRA_AUXILIARES_H

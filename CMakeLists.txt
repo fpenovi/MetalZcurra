@@ -3,5 +3,5 @@ project(MetalZcurra)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES servidor.cpp)
+set(SOURCE_FILES servidor.cpp auxiliares.cpp auxiliares.h)
 add_executable(MetalZcurra ${SOURCE_FILES})

@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-#OBJS = 
+OBJS = auxiliares.cpp
 
 #CC specifies which compiler we're using
 CC = g++
@@ -15,10 +15,10 @@ LINKER_FLAGS = -pthread
 all : servidor cliente
 
 servidor :
-	$(CC) servidor.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidor
+	$(CC) servidor.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidor
 
 cliente :
-	$(CC) cliente.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o cliente
+	$(CC) cliente.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o cliente
 
 clean : servidor cliente
 	rm servidor
