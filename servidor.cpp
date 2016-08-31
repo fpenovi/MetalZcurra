@@ -20,17 +20,22 @@ typedef struct {
 } cliente_t;
 
 bool validarCliente(unordered_map<string,string> map,cliente_t* cliente){
-    /*string strUser(cliente->user);
+    string strUser(cliente->user);
+    if (!strUser.empty() && strUser[strUser.length()-1] == '\n')
+        strUser.erase(strUser.length()-1);
     string strClave(cliente->clave);
-    auto search =map.find(strUser);
-    if(search == map.end()){
+    if (!strClave.empty() && strClave[strClave.length()-1] == '\n')
+        strClave.erase(strClave.length()-1);
+
+    auto it = map.find(strUser);
+    if (it == map.end()){
         printf("el usuario no existe");
         return false;
     }
     if (map[strUser]== strClave){
         printf("la clave es incorrecta");
         return false;
-    }*/
+    }
     return true;
 }
 
