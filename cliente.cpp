@@ -132,7 +132,6 @@ int main(int argc, char** argv) {
 
     //ahora lee del servidor si el usuario y contra existen
     size_t bytesLeidos = getline(&linea, &len, respuestaServidor);
-    printf("%s",linea);
 
     //este cmp es re negro
     if(strcmp(linea,"fallo la conexion al sistema.\n")==0) {
@@ -156,13 +155,8 @@ int main(int argc, char** argv) {
         if (bytesLeidos < 0) {
             perror("ERROR --> EOF o error en lectura\n");
             free(linea);
-
-            //CUANDO LLEGA ACA??????
-
-
-            //free(userClaveIngresada.clave);
-            //free(userClaveIngresada.usuario);
-
+            free(userClaveIngresada.clave);
+            free(userClaveIngresada.usuario);
         }
 
         //si mando '*' entonces sale del programa
@@ -189,11 +183,10 @@ int main(int argc, char** argv) {
         }
 
         free(linea);
-        //linea = NULL;
     }
 
-    free(linea); //LA UNICA QUE VEZ QUE LLEGA ACA ES CON '*'? YA HAY UN FREE LINEA AHI
+    free(linea);
     close(sockFileDescrpt);
     fclose(respuestaServidor);
-    exit(0);
+    exit(EXIT_SUCCESS);
 }
