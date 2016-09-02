@@ -20,7 +20,10 @@ servidor :
 cliente :
 	$(CC) cliente.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o cliente
 
+servidorPOO :
+	$(CC) servidorPOO.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidorPOO
+
 clean : servidor cliente
 	rm servidor
 	rm cliente
-
+	rm servidorPOO
