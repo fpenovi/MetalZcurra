@@ -20,46 +20,6 @@ struct argthread {
 };
 
 
-void* procesarMensajes(void* arg) {
-
-    char* linea;
-    size_t len = 0;
-    ssize_t bytesLeidos;
-    ssize_t bytesEscritos;
-    int sockNewFileDescrpt = ((argthread_t*) arg)->clientFD;
-    pthread_t* thread = ((argthread_t*) arg)->thread;
-    FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
-    bytesEscritos = write(sockNewFileDescrpt,"conectado al servidor\n", 30);
-
-    while (true) {
-        bytesLeidos = getline(&linea, &len, mensajeCliente);
-
-        if (bytesLeidos < 0) {
-            printf("Se desconecto un cliente\n");
-            free(linea);
-            break;
-        }
-
-        printf("Mensaje recibido del cliente: %s", linea);
-        free(linea);
-        linea = NULL;
-
-        bytesEscritos = write(sockNewFileDescrpt,"\xE2\x9C\x93\n", 4);
-
-        if (bytesEscritos < 0) {
-            perror("ERROR --> No se pudo responder al cliente");
-            exit(1);
-        }
-    }
-
-    close(sockNewFileDescrpt);
-    free(arg);
-    free(thread);
-    fclose(mensajeCliente);
-    return NULL;
-}
-
-
 class NoSePudoCrearServidorException : public runtime_error {
 
 public:
@@ -80,6 +40,46 @@ private:
     bool serverOn = false;
     // vector<argthread_t> conectados; --> lista de structs (threads) en ejecucion
     // Log logger; --> un atributo va a ser un objeto Log para logear.
+
+    static void* procesarMensajes(void* arg) {
+
+        char* linea;
+        size_t len = 0;
+        ssize_t bytesLeidos;
+        ssize_t bytesEscritos;
+        int sockNewFileDescrpt = ((argthread_t*) arg)->clientFD;
+        pthread_t* thread = ((argthread_t*) arg)->thread;
+        FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
+        bytesEscritos = write(sockNewFileDescrpt,"conectado al servidor\n", 30);
+
+        while (true) {
+
+            bytesLeidos = getline(&linea, &len, mensajeCliente);
+
+            if (bytesLeidos < 0) {
+                printf("Se desconecto un cliente\n");
+                free(linea);
+                break;
+            }
+
+            printf("Mensaje recibido del cliente: %s", linea);
+            free(linea);
+            linea = NULL;
+
+            bytesEscritos = write(sockNewFileDescrpt,"\xE2\x9C\x93\n", 4);
+
+            if (bytesEscritos < 0) {
+                perror("ERROR --> No se pudo responder al cliente");
+                exit(1);
+            }
+        }
+
+        close(sockNewFileDescrpt);
+        free(arg);
+        free(thread);
+        fclose(mensajeCliente);
+        return NULL;
+    }
 
 public:
     servidorPOO(unsigned short int numPuerto) {
