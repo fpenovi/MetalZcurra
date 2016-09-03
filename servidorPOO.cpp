@@ -33,13 +33,42 @@ class servidorPOO {
 
 private:
     int fileDescrpt;
+    string nombreArchivoCsv;
     struct sockaddr_in serv_addr, cli_addr;
     socklen_t pesoCli_adrr;
     pthread_t threadControl;
     pthread_attr_t attr;
     bool serverOn = false;
-    // vector<argthread_t> conectados; --> lista de structs (threads) en ejecucion
+    static vector<argthread_t*> conectados;
+    static unordered_map<string, string> usuarios;
     // Log logger; --> un atributo va a ser un objeto Log para logear.
+
+    static bool esValido(string usuario, string clave) {
+
+        return true;
+
+        if (usuarios.find(usuario) == usuarios.end())
+            return false;
+
+        return usuarios[usuario].compare(clave);
+    }
+
+    static bool pedirLogin(FILE* mensajeCliente, argthread_t* arg) {
+
+        size_t len = 0;
+        char* usuario = NULL;
+        char* password = NULL;
+        // Pido el usuario al cliente
+        getline(&usuario, &len, mensajeCliente);
+        getline(&password, &len, mensajeCliente);
+
+        arg->user = usuario;
+        arg->clave = password;
+        free(usuario);
+        free(password);
+
+        return esValido(arg->user, arg->clave);
+    }
 
     static void* procesarMensajes(void* arg) {
 
@@ -50,7 +79,18 @@ private:
         int sockNewFileDescrpt = ((argthread_t*) arg)->clientFD;
         pthread_t* thread = ((argthread_t*) arg)->thread;
         FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
-        bytesEscritos = write(sockNewFileDescrpt,"conectado al servidor\n", 30);
+
+        if (!pedirLogin(mensajeCliente, (argthread_t*) arg) ) {
+            write(sockNewFileDescrpt, "fallo la conexion al sistema.\n", 30);
+            fclose(mensajeCliente);
+            close(sockNewFileDescrpt);
+            free(arg);
+            free(thread);
+            return NULL;    // Salgo del thread
+        }
+
+        bytesEscritos = write(sockNewFileDescrpt, "conectado al servidor\n", 22);
+
 
         while (true) {
 
@@ -82,7 +122,9 @@ private:
     }
 
 public:
-    servidorPOO(unsigned short int numPuerto) {
+    servidorPOO(unsigned short int numPuerto, string nombreArchivo) {
+
+        nombreArchivoCsv = nombreArchivo;
 
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
@@ -143,7 +185,6 @@ public:
             }
 
             // ToDo falta en el caso de que no falle, crear los threads y agregarlos a la lista
-            // Ahora que lo pienso... es necesaria una lista de argthreads?
 
             argthread_t* arg = (argthread_t*) malloc(sizeof(argthread_t));
 
@@ -165,9 +206,11 @@ public:
 
             arg->clientFD = newFileDescrpt;
             arg->thread = thread;
+            conectados.push_back(arg);
 
             if (pthread_create(thread, &attr, procesarMensajes, arg) != 0) {
                 cerr << "ERROR --> Creación de thread fallida" << endl;
+                conectados.pop_back();
                 close(newFileDescrpt);      // Rechazar este cliente
                 free(thread);
                 free(arg);
@@ -180,10 +223,20 @@ public:
 
 };
 
+vector<argthread_t*> servidorPOO::conectados;
+unordered_map<string, string> servidorPOO::usuarios;
 
-int main() {
+int main(int argc, char** argv) {
 
-    servidorPOO server = servidorPOO(5001);
+
+    if (argc < 3) {
+        fprintf(stderr, "Modo de Uso: %s <archivo-usuarios> <n° puerto>\n", argv[0]);
+        exit(EXIT_SUCCESS);
+    }
+
+    unsigned short int numPuerto = (unsigned short) strtoull(argv[2], NULL, 0);
+
+    servidorPOO server = servidorPOO(numPuerto, argv[1]);
     server.aceptarClientes();
 
     return 0;

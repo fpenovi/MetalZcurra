@@ -2,14 +2,13 @@
 #define METALZCURRA_AUXILIARES_H
 
 
+#include <unordered_map>
+
+using namespace std;
+
 // Argumento que se le pasa a las funciones de los threads que se crean
 // al atender a un nuevo cliente.
 typedef struct argthread argthread_t;
-
-
-// Función utilizada por los threads dedicados a los clientes en el servidor.
-// Recibe por parametro un argthread_t.
-void* procesarMensajes(void* arg);
 
 
 // Función utilizada en el thread de control
