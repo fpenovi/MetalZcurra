@@ -1,12 +1,21 @@
-#include <string.h>
+#include <iostream>
+#include <unistd.h>
 #include "auxiliares.h"
 
-char* chomp(char* str) {
+using namespace std;
 
-	if (*str && str[strlen(str)-1] == '\n') {
-		str[strlen(str)-1] = '\0';
+
+void* controlInput(void* serverStatus) {
+
+	cout << "Entre al thread de control" << endl;
+
+	string input;
+	while (true) {
+		cin >> input;
+
+		if (input.compare("*") == 0) {
+			*((bool*) serverStatus) = false;
+			return NULL;
+		}
 	}
-
-	return str;
-
 }
