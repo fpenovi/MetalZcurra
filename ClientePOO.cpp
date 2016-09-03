@@ -23,8 +23,8 @@ private:
 public:*/
 
     Cliente::Cliente(){
-         name = NULL;
-         clave = NULL;
+         name;
+         clave;
          sockFileDescrpt = 0;
          //thread = NULL;
          respuestaServidor = NULL;
@@ -36,24 +36,25 @@ public:*/
 
 
         printf("Ingrese nombre de usuario:");
-        bytesLeidos = getline(&name, &largo, stdin);
+        cin >> this->name;
 
-        if (bytesLeidos < 0) {
+        /*if (bytesLeidos < 0) {
             perror("ERROR --> Nombre de usuario\n");
-            free(name);
+            //free(name);
             close(sockFileDescrpt);
         }
 
-        largo =0;
+        largo =0;*/
 
         printf("Ingrese clave:");
-        bytesLeidos = getline(&(clave), &largo, stdin);
-        if (bytesLeidos < 0) {
+        cin >> clave;
+        //bytesLeidos = getline(&(clave), &largo, stdin);
+        /*if (bytesLeidos < 0) {
             perror("ERROR --> Clave\n");
-            free(name);
-            free(clave);
+            //free(name);
+            //free(clave);
             close(sockFileDescrpt);
-        }
+        }*/
     }
 
     void Cliente::mandar_a_servidor(char* linea, int largo){
@@ -70,14 +71,14 @@ public:*/
         char *linea=NULL;
         size_t len = 0;
 
-        size_t bytesEsc = write(sockFileDescrpt, name, strlen(name));
+        size_t bytesEsc = write(sockFileDescrpt, name.c_str(), name.size());
         if (bytesEsc < 0) {
             perror("ERROR --> escribiendo al socket");
             close(sockFileDescrpt);
             exit(1);
         }
 
-        size_t bytesEsc2 = write(sockFileDescrpt, clave, strlen(clave));
+        size_t bytesEsc2 = write(sockFileDescrpt, clave.c_str(), clave.size());
         if (bytesEsc2 < 0) {
             perror("ERROR --> escribiendo al socket");
             close(sockFileDescrpt);
@@ -85,7 +86,6 @@ public:*/
         }
 
         //ahora lee del servidor si el usuario y contra existen
-        respuestaServidor = fdopen(sockFileDescrpt, "r");
 
         size_t bytesLeidos = getline(&linea, &len, respuestaServidor);
 
@@ -93,8 +93,8 @@ public:*/
         if (strcmp(linea, "fallo la conexion al sistema.\n") == 0) {
             printf("%s", linea);
             free(linea);
-            free(name);
-            free(clave);
+            //free(name);
+            //free(clave);
             close(sockFileDescrpt);
             fclose(respuestaServidor);
             exit(0);
@@ -105,6 +105,7 @@ public:*/
 
     void Cliente::asignarFD(int fd){
         sockFileDescrpt = fd;
+        respuestaServidor = fdopen(sockFileDescrpt, "r");
     }
 
     /*Cliente::activar_socket(char **parametros){
@@ -167,8 +168,8 @@ public:*/
 
     void Cliente::liberar(){
         printf("en el destructor del cliente");
-        free(name);
-        free(clave);
+        //free(name);
+        //free(clave);
         close(sockFileDescrpt);
         fclose(respuestaServidor);
     }
@@ -247,6 +248,8 @@ int main(int argc, char** argv) {
         exit(0);
     }
 
+    int respuesta = mostrar_menu();
+
     fd = activar_socket(argv);
 
     Cliente cliente;
@@ -259,7 +262,6 @@ int main(int argc, char** argv) {
     //mando el usuario y clave al servidor y manejo respuesta
     cliente.mandar_credencial_a_servidor();
 
-    int respuesta = mostrar_menu();
 
     while (true) {
         ssize_t bytesLeidos;

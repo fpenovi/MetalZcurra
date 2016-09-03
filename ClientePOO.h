@@ -20,8 +20,8 @@ using namespace std;
 class Cliente {
     private:
         // atributos
-        char* name;
-        char* clave;
+        string name;
+        string clave;
         int sockFileDescrpt;
         //pthread_t* thread;
         FILE* respuestaServidor;
