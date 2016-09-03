@@ -17,7 +17,6 @@
 
 using namespace std;
 
-
 class Cliente {
     private:
         // atributos

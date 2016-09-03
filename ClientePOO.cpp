@@ -218,6 +218,27 @@ int activar_socket(char **parametros){
     return sockFileDescrpt;
 }
 
+int mostrar_menu() {
+    string opcion;
+    while (true) {
+        printf("1 : Conectar\n");
+        printf("2 : Desconectar\n");
+        printf("3 : Salir\n");
+        printf("4 : Enviar\n");
+        printf("5 : Recibir\n");
+        printf("6 : Lorem Ipsum\n");
+
+        cin >> opcion;
+        if (opcion.compare("1") == 0) return 1;
+        else if (opcion.compare("2") == 0) return 2;
+        else if (opcion.compare("3") == 0) return 3;
+        else if (opcion.compare("4") == 0) return 4;
+        else if (opcion.compare("5") == 0) return 5;
+        else if (opcion.compare("6") == 0) return 6;
+        printf("Intente otra vez\n");
+    }
+}
+
 
 int main(int argc, char** argv) {
     int fd;
@@ -238,6 +259,7 @@ int main(int argc, char** argv) {
     //mando el usuario y clave al servidor y manejo respuesta
     cliente.mandar_credencial_a_servidor();
 
+    int respuesta = mostrar_menu();
 
     while (true) {
         ssize_t bytesLeidos;
