@@ -15,8 +15,8 @@ using namespace std;
 typedef struct {
     int sockFileDescrpt;
     pthread_t* thread;
-    char* user=NULL;
-    char* clave=NULL;
+    char* user;
+    char* clave;
 } cliente_t;
 
 
@@ -68,7 +68,7 @@ bool validarCliente(unordered_map<string, string> map, cliente_t* cliente){
     if (it == map.end()){
         return false;
     }
-    if (map[strUser]!= strClave){
+    if (map[cliente->user]!= strClave){
         return false;
     }
     return true;
@@ -189,16 +189,18 @@ int main(int argc, char** argv) {
         cliente->thread = thread;
         FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
 
-        bytesLeidos = getline(&cliente->user, &len, mensajeCliente);
+        bytesLeidos = getline(&(cliente->user), &len, mensajeCliente);
+
         bytesLeidos = getline(&(cliente->clave), &len, mensajeCliente);
 
-        if(!validarCliente(usuariosMap,cliente)){
+
+       /* if(!validarCliente(usuariosMap,cliente)){
             bytesEscritos = write(sockNewFileDescrpt,"fallo la conexion al sistema.\n", 30);
             close(sockNewFileDescrpt);
             free(cliente);
             continue;
 
-        }
+        }*/
 
         // Cuando el cliente es aceptado, creo un nuevo thread
         if (pthread_create(thread, &attr, procesarMensajes, cliente) != 0) {

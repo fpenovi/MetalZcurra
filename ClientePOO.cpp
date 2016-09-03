@@ -23,38 +23,29 @@ private:
 public:*/
 
     Cliente::Cliente(){
-         name;
-         clave;
+         name = NULL;
+         clave = NULL;
          sockFileDescrpt = 0;
          //thread = NULL;
-         respuestaServidor = NULL;
+         FILE* respuestaServidor = NULL;
     }
 
     void Cliente::solicitarUserClave(){
-        size_t largo=0;
         ssize_t bytesLeidos;
-
+        size_t largo = 0;
 
         printf("Ingrese nombre de usuario:");
-        cin >> this->name;
-
-        /*if (bytesLeidos < 0) {
+        bytesLeidos = getline(&(name), &largo, stdin);
+        if (bytesLeidos < 0) {
             perror("ERROR --> Nombre de usuario\n");
-            //free(name);
-            close(sockFileDescrpt);
+            //free(userClave.usuario);
         }
-
-        largo =0;*/
-
         printf("Ingrese clave:");
-        cin >> clave;
-        //bytesLeidos = getline(&(clave), &largo, stdin);
-        /*if (bytesLeidos < 0) {
+        bytesLeidos = getline(&(clave), &largo, stdin);
+        if (bytesLeidos < 0) {
             perror("ERROR --> Clave\n");
-            //free(name);
-            //free(clave);
-            close(sockFileDescrpt);
-        }*/
+            //free(userClave.clave);
+        }
     }
 
     void Cliente::mandar_a_servidor(char* linea, int largo){
@@ -71,14 +62,14 @@ public:*/
         char *linea=NULL;
         size_t len = 0;
 
-        size_t bytesEsc = write(sockFileDescrpt, name.c_str(), name.size());
+        size_t bytesEsc = write(sockFileDescrpt, name, strlen(name));
         if (bytesEsc < 0) {
             perror("ERROR --> escribiendo al socket");
             close(sockFileDescrpt);
             exit(1);
         }
 
-        size_t bytesEsc2 = write(sockFileDescrpt, clave.c_str(), clave.size());
+        size_t bytesEsc2 = write(sockFileDescrpt, clave, strlen(clave));
         if (bytesEsc2 < 0) {
             perror("ERROR --> escribiendo al socket");
             close(sockFileDescrpt);
@@ -86,15 +77,17 @@ public:*/
         }
 
         //ahora lee del servidor si el usuario y contra existen
-
+        linea=NULL;
+        cout << "CREDENCIAL. ANTES DE LEER RESPUESTA\n";
         size_t bytesLeidos = getline(&linea, &len, respuestaServidor);
+        cout << "CREDENCIAL. DESPUES DE LEER RESPUESTA\n";
 
         //este cmp es re negro
         if (strcmp(linea, "fallo la conexion al sistema.\n") == 0) {
             printf("%s", linea);
             free(linea);
-            //free(name);
-            //free(clave);
+            free(name);
+            free(clave);
             close(sockFileDescrpt);
             fclose(respuestaServidor);
             exit(0);
@@ -168,8 +161,8 @@ public:*/
 
     void Cliente::liberar(){
         printf("en el destructor del cliente");
-        //free(name);
-        //free(clave);
+        free(name);
+        free(clave);
         close(sockFileDescrpt);
         fclose(respuestaServidor);
     }
@@ -221,6 +214,8 @@ int activar_socket(char **parametros){
 
 int mostrar_menu() {
     string opcion;
+    ssize_t bytesLeidos;
+    size_t len = 0;
     while (true) {
         printf("1 : Conectar\n");
         printf("2 : Desconectar\n");
@@ -228,15 +223,17 @@ int mostrar_menu() {
         printf("4 : Enviar\n");
         printf("5 : Recibir\n");
         printf("6 : Lorem Ipsum\n");
+        break;
 
-        cin >> opcion;
-        if (opcion.compare("1") == 0) return 1;
-        else if (opcion.compare("2") == 0) return 2;
-        else if (opcion.compare("3") == 0) return 3;
-        else if (opcion.compare("4") == 0) return 4;
-        else if (opcion.compare("5") == 0) return 5;
-        else if (opcion.compare("6") == 0) return 6;
-        printf("Intente otra vez\n");
+       /* bytesLeidos = getline(&opcion, &len, stdin);
+
+        if (strcmp(opcion,"1")==0) return 1;
+        else if (strcmp(opcion,"2")==0) return 2;
+        else if (strcmp(opcion,"3")==0) return 3;
+        else if (strcmp(opcion,"4")==0) return 4;
+        else if (strcmp(opcion,"5")==0) return 5;
+        else if (strcmp(opcion,"6")==0) return 6;
+        printf("Intente otra vez\n");*/
     }
 }
 
