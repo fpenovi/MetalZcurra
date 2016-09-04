@@ -12,7 +12,7 @@ COMPILER_FLAGS = -std=c++11
 LINKER_FLAGS = -pthread
 
 
-all : servidor cliente ClientePOO servidorPOO
+all : ClientePOO servidorPOO
 
 servidor :
 	$(CC) servidor.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidor

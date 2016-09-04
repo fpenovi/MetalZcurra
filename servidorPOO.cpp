@@ -13,10 +13,10 @@
 using namespace std;
 
 struct argthread {
-    int clientFD;
-    pthread_t* thread;
-    string user;
-    string clave;
+    int clientFD= 0;
+    pthread_t* thread= NULL;
+    char* user=NULL;
+    char* clave= NULL;
 };
 
 
@@ -44,34 +44,24 @@ private:
     // Log logger; --> un atributo va a ser un objeto Log para logear.
 
     static bool esValido(string usuario, string clave) {
-
-        return true;
-
+        usuario.erase(usuario.length()-1);
         if (usuarios.find(usuario) == usuarios.end())
             return false;
 
-        return usuarios[usuario].compare(clave);
+        return (usuarios[usuario] == clave);
     }
 
     static bool pedirLogin(FILE* mensajeCliente, argthread_t* arg) {
-
         size_t len = 0;
-        char* usuario = NULL;
-        char* password = NULL;
         // Pido el usuario al cliente
-        getline(&usuario, &len, mensajeCliente);
-        getline(&password, &len, mensajeCliente);
-
-        arg->user = usuario;
-        arg->clave = password;
-        free(usuario);
-        free(password);
-
-        return esValido(arg->user, arg->clave);
+        getline(&arg->user, &len, mensajeCliente);
+        getline(&arg->clave, &len, mensajeCliente);
+        string user(arg->user);
+        string pass(arg->clave);
+        return esValido(user,pass);
     }
 
     static void* procesarMensajes(void* arg) {
-
         char* linea;
         size_t len = 0;
         ssize_t bytesLeidos;
@@ -79,8 +69,7 @@ private:
         int sockNewFileDescrpt = ((argthread_t*) arg)->clientFD;
         pthread_t* thread = ((argthread_t*) arg)->thread;
         FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
-
-        if (!pedirLogin(mensajeCliente, (argthread_t*) arg) ) {
+       if (!pedirLogin(mensajeCliente, (argthread_t*) arg) ) {
             write(sockNewFileDescrpt, "fallo la conexion al sistema.\n", 30);
             fclose(mensajeCliente);
             close(sockNewFileDescrpt);
@@ -171,13 +160,15 @@ public:
         }
 
         serverOn = true;
+        cargarUsuarios(nombreArchivo);
+
+
     }
 
     void aceptarClientes() {
 
         while (serverOn) {
             int newFileDescrpt = accept(fileDescrpt, (sockaddr *) &cli_addr, &pesoCli_adrr);
-
             if (newFileDescrpt < 0) {
                 // ToDo pedirle al logger...
                 cerr << "ERROR --> No se pudo aceptar cliente" << endl;
@@ -207,7 +198,6 @@ public:
             arg->clientFD = newFileDescrpt;
             arg->thread = thread;
             conectados.push_back(arg);
-
             if (pthread_create(thread, &attr, procesarMensajes, arg) != 0) {
                 cerr << "ERROR --> Creación de thread fallida" << endl;
                 conectados.pop_back();
@@ -219,6 +209,20 @@ public:
         }
     }
 
+    void cargarUsuarios(string filename) {
+
+        char* linea = NULL;
+        size_t len = 0;
+        FILE* archivo = fopen(filename.c_str(), "r");
+
+        while (getline(&linea, &len, archivo)!= -1){
+            string usuario = strtok(linea,",");
+            string password = strtok(NULL,",");
+            usuarios[usuario] = password;
+        }
+
+        fclose(archivo);
+    }
 
 
 };

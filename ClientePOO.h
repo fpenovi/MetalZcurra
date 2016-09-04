@@ -1,7 +1,3 @@
-//
-// Created by alan on 01/09/16.
-//
-
 #ifndef METALZCURRA_CLIENTE_H
 #define METALZCURRA_CLIENTE_H
 
@@ -25,25 +21,44 @@ class Cliente {
         int sockFileDescrpt;
         //pthread_t* thread;
         FILE* respuestaServidor;
-
+        bool estado;
+        char port[8];
+        char IP[8];
     public:
 
-        Cliente();
+        Cliente(char** argv);
 
-        void solicitarUserClave();
+    void cambiar_estado(bool nuevo_estado);
 
-        void mandar_a_servidor(char* linea, int largo);
+    void solicitarUserClave();
 
-        void mandar_credencial_a_servidor();
+    void mandar_a_servidor(char* linea, int largo);
 
-        void asignarFD(int fd);
+    void mandar_credencial_a_servidor();
 
-        /*int activar_socket(char **parametros);*/
+    void asignarFD();
 
-        void recibir_de_servidor();
+    void recibir_de_servidor();
 
-        void liberar();
+    void recibir_mensajes();
 
+    void desconectar();
+
+    void salir();
+
+    void enviar();
+
+    void lorem();
+
+    void liberar();
+
+    bool getEstado();
+
+    void mostrar_menu();
+
+    void conectar();
+
+    void activar_socket();
 };
 
 
