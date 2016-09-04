@@ -234,14 +234,14 @@ void Cliente::mostrar_menu() {
     size_t len = 0;
     while (true) {
         cout<<endl;
-        cout<<"//////////////////"<<endl;
-        printf("1 : Conectar\n");
-        printf("2 : Desconectar\n");
-        printf("3 : Salir\n");
-        printf("4 : Enviar\n");
-        printf("5 : Recibir\n");
-        printf("6 : Lorem Ipsum\n");
-        cout<<"//////////////////"<<endl;
+        cout<<"\033[1;31m//////////////////\033[0m"<<endl;
+        printf("\033[1;31m1 : Conectar\033[0m\n");
+        printf("\033[1;31m2 : Desconectar\033[0m\n");
+        printf("\033[1;31m3 : Salir\033[0m\n");
+        printf("\033[1;31m4 : Enviar\033[0m\n");
+        printf("\033[1;31m5 : Recibir\033[0m\n");
+        printf("\033[1;31m6 : Lorem Ipsum\033[0m\n");
+        cout<<"\033[1;31m//////////////////\033[0m"<<endl;
         cout<<endl;
 
         cin >> opcion;
@@ -249,9 +249,9 @@ void Cliente::mostrar_menu() {
         if (opcion==1) conectar() ;
         else if (opcion==2) desconectar();
         else if (opcion==3) salir() ;
-        else if (opcion==4) return enviar();
-        else if (opcion==5) return ;
-        else if (opcion==6) return ;
+        else if (opcion==4) enviar();
+        else if (opcion==5) recibir_mensajes() ;
+        else if (opcion==6) lorem() ;
         else printf("Intente otra vez\n");
     }
 }
