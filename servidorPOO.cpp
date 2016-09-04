@@ -120,9 +120,9 @@ private:
 
             printf("Mensaje recibido del cliente: %s", linea);
 
-            // ToDo Resolver el getline del lado del cliente para poder interactuar mejor
-
             if(strcmp(linea, "4\n") == 0) mandarUsuarios(sockNewFileDescrpt);
+
+            // ToDo Los otros casos del protocolo
              /*
             else if(strcmp(linea, "5\n") == 0); // Recibir msjs
             else if(strcmp(linea, "6\n") == 0); // Lorem
