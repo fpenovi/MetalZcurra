@@ -134,6 +134,9 @@ void Cliente::recibir_usuarios_de_servidor(){
         exit(1);
     }
 
+    // ToDo Al parsear el mensaje, habria que hacer un hash asignandole un numero a cada usuario
+    // ToDo (para simplificar la eleccion en el menu)
+
     char *token = strtok(linea, ",");
 
     while (token != NULL){
