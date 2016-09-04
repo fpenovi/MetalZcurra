@@ -111,10 +111,34 @@ void Cliente::recibir_de_servidor(){
     bytesLeidos = getline(&linea, &len, respuestaServidor);
     printf(" %s", linea);
 
+
     if (bytesLeidos < 0) {
         perror("ERROR --> leyendo de socket");
         free(linea);
         exit(1);
+    }
+
+    free(linea);
+}
+
+void Cliente::recibir_usuarios_de_servidor(){
+    char *linea=NULL;
+    size_t len = 0;
+    size_t bytesLeidos;
+
+    bytesLeidos = getline(&linea, &len, respuestaServidor);
+
+    if (bytesLeidos < 0) {
+        perror("ERROR --> leyendo de socket");
+        free(linea);
+        exit(1);
+    }
+
+    char *token = strtok(linea, ",");
+
+    while (token != NULL){
+        printf( " %s\n", token );
+        token = strtok(NULL,",");
     }
 
     free(linea);
@@ -150,7 +174,13 @@ void Cliente::enviar(){
     // Agarra basura del menu, dejarlo , no se como limpiar el stdin
     // DATO CURIOSO : existe el cin.getline , que trabaja con strings en vez de con char y mem
     // dinamica, hubiese sido lindo saberlo N dias antes :D  -jC-
-    bytesLeidos = getline(&linea, &len, stdin);
+    //bytesLeidos = getline(&linea, &len, stdin);
+    cin.ignore();
+
+    // Imprimo la lista de usuarios
+    char* opcion = "4\n";
+    mandar_a_servidor(opcion, strlen(opcion));
+    recibir_usuarios_de_servidor();
 
     printf("Escriba un mensaje para enviar al servidor: ");
     bytesLeidos = getline(&linea, &len, stdin);
@@ -164,7 +194,7 @@ void Cliente::enviar(){
     // Mando mensaje al servidor
     mandar_a_servidor(linea, bytesLeidos);
     free(linea);    // Una vez que mando el mensaje, libero la linea e inicializo en NULL;
-    //recibir_de_servidor();
+    recibir_de_servidor();
 }
 
 void Cliente::lorem(){

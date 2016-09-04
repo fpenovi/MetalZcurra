@@ -61,6 +61,33 @@ private:
         return esValido(user,pass);
     }
 
+    static void* mandarUsuarios(int sockNewFileDescrpt){
+        //Consigo las claves del hash de usuarios
+        vector<string> keys;
+        for(auto kv : usuarios) {
+            keys.push_back(kv.first);
+        }
+
+        //Los junto en un vector separados por un espacio
+        string texto;
+        for(int i=0 ; i < keys.size() ; i++ ){
+            texto += keys[i] + ",";
+        }
+        texto += "\n";
+
+        //Transformo string en char*
+        char* textoUsuarios = new char[texto.length()+1];
+        strcpy(textoUsuarios,texto.c_str());
+
+        //Mando el vector al cliente
+        ssize_t bytesEscritos = write(sockNewFileDescrpt,textoUsuarios, strlen(textoUsuarios));
+
+        if (bytesEscritos < 0) {
+            perror("ERROR --> No se pudo responder al cliente");
+            exit(1);
+        }
+    }
+
     static void* procesarMensajes(void* arg) {
         char* linea;
         size_t len = 0;
@@ -69,6 +96,7 @@ private:
         int sockNewFileDescrpt = ((argthread_t*) arg)->clientFD;
         pthread_t* thread = ((argthread_t*) arg)->thread;
         FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
+
        if (!pedirLogin(mensajeCliente, (argthread_t*) arg) ) {
             write(sockNewFileDescrpt, "fallo la conexion al sistema.\n", 30);
             fclose(mensajeCliente);
@@ -79,7 +107,6 @@ private:
         }
 
         bytesEscritos = write(sockNewFileDescrpt, "conectado al servidor\n", 22);
-
 
         while (true) {
 
@@ -92,6 +119,16 @@ private:
             }
 
             printf("Mensaje recibido del cliente: %s", linea);
+
+            // ToDo Resolver el getline del lado del cliente para poder interactuar mejor
+
+            if(strcmp(linea, "4\n") == 0) mandarUsuarios(sockNewFileDescrpt);
+             /*
+            else if(strcmp(linea, "5\n") == 0); // Recibir msjs
+            else if(strcmp(linea, "6\n") == 0); // Lorem
+            else if(strcmp(linea, "2\n") == 0); // Desconectar desde el servidor tambien
+            */
+
             free(linea);
             linea = NULL;
 
