@@ -4,6 +4,7 @@
 #include <string.h>
 #include "ClientePOO.h"
 #include <pthread.h>
+#include <unordered_map>
 using namespace std;
 
 Cliente::Cliente(char** argv){
@@ -138,20 +139,52 @@ void Cliente::recibir_usuarios_de_servidor(){
     // ToDo Al parsear el mensaje, habria que hacer un hash asignandole un numero a cada usuario
     // ToDo (para simplificar la eleccion en el menu)
 
+
+    unordered_map<int, char*> usuariosAenviar;
+
     char *token = strtok(linea, ",");
     int i=0;
     printf("0. ");
     printf("TODOS\n");
+
+    char todos[]="TODOS";
+
+    usuariosAenviar[i]=todos;
+
     while (token != NULL){
         i = i+1;
         if (strcmp(token,"\n" )== 0) break;
         printf("%i. ",i);
         printf( "%s\n", token );
         token = strtok(NULL,",");
+        usuariosAenviar[i]=token;
     }
-
+    printf("\n");
 
     free(linea);
+    linea= NULL;
+    // ToDo free(token) ?????
+
+    len = 0;
+
+    printf("Elija una opcion: ");
+    bytesLeidos = getline(&linea, &len, stdin);
+
+    int opcion = atoi(linea);
+    if (opcion >= i) {
+        printf("no eligió un numero de pantalla\n");
+        free(linea);
+        return;
+    }
+
+    printf("\neligió la opcion %i\n",opcion);
+
+    free (linea);
+    // ToDo size_t bytesEsc = write(sockFileDescrpt, opcion, strlen(opcion));
+    // ToDo creo que deberia pasar opcion de int a char* para poder hacer write
+    // ToDo igualmente me falta el mensaje que le escribiria
+
+
 }
 
 void Cliente::recibir_mensajes(){
