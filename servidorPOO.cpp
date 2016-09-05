@@ -43,6 +43,21 @@ private:
     static unordered_map<string, string> usuarios;
     // Log logger; --> un atributo va a ser un objeto Log para logear.
 
+    void cargarUsuarios(string filename) {
+
+        char* linea = NULL;
+        size_t len = 0;
+        FILE* archivo = fopen(filename.c_str(), "r");
+
+        while (getline(&linea, &len, archivo)!= -1){
+            string usuario = strtok(linea,",");
+            string password = strtok(NULL,",");
+            usuarios[usuario] = password;
+        }
+
+        fclose(archivo);
+    }
+
     static bool esValido(string usuario, string clave) {
         usuario.erase(usuario.length()-1);
         if (usuarios.find(usuario) == usuarios.end())
@@ -81,6 +96,7 @@ private:
 
         //Mando el vector al cliente
         ssize_t bytesEscritos = write(sockNewFileDescrpt,textoUsuarios, strlen(textoUsuarios));
+        delete textoUsuarios;
 
         if (bytesEscritos < 0) {
             perror("ERROR --> No se pudo responder al cliente");
@@ -248,22 +264,6 @@ public:
 
         }
     }
-
-    void cargarUsuarios(string filename) {
-
-        char* linea = NULL;
-        size_t len = 0;
-        FILE* archivo = fopen(filename.c_str(), "r");
-
-        while (getline(&linea, &len, archivo)!= -1){
-            string usuario = strtok(linea,",");
-            string password = strtok(NULL,",");
-            usuarios[usuario] = password;
-        }
-
-        fclose(archivo);
-    }
-
 
 };
 

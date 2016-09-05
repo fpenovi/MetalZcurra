@@ -12,22 +12,15 @@ COMPILER_FLAGS = -std=c++11
 LINKER_FLAGS = -pthread
 
 
-all : ClientePOO servidorPOO
+all : cliente servidor
 
-servidor :
-	$(CC) servidor.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidor
 
 cliente :
-	$(CC) cliente.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o cliente
+	$(CC) ClientePOO.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o cliente
 
-ClientePOO:
-	$(CC) ClientePOO.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o clientePOO
+servidor :
+	$(CC) servidorPOO.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidor
 
-servidorPOO :
-	$(CC) servidorPOO.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidorPOO
-
-clean : servidor cliente ClientePOO servidorPOO
+clean : servidor cliente
 	rm servidor
 	rm cliente
-	rm servidorPOO
-	rm clientePOO
