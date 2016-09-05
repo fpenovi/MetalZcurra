@@ -143,23 +143,25 @@ void Cliente::recibir_usuarios_de_servidor(){
     unordered_map<int, char*> usuariosAenviar;
 
     char *token = strtok(linea, ",");
-    int i=0;
-    printf("0. ");
-    printf("TODOS\n");
-
-    char todos[]="TODOS";
-
-    usuariosAenviar[i]=todos;
+    int i=1;
 
     while (token != NULL){
-        i = i+1;
+
         if (strcmp(token,"\n" )== 0) break;
         printf("%i. ",i);
         printf( "%s\n", token );
-        token = strtok(NULL,",");
         usuariosAenviar[i]=token;
+
+        token = strtok(NULL,",");
+        i = i+1;
+
     }
+    printf("%i. %s\n",i,"TODOS");
     printf("\n");
+    char todos[]="TODOS";
+    usuariosAenviar[i]=todos;
+    i=i+1;
+
 
     free(linea);
     linea= NULL;
@@ -177,9 +179,11 @@ void Cliente::recibir_usuarios_de_servidor(){
         return;
     }
 
-    printf("\neligió la opcion %i\n",opcion);
+    printf("\neligió la opcion %i: %s",opcion,usuariosAenviar[opcion]);
+
 
     free (linea);
+    exit(1);
     // ToDo size_t bytesEsc = write(sockFileDescrpt, opcion, strlen(opcion));
     // ToDo creo que deberia pasar opcion de int a char* para poder hacer write
     // ToDo igualmente me falta el mensaje que le escribiria
