@@ -179,7 +179,9 @@ void Cliente::recibir_usuarios_de_servidor(){
         return;
     }
 
-    printf("\neligió la opcion %i: %s",opcion,usuariosAenviar[opcion]);
+
+    // ToDo anda mal el usuariosAenviar[opcion]
+    //printf("\neligió la opcion %i: %s",opcion,usuariosAenviar[opcion]);
 
 
     free (linea);
