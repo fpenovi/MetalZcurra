@@ -107,20 +107,23 @@ private:
         }
 
         bytesEscritos = write(sockNewFileDescrpt, "conectado al servidor\n", 22);
+        // ToDo Escribir en el logger que se conecto
+        cout << "Se conectó " << ((argthread_t*) arg)->user << endl;
 
         while (true) {
 
             bytesLeidos = getline(&linea, &len, mensajeCliente);
 
             if (bytesLeidos < 0) {
-                printf("Se desconecto un cliente\n");
+                cout << "Se desconectó " << ((argthread_t*) arg)->user << endl;
                 free(linea);
                 break;
             }
 
-            printf("Mensaje recibido del cliente: %s", linea);
+            cout << "Mensaje recibido del cliente: " << linea;
 
-            if(strcmp(linea, "4\n") == 0) mandarUsuarios(sockNewFileDescrpt);
+            if(strcmp(linea, "4\n") == 0)
+                mandarUsuarios(sockNewFileDescrpt);
 
             // ToDo Los otros casos del protocolo
              /*
