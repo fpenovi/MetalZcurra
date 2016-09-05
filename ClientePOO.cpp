@@ -24,6 +24,7 @@ Cliente::Cliente(char** argv){
 bool Cliente::getEstado(){
     return estado;
 }
+
 void Cliente::cambiar_estado(bool nuevo_estado){
     estado = nuevo_estado;
 }
@@ -138,11 +139,17 @@ void Cliente::recibir_usuarios_de_servidor(){
     // ToDo (para simplificar la eleccion en el menu)
 
     char *token = strtok(linea, ",");
-
+    int i=0;
+    printf("0. ");
+    printf("TODOS\n");
     while (token != NULL){
-        printf( " %s\n", token );
+        i = i+1;
+        if (strcmp(token,"\n" )== 0) break;
+        printf("%i. ",i);
+        printf( "%s\n", token );
         token = strtok(NULL,",");
     }
+
 
     free(linea);
 }
@@ -220,7 +227,6 @@ void Cliente::liberar(){
     estado = false;
 
 }
-
 
 void Cliente::activar_socket(){
     struct sockaddr_in serv_addr;
@@ -303,6 +309,7 @@ void Cliente::conectar() {
     return;
 
 }
+
 int main(int argc, char** argv) {
         Cliente cliente(argv);
         if (argc < 3) {
