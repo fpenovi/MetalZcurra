@@ -32,7 +32,7 @@ public:
 class servidorPOO {
 
 private:
-    int fileDescrpt;
+    static int fileDescrpt;
     string nombreArchivoCsv;
     struct sockaddr_in serv_addr, cli_addr;
     socklen_t pesoCli_adrr;
@@ -42,6 +42,35 @@ private:
     static vector<argthread_t*> conectados;
     static unordered_map<string, string> usuarios;
     // Log logger; --> un atributo va a ser un objeto Log para logear.
+
+
+    static void* controlInput(void* serverStatus) {
+
+        cout << "ESPERANDO CLIENTES" << endl << "Presione * para salir..." << endl;
+
+        string input;
+        while (true) {
+            cin >> input;
+
+            if (input.compare("*") == 0) {
+                *((bool*) serverStatus) = false;
+                cerrarConexiones();
+                shutdown(fileDescrpt, SHUT_RDWR);
+                return NULL;
+            }
+        }
+    }
+
+    static void cerrarConexiones() {
+        size_t numConexiones = conectados.size();
+
+        for (size_t i=0; i<numConexiones; i++) {
+            argthread_t* actual = conectados[i];
+            shutdown(actual->clientFD, SHUT_RDWR);
+            // No libero el resto de las cosas de argthread porque se liberan
+            // al final de la funcion procesarMensajes
+        }
+    }
 
     void cargarUsuarios(string filename) {
 
@@ -117,7 +146,7 @@ private:
         pthread_t* thread = ((argthread_t*) arg)->thread;
         FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
 
-       if (!pedirLogin(mensajeCliente, (argthread_t*) arg) ) {
+        if (!pedirLogin(mensajeCliente, (argthread_t*) arg) ) {
             write(sockNewFileDescrpt, "fallo la conexion al sistema.\n", 30);
             fclose(mensajeCliente);
             close(sockNewFileDescrpt);
@@ -131,7 +160,6 @@ private:
         cout << "Se conectó " << ((argthread_t*) arg)->user << endl;
 
         while (true) {
-
             bytesLeidos = getline(&linea, &len, mensajeCliente);
 
             if (bytesLeidos < 0) {
@@ -142,7 +170,7 @@ private:
 
             cout << "Mensaje recibido del cliente: " << linea;
 
-            if(strcmp(linea, "4\n") == 0) {
+            if (strcmp(linea, "4\n") == 0) {
                 mandarUsuarios(sockNewFileDescrpt);
                 bytesLeidos = getline(&linea, &len, mensajeCliente);
                 if (bytesLeidos < 0) {
@@ -152,13 +180,12 @@ private:
                 }
                 agregarMensaje();
             }
-            else if (strcmp(linea,"6\n")==0){
+
+            else if (strcmp(linea,"6\n")==0)
                 mandarUsuarios(sockNewFileDescrpt);
 
-            }
-
             // ToDo Los otros casos del protocolo
-             /*
+            /*
             else if(strcmp(linea, "5\n") == 0); // Recibir msjs
             else if(strcmp(linea, "6\n") == 0); // Lorem
             else if(strcmp(linea, "2\n") == 0); // Desconectar desde el servidor tambien
@@ -179,6 +206,7 @@ private:
         free(arg);
         free(thread);
         fclose(mensajeCliente);
+        cout << "Llego a liberar las cosas del argthread" << endl;
         return NULL;
     }
 
@@ -285,6 +313,7 @@ public:
 
 vector<argthread_t*> servidorPOO::conectados;
 unordered_map<string, string> servidorPOO::usuarios;
+int servidorPOO::fileDescrpt;
 
 int main(int argc, char** argv) {
 
