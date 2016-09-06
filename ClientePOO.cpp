@@ -121,7 +121,7 @@ void Cliente::recibir_de_servidor(){
     free(linea);
 }
 
-void Cliente::recibir_usuarios_de_servidor(){
+char* Cliente::recibir_usuarios_de_servidor(){
 
     char *linea=NULL;
     size_t len = 0;
@@ -134,7 +134,47 @@ void Cliente::recibir_usuarios_de_servidor(){
         exit(1);
     }
 
+    return linea;
+
+}
+
+void Cliente::recibir_mensajes(){
+    cout << "Recibiendo mensajes...";
+
+}
+
+void Cliente::desconectar(){
+    if (estado == false) {
+        perror("El cliente ya se encuentra desconectado");
+        return;
+    }
+    liberar();
+}
+
+void Cliente::salir(){
+    if(estado) {
+        liberar();
+    }
+    exit(0);
+}
+
+void Cliente::enviar(){
+
+    if(! estado){
+        cout<<"No esta conectado al servidor"<<endl;
+        return;
+    }
+
     unordered_map<int, string> usuariosAenviar; //hash de usuarios
+    size_t len = 0;
+    size_t bytesLeidos;
+
+    cin.ignore();
+
+    char* opc = "4\n";
+    mandar_a_servidor(opc, strlen(opc));
+
+    char* linea=recibir_usuarios_de_servidor();
 
     char *token = strtok(linea, ",");
     int i=1;
@@ -149,7 +189,6 @@ void Cliente::recibir_usuarios_de_servidor(){
         token = strtok(NULL,",");
         i = i+1;
     }
-
     printf("%i. %s\n",i,"TODOS\n");
 
     string todos = "TODOS";
@@ -186,45 +225,53 @@ void Cliente::recibir_usuarios_de_servidor(){
 
     size_t bytesEsc = write(sockFileDescrpt, envio, strlen(envio));
 
-}
-
-void Cliente::recibir_mensajes(){
-    cout << "Recibiendo mensajes...";
-
-}
-
-void Cliente::desconectar(){
-    if (estado == false) {
-        perror("El cliente ya se encuentra desconectado");
-        return;
-    }
-    liberar();
-}
-
-void Cliente::salir(){
-    if(estado) {
-        liberar();
-    }
-    exit(0);
-}
-
-void Cliente::enviar(){
-    if(! estado){
-        cout<<"No esta conectado al servidor"<<endl;
-        return;
-    }
-
-    cin.ignore();
-    // Imprimo la lista de usuarios
-    char* opcion = "4\n";
-    mandar_a_servidor(opcion, strlen(opcion));
-    recibir_usuarios_de_servidor();
 
     recibir_de_servidor(); //esto estaria recibiendo el tick
 }
 
 void Cliente::lorem(){
-    printf("ACA SE HACE EL LOREM");
+
+    if(! estado){
+        cout<<"No esta conectado al servidor"<<endl;
+        return;
+    }
+
+    unordered_map<int, string> usuariosAenviar; //hash de usuarios
+    size_t len = 0;
+    size_t bytesLeidos;
+
+    cin.ignore();
+
+    char* opc = "6\n"; //IGUAL QUE EL MENSAJE??
+    mandar_a_servidor(opc, strlen(opc));
+
+    char* linea=recibir_usuarios_de_servidor();
+
+    char *token = strtok(linea, ",");
+    int i=1;
+    while (token != NULL){
+        if (strcmp(token,"\n" )== 0) break;
+        string strUsuario(token);
+        usuariosAenviar[i]=strUsuario;
+
+        token = strtok(NULL,",");
+        i = i+1;
+    }
+
+    free(linea);
+    linea= NULL;
+
+    cout << "Cada cuantos segundos quiere que se envie el mensaje?"<<endl;
+    bytesLeidos = getline(&linea, &len, stdin);
+    linea[strlen(linea)-1]='\0'; //saco el \n
+
+    string freq(linea);
+    freq += " segundos"; //ToDo aca tengo que cortar el \n
+
+    int aleatorio = rand()%(i)+1; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
+    cout<< "se le enviara un mensaje a: "<<usuariosAenviar[aleatorio]<<" cada "<<freq<<endl;
+
+
 }
 
 void Cliente::liberar(){

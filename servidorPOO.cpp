@@ -104,6 +104,10 @@ private:
         }
     }
 
+    static void* agregarMensaje(){
+        //ToDo hacerrrrrrrrrrrrrr
+    }
+
     static void* procesarMensajes(void* arg) {
         char* linea;
         size_t len = 0;
@@ -138,8 +142,20 @@ private:
 
             cout << "Mensaje recibido del cliente: " << linea;
 
-            if(strcmp(linea, "4\n") == 0)
+            if(strcmp(linea, "4\n") == 0) {
                 mandarUsuarios(sockNewFileDescrpt);
+                bytesLeidos = getline(&linea, &len, mensajeCliente);
+                if (bytesLeidos < 0) {
+                    cout << "Se desconectó " << ((argthread_t *) arg)->user << endl;
+                    free(linea);
+                    break;
+                }
+                agregarMensaje();
+            }
+            else if (strcmp(linea,"6\n")==0){
+                mandarUsuarios(sockNewFileDescrpt);
+
+            }
 
             // ToDo Los otros casos del protocolo
              /*
