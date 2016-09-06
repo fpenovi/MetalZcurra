@@ -40,7 +40,7 @@ class Cliente {
 
     void recibir_de_servidor();
 
-    void recibir_usuarios_de_servidor();
+    char* recibir_usuarios_de_servidor();
 
     void recibir_mensajes();
 
