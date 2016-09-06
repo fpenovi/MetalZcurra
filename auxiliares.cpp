@@ -5,7 +5,7 @@
 using namespace std;
 
 
-void* controlInput(void* serverStatus) {
+/*void* controlInput(void* serverStatus) {
 
 	cout << "Entre al thread de control" << endl;
 
@@ -18,4 +18,4 @@ void* controlInput(void* serverStatus) {
 			return NULL;
 		}
 	}
-}
+}*/
