@@ -36,10 +36,8 @@ void Cliente::solicitarUserClave(){
 
     printf("Ingrese nombre de usuario:");
 
-    //ESTE SIGUIENTE GETLINE LEE BASURA QUE QUEDO DEL MENU INICIAL
-    //QUE NO ENTIENDO PORQUE LAS LEE, CREO QUE ES UN \N
-    bytesLeidos = getline(&(name), &largo, stdin);
-    name == NULL;
+    cin.ignore();
+
 
     bytesLeidos = getline(&(name), &largo, stdin);
     if (bytesLeidos < 0) {
@@ -124,77 +122,75 @@ void Cliente::recibir_de_servidor(){
 }
 
 void Cliente::recibir_usuarios_de_servidor(){
+
     char *linea=NULL;
     size_t len = 0;
     size_t bytesLeidos;
 
     bytesLeidos = getline(&linea, &len, respuestaServidor);
-
     if (bytesLeidos < 0) {
         perror("ERROR --> leyendo de socket");
         free(linea);
         exit(1);
     }
 
-    // ToDo Al parsear el mensaje, habria que hacer un hash asignandole un numero a cada usuario
-    // ToDo (para simplificar la eleccion en el menu)
-
-
-    unordered_map<int, char*> usuariosAenviar;
+    unordered_map<int, string> usuariosAenviar; //hash de usuarios
 
     char *token = strtok(linea, ",");
     int i=1;
 
     while (token != NULL){
-
         if (strcmp(token,"\n" )== 0) break;
         printf("%i. ",i);
         printf( "%s\n", token );
-        usuariosAenviar[i]=token;
+        string strUsuario(token);
+        usuariosAenviar[i]=strUsuario;
 
         token = strtok(NULL,",");
         i = i+1;
-
     }
-    printf("%i. %s\n",i,"TODOS");
-    printf("\n");
-    char todos[]="TODOS";
-    usuariosAenviar[i]=todos;
-    i=i+1;
 
+    printf("%i. %s\n",i,"TODOS\n");
+
+    string todos = "TODOS";
+    usuariosAenviar[i]=todos;
 
     free(linea);
     linea= NULL;
-    // ToDo free(token) ?????
-
-    len = 0;
+    // NO HAY QUE HACER free(token) !!!!
 
     printf("Elija una opcion: ");
+
+    len = 0;
     bytesLeidos = getline(&linea, &len, stdin);
 
     int opcion = atoi(linea);
-    if (opcion >= i) {
-        printf("no eligió un numero de pantalla\n");
+    if (opcion > i) {
+        printf("No eligió un numero de pantalla\n");
         free(linea);
         return;
     }
 
+    cout <<"Escriba un mensaje a: " << usuariosAenviar[opcion]<<endl;
 
-    // ToDo anda mal el usuariosAenviar[opcion]
-    //printf("\neligió la opcion %i: %s",opcion,usuariosAenviar[opcion]);
+    bytesLeidos = getline(&linea, &len, stdin);
+    string msg(linea);
 
+    string mensajeCompleto = usuariosAenviar[opcion] + "$$"; //LE AGREGO EL PROTOCOLO
+    mensajeCompleto+=msg;
+    cout << mensajeCompleto << endl;
 
-    free (linea);
-    exit(1);
-    // ToDo size_t bytesEsc = write(sockFileDescrpt, opcion, strlen(opcion));
-    // ToDo creo que deberia pasar opcion de int a char* para poder hacer write
-    // ToDo igualmente me falta el mensaje que le escribiria
+    free(linea);
 
+    const char* envio = mensajeCompleto.c_str();
+
+    size_t bytesEsc = write(sockFileDescrpt, envio, strlen(envio));
 
 }
 
 void Cliente::recibir_mensajes(){
-    printf("Recibo mensajes de la lista\n");
+    cout << "Recibiendo mensajes...";
+
 }
 
 void Cliente::desconectar(){
@@ -217,33 +213,14 @@ void Cliente::enviar(){
         cout<<"No esta conectado al servidor"<<endl;
         return;
     }
-    ssize_t bytesLeidos;
-    char *linea = NULL;
-    size_t len = 0;
-    // Agarra basura del menu, dejarlo , no se como limpiar el stdin
-    // DATO CURIOSO : existe el cin.getline , que trabaja con strings en vez de con char y mem
-    // dinamica, hubiese sido lindo saberlo N dias antes :D  -jC-
-    //bytesLeidos = getline(&linea, &len, stdin);
-    cin.ignore();
 
+    cin.ignore();
     // Imprimo la lista de usuarios
     char* opcion = "4\n";
     mandar_a_servidor(opcion, strlen(opcion));
     recibir_usuarios_de_servidor();
 
-    printf("Escriba un mensaje para enviar al servidor: ");
-    bytesLeidos = getline(&linea, &len, stdin);
-
-    if (bytesLeidos < 0) {
-        perror("ERROR --> EOF o error en lectura\n");
-        free(linea);
-        liberar();
-    }
-
-    // Mando mensaje al servidor
-    mandar_a_servidor(linea, bytesLeidos);
-    free(linea);    // Una vez que mando el mensaje, libero la linea e inicializo en NULL;
-    recibir_de_servidor();
+    recibir_de_servidor(); //esto estaria recibiendo el tick
 }
 
 void Cliente::lorem(){
