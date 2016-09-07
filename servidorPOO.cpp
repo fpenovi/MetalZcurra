@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 #include "auxiliares.h"
-
+#include "Mensaje.h"
 #define MAX_CLIENTS 5
 
 using namespace std;
@@ -39,12 +39,12 @@ private:
     pthread_t threadControl;
     pthread_attr_t attr;
     bool serverOn = false;
-    static vector<argthread_t*> conectados;
+    static vector<argthread_t *> conectados;
     static unordered_map<string, string> usuarios;
+    static vector<Mensaje> mensajes;
     // Log logger; --> un atributo va a ser un objeto Log para logear.
 
-
-    static void* controlInput(void* serverStatus) {
+    static void *controlInput(void *serverStatus) {
 
         cout << "ESPERANDO CLIENTES" << endl << "Presione * para salir..." << endl;
 
@@ -53,7 +53,7 @@ private:
             cin >> input;
 
             if (input.compare("*") == 0) {
-                *((bool*) serverStatus) = false;
+                *((bool *) serverStatus) = false;
                 cerrarConexiones();
                 shutdown(fileDescrpt, SHUT_RDWR);
                 return NULL;
@@ -64,8 +64,8 @@ private:
     static void cerrarConexiones() {
         size_t numConexiones = conectados.size();
 
-        for (size_t i=0; i<numConexiones; i++) {
-            argthread_t* actual = conectados[i];
+        for (size_t i = 0; i < numConexiones; i++) {
+            argthread_t *actual = conectados[i];
             shutdown(actual->clientFD, SHUT_RDWR);
             // No libero el resto de las cosas de argthread porque se liberan
             // al final de la funcion procesarMensajes
@@ -74,13 +74,13 @@ private:
 
     void cargarUsuarios(string filename) {
 
-        char* linea = NULL;
+        char *linea = NULL;
         size_t len = 0;
-        FILE* archivo = fopen(filename.c_str(), "r");
+        FILE *archivo = fopen(filename.c_str(), "r");
 
-        while (getline(&linea, &len, archivo)!= -1){
-            string usuario = strtok(linea,",");
-            string password = strtok(NULL,",");
+        while (getline(&linea, &len, archivo) != -1) {
+            string usuario = strtok(linea, ",");
+            string password = strtok(NULL, ",");
             usuarios[usuario] = password;
         }
 
@@ -88,43 +88,43 @@ private:
     }
 
     static bool esValido(string usuario, string clave) {
-        usuario.erase(usuario.length()-1);
+        usuario.erase(usuario.length() - 1);
         if (usuarios.find(usuario) == usuarios.end())
             return false;
 
         return (usuarios[usuario] == clave);
     }
 
-    static bool pedirLogin(FILE* mensajeCliente, argthread_t* arg) {
+    static bool pedirLogin(FILE *mensajeCliente, argthread_t *arg) {
         size_t len = 0;
         // Pido el usuario al cliente
         getline(&arg->user, &len, mensajeCliente);
         getline(&arg->clave, &len, mensajeCliente);
         string user(arg->user);
         string pass(arg->clave);
-        return esValido(user,pass);
+        return esValido(user, pass);
     }
 
-    static void* mandarUsuarios(int sockNewFileDescrpt){
+    static void *mandarUsuarios(int sockNewFileDescrpt) {
         //Consigo las claves del hash de usuarios
         vector<string> keys;
-        for(auto kv : usuarios) {
+        for (auto kv : usuarios) {
             keys.push_back(kv.first);
         }
 
         //Los junto en un vector separados por un espacio
         string texto;
-        for(int i=0 ; i < keys.size() ; i++ ){
+        for (int i = 0; i < keys.size(); i++) {
             texto += keys[i] + ",";
         }
         texto += "\n";
 
         //Transformo string en char*
-        char* textoUsuarios = new char[texto.length()+1];
-        strcpy(textoUsuarios,texto.c_str());
+        char *textoUsuarios = new char[texto.length() + 1];
+        strcpy(textoUsuarios, texto.c_str());
 
         //Mando el vector al cliente
-        ssize_t bytesEscritos = write(sockNewFileDescrpt,textoUsuarios, strlen(textoUsuarios));
+        ssize_t bytesEscritos = write(sockNewFileDescrpt, textoUsuarios, strlen(textoUsuarios));
         delete textoUsuarios;
 
         if (bytesEscritos < 0) {
@@ -133,21 +133,38 @@ private:
         }
     }
 
-    static void* agregarMensaje(){
-        //ToDo hacerrrrrrrrrrrrrr
+
+    static void agregarMensaje(char* emisorChar, char *textoInicial) {
+        string emisor(emisorChar);
+        // le borro el \n
+        emisor.erase(emisor.length()-1);
+        string destinatario = strtok(textoInicial, "$");
+        string mensaje = strtok(NULL,"\0");
+        if (destinatario == "TODOS") {
+            for (auto kv : usuarios) {
+                Mensaje mensajeNuevo(emisor,kv.first,mensaje);
+                mensajes.push_back(mensajeNuevo);
+            }
+        }
+        else {
+            Mensaje mensajeNuevo(emisor,destinatario, mensaje);
+           mensajes.push_back(mensajeNuevo);
+        }
+        return;
     }
 
-    static void* procesarMensajes(void* arg) {
-        char* linea;
+
+    static void *procesarMensajes(void *arg) {
+        char *linea;
         size_t len = 0;
         ssize_t bytesLeidos;
         ssize_t bytesEscritos;
-        int sockNewFileDescrpt = ((argthread_t*) arg)->clientFD;
-        pthread_t* thread = ((argthread_t*) arg)->thread;
-        FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
+        int sockNewFileDescrpt = ((argthread_t *) arg)->clientFD;
+        pthread_t *thread = ((argthread_t *) arg)->thread;
+        FILE *mensajeCliente = fdopen(sockNewFileDescrpt, "r");
 
         // Registro del usuario
-        if (!pedirLogin(mensajeCliente, (argthread_t*) arg) ) {
+        if (!pedirLogin(mensajeCliente, (argthread_t *) arg)) {
             write(sockNewFileDescrpt, "fallo la conexion al sistema.\n", 30);
             fclose(mensajeCliente);
             close(sockNewFileDescrpt);
@@ -158,7 +175,7 @@ private:
 
         bytesEscritos = write(sockNewFileDescrpt, "conectado al servidor\n", 22);
         // ToDo Escribir en el logger que se conecto
-        cout << "Se conectó " << ((argthread_t*) arg)->user << endl;
+        cout << "Se conectó " << ((argthread_t *) arg)->user << endl;
 
         while (true) {
 
@@ -166,7 +183,7 @@ private:
             bytesLeidos = getline(&linea, &len, mensajeCliente);
 
             if (bytesLeidos < 0) {
-                cout << "Se desconectó " << ((argthread_t*) arg)->user << endl;
+                cout << "Se desconectó " << ((argthread_t *) arg)->user << endl;
                 free(linea);
                 break;
             }
@@ -182,14 +199,25 @@ private:
                     free(linea);
                     break;
                 }
-                agregarMensaje();
+                agregarMensaje(((argthread_t *) arg)->user,linea);
             }
 
-            // Opcion recibir msjs
-            else if (strcmp(linea, "/R/\n") == 0); // Recibir msjs
+                // Opcion recibir msjs
+            else if (strcmp(linea, "/R/\n") == 0){
+                string receptor(((argthread_t *) arg)->user);
+                receptor.erase(receptor.length()-1);
+                vector<Mensaje>::iterator it;
+                for(it = mensajes.begin(); it!= mensajes.end(); it++){
+                    if(it->getNameReceptor() == receptor){
+                        printf("hay un mensaje para el user");
+                    }
+                }
 
-            // Opcion desconectar del servidor (para liberar memoria)
-            else if (strcmp(linea, "/D/\n") == 0); // Desconectar desde el servidor tambien
+            }
+                // Opcion desconectar del servidor (para liberar memoria)
+            else if (strcmp(linea, "/D/\n") == 0){
+
+            } // Desconectar desde el servidor tambien
 
 
 
@@ -197,7 +225,7 @@ private:
             linea = NULL;
 
             // Write del tilde (proximamente sin uso)
-            bytesEscritos = write(sockNewFileDescrpt,"\xE2\x9C\x93\n", 4);
+            bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
 
             if (bytesEscritos < 0) {
                 perror("ERROR --> No se pudo responder al cliente");
@@ -246,7 +274,7 @@ public:
         serv_addr.sin_port = htons(numPuerto);  // --> convierte de hostbyte order a network byte order
 
         // Aviso al SO que asocie el programa al socket creado
-        if (bind(fileDescrpt, (const sockaddr*) &serv_addr, sizeof(serv_addr)) < 0) {
+        if (bind(fileDescrpt, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
             // ToDo pedirle al logger...
             close(fileDescrpt);
             pthread_attr_destroy(&attr);
@@ -280,16 +308,16 @@ public:
 
             // ToDo falta en el caso de que no falle, crear los threads y agregarlos a la lista
 
-            argthread_t* arg = (argthread_t*) malloc(sizeof(argthread_t));
+            argthread_t *arg = (argthread_t *) malloc(sizeof(argthread_t));
 
-            if (!arg){
+            if (!arg) {
                 close(newFileDescrpt);  // rechazo cliente
                 // ToDo logger...
                 cerr << "ERROR --> Falta memoria para cliente" << endl;
                 continue;
             }
 
-            pthread_t* thread = (pthread_t*) malloc(sizeof(pthread_t));
+            pthread_t *thread = (pthread_t *) malloc(sizeof(pthread_t));
 
             if (!thread) {
                 close(newFileDescrpt); // rechazo cliente
@@ -311,12 +339,13 @@ public:
 
         }
     }
-
 };
 
 vector<argthread_t*> servidorPOO::conectados;
 unordered_map<string, string> servidorPOO::usuarios;
 int servidorPOO::fileDescrpt;
+vector<Mensaje> servidorPOO::mensajes;
+
 
 int main(int argc, char** argv) {
 

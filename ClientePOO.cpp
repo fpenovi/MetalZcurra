@@ -139,7 +139,19 @@ char* Cliente::recibir_usuarios_de_servidor(){
 }
 
 void Cliente::recibir_mensajes(){
-    cout << "Recibiendo mensajes...";
+    if(! estado){
+        cout<<"No esta conectado al servidor"<<endl;
+        return;
+    }
+
+    unordered_map<int, string> usuariosAenviar; //hash de usuarios
+    size_t len = 0;
+    size_t bytesLeidos;
+
+    cin.ignore();
+
+    char* opc = "/R/\n";
+    mandar_a_servidor(opc, strlen(opc));
 
 }
 
