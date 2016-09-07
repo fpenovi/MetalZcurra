@@ -146,6 +146,7 @@ private:
         pthread_t* thread = ((argthread_t*) arg)->thread;
         FILE* mensajeCliente = fdopen(sockNewFileDescrpt, "r");
 
+        // Registro del usuario
         if (!pedirLogin(mensajeCliente, (argthread_t*) arg) ) {
             write(sockNewFileDescrpt, "fallo la conexion al sistema.\n", 30);
             fclose(mensajeCliente);
@@ -160,6 +161,8 @@ private:
         cout << "Se conectó " << ((argthread_t*) arg)->user << endl;
 
         while (true) {
+
+            // Primer getline para recibir instruccion
             bytesLeidos = getline(&linea, &len, mensajeCliente);
 
             if (bytesLeidos < 0) {
@@ -170,7 +173,8 @@ private:
 
             cout << "Mensaje recibido del cliente: " << linea;
 
-            if (strcmp(linea, "4\n") == 0) {
+            // Opcion enviar mensaje
+            if (strcmp(linea, "/E/\n") == 0) {
                 mandarUsuarios(sockNewFileDescrpt);
                 bytesLeidos = getline(&linea, &len, mensajeCliente);
                 if (bytesLeidos < 0) {
@@ -181,19 +185,18 @@ private:
                 agregarMensaje();
             }
 
-            else if (strcmp(linea,"6\n")==0)
-                mandarUsuarios(sockNewFileDescrpt);
+            // Opcion recibir msjs
+            else if (strcmp(linea, "/R/\n") == 0); // Recibir msjs
 
-            // ToDo Los otros casos del protocolo
-            /*
-            else if(strcmp(linea, "5\n") == 0); // Recibir msjs
-            else if(strcmp(linea, "6\n") == 0); // Lorem
-            else if(strcmp(linea, "2\n") == 0); // Desconectar desde el servidor tambien
-            */
+            // Opcion desconectar del servidor (para liberar memoria)
+            else if (strcmp(linea, "/D/\n") == 0); // Desconectar desde el servidor tambien
+
+
 
             free(linea);
             linea = NULL;
 
+            // Write del tilde (proximamente sin uso)
             bytesEscritos = write(sockNewFileDescrpt,"\xE2\x9C\x93\n", 4);
 
             if (bytesEscritos < 0) {

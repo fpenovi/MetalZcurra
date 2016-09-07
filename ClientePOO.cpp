@@ -171,7 +171,7 @@ void Cliente::enviar(){
 
     cin.ignore();
 
-    char* opc = "4\n";
+    char* opc = "/E/\n";
     mandar_a_servidor(opc, strlen(opc));
 
     char* linea=recibir_usuarios_de_servidor();
