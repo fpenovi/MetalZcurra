@@ -16,3 +16,6 @@ string Mensaje::getMensaje() {
 string Mensaje::getNameReceptor() {
     return receptor;
 }
+string Mensaje::getNameEmisor(){
+    return enviador;
+}

@@ -198,21 +198,39 @@ private:
                     cout << "Se desconectó " << ((argthread_t *) arg)->user << endl;
                     free(linea);
                     break;
-                }
+                    }
                 agregarMensaje(((argthread_t *) arg)->user,linea);
+                bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
+
             }
 
                 // Opcion recibir msjs
-            else if (strcmp(linea, "/R/\n") == 0){
+            else if (strcmp(linea, "/R/\n") == 0) {
                 string receptor(((argthread_t *) arg)->user);
-                receptor.erase(receptor.length()-1);
+                receptor.erase(receptor.length() - 1);
                 vector<Mensaje>::iterator it;
-                for(it = mensajes.begin(); it!= mensajes.end(); it++){
-                    if(it->getNameReceptor() == receptor){
-                        printf("hay un mensaje para el user");
-                    }
-                }
+                for (it = mensajes.begin(); it != mensajes.end(); it++) {
+                    if (it->getNameReceptor() == receptor) {
+                        string nombreDelEmisor = it->getNameEmisor();
+                        string mensajeEmisor = it->getMensaje();
+                        string texto = nombreDelEmisor + " dice: " + mensajeEmisor;
+                        char *mensaje = new char[texto.length() + 1];
+                        strcpy(mensaje, texto.c_str());
 
+                        //Mando el vector al cliente
+                        ssize_t bytesEscritos = write(sockNewFileDescrpt, mensaje, strlen(mensaje));
+                        delete mensaje;
+
+                        if (bytesEscritos < 0) {
+                            perror("ERROR --> No se pudo responder al cliente");
+                            exit(1);
+                        }
+                        mensajes.erase(it);
+                    }
+
+                }
+                char* fin = "$\n";
+                write(sockNewFileDescrpt,fin,strlen(fin));
             }
                 // Opcion desconectar del servidor (para liberar memoria)
             else if (strcmp(linea, "/D/\n") == 0){
@@ -225,7 +243,7 @@ private:
             linea = NULL;
 
             // Write del tilde (proximamente sin uso)
-            bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
+           // bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
 
             if (bytesEscritos < 0) {
                 perror("ERROR --> No se pudo responder al cliente");

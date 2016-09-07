@@ -18,6 +18,7 @@ public:
     Mensaje(string,string,string);
     string getNameReceptor();
     string getMensaje();
+    string getNameEmisor();
 
 };
 

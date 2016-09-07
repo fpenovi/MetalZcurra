@@ -144,14 +144,26 @@ void Cliente::recibir_mensajes(){
         return;
     }
 
-    unordered_map<int, string> usuariosAenviar; //hash de usuarios
-    size_t len = 0;
-    size_t bytesLeidos;
-
     cin.ignore();
 
     char* opc = "/R/\n";
     mandar_a_servidor(opc, strlen(opc));
+    char *linea=NULL;
+    size_t len = 0;
+    size_t bytesLeidos;
+    bool sigo = true;
+    while (sigo) {
+        bytesLeidos = getline(&linea, &len, respuestaServidor);
+        if (strcmp(linea,"$\n")==0){
+            //free(linea);
+            sigo = false;
+            cout << "no hay nada mas para recibir"<<endl;
+            break;
+        }
+        printf(" %s", linea);
+        //free(linea);
+    }
+
 
 }
 
@@ -227,17 +239,11 @@ void Cliente::enviar(){
     bytesLeidos = getline(&linea, &len, stdin);
     string msg(linea);
 
-    string mensajeCompleto = usuariosAenviar[opcion] + "$$"; //LE AGREGO EL PROTOCOLO
+    string mensajeCompleto = usuariosAenviar[opcion] + "$"; //LE AGREGO EL PROTOCOLO
     mensajeCompleto+=msg;
-    cout << mensajeCompleto << endl;
-
     free(linea);
-
     const char* envio = mensajeCompleto.c_str();
-
     size_t bytesEsc = write(sockFileDescrpt, envio, strlen(envio));
-
-
     recibir_de_servidor(); //esto estaria recibiendo el tick
 }
 
@@ -304,7 +310,7 @@ void Cliente::lorem(){
     len=0;
 
     FILE* archivo = fopen("lorem.txt", "r");
-    int tam = rand()%(10); //ToDo preguntar de cuanto!!???!!?
+    int tam = rand()%(100); //ToDo preguntar de cuanto!!???!!?
 
     char buffer[tam+1];
     char c ;
@@ -412,7 +418,7 @@ void Cliente::activar_socket(){
 }
 
 void Cliente::mostrar_menu() {
-    int opcion;
+    string opcion;
     ssize_t bytesLeidos;
     size_t len = 0;
     while (true) {
@@ -428,13 +434,12 @@ void Cliente::mostrar_menu() {
         cout<<endl;
 
         cin >> opcion;
-
-        if (opcion==1) conectar() ;
-        else if (opcion==2) desconectar();
-        else if (opcion==3) salir() ;
-        else if (opcion==4) enviar();
-        else if (opcion==5) recibir_mensajes() ;
-        else if (opcion==6) lorem() ;
+        if (opcion=="1") conectar() ;
+        else if (opcion=="2") desconectar();
+        else if (opcion=="3") salir() ;
+        else if (opcion=="4") enviar();
+        else if (opcion=="5") recibir_mensajes() ;
+        else if (opcion=="6") lorem() ;
         else printf("Intente otra vez\n");
     }
 }
