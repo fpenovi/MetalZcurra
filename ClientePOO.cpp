@@ -242,7 +242,7 @@ void Cliente::lorem(){
 
     cin.ignore();
 
-    char* opc = "6\n"; //IGUAL QUE EL MENSAJE??
+    char* opc = "/E/\n";
     mandar_a_servidor(opc, strlen(opc));
 
     char* linea=recibir_usuarios_de_servidor();
@@ -263,13 +263,82 @@ void Cliente::lorem(){
 
     cout << "Cada cuantos segundos quiere que se envie el mensaje?"<<endl;
     bytesLeidos = getline(&linea, &len, stdin);
-    linea[strlen(linea)-1]='\0'; //saco el \n
-
+    linea[strlen(linea)-1]='\0'; //saco el \n para imprimir
     string freq(linea);
-    freq += " segundos"; //ToDo aca tengo que cortar el \n
+    freq += " segundos";
+
+    free(linea);
+    linea=NULL;
+
+    int cantidad=-1;
+    while (cantidad <= 0) {
+        cout << "Cuantos mensajes quiere enviar?" << endl;
+        bytesLeidos = getline(&linea, &len, stdin);
+        cantidad = atoi(linea);
+        if (cantidad <= 0) cout << "La cantidad de mensajes debe ser positiva";
+    }
+
+    linea[strlen(linea) - 1] = '\0'; //saco el \n para imprimir
+    string cant(linea);
+    cant += " mensajes";
+
 
     int aleatorio = rand()%(i)+1; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
-    cout<< "se le enviara un mensaje a: "<<usuariosAenviar[aleatorio]<<" cada "<<freq<<endl;
+    cout<< "se le enviaran "<<cant<<" a: "<<usuariosAenviar[aleatorio]<<" cada "<<freq<<endl;
+
+
+    free(linea);
+    linea=NULL;
+    len=0;
+
+    FILE* archivo = fopen("lorem.txt", "r");
+    int tam = rand()%(10); //ToDo preguntar de cuanto!!???!!?
+
+    char buffer[tam+1];
+    char c ;
+    int contador=0;
+    size_t bytesEsc=0;
+
+
+
+    /*Explicacion de lo siguiente
+     * un bucle for por la cantidad de mensajes a enviar
+     * un while el archivo no se termine
+     * donde agarra un caracter y lo guarda enun buffer
+     * este buffer tiene un tamanio aleatorio
+     * se corta el while cuando se completo el buffer
+     * o cuando llego a fin de archivo
+     * ahi tiene que cerrar el archivo y reabrirlo
+     * para seguir llenando el buffer y enviando mensajes*/
+    for (int i=0;i != cantidad; i++) {
+        while (!feof(archivo)) {
+            c = fgetc(archivo);
+            if (c==EOF || c=='\n') break;
+            buffer[contador]=c;
+            contador++;
+            if (contador == tam) break;
+        }
+        if (contador<=tam-1) {
+            fclose(archivo);
+            archivo = fopen("lorem.txt", "r");
+            i--;
+        }
+        else {
+            buffer[contador] = '\n';
+
+            //Tengo que mandar el protocolo y recibir la lista de clientes siempre
+            //bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
+            //linea = recibir_usuarios_de_servidor();
+            //free(linea);
+
+            //bytesEsc = write(sockFileDescrpt, buffer, strlen(buffer));
+            printf("IMPRIMO EL BUFFER: %s", buffer);
+            contador = 0;
+            buffer[tam + 1];
+        }
+    }
+
+    fclose(archivo);
 
 
 }
