@@ -109,7 +109,6 @@ void Cliente::recibir_de_servidor(){
     bytesLeidos = getline(&linea, &len, respuestaServidor);
     printf(" %s", linea);
 
-
     if (bytesLeidos < 0) {
         perror("ERROR --> leyendo de socket");
         free(linea);
@@ -159,7 +158,7 @@ void Cliente::recibir_usuarios_de_servidor(){
 }
 
 void Cliente::imprimir_usuarios(){
-    for (int i = 0; i<cantUsuarios;i++){
+    for (int i = 1; i<=cantUsuarios;i++){
         cout << i <<". " << usuariosAenviar[i]<<endl;
     }
 }
@@ -217,6 +216,8 @@ void Cliente::enviar(){
 
     imprimir_usuarios();
 
+    cin.ignore();
+
     printf("Elija una opcion: ");
 
     size_t len = 0;
@@ -241,7 +242,6 @@ void Cliente::enviar(){
 void Cliente::enviarAusuario(string usuario,char* linea){
     char* opc = "/E/\n";
     size_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
-    recibir_de_servidor(); //esto estaria recibiendo el tick
     string msg(linea);
     string mensajeCompleto = usuario + "$"; //LE AGREGO EL PROTOCOLO
     mensajeCompleto+=msg;
@@ -252,6 +252,8 @@ void Cliente::enviarAusuario(string usuario,char* linea){
 }
 
 void Cliente::lorem(){
+    cout << "TENGO QUE REHACER EL LOREM"<<endl;
+    return;
 
     if(! estado){
         cout<<"No esta conectado al servidor"<<endl;

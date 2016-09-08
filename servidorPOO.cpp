@@ -176,6 +176,7 @@ private:
         bytesEscritos = write(sockNewFileDescrpt, "conectado al servidor\n", 22);
         // ToDo Escribir en el logger que se conecto
         cout << "Se conectó " << ((argthread_t *) arg)->user << endl;
+        mandarUsuarios(sockNewFileDescrpt);
 
         while (true) {
 
@@ -192,7 +193,6 @@ private:
 
             // Opcion enviar mensaje
             if (strcmp(linea, "/E/\n") == 0) {
-                mandarUsuarios(sockNewFileDescrpt);
                 bytesLeidos = getline(&linea, &len, mensajeCliente);
                 if (bytesLeidos < 0) {
                     cout << "Se desconectó " << ((argthread_t *) arg)->user << endl;
