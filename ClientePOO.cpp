@@ -251,68 +251,26 @@ void Cliente::enviarAusuario(string usuario,char* linea){
 
 }
 
-void Cliente::lorem(){
-    cout << "TENGO QUE REHACER EL LOREM"<<endl;
-    return;
+void Cliente::lorem() {
 
-    if(! estado){
-        cout<<"No esta conectado al servidor"<<endl;
+    if (!estado) {
+        cout << "No esta conectado al servidor" << endl;
         return;
     }
 
     cin.ignore();
-
-    char* linea=NULL;
+    char *linea = NULL;
     size_t len = 0;
-
-    size_t bytesLeidos = getline(&linea, &len, stdin);
-    int frecuencia = -1;
-    while (frecuencia <= 0) {
-        cout << "Cuantos mensajes quiere mandar por segundo?"<<endl;
-        bytesLeidos = getline(&linea, &len, stdin);
-        frecuencia = atoi(linea);
-        if (frecuencia <= 0) cout << "La cantidad de mensajes debe ser positiva";
-    }
-
-    linea[strlen(linea)-1]='\0'; //saco el \n para imprimir
-    string freq(linea);
-    freq += " por segundo";
-
-    free(linea);
-    linea=NULL;
-
-    int cantidad=-1;
-    while (cantidad <= 0) {
-        cout << "Cuantos mensajes quiere enviar?" << endl;
-        bytesLeidos = getline(&linea, &len, stdin);
-        cantidad = atoi(linea);
-        if (cantidad <= 0) cout << "La cantidad de mensajes debe ser positiva";
-    }
-
-    linea[strlen(linea) - 1] = '\0'; //saco el \n para imprimir
-    string cant(linea);
-    cant += " mensajes";
-
-    int aleatorio = rand()%(cantUsuarios-1)+1; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
-
-    string destinatario =usuariosAenviar[aleatorio];
-
-    cout<< "se le enviaran "<<cant<<" a: "<<destinatario<<" cada "<<freq<<endl;
-
-    free(linea);
-    linea=NULL;
-    len=0;
-
-    FILE* archivo = fopen("lorem.txt", "r");
-    int tam = rand()%(200); //ToDo preguntar de cuanto!!???!!?
-
-
-    char buffer[tam+1];
-    char c;
-    int contador=0;
-    size_t bytesEsc=0;
-
-
+    size_t bytesLeidos;
+    int frecuencia = 1;
+    int aleatorio = 2; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
+    int cantidad = 10;
+    string destinatario = usuariosAenviar[aleatorio];
+    len = 0;
+    int tam =20;
+    char buffer[tam + 2];
+    int contador = 0;
+    size_t bytesEsc = 0;
     /*Explicacion de lo siguiente
      * un bucle for por la cantidad de mensajes a enviar
      * un while el archivo no se termine
@@ -322,29 +280,25 @@ void Cliente::lorem(){
      * o cuando llego a fin de archivo
      * ahi tiene que cerrar el archivo y reabrirlo
      * para seguir llenando el buffer y enviando mensajes*/
-    for (int i=0;i != cantidad; i++) {
-        while (!feof(archivo)) {
-            c = fgetc(archivo);
-            if (c==EOF) break;
-            buffer[contador]=c;
-            contador++;
-            if (contador == tam) break;
-        }
-        if (contador<=tam-1) {
+    FILE *archivo = fopen("lorem.txt", "r");
+    char c;
+    for (int i = 0; i <= tam * cantidad; i++) {
+        c = fgetc(archivo);
+        if (c == EOF) {
             fclose(archivo);
             archivo = fopen("lorem.txt", "r");
-            i--;
+            c = fgetc(archivo);
         }
-        else {
-            buffer[contador] = '\n';
-            recibir_de_servidor();
-            enviarAusuario(destinatario,buffer);
-            printf("IMPRIMO EL BUFFER: %s", buffer);
+        if( c== '\n') c=' ';
+        buffer[contador] = c;
+        contador++;
+        if (contador == tam) {
+            buffer[contador]= '\n';
+            buffer[contador+1] = '\0';
             contador = 0;
-            buffer[tam + 1];
+            enviarAusuario(usuariosAenviar[1],buffer);
         }
     }
-    fclose(archivo);
 }
 
 void Cliente::liberar(){
