@@ -107,7 +107,6 @@ void Cliente::recibir_de_servidor(){
     size_t bytesLeidos;
 
     bytesLeidos = getline(&linea, &len, respuestaServidor);
-    printf(" %s", linea);
 
     if (bytesLeidos < 0) {
         perror("ERROR --> leyendo de socket");
@@ -264,7 +263,7 @@ void Cliente::lorem() {
     size_t bytesLeidos;
     int frecuencia = 1;
     int aleatorio = 2; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
-    int cantidad = 10;
+    int cantidad = 1000;
     string destinatario = usuariosAenviar[aleatorio];
     len = 0;
     int tam =20;

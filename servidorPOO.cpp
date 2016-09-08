@@ -200,7 +200,7 @@ private:
                     break;
                     }
                 agregarMensaje(((argthread_t *) arg)->user,linea);
-                bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
+                bytesEscritos = write(sockNewFileDescrpt, "\n", 1);
 
             }
 
