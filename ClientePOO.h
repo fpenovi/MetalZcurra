@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unordered_map>
 
 using namespace std;
 
@@ -19,8 +20,9 @@ class Cliente {
         char* name;
         char* clave;
         int sockFileDescrpt;
-        //pthread_t* thread;
+        int cantUsuarios;
         FILE* respuestaServidor;
+        unordered_map<int, string> usuariosAenviar; //hash de usuarios
         bool estado;
         char port[8];
         char IP[8];
@@ -28,7 +30,8 @@ class Cliente {
 
         Cliente(char** argv);
 
-    void cambiar_estado(bool nuevo_estado);
+
+    void enviarAusuario(string usuario,char* linea);
 
     void solicitarUserClave();
 
@@ -40,7 +43,7 @@ class Cliente {
 
     void recibir_de_servidor();
 
-    char* recibir_usuarios_de_servidor();
+    void recibir_usuarios_de_servidor();
 
     void recibir_mensajes();
 
@@ -54,13 +57,13 @@ class Cliente {
 
     void liberar();
 
-    bool getEstado();
-
     void mostrar_menu();
 
     void conectar();
 
     void activar_socket();
+
+    void imprimir_usuarios();
 };
 
 

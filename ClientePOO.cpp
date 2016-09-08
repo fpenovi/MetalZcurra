@@ -5,6 +5,7 @@
 #include "ClientePOO.h"
 #include <pthread.h>
 #include <unordered_map>
+
 using namespace std;
 
 Cliente::Cliente(char** argv){
@@ -14,20 +15,16 @@ Cliente::Cliente(char** argv){
     //thread = NULL;
     FILE* respuestaServidor = NULL;
     estado=false;
+
+    usuariosAenviar; //hash de usuarios
+    int cantUsuarios = 0;
+
     string aux(argv[1]);
     strcpy(IP,aux.c_str());
     aux= argv[2];
     strcpy(port,aux.c_str());
 
 
-}
-
-bool Cliente::getEstado(){
-    return estado;
-}
-
-void Cliente::cambiar_estado(bool nuevo_estado){
-    estado = nuevo_estado;
 }
 
 void Cliente::solicitarUserClave(){
@@ -96,6 +93,7 @@ void Cliente::mandar_credencial_a_servidor(){
     free(linea);
     estado = true;
     cout<<"La conexion con el servidor fue exitosa"<<endl;
+    recibir_usuarios_de_servidor();
 
 }
 
@@ -121,7 +119,7 @@ void Cliente::recibir_de_servidor(){
     free(linea);
 }
 
-char* Cliente::recibir_usuarios_de_servidor(){
+void Cliente::recibir_usuarios_de_servidor(){
 
     char *linea=NULL;
     size_t len = 0;
@@ -134,8 +132,36 @@ char* Cliente::recibir_usuarios_de_servidor(){
         exit(1);
     }
 
-    return linea;
+    len = 0;
+    bytesLeidos = 0;
 
+    char *token = strtok(linea, ",");
+    int i=1;
+
+    while (token != NULL){
+        if (strcmp(token,"\n" )== 0) break;
+        printf("%i. ",i);
+        printf( "%s\n", token );
+        string strUsuario(token);
+        usuariosAenviar[i]=strUsuario;
+
+        token = strtok(NULL,",");
+        i = i+1;
+    }
+    printf("%i. %s\n",i,"TODOS\n");
+
+    string todos = "TODOS";
+    usuariosAenviar[i]=todos;
+    cantUsuarios = i;
+
+    free(linea);
+
+}
+
+void Cliente::imprimir_usuarios(){
+    for (int i = 0; i<cantUsuarios;i++){
+        cout << i <<". " << usuariosAenviar[i]<<endl;
+    }
 }
 
 void Cliente::recibir_mensajes(){
@@ -189,46 +215,16 @@ void Cliente::enviar(){
         return;
     }
 
-    unordered_map<int, string> usuariosAenviar; //hash de usuarios
-    size_t len = 0;
-    size_t bytesLeidos;
-
-    cin.ignore();
-
-    char* opc = "/E/\n";
-    mandar_a_servidor(opc, strlen(opc));
-
-    char* linea=recibir_usuarios_de_servidor();
-
-    char *token = strtok(linea, ",");
-    int i=1;
-
-    while (token != NULL){
-        if (strcmp(token,"\n" )== 0) break;
-        printf("%i. ",i);
-        printf( "%s\n", token );
-        string strUsuario(token);
-        usuariosAenviar[i]=strUsuario;
-
-        token = strtok(NULL,",");
-        i = i+1;
-    }
-    printf("%i. %s\n",i,"TODOS\n");
-
-    string todos = "TODOS";
-    usuariosAenviar[i]=todos;
-
-    free(linea);
-    linea= NULL;
-    // NO HAY QUE HACER free(token) !!!!
+    imprimir_usuarios();
 
     printf("Elija una opcion: ");
 
-    len = 0;
-    bytesLeidos = getline(&linea, &len, stdin);
+    size_t len = 0;
+    char* linea = NULL;
+    size_t bytesLeidos = getline(&linea, &len, stdin);
 
     int opcion = atoi(linea);
-    if (opcion > i) {
+    if (opcion > cantUsuarios || opcion <= 0) {
         printf("No eligió un numero de pantalla\n");
         free(linea);
         return;
@@ -237,14 +233,22 @@ void Cliente::enviar(){
     cout <<"Escriba un mensaje a: " << usuariosAenviar[opcion]<<endl;
 
     bytesLeidos = getline(&linea, &len, stdin);
-    string msg(linea);
-
-    string mensajeCompleto = usuariosAenviar[opcion] + "$"; //LE AGREGO EL PROTOCOLO
-    mensajeCompleto+=msg;
+    enviarAusuario(usuariosAenviar[opcion],linea);
     free(linea);
-    const char* envio = mensajeCompleto.c_str();
-    size_t bytesEsc = write(sockFileDescrpt, envio, strlen(envio));
+
+}
+
+void Cliente::enviarAusuario(string usuario,char* linea){
+    char* opc = "/E/\n";
+    size_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
     recibir_de_servidor(); //esto estaria recibiendo el tick
+    string msg(linea);
+    string mensajeCompleto = usuario + "$"; //LE AGREGO EL PROTOCOLO
+    mensajeCompleto+=msg;
+    const char* envio = mensajeCompleto.c_str();
+    bytesEsc = write(sockFileDescrpt, envio, strlen(envio));
+    recibir_de_servidor(); //esto estaria recibiendo el tick
+
 }
 
 void Cliente::lorem(){
@@ -254,36 +258,23 @@ void Cliente::lorem(){
         return;
     }
 
-    unordered_map<int, string> usuariosAenviar; //hash de usuarios
-    size_t len = 0;
-    size_t bytesLeidos;
-
     cin.ignore();
 
-    char* opc = "/E/\n";
-    mandar_a_servidor(opc, strlen(opc));
+    char* linea=NULL;
+    size_t len = 0;
 
-    char* linea=recibir_usuarios_de_servidor();
-
-    char *token = strtok(linea, ",");
-    int i=1;
-    while (token != NULL){
-        if (strcmp(token,"\n" )== 0) break;
-        string strUsuario(token);
-        usuariosAenviar[i]=strUsuario;
-
-        token = strtok(NULL,",");
-        i = i+1;
+    size_t bytesLeidos = getline(&linea, &len, stdin);
+    int frecuencia = -1;
+    while (frecuencia <= 0) {
+        cout << "Cuantos mensajes quiere mandar por segundo?"<<endl;
+        bytesLeidos = getline(&linea, &len, stdin);
+        frecuencia = atoi(linea);
+        if (frecuencia <= 0) cout << "La cantidad de mensajes debe ser positiva";
     }
 
-    free(linea);
-    linea= NULL;
-
-    cout << "Cada cuantos segundos quiere que se envie el mensaje?"<<endl;
-    bytesLeidos = getline(&linea, &len, stdin);
     linea[strlen(linea)-1]='\0'; //saco el \n para imprimir
     string freq(linea);
-    freq += " segundos";
+    freq += " por segundo";
 
     free(linea);
     linea=NULL;
@@ -300,23 +291,24 @@ void Cliente::lorem(){
     string cant(linea);
     cant += " mensajes";
 
+    int aleatorio = rand()%(cantUsuarios-1)+1; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
 
-    int aleatorio = rand()%(i)+1; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
-    cout<< "se le enviaran "<<cant<<" a: "<<usuariosAenviar[aleatorio]<<" cada "<<freq<<endl;
+    string destinatario =usuariosAenviar[aleatorio];
 
+    cout<< "se le enviaran "<<cant<<" a: "<<destinatario<<" cada "<<freq<<endl;
 
     free(linea);
     linea=NULL;
     len=0;
 
     FILE* archivo = fopen("lorem.txt", "r");
-    int tam = rand()%(100); //ToDo preguntar de cuanto!!???!!?
+    int tam = rand()%(200); //ToDo preguntar de cuanto!!???!!?
+
 
     char buffer[tam+1];
-    char c ;
+    char c;
     int contador=0;
     size_t bytesEsc=0;
-
 
 
     /*Explicacion de lo siguiente
@@ -331,7 +323,7 @@ void Cliente::lorem(){
     for (int i=0;i != cantidad; i++) {
         while (!feof(archivo)) {
             c = fgetc(archivo);
-            if (c==EOF || c=='\n') break;
+            if (c==EOF) break;
             buffer[contador]=c;
             contador++;
             if (contador == tam) break;
@@ -343,22 +335,14 @@ void Cliente::lorem(){
         }
         else {
             buffer[contador] = '\n';
-
-            //Tengo que mandar el protocolo y recibir la lista de clientes siempre
-            //bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
-            //linea = recibir_usuarios_de_servidor();
-            //free(linea);
-
-            //bytesEsc = write(sockFileDescrpt, buffer, strlen(buffer));
+            recibir_de_servidor();
+            enviarAusuario(destinatario,buffer);
             printf("IMPRIMO EL BUFFER: %s", buffer);
             contador = 0;
             buffer[tam + 1];
         }
     }
-
     fclose(archivo);
-
-
 }
 
 void Cliente::liberar(){
@@ -466,7 +450,7 @@ int main(int argc, char** argv) {
             exit(0);
         }
         while (true){
-        cliente.mostrar_menu();
+            cliente.mostrar_menu();
         }
 
 }
