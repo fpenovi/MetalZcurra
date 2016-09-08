@@ -209,7 +209,7 @@ private:
                 string receptor(((argthread_t *) arg)->user);
                 receptor.erase(receptor.length() - 1);
                 vector<Mensaje>::iterator it;
-                for (it = mensajes.begin(); it != mensajes.end(); it++) {
+                for (it = mensajes.begin(); it != mensajes.end();) {
                     if (it->getNameReceptor() == receptor) {
                         string nombreDelEmisor = it->getNameEmisor();
                         string mensajeEmisor = it->getMensaje();
@@ -225,9 +225,9 @@ private:
                             perror("ERROR --> No se pudo responder al cliente");
                             exit(1);
                         }
-                        mensajes.erase(it);
+                        it = mensajes.erase(it);
                     }
-
+                    else it++;
                 }
                 char* fin = "$\n";
                 write(sockNewFileDescrpt,fin,strlen(fin));
