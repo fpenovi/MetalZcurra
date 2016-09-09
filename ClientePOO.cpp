@@ -251,11 +251,11 @@ void Cliente::lorem() {
     size_t bytesLeidos;
     int frecuencia = 1;
     int aleatorio = 5; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
-    int cantidad = 3000;
+    int cantidad =1000;
     string destinatario = usuariosAenviar[aleatorio];
-    cout << "Le envio el lorum a" << destinatario << endl;
+    cout << "Le envio el lorum a " << destinatario << endl;
     len = 0;
-    int tam =20;
+    int tam =200;
     char buffer[tam + 2];
     int contador = 0;
     size_t bytesEsc = 0;

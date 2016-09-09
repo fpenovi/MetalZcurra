@@ -144,8 +144,31 @@ private:
         string emisor(emisorChar);
         emisor.erase(emisor.length()-1);
 
-        string destinatario = strtok(textoInicial, "$");
-        string mensaje = " ACA ESTA EL ERROR HAY QUE PARSEAR SIN NULL";
+        //me fijo cuanto mide el destinatario
+        int l=0;
+        for (l;l<=strlen(textoInicial);l++){
+            if (textoInicial[l] == '$')  break;
+        }
+
+        //sabiendo el largo del destinatario se el largo del mensaje
+        char msg[strlen(textoInicial)-l];
+        char dest[l];
+        dest[l]='\0';
+        //guardo el destinatario
+        for (int d=0;d<l;d++) dest[d]=textoInicial[d];
+
+        //guardo el mensaje
+        l++;
+        for(int m=0;l<=strlen(textoInicial);m++){
+            msg[m]=textoInicial[l];
+            l++;
+        }
+        string destinatario(dest);
+        string mensaje(msg);
+        //cout <<destinatario<<endl<<mensaje<<"ACABO DE IMPRIMIR EL DESTINATARIO Y MENSAJE"<<endl;
+
+        //string destinatario = strtok(textoInicial, "$");
+        //string mensaje = " ACA ESTA EL ERROR HAY QUE PARSEAR SIN NULL";
         int result; // para el mutex
         if (destinatario == "TODOS") {
             result = pthread_mutex_lock(&mutex_mensajes);
