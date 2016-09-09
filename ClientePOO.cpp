@@ -231,9 +231,10 @@ void Cliente::enviar(){
     }
 
     cout <<"Escriba un mensaje a: " << usuariosAenviar[opcion]<<endl;
-
-    bytesLeidos = getline(&linea, &len, stdin);
-    enviarAusuario(usuariosAenviar[opcion],linea);
+    for(int i =0; i<100;i++) {
+        bytesLeidos = getline(&linea, &len, stdin);
+        enviarAusuario(usuariosAenviar[opcion], linea);
+    }
     free(linea);
 
 }
@@ -263,7 +264,7 @@ void Cliente::lorem() {
     size_t bytesLeidos;
     int frecuencia = 1;
     int aleatorio = 2; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
-    int cantidad = 1000;
+    int cantidad = 3000;
     string destinatario = usuariosAenviar[aleatorio];
     len = 0;
     int tam =20;

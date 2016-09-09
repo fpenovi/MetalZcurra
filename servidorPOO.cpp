@@ -136,20 +136,23 @@ private:
 
 
     static void agregarMensaje(char* emisorChar, char *textoInicial) {
-        string emisor(emisorChar);
-        // le borro el \n
-        emisor.erase(emisor.length()-1);
-        string destinatario = strtok(textoInicial, "$");
-        string mensaje = strtok(NULL,"\0");
-        
-        int result; // para el mutex
+        if (textoInicial==NULL){
+            printf("ERROR");
+            exit(1);
+        }
 
+        string emisor(emisorChar);
+        emisor.erase(emisor.length()-1);
+
+        string destinatario = strtok(textoInicial, "$");
+        string mensaje = " ACA ESTA EL ERROR HAY QUE PARSEAR SIN NULL";
+        int result; // para el mutex
         if (destinatario == "TODOS") {
+            result = pthread_mutex_lock(&mutex_mensajes);
             for (auto kv : usuarios) {
                 Mensaje mensajeNuevo(emisor,kv.first,mensaje);
 
                 // Lockeo el mutex a mensajes
-                result = pthread_mutex_lock(&mutex_mensajes);
                 if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
                 mensajes.push_back(mensajeNuevo);
@@ -163,7 +166,7 @@ private:
          
             Mensaje mensajeNuevo(emisor,destinatario, mensaje);
 
-            // Lockeo el mutex a mensajes
+            // Lockeo el mutex a mensajess
             result = pthread_mutex_lock(&mutex_mensajes);
             if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
