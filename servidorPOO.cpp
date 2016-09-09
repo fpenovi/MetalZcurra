@@ -141,6 +141,9 @@ private:
         emisor.erase(emisor.length()-1);
         string destinatario = strtok(textoInicial, "$");
         string mensaje = strtok(NULL,"\0");
+        
+        int result; // para el mutex
+
         if (destinatario == "TODOS") {
             for (auto kv : usuarios) {
                 Mensaje mensajeNuevo(emisor,kv.first,mensaje);
@@ -298,6 +301,8 @@ public:
 
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+        mutex_mensajes = PTHREAD_MUTEX_INITIALIZER;
+
 
         // Creo thread de CONTROL
         if (pthread_create(&threadControl, &attr, controlInput, &serverOn) != 0) {
