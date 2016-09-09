@@ -231,10 +231,8 @@ void Cliente::enviar(){
     }
 
     cout <<"Escriba un mensaje a: " << usuariosAenviar[opcion]<<endl;
-    for(int i =0; i<100;i++) {
-        bytesLeidos = getline(&linea, &len, stdin);
-        enviarAusuario(usuariosAenviar[opcion], linea);
-    }
+    bytesLeidos = getline(&linea, &len, stdin);
+    enviarAusuario(usuariosAenviar[opcion],linea);
     free(linea);
 
 }
