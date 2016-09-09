@@ -64,22 +64,8 @@ void Cliente::mandar_credencial_a_servidor(){
     char *linea=NULL;
     size_t len = 0;
 
-    size_t bytesEsc = write(sockFileDescrpt, name, strlen(name));
-    if (bytesEsc < 0) {
-        perror("ERROR --> escribiendo al socket");
-        close(sockFileDescrpt);
-        exit(1);
-    }
-
-    size_t bytesEsc2 = write(sockFileDescrpt, clave, strlen(clave));
-    if (bytesEsc2 < 0) {
-        perror("ERROR --> escribiendo al socket");
-        close(sockFileDescrpt);
-        exit(1);
-    }
-
-    //ahora lee del servidor si el usuario y contra existen
-    linea=NULL;
+    mandar_a_servidor(name,strlen(name));
+    mandar_a_servidor(clave,strlen(clave));
 
     size_t bytesLeidos = getline(&linea, &len, respuestaServidor);
 
@@ -213,11 +199,14 @@ void Cliente::enviar(){
         return;
     }
 
+    cout<<endl;
     imprimir_usuarios();
+    cout<<endl;
 
     cin.ignore();
 
     printf("Elija una opcion: ");
+    cout<<endl;
 
     size_t len = 0;
     char* linea = NULL;
@@ -261,9 +250,10 @@ void Cliente::lorem() {
     size_t len = 0;
     size_t bytesLeidos;
     int frecuencia = 1;
-    int aleatorio = 2; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
+    int aleatorio = 5; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
     int cantidad = 3000;
     string destinatario = usuariosAenviar[aleatorio];
+    cout << "Le envio el lorum a" << destinatario << endl;
     len = 0;
     int tam =20;
     char buffer[tam + 2];
@@ -294,7 +284,7 @@ void Cliente::lorem() {
             buffer[contador]= '\n';
             buffer[contador+1] = '\0';
             contador = 0;
-            enviarAusuario(usuariosAenviar[1],buffer);
+            enviarAusuario(destinatario,buffer);
         }
     }
 }
