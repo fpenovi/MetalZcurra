@@ -42,6 +42,7 @@ private:
     static vector<argthread_t *> conectados;
     static unordered_map<string, string> usuarios;
     static vector<Mensaje> mensajes;
+    static pthread_mutex_t mutex_mensajes;
     // Log logger; --> un atributo va a ser un objeto Log para logear.
 
     static void *controlInput(void *serverStatus) {
@@ -143,12 +144,31 @@ private:
         if (destinatario == "TODOS") {
             for (auto kv : usuarios) {
                 Mensaje mensajeNuevo(emisor,kv.first,mensaje);
+
+                // Lockeo el mutex a mensajes
+                result = pthread_mutex_lock(&mutex_mensajes);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
                 mensajes.push_back(mensajeNuevo);
+
+                // Unlockeo el mutex a mensajes
+                result = pthread_mutex_unlock(&mutex_mensajes);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
             }
         }
         else {
+         
             Mensaje mensajeNuevo(emisor,destinatario, mensaje);
-           mensajes.push_back(mensajeNuevo);
+
+            // Lockeo el mutex a mensajes
+            result = pthread_mutex_lock(&mutex_mensajes);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+            mensajes.push_back(mensajeNuevo);
+
+            // Unlockeo el mutex a mensajes
+            result = pthread_mutex_unlock(&mutex_mensajes);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
         }
         return;
     }
@@ -209,6 +229,13 @@ private:
                 string receptor(((argthread_t *) arg)->user);
                 receptor.erase(receptor.length() - 1);
                 vector<Mensaje>::iterator it;
+                
+                int result; //para el mutex
+
+                // Lockeo el mutex a mensajes
+                result = pthread_mutex_lock(&mutex_mensajes);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
                 for (it = mensajes.begin(); it != mensajes.end();) {
                     if (it->getNameReceptor() == receptor) {
                         string nombreDelEmisor = it->getNameEmisor();
@@ -229,6 +256,11 @@ private:
                     }
                     else it++;
                 }
+                
+                // Unlockeo el mutex a mensajes
+                result = pthread_mutex_unlock(&mutex_mensajes);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                
                 char* fin = "$\n";
                 write(sockNewFileDescrpt,fin,strlen(fin));
             }
@@ -363,7 +395,7 @@ vector<argthread_t*> servidorPOO::conectados;
 unordered_map<string, string> servidorPOO::usuarios;
 int servidorPOO::fileDescrpt;
 vector<Mensaje> servidorPOO::mensajes;
-
+pthread_mutex_t servidorPOO::mutex_mensajes;
 
 int main(int argc, char** argv) {
 
