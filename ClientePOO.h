@@ -31,7 +31,7 @@ class Cliente {
         Cliente(char** argv);
 
 
-    void enviarAusuario(string usuario,char* linea);
+    void enviarAusuario(string usuario,string linea);
 
     void solicitarUserClave();
 

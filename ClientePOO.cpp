@@ -5,6 +5,7 @@
 #include "ClientePOO.h"
 #include <pthread.h>
 #include <unordered_map>
+#include <fstream>
 
 using namespace std;
 
@@ -227,12 +228,12 @@ void Cliente::enviar(){
 
 }
 
-void Cliente::enviarAusuario(string usuario,char* linea){
+void Cliente::enviarAusuario(string usuario,string linea){
     char* opc = "/E/\n";
     size_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
-    string msg(linea);
+    //string msg(linea);
     string mensajeCompleto = usuario + "$"; //LE AGREGO EL PROTOCOLO
-    mensajeCompleto+=msg;
+    mensajeCompleto+=linea;
     const char* envio = mensajeCompleto.c_str();
     bytesEsc = write(sockFileDescrpt, envio, strlen(envio));
     recibir_de_servidor(); //esto estaria recibiendo el tick
@@ -255,7 +256,7 @@ void Cliente::lorem() {
     int aleatorio = (rand()%cantUsuarios)+1;//i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
     int cantidad =1000;
     string destinatario = usuariosAenviar[aleatorio];
-    cout << "Le envio el lorum a " << destinatario << endl;
+    cout << "Le envio el lorem a " << destinatario << endl;
     len = 0;
     int tam =200;
     char buffer[tam + 2];
@@ -270,7 +271,7 @@ void Cliente::lorem() {
      * o cuando llego a fin de archivo
      * ahi tiene que cerrar el archivo y reabrirlo
      * para seguir llenando el buffer y enviando mensajes*/
-    FILE *archivo = fopen("lorem.txt", "r");
+    /*FILE *archivo = fopen("lorem.txt", "r");
     char c;
     for (int i = 0; i <= tam * cantidad; i++) {
         c = fgetc(archivo);
@@ -288,7 +289,44 @@ void Cliente::lorem() {
             contador = 0;
             enviarAusuario(destinatario,buffer);
         }
+    }*/
+    ifstream archivo;
+    archivo.open("lorem.txt");
+    int can=0;
+
+    string* texto = new string;
+    string mensaje;
+    size_t i =0;
+    //bytesLeidos=0;
+    while(i < cantidad){
+        getline(archivo,mensaje);
+        *texto += mensaje;
+        i++;
     }
+
+    i = 0;
+    size_t enviados=0;
+    mensaje = "";
+    size_t largomsg = 0;
+    while(enviados<cantidad){
+        if (i == texto->size())
+            i = 0;
+
+        if (largomsg == tam) {
+            mensaje+="\n";
+            enviarAusuario(destinatario,mensaje);
+            enviados++;
+            mensaje = "";
+            largomsg=0;
+        }
+
+        mensaje+=(*texto)[i];
+        i++;
+        largomsg++;
+    }
+    delete(texto);
+    archivo.close();
+
 }
 
 void Cliente::liberar(){
