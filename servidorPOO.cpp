@@ -98,12 +98,31 @@ private:
 
     static bool pedirLogin(FILE *mensajeCliente, argthread_t *arg) {
         size_t len = 0;
+        char* user = NULL;
+        char* pass = NULL;
+
         // Pido el usuario al cliente
-        getline(&arg->user, &len, mensajeCliente);
-        getline(&arg->clave, &len, mensajeCliente);
-        string user(arg->user);
-        string pass(arg->clave);
-        return esValido(user, pass);
+        getline(&user, &len, mensajeCliente);
+        getline(&pass, &len, mensajeCliente);
+
+        // Chequeo si el user ya esta conectado
+        vector<argthread_t *>::iterator it;
+        for (it = conectados.begin(); it != conectados.end();) {
+            if (it.operator*()->user != NULL){
+                if (!strcmp(it.operator*()->user,user)){
+                    return false;
+                }
+            }
+            it++;
+        }
+
+        arg->user = user;
+        arg->clave = pass;
+
+        string user_s(arg->user);
+        string pass_s(arg->clave);
+
+        return esValido(user_s, pass_s);
     }
 
     static void *mandarUsuarios(int sockNewFileDescrpt) {

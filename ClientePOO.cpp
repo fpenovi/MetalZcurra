@@ -165,13 +165,13 @@ void Cliente::recibir_mensajes(){
     while (sigo) {
         bytesLeidos = getline(&linea, &len, respuestaServidor);
         if (strcmp(linea,"$\n")==0){
-            //free(linea);
+            free(linea);
             sigo = false;
             cout << "no hay nada mas para recibir"<<endl;
             break;
         }
         printf(" %s", linea);
-        //free(linea);
+        free(linea);
     }
 
 
