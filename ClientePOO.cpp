@@ -24,7 +24,6 @@ Cliente::Cliente(char** argv){
     aux= argv[2];
     strcpy(port,aux.c_str());
 
-
 }
 
 void Cliente::solicitarUserClave(){
@@ -91,8 +90,10 @@ void Cliente::recibir_de_servidor(){
     char *linea=NULL;
     size_t len = 0;
     size_t bytesLeidos;
+    char respuesta[1];
 
-    bytesLeidos = getline(&linea, &len, respuestaServidor);
+    read(sockFileDescrpt,respuesta,1);
+    //bytesLeidos = getline(&linea, &len, respuestaServidor);
 
     if (bytesLeidos < 0) {
         perror("ERROR --> leyendo de socket");
@@ -136,7 +137,7 @@ void Cliente::recibir_usuarios_de_servidor(){
 
     string todos = "TODOS";
     usuariosAenviar[i]=todos;
-    cantUsuarios = i;
+    cantUsuarios = i-1;
 
     free(linea);
 
@@ -250,7 +251,8 @@ void Cliente::lorem() {
     size_t len = 0;
     size_t bytesLeidos;
     int frecuencia = 1;
-    int aleatorio = 5; //i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
+    srand (time(NULL));
+    int aleatorio = (rand()%cantUsuarios)+1;//i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
     int cantidad =1000;
     string destinatario = usuariosAenviar[aleatorio];
     cout << "Le envio el lorum a " << destinatario << endl;
