@@ -8,6 +8,7 @@
 #include <vector>
 #include "auxiliares.h"
 #include "Mensaje.h"
+#include "Log.h"
 #define MAX_CLIENTS 5
 
 using namespace std;
@@ -97,6 +98,8 @@ private:
     }
 
     static bool pedirLogin(FILE *mensajeCliente, argthread_t *arg) {
+
+
         size_t len = 0;
         char* user = NULL;
         char* pass = NULL;
@@ -109,23 +112,26 @@ private:
         vector<argthread_t *>::iterator it;
         for (it = conectados.begin(); it != conectados.end();) {
             if (it.operator*()->user != NULL){
-                if (!strcmp(it.operator*()->user,user)){
+                if (strcmp(it.operator*()->user,user) == 0){
                     return false;
                 }
             }
             it++;
         }
 
-        arg->user = user;
-        arg->clave = pass;
+        string user_s(user);
+        string pass_s(pass);
 
-        string user_s(arg->user);
-        string pass_s(arg->clave);
+        if(esValido(user_s, pass_s)){
+            arg->user = user;
+            arg->clave = pass;
+            return true;
+        }
 
-        return esValido(user_s, pass_s);
+        return false;
     }
 
-    static void *mandarUsuarios(int sockNewFileDescrpt) {
+    static void mandarUsuarios(int sockNewFileDescrpt) {
         //Consigo las claves del hash de usuarios
         vector<string> keys;
         for (auto kv : usuarios) {
@@ -153,6 +159,29 @@ private:
         }
     }
 
+    static void kickearUsuario(argthread_t* arg) {
+
+
+        vector<argthread_t *>::iterator it;
+        for (it = conectados.begin(); it != conectados.end();) {
+
+
+            if (it.operator*()->user != NULL && arg->user != NULL){
+                if (strcmp(it.operator*()->user, arg->user) == 0){
+                    it = conectados.erase(it);
+
+                    return;
+                }
+            }
+            else if (arg->user != NULL){
+                it++;
+            }
+            else{
+                it = conectados.erase(it);
+                return;
+            }
+        }
+    }
 
     static void agregarMensaje(char* emisorChar, char *textoInicial) {
         if (textoInicial==NULL){
@@ -236,6 +265,7 @@ private:
             write(sockNewFileDescrpt, "fallo la conexion al sistema.\n", 30);
             fclose(mensajeCliente);
             close(sockNewFileDescrpt);
+            kickearUsuario((argthread_t*) arg);
             free(arg);
             free(thread);
             return NULL;    // Salgo del thread
@@ -332,6 +362,7 @@ private:
         }
 
         close(sockNewFileDescrpt);
+        kickearUsuario((argthread_t*) arg);
         free(arg);
         free(thread);
         fclose(mensajeCliente);
@@ -428,6 +459,8 @@ public:
 
             arg->clientFD = newFileDescrpt;
             arg->thread = thread;
+            arg->user = NULL;
+            arg->clave = NULL;
             conectados.push_back(arg);
             if (pthread_create(thread, &attr, procesarMensajes, arg) != 0) {
                 cerr << "ERROR --> Creación de thread fallida" << endl;
