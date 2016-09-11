@@ -184,7 +184,8 @@ private:
     }
 
     static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo) {
-        if (textoInicial==NULL){
+
+        if (textoInicial == NULL){
             printf("ERROR");
             exit(1);
         }
@@ -195,7 +196,8 @@ private:
         //me fijo cuanto mide el destinatario
         int l=0;
         for (l; l<=largo; l++){
-            if (textoInicial[l] == '$')  break;
+            if (textoInicial[l] == '$')
+                break;
         }
 
         //sabiendo el largo del destinatario se el largo del mensaje
@@ -213,10 +215,8 @@ private:
         }
         string destinatario(dest);
         string mensaje(msg);
-        //cout <<destinatario<<endl<<mensaje<<"ACABO DE IMPRIMIR EL DESTINATARIO Y MENSAJE"<<endl;
 
-        //string destinatario = strtok(textoInicial, "$");
-        //string mensaje = " ACA ESTA EL ERROR HAY QUE PARSEAR SIN NULL";
+
         int result; // para el mutex
         if (destinatario == "TODOS") {
             for (auto kv : usuarios) {
@@ -250,6 +250,23 @@ private:
         return;
     }
 
+    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos) {
+
+        if (*bytesLeidos < 0) {
+            cout << "(CUANDO LLEGO A ESTA LINEA?) SE DESCONECTÓ " << arg->user << endl;
+            free(linea);
+            return false;
+        }
+
+        agregarMensaje(arg->user, linea, *bytesLeidos);
+        //bytesEscritos = write(sockNewFileDescrpt, "\n", 1); Esto es lo que hacia lento el lorem...
+        return true;
+
+    }
+
+    static void recibirMensajes() {
+
+    }
 
     static void *procesarMensajes(void *arg) {
         char *linea;
@@ -274,7 +291,7 @@ private:
         bytesEscritos = write(sockNewFileDescrpt, "conectado al servidor\n", 22);
         // ToDo Escribir en el logger que se conecto
         cout << "Se conectó " << ((argthread_t *) arg)->user << endl;
-        mandarUsuarios(sockNewFileDescrpt);
+        mandarUsuarios(sockNewFileDescrpt);     // Mando lista de usuarios al cliente por unica vez
 
         while (true) {
 
@@ -287,19 +304,17 @@ private:
                 break;
             }
 
-            cout << "Mensaje recibido del cliente: " << linea;
+            cout << "debug: Mensaje recibido del cliente: " << linea;
 
             // Opcion enviar mensaje
             if (strcmp(linea, "/E/\n") == 0) {
+                free(linea);
+                linea = NULL;
                 bytesLeidos = getline(&linea, &len, mensajeCliente);
-                if (bytesLeidos < 0) {
-                    cout << "Se desconectó " << ((argthread_t *) arg)->user << endl;
-                    free(linea);
-                    break;
-                    }
-                agregarMensaje(((argthread_t *) arg)->user,linea, bytesLeidos);
-                //bytesEscritos = write(sockNewFileDescrpt, "\n", 1);
 
+                // ENVIO MENSAJE
+                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos) )
+                    break;
             }
 
                 // Opcion recibir msjs
@@ -323,7 +338,7 @@ private:
                         strcpy(mensaje, texto.c_str());
 
                         //Mando el vector al cliente
-                        ssize_t bytesEscritos = write(sockNewFileDescrpt, mensaje, strlen(mensaje));
+                        ssize_t bytesEscritos = write(sockNewFileDescrpt, mensaje, texto.length());
                         delete mensaje;
 
                         if (bytesEscritos < 0) {
@@ -348,7 +363,6 @@ private:
             } // Desconectar desde el servidor tambien
 
 
-
             free(linea);
             linea = NULL;
 
@@ -366,7 +380,6 @@ private:
         free(arg);
         free(thread);
         fclose(mensajeCliente);
-        cout << "Llego a liberar las cosas del argthread" << endl;
         return NULL;
     }
 
@@ -374,6 +387,7 @@ public:
     servidorPOO(unsigned short int numPuerto, string nombreArchivo) {
 
         nombreArchivoCsv = nombreArchivo;
+        bzero(&attr, sizeof(attr));
 
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
