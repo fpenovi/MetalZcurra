@@ -162,7 +162,7 @@ private:
     static void kickearUsuario(argthread_t* arg) {
 
 
-        vector<argthread_t *>::iterator it;
+        vector<argthread_t*>::iterator it;
         for (it = conectados.begin(); it != conectados.end();) {
 
 
@@ -264,8 +264,48 @@ private:
 
     }
 
-    static void recibirMensajes() {
+    static void recibirMensajes(argthread_t* arg, ssize_t* bytesEscritos, int sockNewFileDescrpt) {
 
+        string receptor(arg->user);
+        receptor.erase(receptor.length() - 1);
+        vector<Mensaje>::iterator it;
+
+        int result; //para el mutex
+
+        // Lockeo el mutex a mensajes
+        result = pthread_mutex_lock(&mutex_mensajes);
+
+        if (result != 0)
+            perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+        for (it = mensajes.begin(); it != mensajes.end();) {
+            if (it->getNameReceptor() == receptor) {
+                string nombreDelEmisor = it->getNameEmisor();
+                string mensajeEmisor = it->getMensaje();
+                string texto = nombreDelEmisor + " dice: " + mensajeEmisor;
+                char *mensaje = new char[texto.length() + 1];
+                strcpy(mensaje, texto.c_str());
+
+                //Mando el vector al cliente
+                *bytesEscritos = write(sockNewFileDescrpt, mensaje, texto.length());
+                delete mensaje;
+
+                if (*bytesEscritos < 0) {
+                    perror("ERROR --> No se pudo responder al cliente");
+                    exit(1);
+                }
+                it = mensajes.erase(it);
+            }
+            else it++;
+        }
+
+        // Unlockeo el mutex a mensajes
+        result = pthread_mutex_unlock(&mutex_mensajes);
+        if (result != 0)
+            perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+        const char* fin = "$\n";
+        write(sockNewFileDescrpt, fin, strlen(fin));    // ToDo loggear si write devolvio -1 no pudo escribir el $
     }
 
     static void *procesarMensajes(void *arg) {
@@ -317,51 +357,19 @@ private:
                     break;
             }
 
-                // Opcion recibir msjs
+            // Opcion recibir msjs
             else if (strcmp(linea, "/R/\n") == 0) {
-                string receptor(((argthread_t *) arg)->user);
-                receptor.erase(receptor.length() - 1);
-                vector<Mensaje>::iterator it;
-                
-                int result; //para el mutex
-
-                // Lockeo el mutex a mensajes
-                result = pthread_mutex_lock(&mutex_mensajes);
-                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-
-                for (it = mensajes.begin(); it != mensajes.end();) {
-                    if (it->getNameReceptor() == receptor) {
-                        string nombreDelEmisor = it->getNameEmisor();
-                        string mensajeEmisor = it->getMensaje();
-                        string texto = nombreDelEmisor + " dice: " + mensajeEmisor;
-                        char *mensaje = new char[texto.length() + 1];
-                        strcpy(mensaje, texto.c_str());
-
-                        //Mando el vector al cliente
-                        ssize_t bytesEscritos = write(sockNewFileDescrpt, mensaje, texto.length());
-                        delete mensaje;
-
-                        if (bytesEscritos < 0) {
-                            perror("ERROR --> No se pudo responder al cliente");
-                            exit(1);
-                        }
-                        it = mensajes.erase(it);
-                    }
-                    else it++;
-                }
-                
-                // Unlockeo el mutex a mensajes
-                result = pthread_mutex_unlock(&mutex_mensajes);
-                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-                
-                char* fin = "$\n";
-                write(sockNewFileDescrpt,fin,strlen(fin));
+                free(linea);
+                linea = NULL;
+                recibirMensajes((argthread_t*) arg, &bytesEscritos, sockNewFileDescrpt);
             }
-                // Opcion desconectar del servidor (para liberar memoria)
-            else if (strcmp(linea, "/D/\n") == 0){
 
-            } // Desconectar desde el servidor tambien
-
+            // Desconecto al cliente desde el servidor
+            else if (strcmp(linea, "/D/\n") == 0) {
+                free(linea);
+                linea = NULL;
+                break;
+            }
 
             free(linea);
             linea = NULL;
