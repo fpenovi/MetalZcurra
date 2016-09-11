@@ -219,11 +219,11 @@ private:
         //string mensaje = " ACA ESTA EL ERROR HAY QUE PARSEAR SIN NULL";
         int result; // para el mutex
         if (destinatario == "TODOS") {
-            result = pthread_mutex_lock(&mutex_mensajes);
             for (auto kv : usuarios) {
                 Mensaje mensajeNuevo(emisor,kv.first,mensaje);
 
                 // Lockeo el mutex a mensajes
+                result = pthread_mutex_lock(&mutex_mensajes);
                 if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
                 mensajes.push_back(mensajeNuevo);
@@ -298,7 +298,7 @@ private:
                     break;
                     }
                 agregarMensaje(((argthread_t *) arg)->user,linea, bytesLeidos);
-                bytesEscritos = write(sockNewFileDescrpt, "\n", 1);
+                //bytesEscritos = write(sockNewFileDescrpt, "\n", 1);
 
             }
 

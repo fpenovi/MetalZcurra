@@ -102,7 +102,7 @@ void Cliente::recibir_de_servidor(){
         exit(1);
     }
 
-    free(linea);
+    //free(linea);
 }
 
 void Cliente::recibir_usuarios_de_servidor(){
@@ -236,7 +236,7 @@ void Cliente::enviarAusuario(string usuario,string linea){
     mensajeCompleto+=linea;
     const char* envio = mensajeCompleto.c_str();
     bytesEsc = write(sockFileDescrpt, envio, strlen(envio));
-    recibir_de_servidor(); //esto estaria recibiendo el tick
+    //recibir_de_servidor(); //esto estaria recibiendo el tick
 
 }
 
