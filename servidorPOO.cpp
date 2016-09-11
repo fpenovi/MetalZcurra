@@ -183,7 +183,7 @@ private:
         }
     }
 
-    static void agregarMensaje(char* emisorChar, char *textoInicial) {
+    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo) {
         if (textoInicial==NULL){
             printf("ERROR");
             exit(1);
@@ -194,12 +194,12 @@ private:
 
         //me fijo cuanto mide el destinatario
         int l=0;
-        for (l;l<=strlen(textoInicial);l++){
+        for (l; l<=largo; l++){
             if (textoInicial[l] == '$')  break;
         }
 
         //sabiendo el largo del destinatario se el largo del mensaje
-        char msg[strlen(textoInicial)-l];
+        char msg[largo-l];
         char dest[l];
         dest[l]='\0';
         //guardo el destinatario
@@ -207,7 +207,7 @@ private:
 
         //guardo el mensaje
         l++;
-        for(int m=0;l<=strlen(textoInicial);m++){
+        for(int m=0; l<=largo; m++){
             msg[m]=textoInicial[l];
             l++;
         }
@@ -297,7 +297,7 @@ private:
                     free(linea);
                     break;
                     }
-                agregarMensaje(((argthread_t *) arg)->user,linea);
+                agregarMensaje(((argthread_t *) arg)->user,linea, bytesLeidos);
                 bytesEscritos = write(sockNewFileDescrpt, "\n", 1);
 
             }

@@ -262,34 +262,7 @@ void Cliente::lorem() {
     char buffer[tam + 2];
     int contador = 0;
     size_t bytesEsc = 0;
-    /*Explicacion de lo siguiente
-     * un bucle for por la cantidad de mensajes a enviar
-     * un while el archivo no se termine
-     * donde agarra un caracter y lo guarda enun buffer
-     * este buffer tiene un tamanio aleatorio
-     * se corta el while cuando se completo el buffer
-     * o cuando llego a fin de archivo
-     * ahi tiene que cerrar el archivo y reabrirlo
-     * para seguir llenando el buffer y enviando mensajes*/
-    /*FILE *archivo = fopen("lorem.txt", "r");
-    char c;
-    for (int i = 0; i <= tam * cantidad; i++) {
-        c = fgetc(archivo);
-        if (c == EOF) {
-            fclose(archivo);
-            archivo = fopen("lorem.txt", "r");
-            c = fgetc(archivo);
-        }
-        if( c== '\n') c=' ';
-        buffer[contador] = c;
-        contador++;
-        if (contador == tam) {
-            buffer[contador]= '\n';
-            buffer[contador+1] = '\0';
-            contador = 0;
-            enviarAusuario(destinatario,buffer);
-        }
-    }*/
+
     ifstream archivo;
     archivo.open("lorem.txt");
     int can=0;
@@ -297,7 +270,7 @@ void Cliente::lorem() {
     string* texto = new string;
     string mensaje;
     size_t i =0;
-    //bytesLeidos=0;
+
     while(i < cantidad){
         getline(archivo,mensaje);
         *texto += mensaje;
@@ -308,7 +281,7 @@ void Cliente::lorem() {
     size_t enviados=0;
     mensaje = "";
     size_t largomsg = 0;
-    while(enviados<cantidad){
+    while (enviados<cantidad){
         if (i == texto->size())
             i = 0;
 
@@ -326,7 +299,6 @@ void Cliente::lorem() {
     }
     delete(texto);
     archivo.close();
-
 }
 
 void Cliente::liberar(){
