@@ -369,6 +369,7 @@ private:
             else if (strcmp(linea, "/D/\n") == 0) {
                 free(linea);
                 linea = NULL;
+                cout << "Se desconectó" << ((argthread_t*) arg)->user;
                 break;
             }
 

@@ -188,12 +188,13 @@ void Cliente::desconectar(){
         perror("El cliente ya se encuentra desconectado");
         return;
     }
+    write(sockFileDescrpt, "/D/\n", 4);
     liberar();
 }
 
 void Cliente::salir(){
     if(estado) {
-        liberar();
+        desconectar();
     }
     exit(0);
 }
