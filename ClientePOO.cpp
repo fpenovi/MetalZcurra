@@ -151,6 +151,7 @@ void Cliente::imprimir_usuarios(){
 }
 
 void Cliente::recibir_mensajes(){
+
     if(! estado){
         cout<<"No esta conectado al servidor"<<endl;
         return;
@@ -160,23 +161,26 @@ void Cliente::recibir_mensajes(){
 
     char* opc = "/R/\n";
     mandar_a_servidor(opc, strlen(opc));
-    char *linea=NULL;
+    char* linea = NULL;
     size_t len = 0;
     size_t bytesLeidos;
     bool sigo = true;
+
     while (sigo) {
         bytesLeidos = getline(&linea, &len, respuestaServidor);
-        if (strcmp(linea,"$\n")==0){
-            //free(linea);
+
+        if (strcmp(linea,"$\n") == 0) {
+
             sigo = false;
             cout << "no hay nada mas para recibir"<<endl;
             break;
         }
-        printf(" %s", linea);
-        //free(linea);
+        printf("%s", linea);
+        free(linea);
+        linea = NULL;
     }
 
-
+    free(linea);
 }
 
 void Cliente::desconectar(){
@@ -228,16 +232,16 @@ void Cliente::enviar(){
 
 }
 
-void Cliente::enviarAusuario(string usuario,string linea){
-    char* opc = "/E/\n";
+void Cliente::enviarAusuario(string usuario,string linea) {
+
+    const char* opc = "/E/\n";
     size_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
     //string msg(linea);
     string mensajeCompleto = usuario + "$"; //LE AGREGO EL PROTOCOLO
     mensajeCompleto+=linea;
     const char* envio = mensajeCompleto.c_str();
     bytesEsc = write(sockFileDescrpt, envio, strlen(envio));
-    //recibir_de_servidor(); //esto estaria recibiendo el tick
-
+    //recibir_de_servidor(); //esto estaria recibiendo el tick ---> hace lento el lorem ipsum tambien
 }
 
 void Cliente::lorem() {

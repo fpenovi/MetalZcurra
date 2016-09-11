@@ -282,6 +282,7 @@ private:
             if (it->getNameReceptor() == receptor) {
                 string nombreDelEmisor = it->getNameEmisor();
                 string mensajeEmisor = it->getMensaje();
+
                 string texto = nombreDelEmisor + " dice: " + mensajeEmisor;
                 char *mensaje = new char[texto.length() + 1];
                 strcpy(mensaje, texto.c_str());
