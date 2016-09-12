@@ -340,7 +340,7 @@ private:
             bytesLeidos = getline(&linea, &len, mensajeCliente);
 
             if (bytesLeidos < 0) {
-                cout << "Se desconectó " << ((argthread_t *) arg)->user << endl;
+                cout << "Se desconectó MAL " << ((argthread_t *) arg)->user << endl;
                 free(linea);
                 break;
             }
@@ -369,7 +369,7 @@ private:
             else if (strcmp(linea, "/D/\n") == 0) {
                 free(linea);
                 linea = NULL;
-                cout << "Se desconectó" << ((argthread_t*) arg)->user;
+                cout << "Se desconectó BIEN " << ((argthread_t*) arg)->user;
                 break;
             }
 
