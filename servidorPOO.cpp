@@ -173,6 +173,8 @@ private:
 
             else if (it.operator*()->user != NULL && arg->user != NULL){
                 if (strcmp(it.operator*()->user, arg->user) == 0){
+                    free(it.operator*()->user);
+                    free(it.operator*()->clave);
                     it = conectados.erase(it);
                     return;
                 }
