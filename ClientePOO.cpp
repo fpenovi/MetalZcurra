@@ -6,7 +6,8 @@
 #include <pthread.h>
 #include <unordered_map>
 #include <fstream>
-
+#include <unistd.h>
+#include <time.h>
 using namespace std;
 
 Cliente::Cliente(char** argv){
@@ -256,14 +257,21 @@ void Cliente::lorem() {
     char *linea = NULL;
     size_t len = 0;
     size_t bytesLeidos;
-    int frecuencia = 1;
+
+    int frecuencia;
+    cout << "Cuantos mensajes quiere enviar por segundo?"<<endl;
+    cin >> frecuencia;
+    int cantidad;
+    cout << "Cuantos mensajes quieren enviar?"<<endl;
+    cin >> cantidad;
+
+
     srand (time(NULL));
     int aleatorio = (rand()%cantUsuarios)+1;//i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
-    int cantidad =1000;
     string destinatario = usuariosAenviar[aleatorio];
     cout << "Le envio el lorem a " << destinatario << endl;
     len = 0;
-    int tam =200;
+    int tam =(rand()%200)+1;
     char buffer[tam + 2];
     int contador = 0;
     size_t bytesEsc = 0;
@@ -281,21 +289,44 @@ void Cliente::lorem() {
         *texto += mensaje;
         i++;
     }
-
+    int yaEnviados=0;
     i = 0;
     size_t enviados=0;
     mensaje = "";
     size_t largomsg = 0;
+    clock_t tiempo = clock();
+    clock_t tiempoQuePaso;
+    clock_t restante;
+    clock_t aEsperar;
     while (enviados<cantidad){
+
         if (i == texto->size())
             i = 0;
 
         if (largomsg == tam) {
             mensaje+="\n";
+            yaEnviados++;
             enviarAusuario(destinatario,mensaje);
             enviados++;
             mensaje = "";
             largomsg=0;
+        }
+        if (yaEnviados == frecuencia){
+            cout <<"adentro del if"<<endl;
+            tiempoQuePaso = clock() - tiempo;
+
+            printf("imprimo tiempo que paso: %i\n",tiempoQuePaso);
+
+            restante = 1000000 - tiempoQuePaso;
+            printf("imprimo tiempo restante: %i\n",restante);
+
+            aEsperar=clock()+restante;
+            printf("tengo que esperar hasta: %i desde %i\n",aEsperar,clock());
+
+            while (aEsperar>clock());
+            printf("pasaron %i mensajes\n",frecuencia);
+            yaEnviados=0;
+            tiempo = clock();
         }
 
         mensaje+=(*texto)[i];
