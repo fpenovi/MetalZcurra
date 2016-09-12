@@ -76,7 +76,7 @@ private:
 
     void cargarUsuarios(string filename) {
 
-        char *linea = NULL;
+        char* linea = NULL;
         size_t len = 0;
         FILE *archivo = fopen(filename.c_str(), "r");
 
@@ -84,8 +84,11 @@ private:
             string usuario = strtok(linea, ",");
             string password = strtok(NULL, ",");
             usuarios[usuario] = password;
+            free(linea);
+            linea = NULL;
         }
 
+        free(linea);
         fclose(archivo);
     }
 
@@ -98,7 +101,6 @@ private:
     }
 
     static bool pedirLogin(FILE *mensajeCliente, argthread_t *arg) {
-
 
         size_t len = 0;
         char* user = NULL;
@@ -114,6 +116,8 @@ private:
             if (it.operator*()->user != NULL){
                 if (strcmp(it.operator*()->user,user) == 0){
                     cout << user << "Ya esta conectado" << endl;
+                    free(user);
+                    free(pass);
                     return false;
                 }
             }
@@ -130,6 +134,8 @@ private:
         }
 
         cout << "User o pass fallidos" << endl;
+        free(user);
+        free(pass);
         return false;
     }
 
@@ -332,7 +338,7 @@ private:
 
         bytesEscritos = write(sockNewFileDescrpt, "conectado al servidor\n", 22);
         // ToDo Escribir en el logger que se conecto
-        cout << "Se conectó " << ((argthread_t *) arg)->user << endl;
+        cout << "\033[1m\033[32mSe conectó \033[1m\033[32m" << ((argthread_t *) arg)->user << "\033[0m";
         mandarUsuarios(sockNewFileDescrpt);     // Mando lista de usuarios al cliente por unica vez
 
         while (true) {
@@ -341,7 +347,7 @@ private:
             bytesLeidos = getline(&linea, &len, mensajeCliente);
 
             if (bytesLeidos < 0) {
-                cout << "Se desconectó MAL " << ((argthread_t *) arg)->user << endl;
+                cout << "\033[1;31mSe desconectó MAL " << ((argthread_t *) arg)->user << "\033[0m";
                 free(linea);
                 break;
             }
@@ -370,7 +376,7 @@ private:
             else if (strcmp(linea, "/D/\n") == 0) {
                 free(linea);
                 linea = NULL;
-                cout << "Se desconectó BIEN " << ((argthread_t*) arg)->user;
+                cout << "\033[32mSe desconectó BIEN \033[32m" << ((argthread_t*) arg)->user << "\033[0m";
                 break;
             }
 
@@ -414,6 +420,7 @@ public:
             throw NoSePudoCrearServidorException();
         }
 
+
         bzero(&serv_addr, sizeof(serv_addr));   // Inicializo structs
         bzero(&cli_addr, sizeof(cli_addr));
 
@@ -449,8 +456,6 @@ public:
 
         serverOn = true;
         cargarUsuarios(nombreArchivo);
-
-
     }
 
     void aceptarClientes() {
