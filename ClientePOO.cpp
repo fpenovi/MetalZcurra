@@ -166,7 +166,6 @@ void Cliente::recibir_mensajes(){
     size_t len = 0;
     size_t bytesLeidos;
     bool sigo = true;
-
     while (sigo) {
         bytesLeidos = getline(&linea, &len, respuestaServidor);
 
@@ -259,12 +258,20 @@ void Cliente::lorem() {
     size_t bytesLeidos;
 
     int frecuencia;
+    char* caca = NULL;
+
+
     cout << "Cuantos mensajes quiere enviar por segundo?"<<endl;
-    cin >> frecuencia;
+    bytesLeidos = getline(&caca, &len, stdin);
+    frecuencia = atoi(caca);
+    caca=NULL;
+    //cin >> frecuencia;
     int cantidad;
     cout << "Cuantos mensajes quieren enviar?"<<endl;
-    cin >> cantidad;
-
+    bytesLeidos = getline(&caca, &len, stdin);
+    cantidad = atoi(caca);
+    //cin >> cantidad;
+    //ToDo VERIFICAR TIPO DE DATO!!
 
     srand (time(NULL));
     int aleatorio = (rand()%cantUsuarios)+1;//i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
@@ -312,19 +319,14 @@ void Cliente::lorem() {
             largomsg=0;
         }
         if (yaEnviados == frecuencia){
-            cout <<"adentro del if"<<endl;
+            cout<<"ya se han enviado "<<frecuencia<<" mensajes"<<endl;
             tiempoQuePaso = clock() - tiempo;
 
-            printf("imprimo tiempo que paso: %li\n",tiempoQuePaso);
-
             restante = 1000000 - tiempoQuePaso;
-            printf("imprimo tiempo restante: %li\n",restante);
 
             aEsperar=clock()+restante;
-            printf("tengo que esperar hasta: %li desde %li\n",aEsperar,clock());
 
             while (aEsperar>clock());
-            printf("pasaron %i mensajes\n",frecuencia);
             yaEnviados=0;
             tiempo = clock();
         }
