@@ -315,13 +315,13 @@ void Cliente::lorem() {
             cout <<"adentro del if"<<endl;
             tiempoQuePaso = clock() - tiempo;
 
-            printf("imprimo tiempo que paso: %i\n",tiempoQuePaso);
+            printf("imprimo tiempo que paso: %li\n",tiempoQuePaso);
 
             restante = 1000000 - tiempoQuePaso;
-            printf("imprimo tiempo restante: %i\n",restante);
+            printf("imprimo tiempo restante: %li\n",restante);
 
             aEsperar=clock()+restante;
-            printf("tengo que esperar hasta: %i desde %i\n",aEsperar,clock());
+            printf("tengo que esperar hasta: %li desde %li\n",aEsperar,clock());
 
             while (aEsperar>clock());
             printf("pasaron %i mensajes\n",frecuencia);
