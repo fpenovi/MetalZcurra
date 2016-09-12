@@ -113,6 +113,7 @@ private:
         for (it = conectados.begin(); it != conectados.end();) {
             if (it.operator*()->user != NULL){
                 if (strcmp(it.operator*()->user,user) == 0){
+                    cout << user << "Ya esta conectado" << endl;
                     return false;
                 }
             }
@@ -128,6 +129,7 @@ private:
             return true;
         }
 
+        cout << "User o pass fallidos" << endl;
         return false;
     }
 
@@ -161,25 +163,22 @@ private:
 
     static void kickearUsuario(argthread_t* arg) {
 
-
         vector<argthread_t*>::iterator it;
         for (it = conectados.begin(); it != conectados.end();) {
 
-
-            if (it.operator*()->user != NULL && arg->user != NULL){
-                if (strcmp(it.operator*()->user, arg->user) == 0){
-                    it = conectados.erase(it);
-
-                    return;
-                }
-            }
-            else if (arg->user != NULL){
-                it++;
-            }
-            else{
+            if (it.operator*()->user == NULL){
                 it = conectados.erase(it);
                 return;
             }
+
+            else if (it.operator*()->user != NULL && arg->user != NULL){
+                if (strcmp(it.operator*()->user, arg->user) == 0){
+                    it = conectados.erase(it);
+                    return;
+                }
+            }
+
+            it++;
         }
     }
 
@@ -377,12 +376,13 @@ private:
             linea = NULL;
 
             // Write del tilde (proximamente sin uso)
-           // bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
-
+            // bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
+            /*
             if (bytesEscritos < 0) {
                 perror("ERROR --> No se pudo responder al cliente");
                 exit(1);
             }
+            */
         }
 
         close(sockNewFileDescrpt);
