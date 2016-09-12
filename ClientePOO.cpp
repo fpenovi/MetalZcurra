@@ -138,7 +138,7 @@ void Cliente::recibir_usuarios_de_servidor(){
 
     string todos = "TODOS";
     usuariosAenviar[i]=todos;
-    cantUsuarios = i-1;
+    cantUsuarios = i;
 
     free(linea);
 
