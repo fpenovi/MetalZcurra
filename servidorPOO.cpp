@@ -76,7 +76,7 @@ private:
 
     void cargarUsuarios(string filename) {
 
-        char *linea = NULL;
+        char* linea = NULL;
         size_t len = 0;
         FILE *archivo = fopen(filename.c_str(), "r");
 
@@ -84,8 +84,11 @@ private:
             string usuario = strtok(linea, ",");
             string password = strtok(NULL, ",");
             usuarios[usuario] = password;
+            free(linea);
+            linea = NULL;
         }
 
+        free(linea);
         fclose(archivo);
     }
 
@@ -98,7 +101,6 @@ private:
     }
 
     static bool pedirLogin(FILE *mensajeCliente, argthread_t *arg) {
-
 
         size_t len = 0;
         char* user = NULL;
@@ -113,6 +115,9 @@ private:
         for (it = conectados.begin(); it != conectados.end();) {
             if (it.operator*()->user != NULL){
                 if (strcmp(it.operator*()->user,user) == 0){
+                    cout << user << "Ya esta conectado" << endl;
+                    free(user);
+                    free(pass);
                     return false;
                 }
             }
@@ -128,6 +133,9 @@ private:
             return true;
         }
 
+        cout << "User o pass fallidos" << endl;
+        free(user);
+        free(pass);
         return false;
     }
 
@@ -161,25 +169,24 @@ private:
 
     static void kickearUsuario(argthread_t* arg) {
 
-
         vector<argthread_t*>::iterator it;
         for (it = conectados.begin(); it != conectados.end();) {
 
-
-            if (it.operator*()->user != NULL && arg->user != NULL){
-                if (strcmp(it.operator*()->user, arg->user) == 0){
-                    it = conectados.erase(it);
-
-                    return;
-                }
-            }
-            else if (arg->user != NULL){
-                it++;
-            }
-            else{
+            if (it.operator*()->user == NULL){
                 it = conectados.erase(it);
                 return;
             }
+
+            else if (it.operator*()->user != NULL && arg->user != NULL){
+                if (strcmp(it.operator*()->user, arg->user) == 0){
+                    free(it.operator*()->user);
+                    free(it.operator*()->clave);
+                    it = conectados.erase(it);
+                    return;
+                }
+            }
+
+            it++;
         }
     }
 
@@ -331,7 +338,7 @@ private:
 
         bytesEscritos = write(sockNewFileDescrpt, "conectado al servidor\n", 22);
         // ToDo Escribir en el logger que se conecto
-        cout << "Se conectó " << ((argthread_t *) arg)->user << endl;
+        cout << "\033[1m\033[32mSe conectó \033[1m\033[32m" << ((argthread_t *) arg)->user << "\033[0m";
         mandarUsuarios(sockNewFileDescrpt);     // Mando lista de usuarios al cliente por unica vez
 
         while (true) {
@@ -340,7 +347,7 @@ private:
             bytesLeidos = getline(&linea, &len, mensajeCliente);
 
             if (bytesLeidos < 0) {
-                cout << "Se desconectó " << ((argthread_t *) arg)->user << endl;
+                cout << "\033[1;31mSe desconectó MAL " << ((argthread_t *) arg)->user << "\033[0m";
                 free(linea);
                 break;
             }
@@ -369,7 +376,7 @@ private:
             else if (strcmp(linea, "/D/\n") == 0) {
                 free(linea);
                 linea = NULL;
-                cout << "Se desconectó" << ((argthread_t*) arg)->user;
+                cout << "\033[32mSe desconectó BIEN \033[32m" << ((argthread_t*) arg)->user << "\033[0m";
                 break;
             }
 
@@ -377,12 +384,13 @@ private:
             linea = NULL;
 
             // Write del tilde (proximamente sin uso)
-           // bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
-
+            // bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
+            /*
             if (bytesEscritos < 0) {
                 perror("ERROR --> No se pudo responder al cliente");
                 exit(1);
             }
+            */
         }
 
         close(sockNewFileDescrpt);
@@ -411,6 +419,7 @@ public:
             pthread_attr_destroy(&attr);
             throw NoSePudoCrearServidorException();
         }
+
 
         bzero(&serv_addr, sizeof(serv_addr));   // Inicializo structs
         bzero(&cli_addr, sizeof(cli_addr));
@@ -447,8 +456,6 @@ public:
 
         serverOn = true;
         cargarUsuarios(nombreArchivo);
-
-
     }
 
     void aceptarClientes() {

@@ -238,11 +238,11 @@ void Cliente::enviarAusuario(string usuario,string linea) {
 
     const char* opc = "/E/\n";
     size_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
-    //string msg(linea);
     string mensajeCompleto = usuario + "$"; //LE AGREGO EL PROTOCOLO
     mensajeCompleto+=linea;
     const char* envio = mensajeCompleto.c_str();
-    bytesEsc = write(sockFileDescrpt, envio, strlen(envio));
+
+    bytesEsc = write(sockFileDescrpt, envio, mensajeCompleto.size());
     //recibir_de_servidor(); //esto estaria recibiendo el tick ---> hace lento el lorem ipsum tambien
 }
 
