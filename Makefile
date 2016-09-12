@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = auxiliares.cpp Mensaje.cpp
+OBJS = auxiliares.cpp Mensaje.cpp Log.cpp
 
 #CC specifies which compiler we're using
 CC = g++

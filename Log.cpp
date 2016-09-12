@@ -8,26 +8,43 @@ Log::Log(int n ){
     maxtext = n;
     archlog.open("log.txt",ios::out	| ios::app);
 }
-void Log::loggearMsj(string cliente , vector<string> reciben, string texto){
+void Log::loggearMsj(string cliente , string receptor, string texto){
     if (maxtext !=0){
         texto= texto.substr(0,maxtext);
+        texto.erase(texto.length()-1);
     }
-    string receptores = procesarVector(reciben);
-    string horaYFecha = getHora(reciben);
-    string textoLog = horaYFecha+cliente+" envio a "+receptores+": "+texto;
-    archlog << textoLog<< endl;
+    string horaYFecha = getHora();
+    string textoLog = horaYFecha+cliente+" envio a "+receptor+": "+texto;
+    archlog << textoLog<<endl;
 }
 
 void Log::loggearConexion(string cliente){
-    archlog<< "se conecto "+ cliente<< endl;
+    archlog<<getHora()+ "se conecto "+ cliente<< endl;
 }
 
+void Log::inicializoServer() {
+    archlog<<getHora()+ "se inicializo el servidor" << endl;
 
-void Log::loggearDesconexion(string cliente){
-    archlog<< "se desconecto "+ cliente<< endl;
 }
 
-string Log::getHora(const vector<string> &reciben) {
+void Log::cierroServer() {
+    archlog<<getHora()+"se cerro el servidor" << endl;
+
+}
+
+void Log::loggearDesconexionViolenta(string cliente){
+    archlog<<getHora()+ "se perdio conexion con "+ cliente<< endl;
+}
+
+void Log::loggearDesconexionNormal(string cliente){
+    archlog<< getHora()+"se desconecto: "+ cliente<< endl;
+}
+
+void Log::error(string texto){
+    archlog<< getHora()+"error: "+texto<<endl;
+
+}
+string Log::getHora() {
     time_t tiempo= time(0);
     struct tm *tlocal = localtime(&tiempo);
     char output[128];
@@ -40,21 +57,7 @@ void Log::cerrarLog() {
     archlog.close();
 }
 
-string Log::procesarVector(vector<string> vector) {
-    string texto;
-    for(int i=0;i<vector.size();i++ ){
-        texto+=vector[i]+" ";
-    }
-    return texto;
+void Log::loggearRecepcion(string cliente){
+    archlog<<getHora()+cliente+" recibio todos sus mensajes"<<endl;
 }
-
-// main de prueba, obviamente no va , lo adjunto para que lo prueben.
-int main(){
-	vector<string> b(2,"kaka");
-	Log log(10);
-    log.loggearMsj("juancho",b,"trabajen mas pajas");
-    log.cerrarLog();
-    return 0;
-}
-
 

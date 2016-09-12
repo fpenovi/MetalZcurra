@@ -15,15 +15,18 @@ using namespace std;
 class Log {
     public:
     Log(int);
-    void loggearMsj(string,vector<string>,string);
+    void loggearMsj(string,string,string);
     void loggearConexion(string);
-    void loggearDesconexion(string);
-    void error();
+    void loggearDesconexionViolenta(string);
+    void loggearDesconexionNormal(string);
+    void inicializoServer();
+    void cierroServer();
+    void error(string);
     void cerrarLog();
+    void loggearRecepcion(string);
     private:
     fstream archlog;
-    string procesarVector(vector<string> vector);
-    string getHora(const vector<string> &reciben);
+    string getHora();
     int maxtext;
 };
 

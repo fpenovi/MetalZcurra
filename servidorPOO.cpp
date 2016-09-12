@@ -44,7 +44,7 @@ private:
     static unordered_map<string, string> usuarios;
     static vector<Mensaje> mensajes;
     static pthread_mutex_t mutex_mensajes;
-    // Log logger; --> un atributo va a ser un objeto Log para logear.
+    static Log logger;
 
     static void *controlInput(void *serverStatus) {
 
@@ -69,8 +69,6 @@ private:
         for (size_t i = 0; i < numConexiones; i++) {
             argthread_t *actual = conectados[i];
             shutdown(actual->clientFD, SHUT_RDWR);
-            // No libero el resto de las cosas de argthread porque se liberan
-            // al final de la funcion procesarMensajes
         }
     }
 
@@ -232,6 +230,7 @@ private:
                 // Lockeo el mutex a mensajes
                 result = pthread_mutex_lock(&mutex_mensajes);
                 if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                logger.loggearMsj(emisor,kv.first,mensaje);
 
                 mensajes.push_back(mensajeNuevo);
 
@@ -247,7 +246,7 @@ private:
             // Lockeo el mutex a mensajess
             result = pthread_mutex_lock(&mutex_mensajes);
             if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-
+            logger.loggearMsj(emisor,destinatario,mensaje);
             mensajes.push_back(mensajeNuevo);
 
             // Unlockeo el mutex a mensajes
@@ -284,12 +283,11 @@ private:
 
         if (result != 0)
             perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-
+        logger.loggearRecepcion(receptor);
         for (it = mensajes.begin(); it != mensajes.end();) {
             if (it->getNameReceptor() == receptor) {
                 string nombreDelEmisor = it->getNameEmisor();
                 string mensajeEmisor = it->getMensaje();
-
                 string texto = nombreDelEmisor + " dice: " + mensajeEmisor;
                 char *mensaje = new char[texto.length() + 1];
                 strcpy(mensaje, texto.c_str());
@@ -313,7 +311,7 @@ private:
             perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
         const char* fin = "$\n";
-        write(sockNewFileDescrpt, fin, strlen(fin));    // ToDo loggear si write devolvio -1 no pudo escribir el $
+        write(sockNewFileDescrpt, fin, strlen(fin));    //
     }
 
     static void *procesarMensajes(void *arg) {
@@ -337,7 +335,9 @@ private:
         }
 
         bytesEscritos = write(sockNewFileDescrpt, "conectado al servidor\n", 22);
-        // ToDo Escribir en el logger que se conecto
+        string userCon(((argthread_t *) arg)->user);
+        userCon.erase(userCon.length()-1);
+        logger.loggearConexion(userCon);
         cout << "\033[1m\033[32mSe conectó \033[1m\033[32m" << ((argthread_t *) arg)->user << "\033[0m";
         mandarUsuarios(sockNewFileDescrpt);     // Mando lista de usuarios al cliente por unica vez
 
@@ -347,6 +347,9 @@ private:
             bytesLeidos = getline(&linea, &len, mensajeCliente);
 
             if (bytesLeidos < 0) {
+                string userDesc(((argthread_t *) arg)->user);
+                userDesc.erase(userDesc.length()-1);
+                logger.loggearDesconexionViolenta(userDesc);
                 cout << "\033[1;31mSe desconectó MAL " << ((argthread_t *) arg)->user << "\033[0m";
                 free(linea);
                 break;
@@ -376,21 +379,15 @@ private:
             else if (strcmp(linea, "/D/\n") == 0) {
                 free(linea);
                 linea = NULL;
+                string userDesc(((argthread_t *) arg)->user);
+                userDesc.erase(userDesc.length()-1);
+                logger.loggearDesconexionNormal(userDesc);
                 cout << "\033[32mSe desconectó BIEN \033[32m" << ((argthread_t*) arg)->user << "\033[0m";
                 break;
             }
 
             free(linea);
             linea = NULL;
-
-            // Write del tilde (proximamente sin uso)
-            // bytesEscritos = write(sockNewFileDescrpt, "\xE2\x9C\x93\n", 4);
-            /*
-            if (bytesEscritos < 0) {
-                perror("ERROR --> No se pudo responder al cliente");
-                exit(1);
-            }
-            */
         }
 
         close(sockNewFileDescrpt);
@@ -414,7 +411,6 @@ public:
 
         // Creo thread de CONTROL
         if (pthread_create(&threadControl, &attr, controlInput, &serverOn) != 0) {
-            // ToDo logger...
             cerr << "ERROR --> No se pudo crear thread de control" << endl;
             pthread_attr_destroy(&attr);
             throw NoSePudoCrearServidorException();
@@ -427,7 +423,7 @@ public:
         fileDescrpt = socket(AF_INET, SOCK_STREAM, 0);
 
         if (fileDescrpt < 0) {
-            // ToDo pedirle al logger que escriba el error ( i.e. logger.error("yada yada") )
+            logger.error("no se pudo abrir el socket");
             cerr << "ERROR --> No se pudo abrir socket" << endl;
             pthread_attr_destroy(&attr);
             throw NoSePudoCrearServidorException();
@@ -439,7 +435,7 @@ public:
 
         // Aviso al SO que asocie el programa al socket creado
         if (bind(fileDescrpt, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-            // ToDo pedirle al logger...
+            logger.error("no se pudo crear servidor");
             close(fileDescrpt);
             pthread_attr_destroy(&attr);
             throw NoSePudoCrearServidorException();
@@ -447,7 +443,7 @@ public:
 
         // Comienza a escuchar a los clientes que se quieren conectar y los va encolando
         if (listen(fileDescrpt, MAX_CLIENTS) < 0) {
-            // ToDo pedirle al logger...
+            logger.error("se alcanzo la cant maxima de clientes");
             cerr << "ERROR --> Falla en listen" << endl;
             close(fileDescrpt);
             pthread_attr_destroy(&attr);
@@ -456,6 +452,8 @@ public:
 
         serverOn = true;
         cargarUsuarios(nombreArchivo);
+        logger.inicializoServer();
+
     }
 
     void aceptarClientes() {
@@ -463,18 +461,15 @@ public:
         while (serverOn) {
             int newFileDescrpt = accept(fileDescrpt, (sockaddr *) &cli_addr, &pesoCli_adrr);
             if (newFileDescrpt < 0) {
-                // ToDo pedirle al logger...
-                cerr << "ERROR --> No se pudo aceptar cliente" << endl;
+                //cerr << "ERROR --> No se pudo aceptar cliente" << endl;
                 continue;
             }
 
-            // ToDo falta en el caso de que no falle, crear los threads y agregarlos a la lista
 
             argthread_t *arg = (argthread_t *) malloc(sizeof(argthread_t));
 
             if (!arg) {
                 close(newFileDescrpt);  // rechazo cliente
-                // ToDo logger...
                 cerr << "ERROR --> Falta memoria para cliente" << endl;
                 continue;
             }
@@ -483,7 +478,6 @@ public:
 
             if (!thread) {
                 close(newFileDescrpt); // rechazo cliente
-                // ToDo logger...
                 cerr << "ERROR --> Falta memoria para thread de cliente" << endl;
                 continue;
             }
@@ -501,7 +495,10 @@ public:
                 free(arg);
             }
 
+
         }
+        logger.cierroServer();
+        logger.cerrarLog();
     }
 };
 
@@ -510,6 +507,7 @@ unordered_map<string, string> servidorPOO::usuarios;
 int servidorPOO::fileDescrpt;
 vector<Mensaje> servidorPOO::mensajes;
 pthread_mutex_t servidorPOO::mutex_mensajes;
+Log servidorPOO::logger(100);
 
 int main(int argc, char** argv) {
 
@@ -523,6 +521,5 @@ int main(int argc, char** argv) {
 
     servidorPOO server = servidorPOO(numPuerto, argv[1]);
     server.aceptarClientes();
-
     return 0;
 }
