@@ -160,8 +160,8 @@ void Cliente::recibir_mensajes(){
 
     cin.ignore();
 
-    char* opc = "/R/\n";
-    mandar_a_servidor(opc, strlen(opc));
+    const char* opc = "/R/\n";
+    ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
     char* linea = NULL;
     size_t len = 0;
     size_t bytesLeidos;
@@ -236,7 +236,7 @@ void Cliente::enviar(){
 void Cliente::enviarAusuario(string usuario,string linea) {
 
     const char* opc = "/E/\n";
-    size_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
+    ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
     string mensajeCompleto = usuario + "$"; //LE AGREGO EL PROTOCOLO
     mensajeCompleto+=linea;
     const char* envio = mensajeCompleto.c_str();
