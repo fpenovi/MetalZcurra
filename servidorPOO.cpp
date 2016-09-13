@@ -9,7 +9,7 @@
 #include "auxiliares.h"
 #include "Mensaje.h"
 #include "Log.h"
-#define MAX_CLIENTS 5
+#define MAX_CLIENTS 6
 
 using namespace std;
 
@@ -134,7 +134,7 @@ private:
         string user_s(user);
         string pass_s(pass);
 
-        if(esValido(user_s, pass_s)){
+        if (esValido(user_s, pass_s)){
             arg->user = user;
             arg->clave = pass;
             return true;
@@ -168,10 +168,8 @@ private:
         ssize_t bytesEscritos = write(sockNewFileDescrpt, textoUsuarios, strlen(textoUsuarios));
         delete textoUsuarios;
 
-        if (bytesEscritos < 0) {
+        if (bytesEscritos < 0)
             perror("ERROR --> No se pudo responder al cliente");
-
-        }
     }
 
     static void kickearUsuario(argthread_t* arg) {
@@ -292,7 +290,9 @@ private:
 
         if (result != 0)
             perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
         logger.loggearRecepcion(receptor);
+
         for (it = mensajes.begin(); it != mensajes.end();) {
             if (it->getNameReceptor() == receptor) {
                 string nombreDelEmisor = it->getNameEmisor();
@@ -306,7 +306,7 @@ private:
                 delete mensaje;
 
                 if (*bytesEscritos < 0) {
-                    perror("ERROR --> No se pudo responder al cliente");
+                    perror("ERROR --> Cliente se desconectó inesperadamente");
                     break;
                 }
                 it = mensajes.erase(it);
@@ -320,7 +320,9 @@ private:
             perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
         const char* fin = "$\n";
-        write(sockNewFileDescrpt, fin, strlen(fin));    //
+
+        if (*bytesEscritos >= 0)
+            write(sockNewFileDescrpt, fin, strlen(fin));
     }
 
     static void *procesarMensajes(void *arg) {

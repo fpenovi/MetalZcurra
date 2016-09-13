@@ -169,6 +169,9 @@ void Cliente::recibir_mensajes(){
     while (sigo) {
         bytesLeidos = getline(&linea, &len, respuestaServidor);
 
+        if (bytesLeidos < 0)
+            cout << "Se cerró el server" << endl;
+
         if (strcmp(linea,"$\n") == 0) {
 
             sigo = false;
