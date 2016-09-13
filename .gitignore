@@ -32,3 +32,6 @@ bin/
 # Ejecutables
 cliente
 servidor
+
+# Log
+log.txt
