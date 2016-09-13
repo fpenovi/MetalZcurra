@@ -103,10 +103,19 @@ private:
         size_t len = 0;
         char* user = NULL;
         char* pass = NULL;
+        size_t bytesLeidos=0;
 
         // Pido el usuario al cliente
-        getline(&user, &len, mensajeCliente);
-        getline(&pass, &len, mensajeCliente);
+        bytesLeidos=getline(&user, &len, mensajeCliente);
+        if (bytesLeidos<0){
+            perror("Sos un molesto, porque cortas ahora?\n");
+            return false;
+        }
+        bytesLeidos=getline(&pass, &len, mensajeCliente);
+        if (bytesLeidos<0){
+            perror("Sos un molesto, porque cortas ahora?\n");
+            return false;
+        }
 
         // Chequeo si el user ya esta conectado
         vector<argthread_t *>::iterator it;
@@ -161,7 +170,7 @@ private:
 
         if (bytesEscritos < 0) {
             perror("ERROR --> No se pudo responder al cliente");
-            exit(1);
+
         }
     }
 
@@ -298,7 +307,7 @@ private:
 
                 if (*bytesEscritos < 0) {
                     perror("ERROR --> No se pudo responder al cliente");
-                    exit(1);
+                    break;
                 }
                 it = mensajes.erase(it);
             }

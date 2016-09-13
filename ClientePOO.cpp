@@ -274,7 +274,7 @@ void Cliente::lorem() {
     //ToDo VERIFICAR TIPO DE DATO!!
 
     srand (time(NULL));
-    int aleatorio = (rand()%cantUsuarios)+1;//i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
+    int aleatorio = (rand()%(cantUsuarios-1))+1;//i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
     string destinatario = usuariosAenviar[aleatorio];
     // ToDo sacar todos de destinarario posible
     cout << "Le envio el lorem a " << destinatario << endl;
