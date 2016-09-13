@@ -231,6 +231,11 @@ void Cliente::enviar(){
 
     cout <<"Escriba un mensaje a: " << usuariosAenviar[opcion]<<endl;
     bytesLeidos = getline(&linea, &len, stdin);
+    if (bytesLeidos < 0) {
+        perror("ERROR --> Error stdin");
+        free(linea);
+        salir();
+    }
     enviarAusuario(usuariosAenviar[opcion],linea);
     free(linea);
 
@@ -238,13 +243,22 @@ void Cliente::enviar(){
 
 void Cliente::enviarAusuario(string usuario,string linea) {
 
-    const char* opc = "/E/\n";
+    const char *opc = "/E/\n";
     ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
+    if (bytesEsc < 0) {
+        perror("ERROR --> Has sido desconectado del servidor");
+        salir();
+    }
+
     string mensajeCompleto = usuario + "$"; //LE AGREGO EL PROTOCOLO
-    mensajeCompleto+=linea;
-    const char* envio = mensajeCompleto.c_str();
+    mensajeCompleto += linea;
+    const char *envio = mensajeCompleto.c_str();
 
     bytesEsc = write(sockFileDescrpt, envio, mensajeCompleto.size());
+    if (bytesEsc < 0) {
+        perror("ERROR --> Has sido desconectado del servidor");
+        salir();
+    }
     //recibir_de_servidor(); //esto estaria recibiendo el tick ---> hace lento el lorem ipsum tambien
 }
 
