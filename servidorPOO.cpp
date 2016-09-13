@@ -322,7 +322,10 @@ private:
         const char* fin = "$\n";
 
         if (*bytesEscritos >= 0)
-            write(sockNewFileDescrpt, fin, strlen(fin));
+            if (write(sockNewFileDescrpt, fin, strlen(fin)) < 0 ) {
+                perror("ERROR --> Escritura de fin de mensajes");
+                // ToDo logger
+            }
     }
 
     static void *procesarMensajes(void *arg) {
@@ -336,7 +339,10 @@ private:
 
         // Registro del usuario
         if (!pedirLogin(mensajeCliente, (argthread_t *) arg)) {
-            write(sockNewFileDescrpt, "fallo la conexion al sistema.\n", 30);
+            if (write(sockNewFileDescrpt, "fallo la conexion al sistema.\n", 30) < 0 ) {
+                perror("ERROR --> No se pudo informar de error al cliente");
+                // ToDo logger
+            }
             fclose(mensajeCliente);
             close(sockNewFileDescrpt);
             kickearUsuario((argthread_t*) arg);
@@ -472,7 +478,7 @@ public:
         while (serverOn) {
             int newFileDescrpt = accept(fileDescrpt, (sockaddr *) &cli_addr, &pesoCli_adrr);
             if (newFileDescrpt < 0) {
-                //cerr << "ERROR --> No se pudo aceptar cliente" << endl;
+                cerr << "ERROR --> No se pudo aceptar cliente" << endl;
                 continue;
             }
 
