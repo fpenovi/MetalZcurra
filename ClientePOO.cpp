@@ -270,23 +270,22 @@ void Cliente::lorem() {
     }
 
     cin.ignore();
-    char *linea = NULL;
     size_t len = 0;
     size_t bytesLeidos;
 
     int frecuencia;
-    char* caca = NULL;
+    char* linea = NULL;
 
 
     cout << "Cuantos mensajes quiere enviar por segundo?"<<endl;
-    bytesLeidos = getline(&caca, &len, stdin);
-    frecuencia = atoi(caca);
-    caca=NULL;
+    bytesLeidos = getline(&linea, &len, stdin);
+    frecuencia = atoi(linea);
+    linea=NULL;
     //cin >> frecuencia;
     int cantidad;
     cout << "Cuantos mensajes quieren enviar?"<<endl;
-    bytesLeidos = getline(&caca, &len, stdin);
-    cantidad = atoi(caca);
+    bytesLeidos = getline(&linea, &len, stdin);
+    cantidad = atoi(linea);
     //cin >> cantidad;
     //ToDo VERIFICAR TIPO DE DATO!!
 
@@ -297,7 +296,6 @@ void Cliente::lorem() {
     cout << "Le envio el lorem a " << destinatario << endl;
     len = 0;
     int tam =(rand()%200)+1;
-    char buffer[tam + 2];
     int contador = 0;
     size_t bytesEsc = 0;
 
