@@ -88,22 +88,31 @@ void Cliente::asignarFD(){
     respuestaServidor = fdopen(sockFileDescrpt, "r");
 }
 
-void Cliente::recibir_de_servidor(){
+void* Cliente::recibir_de_servidor(void* arg) {
     char *linea=NULL;
     size_t len = 0;
     size_t bytesLeidos;
     char respuesta[1];
 
-    read(sockFileDescrpt,respuesta,1);
-    //bytesLeidos = getline(&linea, &len, respuestaServidor);
+    //FILE* respuestaServidor2 = fdopen(FDprueba,"r");
 
-    if (bytesLeidos < 0) {
-        perror("ERROR --> leyendo de socket");
-        free(linea);
-        exit(1);
+    while (1) {
+
+        bytesLeidos = read(FDprueba, respuesta, 1);
+        //bytesLeidos = getline(&linea, &len, respuestaServidor2);
+
+        cout << respuesta;
+
+        if (bytesLeidos < 0) {
+            perror("ERROR --> leyendo de socket");
+            //free(linea);
+            exit(1);
+        }
+
+        //free(linea);
+        //linea = NULL;
     }
-
-    //free(linea);
+    free(linea);
 }
 
 void Cliente::recibir_usuarios_de_servidor(){
@@ -353,6 +362,7 @@ void Cliente::lorem() {
     }
     delete(texto);
     archivo.close();
+    pthread_cancel(listenerThread);
 }
 
 void Cliente::liberar(){
