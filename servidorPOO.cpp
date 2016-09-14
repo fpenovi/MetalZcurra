@@ -44,6 +44,7 @@ private:
     static unordered_map<string, string> usuarios;
     static vector<Mensaje> mensajes;
     static pthread_mutex_t mutex_mensajes;
+    static pthread_mutex_t mutex_login;
     static Log logger;
 
     static void *controlInput(void *serverStatus) {
@@ -108,14 +109,17 @@ private:
         // Pido el usuario al cliente
         bytesLeidos=getline(&user, &len, mensajeCliente);
         if (bytesLeidos<0){
-            perror("Sos un molesto, porque cortas ahora?\n");
+            perror("ERROR --> Al leer nombre de usuario\n");
             return false;
         }
         bytesLeidos=getline(&pass, &len, mensajeCliente);
         if (bytesLeidos<0){
-            perror("Sos un molesto, porque cortas ahora?\n");
+            perror("ERROR --> Al leer contrasena\n");
             return false;
         }
+
+         int result = pthread_mutex_lock(&mutex_login);
+         if (result != 0) perror("Fallo el pthread_mutex_lock en login");
 
         // Chequeo si el user ya esta conectado
         vector<argthread_t *>::iterator it;
@@ -125,6 +129,8 @@ private:
                     cout << user << "Ya esta conectado" << endl;
                     free(user);
                     free(pass);
+                    result = pthread_mutex_unlock(&mutex_login);
+                    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
                     return false;
                 }
             }
@@ -137,12 +143,16 @@ private:
         if (esValido(user_s, pass_s)){
             arg->user = user;
             arg->clave = pass;
+            result = pthread_mutex_unlock(&mutex_login);
+            if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
             return true;
         }
 
         cout << "User o pass fallidos" << endl;
         free(user);
         free(pass);
+        result = pthread_mutex_unlock(&mutex_login);
+        if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         return false;
     }
 
@@ -424,6 +434,7 @@ public:
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
         mutex_mensajes = PTHREAD_MUTEX_INITIALIZER;
+        mutex_login = PTHREAD_MUTEX_INITIALIZER;
 
 
         // Creo thread de CONTROL
@@ -478,7 +489,8 @@ public:
         while (serverOn) {
             int newFileDescrpt = accept(fileDescrpt, (sockaddr *) &cli_addr, &pesoCli_adrr);
             if (newFileDescrpt < 0) {
-                cerr << "ERROR --> No se pudo aceptar cliente" << endl;
+                // cerr << "ERROR --> No se pudo aceptar cliente" << endl;
+                // ToDo logger
                 continue;
             }
 
@@ -524,6 +536,7 @@ unordered_map<string, string> servidorPOO::usuarios;
 int servidorPOO::fileDescrpt;
 vector<Mensaje> servidorPOO::mensajes;
 pthread_mutex_t servidorPOO::mutex_mensajes;
+pthread_mutex_t servidorPOO::mutex_login;
 Log servidorPOO::logger(100);
 
 int main(int argc, char** argv) {
