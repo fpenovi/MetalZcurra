@@ -282,7 +282,11 @@ private:
         }
 
         agregarMensaje(arg->user, linea, *bytesLeidos);
-        //bytesEscritos = write(sockNewFileDescrpt, "\n", 1); Esto es lo que hacia lento el lorem...
+        ssize_t bytesEscritos = write((arg)->clientFD, "Z\n", 2); // Esto es lo que hacia lento el lorem...
+
+        if (bytesEscritos < 0)
+            perror("Agus la concha de tu vieja");
+
         return true;
 
     }

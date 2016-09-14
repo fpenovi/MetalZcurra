@@ -26,6 +26,9 @@ class Cliente {
         bool estado;
         char port[8];
         char IP[8];
+        pthread_t listenerThread;
+        pthread_attr_t attr;
+        static int FDprueba;
     public:
 
         Cliente(char** argv);
@@ -41,7 +44,7 @@ class Cliente {
 
     void asignarFD();
 
-    void recibir_de_servidor();
+    static void* recibir_de_servidor(void* arg);
 
     void recibir_usuarios_de_servidor();
 

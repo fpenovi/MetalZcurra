@@ -88,21 +88,25 @@ void Cliente::asignarFD(){
     respuestaServidor = fdopen(sockFileDescrpt, "r");
 }
 
-void Cliente::recibir_de_servidor(){
+void* Cliente::recibir_de_servidor(void* arg) {
     char *linea=NULL;
     size_t len = 0;
     size_t bytesLeidos;
-    char respuesta[1];
+    char respuesta[2];
 
-    read(sockFileDescrpt,respuesta,1);
-    //bytesLeidos = getline(&linea, &len, respuestaServidor);
+    while (1) {
 
-    if (bytesLeidos < 0) {
-        perror("ERROR --> leyendo de socket");
-        free(linea);
-        exit(1);
+        bytesLeidos = read(FDprueba, respuesta, 2);
+        //bytesLeidos = getline(&linea, &len, respuestaServidor);
+
+        cout << respuesta << endl;
+
+        if (bytesLeidos < 0) {
+            perror("ERROR --> leyendo de socket");
+            free(linea);
+            exit(1);
+        }
     }
-
     //free(linea);
 }
 
@@ -269,6 +273,19 @@ void Cliente::lorem() {
         return;
     }
 
+    /////// PRUEBA THREAD
+
+    bzero(&attr, sizeof(attr));
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+
+    if (pthread_create(&listenerThread, &attr, recibir_de_servidor, NULL) != 0){
+        pthread_attr_destroy(&attr);
+    }
+
+    ///////////////////
+
     cin.ignore();
     char *linea = NULL;
     size_t len = 0;
@@ -381,6 +398,7 @@ void Cliente::activar_socket(){
     numPuerto = atoi(port);
     // Creo el socket para el cliente
     sockFileDescrpt = socket(AF_INET, SOCK_STREAM, 0);
+    FDprueba = sockFileDescrpt;
 
     if (sockFileDescrpt < 0) {
         perror("ERROR --> abriendo socket");
@@ -454,6 +472,10 @@ void Cliente::conectar() {
     return;
 
 }
+
+
+int Cliente::FDprueba;
+
 
 int main(int argc, char** argv) {
         Cliente cliente(argv);
