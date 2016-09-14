@@ -382,7 +382,7 @@ private:
                 break;
             }
 
-            cout << "debug: Mensaje recibido del cliente: " << linea;
+            // cout << "debug: Mensaje recibido del cliente: " << linea;
 
             // Opcion enviar mensaje
             if (strcmp(linea, "/E/\n") == 0) {

@@ -259,7 +259,7 @@ void Cliente::enviarAusuario(string usuario,string linea) {
         perror("ERROR --> Has sido desconectado del servidor");
         salir();
     }
-    //recibir_de_servidor(); //esto estaria recibiendo el tick ---> hace lento el lorem ipsum tambien
+    //recibir_de_servidor(); //esto estaria recibiendo el tick
 }
 
 void Cliente::lorem() {
@@ -460,13 +460,16 @@ void Cliente::conectar() {
 }
 
 int main(int argc, char** argv) {
-        Cliente cliente(argv);
-        if (argc < 3) {
-            fprintf(stderr, "Modo de Uso: %s IP-hostname puerto\n", argv[0]);
-            exit(0);
-        }
-        while (true){
-            cliente.mostrar_menu();
-        }
+
+    if (argc < 3) {
+        fprintf(stderr, "Modo de Uso: %s IP-hostname puerto\n", argv[0]);
+        exit(0);
+    }
+
+    Cliente cliente(argv);
+
+    while (true){
+        cliente.mostrar_menu();
+    }
 
 }
