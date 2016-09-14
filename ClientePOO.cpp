@@ -273,21 +273,20 @@ void Cliente::lorem() {
     size_t len = 0;
     size_t bytesLeidos;
 
-    int frecuencia;
+    double frecuencia;
     char* linea = NULL;
 
 
-    cout << "Cuantos mensajes quiere enviar por segundo?"<<endl;
+    cout << "Que frecuencia quiere usar?"<<endl;
     bytesLeidos = getline(&linea, &len, stdin);
-    frecuencia = atoi(linea);
+    frecuencia = atof(linea);
     linea=NULL;
-    //cin >> frecuencia;
+    //cin >> frecuencmaia;
     int cantidad;
     cout << "Cuantos mensajes quieren enviar?"<<endl;
     bytesLeidos = getline(&linea, &len, stdin);
     cantidad = atoi(linea);
     //cin >> cantidad;
-    //ToDo VERIFICAR TIPO DE DATO!!
 
     srand (time(NULL));
     int aleatorio = (rand()%(cantUsuarios-1))+1;//i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
@@ -321,6 +320,12 @@ void Cliente::lorem() {
     clock_t tiempoQuePaso;
     clock_t restante;
     clock_t aEsperar;
+    //double tiempoXsegundo;
+    double segundo=1000000;
+    //if (frecuencia>0 && frecuencia<1){
+    segundo = segundo/frecuencia;
+    frecuencia=1;
+    //}
     while (enviados<cantidad){
 
         if (i == texto->size())
@@ -335,10 +340,10 @@ void Cliente::lorem() {
             largomsg=0;
         }
         if (yaEnviados == frecuencia){
-            cout<<"ya se han enviado "<<frecuencia<<" mensajes"<<endl;
+            //cout<<"ya se han enviado "<<frecuencia<<" mensajes"<<endl;
             tiempoQuePaso = clock() - tiempo;
 
-            restante = 1000000 - tiempoQuePaso;
+            restante = segundo - tiempoQuePaso;
 
             aEsperar=clock()+restante;
 
@@ -351,6 +356,7 @@ void Cliente::lorem() {
         i++;
         largomsg++;
     }
+    cout << "fin lorem"<<endl;
     delete(texto);
     archivo.close();
 }

@@ -108,12 +108,12 @@ private:
 
         // Pido el usuario al cliente
         bytesLeidos=getline(&user, &len, mensajeCliente);
-        if (bytesLeidos<0){
+        if (bytesLeidos<=0){
             perror("ERROR --> Al leer nombre de usuario\n");
             return false;
         }
         bytesLeidos=getline(&pass, &len, mensajeCliente);
-        if (bytesLeidos<0){
+        if (bytesLeidos<=0){
             perror("ERROR --> Al leer contrasena\n");
             return false;
         }
@@ -276,13 +276,13 @@ private:
     static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos) {
 
         if (*bytesLeidos < 0) {
-            cout << "(CUANDO LLEGO A ESTA LINEA?) SE DESCONECTÓ " << arg->user << endl;
+            cout << " SE DESCONECTÓ " << arg->user << endl;
             free(linea);
             return false;
         }
 
         agregarMensaje(arg->user, linea, *bytesLeidos);
-        //bytesEscritos = write(sockNewFileDescrpt, "\n", 1); Esto es lo que hacia lento el lorem...
+        //bytesEscritos = write(sockNewFileDescrpt, "\n", 1);
         return true;
 
     }
