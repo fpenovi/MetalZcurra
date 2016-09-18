@@ -31,7 +31,7 @@ class Cliente {
         Cliente(char** argv);
 
 
-    void enviarAusuario(string usuario,string linea);
+    void enviarAusuario(string usuario, string linea, bool debePedirRespuesta);
 
     void solicitarUserClave();
 
@@ -46,6 +46,10 @@ class Cliente {
     void recibir_usuarios_de_servidor();
 
     void recibir_mensajes();
+
+    bool heuristicaDeMensajes(size_t msjActual, size_t msjsTotales);
+
+    void corroborarConexionConServer();
 
     void desconectar();
 

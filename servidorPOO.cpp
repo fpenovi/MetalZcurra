@@ -282,7 +282,6 @@ private:
         }
 
         agregarMensaje(arg->user, linea, *bytesLeidos);
-        //bytesEscritos = write(sockNewFileDescrpt, "\n", 1);
         return true;
 
     }
@@ -382,7 +381,7 @@ private:
                 break;
             }
 
-            // cout << "debug: Mensaje recibido del cliente: " << linea;
+            cout << "debug: Mensaje recibido del cliente: " << linea;
 
             // Opcion enviar mensaje
             if (strcmp(linea, "/E/\n") == 0) {
@@ -410,6 +409,18 @@ private:
                 userDesc.erase(userDesc.length()-1);
                 logger.loggearDesconexionNormal(userDesc);
                 cout << "\033[32mSe desconectó BIEN \033[32m" << ((argthread_t*) arg)->user << "\033[0m";
+                break;
+            }
+
+            else if (strcmp(linea, "/Z/\n") == 0) {
+                if ((bytesEscritos = write(sockNewFileDescrpt, "/Z/\n", 4)) <= 0) {
+                    cout << "El cliente se desconecto del servidor1" << endl;
+                    break;
+                }
+            }
+
+            else {
+                cout << "El cliente se desconecto del servidor2" << endl;
                 break;
             }
 

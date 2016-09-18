@@ -160,17 +160,22 @@ void Cliente::recibir_mensajes(){
 
     cin.ignore();
 
+    corroborarConexionConServer();
+
     const char* opc = "/R/\n";
     ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
     char* linea = NULL;
     size_t len = 0;
     size_t bytesLeidos;
     bool sigo = true;
+
     while (sigo) {
         bytesLeidos = getline(&linea, &len, respuestaServidor);
 
-        if (bytesLeidos < 0)
-            cout << "Se cerró el server" << endl;
+        if (bytesLeidos <= 0) {
+            perror("ERROR --> Se cerró el server");
+            salir();
+        }
 
         if (strcmp(linea,"$\n") == 0) {
 
@@ -200,6 +205,32 @@ void Cliente::salir(){
         desconectar();
     }
     exit(0);
+}
+
+bool Cliente::heuristicaDeMensajes(size_t msjActual, size_t msjsTotales) {
+    return ( (msjsTotales == 1) ? true : (msjActual % msjsTotales) == 0 );
+}
+
+void Cliente::corroborarConexionConServer() {
+
+    ssize_t bytesLeidos;
+    ssize_t bytesEsc;
+    char respuesta[4];
+
+    // Envio un pedido de respuesta al servidor para checkear que sigo conectado
+    bytesEsc = write(sockFileDescrpt, "/Z/\n", 4);
+
+    if (bytesEsc <= 0) {
+        perror("ERROR --> Has sido desconectado del servidor1");
+        salir();
+    }
+
+    bytesLeidos = read(sockFileDescrpt, respuesta, 4);
+
+    if (bytesLeidos <= 0 || strcmp(respuesta, "/Z/\n") != 0) {
+        perror("ERROR --> Has sido desconectado del servidor2");
+        salir();
+    }
 }
 
 void Cliente::enviar(){
@@ -236,17 +267,26 @@ void Cliente::enviar(){
         free(linea);
         salir();
     }
-    enviarAusuario(usuariosAenviar[opcion],linea);
+    enviarAusuario(usuariosAenviar[opcion], linea, heuristicaDeMensajes(1, 1));
     free(linea);
 
 }
 
-void Cliente::enviarAusuario(string usuario,string linea) {
+void Cliente::enviarAusuario(string usuario, string linea, bool debePedirRespuesta) {
 
+    ssize_t bytesLeidos;
+    ssize_t bytesEsc;
+    char respuesta[4];
     const char *opc = "/E/\n";
-    ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
+
+    if (debePedirRespuesta)
+        corroborarConexionConServer();
+
+    // Mando el protocolo de ENVIO
+    bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
+
     if (bytesEsc < 0) {
-        perror("ERROR --> Has sido desconectado del servidor");
+        perror("ERROR --> Has sido desconectado del servidor2");
         salir();
     }
 
@@ -254,12 +294,14 @@ void Cliente::enviarAusuario(string usuario,string linea) {
     mensajeCompleto += linea;
     const char *envio = mensajeCompleto.c_str();
 
+
     bytesEsc = write(sockFileDescrpt, envio, mensajeCompleto.size());
-    if (bytesEsc < 0) {
+
+    if (bytesEsc <= 0) {
         perror("ERROR --> Has sido desconectado del servidor");
         salir();
     }
-    //recibir_de_servidor(); //esto estaria recibiendo el tick
+
 }
 
 void Cliente::lorem() {
@@ -306,6 +348,8 @@ void Cliente::lorem() {
     string mensaje;
     size_t i =0;
 
+    corroborarConexionConServer();
+
     while(i < cantidad){
         getline(archivo,mensaje);
         *texto += mensaje;
@@ -334,8 +378,8 @@ void Cliente::lorem() {
         if (largomsg == tam) {
             mensaje+="\n";
             yaEnviados++;
-            enviarAusuario(destinatario,mensaje);
-            enviados++;
+            enviarAusuario(destinatario, mensaje, heuristicaDeMensajes(++enviados, cantidad));
+            //enviados++;
             mensaje = "";
             largomsg=0;
         }
