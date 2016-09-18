@@ -215,7 +215,7 @@ void Cliente::corroborarConexionConServer() {
 
     ssize_t bytesLeidos;
     ssize_t bytesEsc;
-    char respuesta[4];
+    char respuesta[10];
 
     // Envio un pedido de respuesta al servidor para checkear que sigo conectado
     bytesEsc = write(sockFileDescrpt, "/Z/\n", 4);
@@ -225,10 +225,37 @@ void Cliente::corroborarConexionConServer() {
         salir();
     }
 
-    bytesLeidos = read(sockFileDescrpt, respuesta, 4);
+    // Initialize file descriptor sets
+    fd_set read_fds, write_fds, except_fds;
+    FD_ZERO(&read_fds);
+    FD_ZERO(&write_fds);
+    FD_ZERO(&except_fds);
+    FD_SET(sockFileDescrpt, &read_fds);
 
-    if (bytesLeidos <= 0 || strcmp(respuesta, "/Z/\n") != 0) {
-        perror("ERROR --> Has sido desconectado del servidor2");
+    // Seteo el timeout a 5 segundos
+    struct timeval timeout;
+    timeout.tv_sec = 5;
+    timeout.tv_usec = 0;
+
+    // Wait for input to become ready or until the time out; the first parameter is
+    // 1 more than the largest file descriptor in any of the sets
+    if (int rv = select(sockFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1)
+    {
+        bzero(respuesta, 10);
+        bytesLeidos = read(sockFileDescrpt, respuesta, 10);
+
+        if (bytesLeidos <= 0 || strcmp(respuesta, "/Z/\n") != 0) {
+            perror("ERROR --> Has sido desconectado del servidor2");
+            salir();
+        }
+    }
+    else if(rv == 0)
+    {
+        perror("ERROR --> timeout");
+        salir();
+    }
+    else{
+        perror("ERROR --> select");
         salir();
     }
 }
