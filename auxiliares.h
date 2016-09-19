@@ -10,5 +10,9 @@ using namespace std;
 // al atender a un nuevo cliente.
 typedef struct argthread argthread_t;
 
+// Funcion de latido que corre en el thread de HeartBeat. Es la encargada de mandar un mensaje
+// Al FD pasado por parametro cada N segundos para mantener viva la conexión con el servidor.
+void* heartBeatFunc(void* fd);
 
 #endif //METALZCURRA_AUXILIARES_H
+// 45827266
