@@ -8,13 +8,14 @@
 #include <fstream>
 #include <unistd.h>
 #include <time.h>
+
 using namespace std;
 
 Cliente::Cliente(char** argv){
     name = NULL;
     clave = NULL;
+    heartbeat = NULL;
     sockFileDescrpt = 0;
-    //thread = NULL;
     FILE* respuestaServidor = NULL;
     estado=false;
 
@@ -25,7 +26,6 @@ Cliente::Cliente(char** argv){
     strcpy(IP,aux.c_str());
     aux= argv[2];
     strcpy(port,aux.c_str());
-
 }
 
 void Cliente::solicitarUserClave(){
@@ -192,11 +192,12 @@ void Cliente::recibir_mensajes(){
 }
 
 void Cliente::desconectar(){
-    if (estado == false) {
+    if (!estado) {
         perror("El cliente ya se encuentra desconectado");
         return;
     }
     write(sockFileDescrpt, "/D/\n", 4);
+    heartbeat->Off();
     liberar();
 }
 
@@ -445,6 +446,7 @@ void Cliente::liberar(){
         close(sockFileDescrpt);
         fclose(respuestaServidor);
     }
+    delete heartbeat;
     estado = false;
 
 }
@@ -521,6 +523,8 @@ void Cliente::conectar() {
         return;
     }
     activar_socket();
+    heartbeat = new Heartbeat(sockFileDescrpt);
+    heartbeat->On();
     asignarFD();
     // solicito usuario y contrasena al cliente
     solicitarUserClave();

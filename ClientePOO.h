@@ -11,25 +11,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unordered_map>
+#include "Heartbeat.h"
 
 using namespace std;
 
 class Cliente {
-    private:
-        // atributos
-        char* name;
-        char* clave;
-        int sockFileDescrpt;
-        int cantUsuarios;
-        FILE* respuestaServidor;
-        unordered_map<int, string> usuariosAenviar; //hash de usuarios
-        bool estado;
-        char port[8];
-        char IP[8];
-    public:
 
-        Cliente(char** argv);
+private:
+    char* name;
+    char* clave;
+    int sockFileDescrpt;
+    int cantUsuarios;
+    FILE* respuestaServidor;
+    unordered_map<int, string> usuariosAenviar; //hash de usuarios
+    bool estado;
+    char port[8];
+    char IP[8];
+	Heartbeat* heartbeat;
 
+public:
+    Cliente(char** argv);
 
     void enviarAusuario(string usuario, string linea, bool debePedirRespuesta);
 
