@@ -30,7 +30,7 @@ public:
 };
 
 
-class servidorPOO {
+class Servidor {
 
 private:
     static int fileDescrpt;
@@ -437,7 +437,7 @@ private:
     }
 
 public:
-    servidorPOO(unsigned short int numPuerto, string nombreArchivo) {
+    Servidor(unsigned short int numPuerto, string nombreArchivo) {
 
         nombreArchivoCsv = nombreArchivo;
         bzero(&attr, sizeof(attr));
@@ -542,13 +542,13 @@ public:
     }
 };
 
-vector<argthread_t*> servidorPOO::conectados;
-unordered_map<string, string> servidorPOO::usuarios;
-int servidorPOO::fileDescrpt;
-vector<Mensaje> servidorPOO::mensajes;
-pthread_mutex_t servidorPOO::mutex_mensajes;
-pthread_mutex_t servidorPOO::mutex_login;
-Log servidorPOO::logger(100);
+vector<argthread_t*> Servidor::conectados;
+unordered_map<string, string> Servidor::usuarios;
+int Servidor::fileDescrpt;
+vector<Mensaje> Servidor::mensajes;
+pthread_mutex_t Servidor::mutex_mensajes;
+pthread_mutex_t Servidor::mutex_login;
+Log Servidor::logger(100);
 
 int main(int argc, char** argv) {
 
@@ -560,7 +560,7 @@ int main(int argc, char** argv) {
 
     unsigned short int numPuerto = (unsigned short) strtoull(argv[2], NULL, 0);
 
-    servidorPOO server = servidorPOO(numPuerto, argv[1]);
+    Servidor server = Servidor(numPuerto, argv[1]);
     server.aceptarClientes();
     return 0;
 }

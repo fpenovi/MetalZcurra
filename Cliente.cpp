@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <netdb.h>
 #include <string.h>
-#include "ClientePOO.h"
+#include "Cliente.h"
 #include <pthread.h>
 #include <unordered_map>
 #include <fstream>

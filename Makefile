@@ -16,10 +16,10 @@ all : cliente servidor
 
 
 cliente :
-	$(CC) ClientePOO.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o cliente
+	$(CC) Cliente.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o cliente
 
 servidor :
-	$(CC) servidorPOO.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidor
+	$(CC) Servidor.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidor
 
 clean : servidor cliente
 	rm servidor
