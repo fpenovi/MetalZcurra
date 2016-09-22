@@ -19,7 +19,8 @@ void* heartBeatFunc(void* fd) {
 			char output[128];
 			strftime(output,128,"%d/%m/%y %H:%M:%S ",tlocal);
 			string horaYFecha(output);
-			cout << "Holas " << output << endl;
+			//cout << "Holas " << output << endl; --> cout no es thread safe... esto caga el MENU
+			printf("Holas %s\n", output);
 			start = clock();
 		}
 	}

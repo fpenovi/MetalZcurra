@@ -60,7 +60,7 @@ void Cliente::mandar_a_servidor(char* linea, int largo){
     }
 }
 
-void Cliente::mandar_credencial_a_servidor(){
+bool Cliente::mandar_credencial_a_servidor(){
 
     char *linea=NULL;
     size_t len = 0;
@@ -75,13 +75,13 @@ void Cliente::mandar_credencial_a_servidor(){
         printf("%s", linea);
         free(linea);
         liberar();
-        return;
+        return false;
     }
     free(linea);
     estado = true;
     cout<<"La conexion con el servidor fue exitosa"<<endl;
     recibir_usuarios_de_servidor();
-
+    return true;
 }
 
 void Cliente::asignarFD(){
@@ -523,15 +523,14 @@ void Cliente::conectar() {
         return;
     }
     activar_socket();
-    heartbeat = new Heartbeat(sockFileDescrpt);
-    heartbeat->On();
     asignarFD();
     // solicito usuario y contrasena al cliente
     solicitarUserClave();
     //mando el usuario y clave al servidor y manejo respuesta
-    mandar_credencial_a_servidor();
-    return;
-
+    if (mandar_credencial_a_servidor()) {
+        heartbeat = new Heartbeat(sockFileDescrpt);
+        heartbeat->On();
+    }
 }
 
 int main(int argc, char** argv) {

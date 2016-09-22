@@ -22,7 +22,7 @@ class Heartbeat {
 
 private:
 	int sockFileDesc;
-	pthread_t heartBeatTh;
+	pthread_t* heartBeatTh;
 	bool isOn;
 
 public:

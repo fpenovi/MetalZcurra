@@ -38,7 +38,7 @@ public:
 
     void mandar_a_servidor(char* linea, int largo);
 
-    void mandar_credencial_a_servidor();
+    bool mandar_credencial_a_servidor();
 
     void asignarFD();
 
