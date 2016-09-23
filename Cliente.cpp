@@ -279,7 +279,7 @@ void Cliente::enviar(){
 
     size_t len = 0;
     char* linea = NULL;
-    size_t bytesLeidos = getline(&linea, &len, stdin);
+    ssize_t bytesLeidos = getline(&linea, &len, stdin);
 
     int opcion = atoi(linea);
     if (opcion > cantUsuarios || opcion <= 0) {
@@ -494,6 +494,7 @@ void Cliente::mostrar_menu() {
     string opcion;
     ssize_t bytesLeidos;
     size_t len = 0;
+
     while (true) {
         cout<<endl;
         cout<<"\033[1;31m//////////////////\033[0m"<<endl;
@@ -507,12 +508,13 @@ void Cliente::mostrar_menu() {
         cout<<endl;
 
         cin >> opcion;
-        if (opcion=="1") conectar() ;
+
+        if (opcion=="1") conectar();
         else if (opcion=="2") desconectar();
-        else if (opcion=="3") salir() ;
+        else if (opcion=="3") salir();
         else if (opcion=="4") enviar();
-        else if (opcion=="5") recibir_mensajes() ;
-        else if (opcion=="6") lorem() ;
+        else if (opcion=="5") recibir_mensajes();
+        else if (opcion=="6") lorem();
         else printf("Intente otra vez\n");
     }
 }
