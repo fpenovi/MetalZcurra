@@ -3,6 +3,7 @@
 
 #include <pthread.h>
 #include <stdexcept>
+#include "auxiliares.h"
 
 using namespace std;
 
@@ -23,14 +24,22 @@ class Heartbeat {
 private:
 	int sockFileDesc;
 	pthread_t* heartBeatTh;
+	arghb_t* argHeartB;
 	bool isOn;
+	bool isPaused;
 
 public:
 	Heartbeat(int FD);
 
+	~Heartbeat();
+
 	void On();
 
 	void Off();
+
+	void Pause();
+
+	void Resume();
 };
 
 
