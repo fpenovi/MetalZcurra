@@ -377,7 +377,7 @@ private:
 
         while (true) {
 
-            timeout.tv_sec = 5;
+            timeout.tv_sec = 10;
             timeout.tv_usec = 0;
 
             if (int rv = select(sockNewFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
