@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <time.h>
+#include <chrono>
 #include "auxiliares.h"
 
 using namespace std;
@@ -19,16 +20,24 @@ void* heartBeatFunc(void* arghb) {
 	bool* ishbOn = (((arghb_t*) arghb)->ishbOn);
 	bool* ishbPaused = (((arghb_t*) arghb)->ishbPaused);
 
-	clock_t start = clock();
+	std::chrono::time_point<std::chrono::system_clock> start;
+
+	start = std::chrono::system_clock::now();
 
 	while (*ishbOn) {
 
-		if ( (clock() - start) / CLOCKS_PER_SEC >= 5 ) {
+		std::chrono::time_point<std::chrono::system_clock> actual;
+		actual = std::chrono::system_clock::now();
+
+		std::chrono::duration<double> elapsed_seconds = actual.time_since_epoch() - start.time_since_epoch();
+
+		if ( (elapsed_seconds.count()) >= 5 ) {
 
 			if (*ishbOn && !(*ishbPaused))
 				write(FD, "/H/\n", 4);
 
-			start = clock();
+			start = std::chrono::system_clock::now();
+
 		}
 	}
 

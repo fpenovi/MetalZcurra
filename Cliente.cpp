@@ -91,7 +91,7 @@ void Cliente::asignarFD(){
 void Cliente::recibir_de_servidor(){
     char *linea=NULL;
     size_t len = 0;
-    size_t bytesLeidos;
+    ssize_t bytesLeidos;
     char respuesta[1];
 
     read(sockFileDescrpt,respuesta,1);
@@ -110,7 +110,7 @@ void Cliente::recibir_usuarios_de_servidor(){
 
     char *linea=NULL;
     size_t len = 0;
-    size_t bytesLeidos;
+    ssize_t bytesLeidos;
 
     bytesLeidos = getline(&linea, &len, respuestaServidor);
     if (bytesLeidos < 0) {
@@ -166,7 +166,7 @@ void Cliente::recibir_mensajes(){
     ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
     char* linea = NULL;
     size_t len = 0;
-    size_t bytesLeidos;
+    ssize_t bytesLeidos;
     bool sigo = true;
 
     while (sigo) {
@@ -344,7 +344,7 @@ void Cliente::lorem() {
 
     cin.ignore();
     size_t len = 0;
-    size_t bytesLeidos;
+    ssize_t bytesLeidos;
 
     double frecuencia;
     char* linea = NULL;
