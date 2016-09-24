@@ -240,8 +240,8 @@ void Cliente::corroborarConexionConServer() {
 
     // Wait for input to become ready or until the time out; the first parameter is
     // 1 more than the largest file descriptor in any of the sets
-    if (int rv = select(sockFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1)
-    {
+    if (int rv = select(sockFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
+
         bzero(respuesta, 10);
         bytesLeidos = read(sockFileDescrpt, respuesta, 10);
 
@@ -307,6 +307,8 @@ void Cliente::enviarAusuario(string usuario, string linea, bool debePedirRespues
     char respuesta[4];
     const char *opc = "/E/\n";
 
+    heartbeat->Pause();
+
     if (debePedirRespuesta)
         corroborarConexionConServer();
 
@@ -330,6 +332,7 @@ void Cliente::enviarAusuario(string usuario, string linea, bool debePedirRespues
         salir();
     }
 
+    heartbeat->Resume();
 }
 
 void Cliente::lorem() {

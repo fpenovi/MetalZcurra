@@ -49,13 +49,7 @@ void Heartbeat::Off() {
 	if (!isOn)
 		return;
 
-	/*if (pthread_cancel(*heartBeatTh) != 0)
-		throw NoSePudoCerrarThreadHeartBeatException();*/
-
-
 	isOn = false;
-	delete heartBeatTh;
-	heartBeatTh = NULL;
 }
 
 void Heartbeat::Pause() {

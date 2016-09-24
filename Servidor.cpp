@@ -367,60 +367,92 @@ private:
         cout << "\033[1m\033[32mSe conectó \033[1m\033[32m" << ((argthread_t *) arg)->user << "\033[0m";
         mandarUsuarios(sockNewFileDescrpt);     // Mando lista de usuarios al cliente por unica vez
 
+        // SETEO RESTRICCION DE TIMEOUT PARA EL PEDIDO DE INSTRUCCION/MENSAJES
+        fd_set read_fds, write_fds, except_fds;
+        FD_ZERO(&read_fds);
+        FD_ZERO(&write_fds);
+        FD_ZERO(&except_fds);
+        FD_SET(sockNewFileDescrpt, &read_fds);
+        struct timeval timeout;
+
         while (true) {
 
-            // Primer getline para recibir instruccion
-            bytesLeidos = getline(&linea, &len, mensajeCliente);
+            timeout.tv_sec = 5;
+            timeout.tv_usec = 0;
 
-            if (bytesLeidos < 0) {
+            if (int rv = select(sockNewFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
+
+                // Primer getline para recibir instruccion
+                bytesLeidos = getline(&linea, &len, mensajeCliente);
+
+                if (bytesLeidos < 0) {
+                    string userDesc(((argthread_t *) arg)->user);
+                    userDesc.erase(userDesc.length()-1);
+                    logger.loggearDesconexionViolenta(userDesc);
+                    cout << "\033[1;31mSe desconectó MAL " << ((argthread_t *) arg)->user << "\033[0m";
+                    free(linea);
+                    break;
+                }
+
+                cout << "debug: Mensaje recibido del cliente: " << linea;
+
+                // Opcion enviar mensaje
+                if (strcmp(linea, "/E/\n") == 0) {
+                    free(linea);
+                    linea = NULL;
+                    bytesLeidos = getline(&linea, &len, mensajeCliente);
+
+                    // ENVIO MENSAJE
+                    if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos) )
+                        break;
+                }
+
+                    // Opcion recibir msjs
+                else if (strcmp(linea, "/R/\n") == 0) {
+                    free(linea);
+                    linea = NULL;
+                    recibirMensajes((argthread_t*) arg, &bytesEscritos, sockNewFileDescrpt);
+                }
+
+                    // Desconecto al cliente desde el servidor
+                else if (strcmp(linea, "/D/\n") == 0) {
+                    free(linea);
+                    linea = NULL;
+                    string userDesc(((argthread_t *) arg)->user);
+                    userDesc.erase(userDesc.length()-1);
+                    logger.loggearDesconexionNormal(userDesc);
+                    cout << "\033[32mSe desconectó BIEN \033[32m" << ((argthread_t*) arg)->user << "\033[0m";
+                    break;
+                }
+
+                else if (strcmp(linea, "/Z/\n") == 0) {
+                    if ((bytesEscritos = write(sockNewFileDescrpt, "/Z/\n", 4)) <= 0) {
+                        cout << "El cliente se desconecto del servidor1" << endl;
+                        break;
+                    }
+                }
+
+                else if (strcmp(linea, "/H/\n") == 0) {
+                    free(linea);
+                    linea = NULL;
+                }
+
+                else {
+                    cout << "El cliente se desconecto del servidor2" << endl;
+                    free(linea);
+                    linea = NULL;
+                    break;
+                }
+
+            }
+
+            else if (rv == 0) {
+                cout << "\033[1;31mSe perdió la conexión con " << ((argthread_t *) arg)->user << "\033[0m";
                 string userDesc(((argthread_t *) arg)->user);
                 userDesc.erase(userDesc.length()-1);
                 logger.loggearDesconexionViolenta(userDesc);
-                cout << "\033[1;31mSe desconectó MAL " << ((argthread_t *) arg)->user << "\033[0m";
-                free(linea);
-                break;
-            }
-
-            cout << "debug: Mensaje recibido del cliente: " << linea;
-
-            // Opcion enviar mensaje
-            if (strcmp(linea, "/E/\n") == 0) {
                 free(linea);
                 linea = NULL;
-                bytesLeidos = getline(&linea, &len, mensajeCliente);
-
-                // ENVIO MENSAJE
-                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos) )
-                    break;
-            }
-
-            // Opcion recibir msjs
-            else if (strcmp(linea, "/R/\n") == 0) {
-                free(linea);
-                linea = NULL;
-                recibirMensajes((argthread_t*) arg, &bytesEscritos, sockNewFileDescrpt);
-            }
-
-            // Desconecto al cliente desde el servidor
-            else if (strcmp(linea, "/D/\n") == 0) {
-                free(linea);
-                linea = NULL;
-                string userDesc(((argthread_t *) arg)->user);
-                userDesc.erase(userDesc.length()-1);
-                logger.loggearDesconexionNormal(userDesc);
-                cout << "\033[32mSe desconectó BIEN \033[32m" << ((argthread_t*) arg)->user << "\033[0m";
-                break;
-            }
-
-            else if (strcmp(linea, "/Z/\n") == 0) {
-                if ((bytesEscritos = write(sockNewFileDescrpt, "/Z/\n", 4)) <= 0) {
-                    cout << "El cliente se desconecto del servidor1" << endl;
-                    break;
-                }
-            }
-
-            else {
-                cout << "El cliente se desconecto del servidor2" << endl;
                 break;
             }
 
