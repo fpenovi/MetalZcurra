@@ -58,6 +58,7 @@ private:
             if (input.compare("*") == 0) {
                 *((bool *) serverStatus) = false;
                 cerrarConexiones();
+                sleep(2);
                 shutdown(fileDescrpt, SHUT_RDWR);
                 return NULL;
             }
@@ -185,10 +186,16 @@ private:
     static void kickearUsuario(argthread_t* arg) {
 
         vector<argthread_t*>::iterator it;
+
+        int result = pthread_mutex_lock(&mutex_login);
+        if (result != 0) perror("Fallo el pthread_mutex_lock en kick");
+
         for (it = conectados.begin(); it != conectados.end();) {
 
             if (it.operator*()->user == NULL){
                 it = conectados.erase(it);
+                result = pthread_mutex_unlock(&mutex_login);
+                if (result != 0) perror("Fallo el pthread_mutex_unlock en kick");
                 return;
             }
 
@@ -197,12 +204,17 @@ private:
                     free(it.operator*()->user);
                     free(it.operator*()->clave);
                     it = conectados.erase(it);
+                    result = pthread_mutex_unlock(&mutex_login);
+                    if (result != 0) perror("Fallo el pthread_mutex_unlock en kick");
                     return;
                 }
             }
 
             it++;
         }
+
+        result = pthread_mutex_unlock(&mutex_login);
+        if (result != 0) perror("Fallo el pthread_mutex_unlock en kick");
     }
 
     static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo) {
