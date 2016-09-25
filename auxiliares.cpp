@@ -3,7 +3,6 @@
 #include <chrono>
 #include <signal.h>
 #include "auxiliares.h"
-#include "Cliente.h"
 
 using namespace std;
 
@@ -12,7 +11,6 @@ struct arghb {
 	int* fd;
 	bool* ishbOn;
 	bool* ishbPaused;
-	//Cliente* client;
 };
 
 
@@ -21,7 +19,6 @@ void* heartBeatFunc(void* arghb) {
 	int FD = *(((arghb_t*) arghb)->fd);
 	bool* ishbOn = (((arghb_t*) arghb)->ishbOn);
 	bool* ishbPaused = (((arghb_t*) arghb)->ishbPaused);
-	//Cliente clienteAux = *(((arghb_t*) arghb)->client);
 
 	std::chrono::time_point<std::chrono::system_clock> start;
 
@@ -57,7 +54,8 @@ void* heartBeatFunc(void* arghb) {
 
 					if (bytesEscritos < 0) {
 						perror("ERROR --> No se pudo enviar el heartbeat");
-						//clienteAux.salir();
+						close(FD);
+						exit(1);
 					}
 				}
 
