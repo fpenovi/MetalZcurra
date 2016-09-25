@@ -35,38 +35,14 @@ void* heartBeatFunc(void* arghb) {
 
 			if (*ishbOn && !(*ishbPaused)) {
 
-				// Initialize file descriptor sets
-				fd_set read_fds, write_fds, except_fds;
-				FD_ZERO(&read_fds);
-				FD_ZERO(&write_fds);
-				FD_ZERO(&except_fds);
-				FD_SET(FD, &write_fds);
+				signal(SIGPIPE, SIG_IGN);
+				ssize_t bytesEscritos = write(FD, "/H/\n", 4);
 
-				// Seteo el timeout a 5 segundos
-				struct timeval timeout;
-				timeout.tv_sec = 5;
-				timeout.tv_usec = 0;
-
-				if (int rv = select(FD + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
-
-					signal(SIGPIPE, SIG_IGN);
-					ssize_t bytesEscritos = write(FD, "/H/\n", 4);
-
-					if (bytesEscritos < 0) {
-						perror("ERROR --> No se pudo enviar el heartbeat (Desconexion con el servidor)");
-						close(FD);
-						exit(1);
-					}
+				if (bytesEscritos < 0) {
+					perror("ERROR --> No se pudo enviar el heartbeat (Desconexion con el servidor)");
+					close(FD);
+					exit(1);
 				}
-
-				else if(rv == 0)
-				{
-					perror("ERROR --> timeout");
-				}
-				else{
-					perror("ERROR --> select");
-				}
-
 			}
 			start = std::chrono::system_clock::now();
 
