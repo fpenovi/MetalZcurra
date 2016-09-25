@@ -380,6 +380,7 @@ private:
             timeout.tv_sec = 10;
             timeout.tv_usec = 0;
 
+            // Uso el select para esperar el heartbeat del cliente
             if (int rv = select(sockNewFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
                 // Primer getline para recibir instruccion
                 bytesLeidos = getline(&linea, &len, mensajeCliente);

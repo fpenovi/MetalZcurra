@@ -8,6 +8,7 @@
 #include <fstream>
 #include <unistd.h>
 #include <time.h>
+#include <signal.h>
 
 using namespace std;
 
@@ -313,10 +314,11 @@ void Cliente::enviarAusuario(string usuario, string linea, bool debePedirRespues
         corroborarConexionConServer();
 
     // Mando el protocolo de ENVIO
+    signal(SIGPIPE, SIG_IGN);
     bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
 
     if (bytesEsc < 0) {
-        perror("ERROR --> Has sido desconectado del servidor2");
+        perror("ERROR --> Has sido desconectado del servidor");
         salir();
     }
 
@@ -324,7 +326,8 @@ void Cliente::enviarAusuario(string usuario, string linea, bool debePedirRespues
     mensajeCompleto += linea;
     const char *envio = mensajeCompleto.c_str();
 
-
+    // Mando el destino y el mensaje
+    signal(SIGPIPE, SIG_IGN);
     bytesEsc = write(sockFileDescrpt, envio, mensajeCompleto.size());
 
     if (bytesEsc <= 0) {

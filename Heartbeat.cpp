@@ -1,6 +1,5 @@
 #include "Heartbeat.h"
 
-
 using namespace std;
 
 struct arghb {
