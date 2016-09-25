@@ -53,7 +53,7 @@ void* heartBeatFunc(void* arghb) {
 					ssize_t bytesEscritos = write(FD, "/H/\n", 4);
 
 					if (bytesEscritos < 0) {
-						perror("ERROR --> No se pudo enviar el heartbeat");
+						perror("ERROR --> No se pudo enviar el heartbeat (Desconexion con el servidor)");
 						close(FD);
 						exit(1);
 					}
