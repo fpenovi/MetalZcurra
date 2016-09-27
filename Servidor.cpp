@@ -58,7 +58,7 @@ private:
             if (input.compare("*") == 0) {
                 *((bool *) serverStatus) = false;
                 cerrarConexiones();
-                sleep(2);
+                usleep(100000);
                 shutdown(fileDescrpt, SHUT_RDWR);
                 return NULL;
             }
