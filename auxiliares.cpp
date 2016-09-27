@@ -20,16 +20,16 @@ void* heartBeatFunc(void* arghb) {
 	bool* ishbOn = (((arghb_t*) arghb)->ishbOn);
 	bool* ishbPaused = (((arghb_t*) arghb)->ishbPaused);
 
-	std::chrono::time_point<std::chrono::system_clock> start;
+	chrono::time_point<chrono::system_clock> start;
 
-	start = std::chrono::system_clock::now();
+	start = chrono::system_clock::now();
 
 	while (*ishbOn) {
 
-		std::chrono::time_point<std::chrono::system_clock> actual;
-		actual = std::chrono::system_clock::now();
+		chrono::time_point<chrono::system_clock> actual;
+		actual = chrono::system_clock::now();
 
-		std::chrono::duration<double> elapsed_seconds = actual.time_since_epoch() - start.time_since_epoch();
+		chrono::duration<double> elapsed_seconds = actual.time_since_epoch() - start.time_since_epoch();
 
 		if ( (elapsed_seconds.count()) >= 5 ) {
 
@@ -44,7 +44,7 @@ void* heartBeatFunc(void* arghb) {
 					exit(1);
 				}
 			}
-			start = std::chrono::system_clock::now();
+			start = chrono::system_clock::now();
 
 		}
 	}
