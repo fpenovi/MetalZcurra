@@ -7,10 +7,11 @@
 #include <unordered_map>
 #include <fstream>
 #include <unistd.h>
-#include <time.h>
 #include <signal.h>
+#include <chrono>
 
 using namespace std;
+using namespace chrono;
 
 Cliente::Cliente(char** argv){
     name = NULL;
@@ -349,92 +350,88 @@ void Cliente::lorem() {
     size_t len = 0;
     ssize_t bytesLeidos;
 
-    double frecuencia;
+    int frecuencia;
     char* linea = NULL;
 
 
     cout << "Que frecuencia quiere usar?"<<endl;
     bytesLeidos = getline(&linea, &len, stdin);
-    frecuencia = atof(linea);
-    linea=NULL;
-    //cin >> frecuencmaia;
+    frecuencia = atoi(linea);
+    linea = NULL;
     int cantidad;
     cout << "Cuantos mensajes quieren enviar?"<<endl;
     bytesLeidos = getline(&linea, &len, stdin);
     cantidad = atoi(linea);
-    //cin >> cantidad;
 
-    srand (time(NULL));
-    int aleatorio = (rand()%(cantUsuarios-1))+1;//i-1=cantidad de usuarios de 0 a i, +1= que no cuente al 0
+    srand(time(NULL));
+    int aleatorio = ( rand() % (cantUsuarios - 1) ) + 1;
     string destinatario = usuariosAenviar[aleatorio];
-    // ToDo sacar todos de destinarario posible
+
     cout << "Le envio el lorem a " << destinatario << endl;
     len = 0;
-    int tam =(rand()%200)+1;
+    int tam = (rand() % 200) + 1;
     int contador = 0;
     size_t bytesEsc = 0;
 
     ifstream archivo;
     archivo.open("lorem.txt");
-    int can=0;
+    int can = 0;
 
     string* texto = new string;
     string mensaje;
-    size_t i =0;
+    size_t i = 0;
 
     corroborarConexionConServer();
 
-    while(i < cantidad){
-        getline(archivo,mensaje);
+    // Leo el archivo y lo cargo en RAM
+    while (i < cantidad){
+        getline(archivo, mensaje);
         *texto += mensaje;
         i++;
     }
-    int yaEnviados=0;
+
     i = 0;
-    size_t enviados=0;
+    size_t enviados = 0;
     mensaje = "";
-    size_t largomsg = 0;
-    clock_t tiempo = clock();
-    clock_t tiempoQuePaso;
-    clock_t restante;
-    clock_t aEsperar;
-    //double tiempoXsegundo;
-    double segundo=1000000;
-    //if (frecuencia>0 && frecuencia<1){
-    segundo = segundo/frecuencia;
-    frecuencia=1;
-    //}
-    while (enviados<cantidad){
 
-        if (i == texto->size())
-            i = 0;
+    int64_t SEGUNDO_nano = 1000000000;              // un segundo en nanosegundos
+    nanoseconds intervalo(SEGUNDO_nano/frecuencia);
 
-        if (largomsg == tam) {
-            mensaje+="\n";
-            yaEnviados++;
-            enviarAusuario(destinatario, mensaje, heuristicaDeMensajes(++enviados, cantidad));
-            //enviados++;
-            mensaje = "";
-            largomsg=0;
-        }
-        if (yaEnviados == frecuencia){
-            //cout<<"ya se han enviado "<<frecuencia<<" mensajes"<<endl;
-            tiempoQuePaso = clock() - tiempo;
+    time_point<high_resolution_clock> start;
+    start = high_resolution_clock::now();
 
-            restante = segundo - tiempoQuePaso;
+    while (enviados < cantidad) {
 
-            aEsperar=clock()+restante;
+        time_point<high_resolution_clock> actual;
+        actual = high_resolution_clock::now();
 
-            while (aEsperar>clock());
-            yaEnviados=0;
-            tiempo = clock();
+        auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
+        auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
+
+        if (elapsed_ms.count() >= intervalo.count()) {
+
+            // Si ya recorri el texto y tengo que comenzar desde el principio
+            if (i == texto->size())
+                i = 0;
+
+            // Debo mandar la linea
+            if (mensaje.size() == tam) {
+                mensaje += "\n";
+                enviarAusuario(destinatario, mensaje, heuristicaDeMensajes(++enviados, cantidad));
+                mensaje = "";
+            }
+
+            start = high_resolution_clock::now();
         }
 
-        mensaje+=(*texto)[i];
-        i++;
-        largomsg++;
+        // Solo agrego letra al mensaje si le falta para alcanzar su tamano
+        if (mensaje.size() < tam) {
+            mensaje += (*texto)[i];
+            i++;
+        }
     }
-    cout << "fin lorem"<<endl;
+
+    cout << "fin lorem" << endl;
     delete(texto);
     archivo.close();
 }
