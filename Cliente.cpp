@@ -406,13 +406,9 @@ void Cliente::lorem() {
         actual = high_resolution_clock::now();
 
         auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
-        auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
+        auto elapsed_ns = duration_cast<nanoseconds>(deltaTiempo);
 
-        if (elapsed_ms.count() >= intervalo.count()) {
-
-            // Si ya recorri el texto y tengo que comenzar desde el principio
-            if (i == texto->size())
-                i = 0;
+        if (elapsed_ns.count() >= intervalo.count()) {
 
             // Debo mandar la linea
             if (mensaje.size() == tam) {
@@ -428,6 +424,10 @@ void Cliente::lorem() {
         if (mensaje.size() < tam) {
             mensaje += (*texto)[i];
             i++;
+
+            // Si ya recorri el texto y tengo que comenzar desde el principio
+            if (i == texto->size())
+                i = 0;
         }
     }
 
