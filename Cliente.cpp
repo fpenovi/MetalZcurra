@@ -211,7 +211,7 @@ void Cliente::salir(){
 }
 
 bool Cliente::heuristicaDeMensajes(size_t msjActual, size_t msjsTotales) {
-    return ( (msjsTotales == 1) ? true : (msjActual % msjsTotales) == 0 );
+    return ( (msjsTotales == 1)); //? true : (msjActual % msjsTotales) == 0 );
 }
 
 void Cliente::corroborarConexionConServer() {
