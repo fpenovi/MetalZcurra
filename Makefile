@@ -1,5 +1,7 @@
 #OBJS specifies which files to compile as part of the project
 OBJS = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp
+OBJS2 = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp Cliente.cpp Textura.cpp VistaMarco.cpp
+
 
 #CC specifies which compiler we're using
 CC = g++
@@ -10,17 +12,17 @@ COMPILER_FLAGS = -std=c++11
 
 #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS = -pthread
+LINKER_FLAGS2 = -pthread -lSDL2 -lSDL2_image
+
+all : juego servidor
 
 
-all : cliente servidor
-
-
-cliente :
-	$(CC) Cliente.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o cliente
+juego :
+	$(CC) Juego.cpp $(OBJS2) $(COMPILER_FLAGS) $(LINKER_FLAGS2) -o juego
 
 servidor :
 	$(CC) Servidor.cpp $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o servidor
 
-clean : servidor cliente
+clean :
 	rm servidor
-	rm cliente
+	rm juego

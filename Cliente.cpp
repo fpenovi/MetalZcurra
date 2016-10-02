@@ -36,7 +36,7 @@ void Cliente::solicitarUserClave(){
 
     printf("Ingrese nombre de usuario:");
 
-    cin.ignore();
+    //cin.ignore();
 
 
     bytesLeidos = getline(&(name), &largo, stdin);
@@ -70,7 +70,7 @@ bool Cliente::mandar_credencial_a_servidor(){
     mandar_a_servidor(name,strlen(name));
     mandar_a_servidor(clave,strlen(clave));
 
-    size_t bytesLeidos = getline(&linea, &len, respuestaServidor);
+    ssize_t bytesLeidos = getline(&linea, &len, respuestaServidor);
 
     //este cmp es re negro
     if (strcmp(linea, "fallo la conexion al sistema.\n") == 0) {
@@ -160,7 +160,7 @@ void Cliente::recibir_mensajes(){
         return;
     }
 
-    cin.ignore();
+    //cin.ignore();
 
     corroborarConexionConServer();
 
@@ -274,7 +274,7 @@ void Cliente::enviar(){
     imprimir_usuarios();
     cout<<endl;
 
-    cin.ignore();
+    //cin.ignore();
 
     printf("Elija una opcion: ");
     cout<<endl;
@@ -346,7 +346,7 @@ void Cliente::lorem() {
         return;
     }
 
-    cin.ignore();
+    //cin.ignore();
     size_t len = 0;
     ssize_t bytesLeidos;
 
@@ -538,7 +538,7 @@ void Cliente::conectar() {
     }
 }
 
-int main(int argc, char** argv) {
+/*int main(int argc, char** argv) {
 
     if (argc < 3) {
         fprintf(stderr, "Modo de Uso: %s IP-hostname puerto\n", argv[0]);
@@ -551,4 +551,4 @@ int main(int argc, char** argv) {
         cliente.mostrar_menu();
     }
 
-}
+}*/

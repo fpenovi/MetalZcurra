@@ -93,6 +93,7 @@ private:
     }
 
     static bool esValido(string usuario, string clave) {
+        cout << usuario << " " << clave << endl;
         usuario.erase(usuario.length() - 1);
         if (usuarios.find(usuario) == usuarios.end())
             return false;
