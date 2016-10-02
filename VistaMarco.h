@@ -1,0 +1,8 @@
+//
+// Created by juancho on 02/10/16.
+//
+
+#ifndef METALZCURRA_VISTAMARCO_H
+#define METALZCURRA_VISTAMARCO_H
+
+#endif //METALZCURRA_VISTAMARCO_H

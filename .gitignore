@@ -30,8 +30,11 @@ bin/
 .ant-targets-build.xml
 
 # Ejecutables
-cliente
 servidor
+juego
 
 # Log
 log.txt
+
+# Archivos editables de Gimp
+*.xcf
