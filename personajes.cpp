@@ -8,6 +8,8 @@ using namespace std;
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
+const int LEVEL_WIDTH = 4500;
+const int LEVEL_HEIGHT = 480;
 SDL_Renderer* renderizador;
 SDL_Window* ventana;
 
@@ -25,7 +27,6 @@ class Textura
 			textura = NULL;
 			ancho = 0;
 			alto = 0;
-			renderizador = NULL;
 		}
 
 		//Deallocates memory
@@ -33,12 +34,13 @@ class Textura
 			free();
 		}
 
-		//Loads image at specified path
+		//Cargar una imagen en la textura
 		bool cargarImagen( std::string path){
+
 			//elimino cualquier textura
 			free();
 
-			//Aca guardo la ultima
+			//Aca voy a guardar la ultima
 			SDL_Texture* texturaFinal = NULL;
 
 			//Cargo la imagen
@@ -46,11 +48,10 @@ class Textura
 			if( imagenCargada == NULL ){
 				printf( "IMPOSIBLE CARGAR IMAGEN %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
 			}
-
 			else
 			{
-				//Si la imagen tiene un fondito de color se la saca (creo)
-				SDL_SetColorKey( imagenCargada, SDL_TRUE, SDL_MapRGB( imagenCargada->format, 0, 0xFF, 0xFF ) );
+				//Si la imagen tiene un fondito de color se la saca
+				SDL_SetColorKey( imagenCargada, SDL_TRUE, SDL_MapRGB( imagenCargada->format,0xFF, 0xFF, 0xFF ) );
 
 				//Create texture from surface pixels
 		        texturaFinal = SDL_CreateTextureFromSurface( renderizador, imagenCargada );
@@ -93,8 +94,8 @@ class Textura
 
 			//Set clip rendering dimensions
 			if( clip != NULL ){
-				renderQuad.w = clip->w+30;
-				renderQuad.h = clip->h+40;
+				renderQuad.w = clip->w;
+				renderQuad.h = clip->h;
 			}
 
 			//ESTO LO PONE EN PANTALLA
@@ -119,29 +120,31 @@ class Personaje
 		int ancho, alto;
 		const static int ANIMACION_PARADO=3;
 		const static int ANIMACION_CORRIENDO=9;
-		const static int ANIMACION_SALTANDO=12;
+		const static int ANIMACION_SALTANDO=10;
 		SDL_Rect spriteParado[ ANIMACION_PARADO ];
 		SDL_Rect spriteCorriendo[ ANIMACION_CORRIENDO ];
 		SDL_Rect spriteSaltando[ ANIMACION_SALTANDO ];
 
-		int frameCorriendo = 0;
-		int frameParado = 0;
-		bool derecha = true;
-		bool quieto = true;
-		bool saltando = false;
-		bool subiendo = false;
-		bool bajando = false;
-		int frameSaltando=0;
+		int frameCorriendo;
+		int frameParado;
+		bool derecha;
+		bool quieto;
+		bool saltando ;
+		bool subiendo;
+		bool bajando;
+		int frameSaltando;
 
 		//velocidad del personaje
 		int velx;
 		int vely;
-		Textura TEXTURA_PERSONAJE;
-		bool imagCargada = false;
+		Textura TEXTURA_PERSONAJE_PARADO;
+		Textura TEXTURA_PERSONAJE_SALTANDO;
+		Textura TEXTURA_PERSONAJE_CORRIENDO;
+		const static int Personaje_VEL = 5;
+		const static int Personaje_VEL_Y = 4;
 
     public:
-		static const int Personaje_VEL = 5;
-		static const int Personaje_VEL_Y = 7;
+		
 		//Initializes the variables
 		Personaje(){
 			posx = 0;
@@ -151,9 +154,14 @@ class Personaje
 			frameCorriendo=0;
 			frameParado=0;
 			frameSaltando=0;
-
 			velx = 0;
 			vely = 0;
+			derecha = true;
+			quieto = true;
+			saltando = false;
+			subiendo = false;
+			bajando = false;
+			frameSaltando=0;
 		}
 
 		//maneja los eventos
@@ -198,14 +206,14 @@ class Personaje
 		    posx += velx;
 
 		    //Que no salga de la pantalla
-		    if( ( posx < 0 ) || ( posx + ancho > SCREEN_WIDTH ) )
+		    if( ( posx < 0 ) || ( posx + ancho > LEVEL_WIDTH ) )
 		    {
 		        posx -= velx;
 		    }
 
 			posy += vely;
 
-		    if( ( posy < 0 ) || ( posy + alto > SCREEN_HEIGHT ) )
+		    if( ( posy < 0 ) || ( posy + alto > LEVEL_HEIGHT ) )
 		    {
 		        //Move back
 		        posy -= vely;
@@ -217,12 +225,22 @@ class Personaje
 			return true;
 		}
 
-		void animacionParado(){
+		void render(bool seMovio, int camx, int camy){
+			if (seMovio==true){
+					animacionCorrer(camx,camy);
+				} 
+				else {
+					animacionParado(camx,camy);
+				}
+				if (estaSaltando()) animacionSaltando(camx,camy);
+		}
+
+		void animacionParado(int camx,int camy){
 			if (saltando) return;
 			SDL_RendererFlip flip = SDL_FLIP_NONE;
 			if (!derecha) flip = SDL_FLIP_HORIZONTAL;
 			SDL_Rect* currentClip = &spriteParado[ frameParado / 9];
-			TEXTURA_PERSONAJE.render(posx,posy, currentClip,0,NULL,flip );;
+			TEXTURA_PERSONAJE_PARADO.render(posx-camx,posy-camy, currentClip,0,NULL,flip );;
 
 			++frameParado;
 
@@ -232,32 +250,29 @@ class Personaje
 			}
 			
 		}
-		void animacionCorrer(){
-			//if (saltando) return;
+		void animacionCorrer(int camx,int camy){
+			if (saltando) return;
 			SDL_RendererFlip flip = SDL_FLIP_NONE;
 			if (!derecha) {
 				flip = SDL_FLIP_HORIZONTAL;
 			}
 			SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo /3 ];
-			TEXTURA_PERSONAJE.render( posx, posy, currentClip,0,NULL,flip);
+			TEXTURA_PERSONAJE_CORRIENDO.render( posx-camx, posy-camy, currentClip,0,NULL,flip);
 			++frameCorriendo;
 			if( frameCorriendo /3 >= ANIMACION_CORRIENDO ){
 				frameCorriendo = 0;
 			}
 		}
 
-		int animacionSaltando(){
-
-			SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
-			SDL_RenderClear( renderizador );
+		int animacionSaltando(int camx,int camy){
 			SDL_RendererFlip flip = SDL_FLIP_NONE;
 			if (!derecha) {
 				flip = SDL_FLIP_HORIZONTAL;
 			}
-			SDL_Rect* currentClip = &spriteSaltando[ frameSaltando/2 ];
-			TEXTURA_PERSONAJE.render( posx, posy, currentClip,0,NULL,flip);
+			SDL_Rect* currentClip = &spriteSaltando[ frameSaltando/4 ];
+			TEXTURA_PERSONAJE_SALTANDO.render( posx-camx, posy-camy, currentClip,0,NULL,flip);
 			
-			if (frameSaltando/2  >= ANIMACION_SALTANDO/2){
+			if (frameSaltando/4  >= ANIMACION_SALTANDO/2){
 				subiendo=false;
 				bajando= true;
 				posy+=Personaje_VEL_Y;
@@ -268,459 +283,109 @@ class Personaje
 				posy-=Personaje_VEL_Y;
 			}
 			++frameSaltando;
-			SDL_RenderPresent( renderizador );
-			if( frameSaltando/2 == ANIMACION_SALTANDO ){
+			if( frameSaltando/4 == ANIMACION_SALTANDO ){
 				frameSaltando = 0;
 				saltando=false;
 				bajando= false;
 			}
 		}
 
-		Textura getTextura(){
-			return TEXTURA_PERSONAJE;
-		}
-
-		bool cargarImagenSprites(){
+		bool cargarImagen(){
 			//Loading success flag
 			bool success = true;
+			int i;
 
 			//Load sprite sheet texture
-			if( !TEXTURA_PERSONAJE.cargarImagen( "imag/marco/marco.png") )
+			if( !TEXTURA_PERSONAJE_PARADO.cargarImagen( "imag/marco/quieto3.png") )
 			{
-				printf( "Fallo\n" );
+				printf( "Fallo sprite parado\n" );
 				success = false;
 			}
 			else
 			{
 				//SPRITE PARADO
-				spriteParado[ 0 ].x = 4;
-				spriteParado[ 0 ].y = 0;
-				spriteParado[ 0 ].w = 30;
-				spriteParado[ 0 ].h = 40;
-
-				spriteParado[ 1 ].x =  35;
-				spriteParado[ 1 ].y =   0;
-				spriteParado[ 1 ].w =  29;
-				spriteParado[ 1 ].h = 40;
-				
-				spriteParado[ 2 ].x = 64;
-				spriteParado[ 2 ].y =   0;
-				spriteParado[ 2 ].w =  29;
-				spriteParado[ 2 ].h = 40;
-
-
-				//SPRITE CORRIENDO
-				spriteCorriendo[ 0 ].x = 107;
-				spriteCorriendo[ 0 ].y = 0;
-				spriteCorriendo[ 0 ].w = 30;
-				spriteCorriendo[ 0 ].h = 40;
-
-				spriteCorriendo[ 1 ].x =  139;
-				spriteCorriendo[ 1 ].y =   0;
-				spriteCorriendo[ 1 ].w =  28;
-				spriteCorriendo[ 1 ].h = 40;
-				
-				spriteCorriendo[ 2 ].x = 168;
-				spriteCorriendo[ 2 ].y =   0;
-				spriteCorriendo[ 2 ].w =  32;
-				spriteCorriendo[ 2 ].h = 40;
-
-				spriteCorriendo[ 3 ].x = 201;
-				spriteCorriendo[ 3 ].y = 0;
-				spriteCorriendo[ 3 ].w = 32;
-				spriteCorriendo[ 3 ].h = 40;
-
-				spriteCorriendo[ 4 ].x =  235;
-				spriteCorriendo[ 4 ].y =   0;
-				spriteCorriendo[ 4 ].w =  27;
-				spriteCorriendo[ 4 ].h = 40;
-				
-				spriteCorriendo[ 5 ].x = 266;
-				spriteCorriendo[ 5 ].y =   0;
-				spriteCorriendo[ 5 ].w =  29;
-				spriteCorriendo[ 5 ].h = 40;
-
-				spriteCorriendo[ 6 ].x = 298;
-				spriteCorriendo[ 6 ].y = 0;
-				spriteCorriendo[ 6 ].w = 32;
-				spriteCorriendo[ 6 ].h = 40;
-
-				spriteCorriendo[ 7 ].x =  330;
-				spriteCorriendo[ 7 ].y =   0;
-				spriteCorriendo[ 7 ].w =  36;
-				spriteCorriendo[ 7 ].h = 40;
-				
-				spriteCorriendo[ 8 ].x = 366;
-				spriteCorriendo[ 8 ].y =   0;
-				spriteCorriendo[ 8 ].w =  31;
-				spriteCorriendo[ 8 ].h = 40;
-
-				//sprites saltando
-				spriteSaltando[ 0 ].x=3;
-				spriteSaltando[ 0 ].y=189;
-				spriteSaltando[ 0 ].w=29;
-				spriteSaltando[ 0 ].h=48;
-
-				spriteSaltando[ 1 ].x=32;
-				spriteSaltando[ 1 ].y=190;
-				spriteSaltando[ 1 ].w=29;
-				spriteSaltando[ 1 ].h=46;
-
-				spriteSaltando[ 2 ].x=63;
-				spriteSaltando[ 2 ].y=191;
-				spriteSaltando[ 2 ].w=29;
-				spriteSaltando[ 2 ].h=44;
-
-				spriteSaltando[ 3 ].x=94;
-				spriteSaltando[ 3 ].y=192;
-				spriteSaltando[ 3 ].w=29;
-				spriteSaltando[ 3 ].h=39;
-
-				spriteSaltando[ 4 ].x=124;
-				spriteSaltando[ 4 ].y=193;
-				spriteSaltando[ 4 ].w=29;
-				spriteSaltando[ 4 ].h=37;
-
-				spriteSaltando[ 5 ].x=156;
-				spriteSaltando[ 5 ].y=193;
-				spriteSaltando[ 5 ].w=29;
-				spriteSaltando[ 5 ].h=36;
-
-				spriteSaltando[ 6 ].x=187;
-				spriteSaltando[ 6 ].y=193;
-				spriteSaltando[ 6 ].w=29;
-				spriteSaltando[ 6 ].h=37;
-
-				spriteSaltando[ 7 ].x=218;
-				spriteSaltando[ 7 ].y=193;
-				spriteSaltando[ 7 ].w=29;
-				spriteSaltando[ 7 ].h=41;
-
-				spriteSaltando[ 8 ].x=250;
-				spriteSaltando[ 8 ].y=192;
-				spriteSaltando[ 8 ].w=29;
-				spriteSaltando[ 8 ].h=44;
-
-				spriteSaltando[ 9 ].x=282;
-				spriteSaltando[ 9 ].y=194;
-				spriteSaltando[ 9 ].w=26;
-				spriteSaltando[ 9 ].h=37;
-
-				spriteSaltando[ 10 ].x=338;
-				spriteSaltando[ 10 ].y=194;
-				spriteSaltando[ 10 ].w=28;
-				spriteSaltando[ 10 ].h=37;
-
-				spriteSaltando[ 11 ].x=368;
-				spriteSaltando[ 11 ].y=194;
-				spriteSaltando[ 11 ].w=31;
-				spriteSaltando[ 11 ].h=37;
-				imagCargada=true;
-
+				for (i = 0;i<ANIMACION_PARADO;i++){
+					spriteParado[ i ].x = i*60;
+					spriteParado[ i ].y = 0;
+					spriteParado[ i ].w = 60;
+					spriteParado[ i ].h = 80;
+				}
 			}
 
-			
-			return success;
-		}
-
-		bool cargarImagenGoku(){
-			//Loading success flag
-			bool success = true;
-
-			//Load sprite sheet texture
-			if( !TEXTURA_PERSONAJE.cargarImagen( "imag/goku/gokuss3cheto.png") )
+			if( !TEXTURA_PERSONAJE_CORRIENDO.cargarImagen( "imag/marco/corriendo2.png") )
 			{
-				printf( "Fallo\n" );
+				printf( "Fallo sprite corriendo\n" );
 				success = false;
 			}
-			else
-			{
-				//SPRITE PARADO
-				spriteParado[ 0 ].x = 473;
-				spriteParado[ 0 ].y = 186;
-				spriteParado[ 0 ].w = 50;
-				spriteParado[ 0 ].h = 75;
-
-				spriteParado[ 1 ].x = 528;
-				spriteParado[ 1 ].y = 188;
-				spriteParado[ 1 ].w = 56;
-				spriteParado[ 1 ].h = 72;
-				
-				spriteParado[ 2 ].x = 590;
-				spriteParado[ 2 ].y = 190;
-				spriteParado[ 2 ].w = 61;
-				spriteParado[ 2 ].h = 70;
-
-
-				//SPRITE CORRIENDO
-				spriteCorriendo[ 0 ].x = 331;
-				spriteCorriendo[ 0 ].y = 106;
-				spriteCorriendo[ 0 ].w = 40;
-				spriteCorriendo[ 0 ].h = 68;
-
-				spriteCorriendo[ 1 ].x =  377;
-				spriteCorriendo[ 1 ].y =   106;
-				spriteCorriendo[ 1 ].w =  67;
-				spriteCorriendo[ 1 ].h = 74;
-				
-				spriteCorriendo[ 2 ].x =  377;
-				spriteCorriendo[ 2 ].y =   106;
-				spriteCorriendo[ 2 ].w =  67;
-				spriteCorriendo[ 2 ].h = 74;
-
-				spriteCorriendo[ 3 ].x =  377;
-				spriteCorriendo[ 3 ].y =   106;
-				spriteCorriendo[ 3 ].w =  67;
-				spriteCorriendo[ 3 ].h = 74;
-
-				spriteCorriendo[ 4 ].x =  377;
-				spriteCorriendo[ 4 ].y =   106;
-				spriteCorriendo[ 4 ].w =  67;
-				spriteCorriendo[ 4 ].h = 74;
-				
-				spriteCorriendo[ 5 ].x =  377;
-				spriteCorriendo[ 5 ].y =   106;
-				spriteCorriendo[ 5 ].w =  67;
-				spriteCorriendo[ 5 ].h = 74;
-
-				spriteCorriendo[ 6 ].x =  377;
-				spriteCorriendo[ 6 ].y =   106;
-				spriteCorriendo[ 6 ].w =  67;
-				spriteCorriendo[ 6 ].h = 74;
-
-				spriteCorriendo[ 7 ].x =  377;
-				spriteCorriendo[ 7 ].y =   106;
-				spriteCorriendo[ 7 ].w =  67;
-				spriteCorriendo[ 7 ].h = 74;
-				
-				spriteCorriendo[ 8 ].x = 331;
-				spriteCorriendo[ 8 ].y = 106;
-				spriteCorriendo[ 8 ].w = 40;
-				spriteCorriendo[ 8 ].h = 68;
-
-				//sprites saltando
-				spriteSaltando[ 0 ].x=12;
-				spriteSaltando[ 0 ].y=13;
-				spriteSaltando[ 0 ].w=45;
-				spriteSaltando[ 0 ].h=80;
-
-				spriteSaltando[ 1 ].x=75;
-				spriteSaltando[ 1 ].y=14;
-				spriteSaltando[ 1 ].w=46;
-				spriteSaltando[ 1 ].h=50;
-
-				spriteSaltando[ 2 ].x=127;
-				spriteSaltando[ 2 ].y=13;
-				spriteSaltando[ 2 ].w=50;
-				spriteSaltando[ 2 ].h=47;
-
-				spriteSaltando[ 3 ].x=186;
-				spriteSaltando[ 3 ].y=10;
-				spriteSaltando[ 3 ].w=46;
-				spriteSaltando[ 3 ].h=50;
-
-				spriteSaltando[ 4 ].x=238;
-				spriteSaltando[ 4 ].y=12;
-				spriteSaltando[ 4 ].w=50;
-				spriteSaltando[ 4 ].h=48;
-
-				spriteSaltando[ 5 ].x=75;
-				spriteSaltando[ 5 ].y=14;
-				spriteSaltando[ 5 ].w=46;
-				spriteSaltando[ 5 ].h=50;
-
-				spriteSaltando[ 6 ].x=127;
-				spriteSaltando[ 6 ].y=13;
-				spriteSaltando[ 6 ].w=50;
-				spriteSaltando[ 6 ].h=47;
-
-				spriteSaltando[ 7 ].x=186;
-				spriteSaltando[ 7 ].y=10;
-				spriteSaltando[ 7 ].w=46;
-				spriteSaltando[ 7 ].h=50;
-
-				spriteSaltando[ 8 ].x=238;
-				spriteSaltando[ 8 ].y=12;
-				spriteSaltando[ 8 ].w=50;
-				spriteSaltando[ 8 ].h=48;
-
-				spriteSaltando[ 9 ].x=75;
-				spriteSaltando[ 9 ].y=14;
-				spriteSaltando[ 9 ].w=46;
-				spriteSaltando[ 9 ].h=50;7;
-
-				spriteSaltando[ 10 ].x=186;
-				spriteSaltando[ 10 ].y=10;
-				spriteSaltando[ 10 ].w=46;
-				spriteSaltando[ 10 ].h=50;
-
-				spriteSaltando[ 11 ].x=292;
-				spriteSaltando[ 11 ].y=12;
-				spriteSaltando[ 11 ].w=60;
-				spriteSaltando[ 11 ].h=86;
-				imagCargada=true;
-
+			else{
+				for (i = 0;i<ANIMACION_CORRIENDO;i++){
+					spriteCorriendo[ i ].x = i*60;
+					spriteCorriendo[ i ].y = 0;
+					spriteCorriendo[ i ].w = 60;
+					spriteCorriendo[ i ].h = 80;
+				}
 			}
 
-			
-			return success;
-		}
-
-		bool cargarImagenMegaman(){
-			//Loading success flag
-			bool success = true;
-
-			//Load sprite sheet texture
-			if( !TEXTURA_PERSONAJE.cargarImagen( "imag/megaman/megamanx.jpg") )
+			if( !TEXTURA_PERSONAJE_SALTANDO.cargarImagen( "imag/marco/saltando3.png") )
 			{
-				printf( "Fallo\n" );
+				printf( "Fallo sprite saltando\n" );
 				success = false;
 			}
-			else
-			{
-				//SPRITE PARADO
-				spriteParado[ 0 ].x = 460;
-				spriteParado[ 0 ].y = 23;
-				spriteParado[ 0 ].w = 37;
-				spriteParado[ 0 ].h = 48;
+			else{
 
-				spriteParado[ 1 ].x = 505;
-				spriteParado[ 1 ].y = 22;
-				spriteParado[ 1 ].w = 35;
-				spriteParado[ 1 ].h = 49;
-				
-				spriteParado[ 2 ].x = 550;
-				spriteParado[ 2 ].y = 22;
-				spriteParado[ 2 ].w = 35;
-				spriteParado[ 2 ].h = 50;
-
-
-				//SPRITE CORRIENDO
-				spriteCorriendo[ 0 ].x = 5;
-				spriteCorriendo[ 0 ].y = 100;
-				spriteCorriendo[ 0 ].w = 34;
-				spriteCorriendo[ 0 ].h = 44;
-
-				spriteCorriendo[ 1 ].x =  50;
-				spriteCorriendo[ 1 ].y =   100;
-				spriteCorriendo[ 1 ].w =  31;
-				spriteCorriendo[ 1 ].h = 47;
-				
-				spriteCorriendo[ 2 ].x =  90;
-				spriteCorriendo[ 2 ].y =   100;
-				spriteCorriendo[ 2 ].w =  34;
-				spriteCorriendo[ 2 ].h = 43;
-
-				spriteCorriendo[ 3 ].x =  130;
-				spriteCorriendo[ 3 ].y =   100;
-				spriteCorriendo[ 3 ].w =  38;
-				spriteCorriendo[ 3 ].h = 46;
-
-				spriteCorriendo[ 4 ].x =  170;
-				spriteCorriendo[ 4 ].y =   100;
-				spriteCorriendo[ 4 ].w =  45;
-				spriteCorriendo[ 4 ].h = 40;
-				
-				spriteCorriendo[ 5 ].x =  225;
-				spriteCorriendo[ 5 ].y =   100;
-				spriteCorriendo[ 5 ].w =  53;
-				spriteCorriendo[ 5 ].h = 34;
-
-				spriteCorriendo[ 6 ].x =  225;
-				spriteCorriendo[ 6 ].y =   100;
-				spriteCorriendo[ 6 ].w =  53;
-				spriteCorriendo[ 6 ].h = 34;
-
-				spriteCorriendo[ 7 ].x =  170;
-				spriteCorriendo[ 7 ].y =   100;
-				spriteCorriendo[ 7 ].w =  45;
-				spriteCorriendo[ 7 ].h = 40;
-				
-				spriteCorriendo[ 8 ].x =  130;
-				spriteCorriendo[ 8 ].y =   100;
-				spriteCorriendo[ 8 ].w =  38;
-				spriteCorriendo[ 8 ].h = 46;
-
-				//sprites saltando
-				spriteSaltando[ 0 ].x=5;
-				spriteSaltando[ 0 ].y=285;
-				spriteSaltando[ 0 ].w=26;
-				spriteSaltando[ 0 ].h=51;
-
-				spriteSaltando[ 1 ].x=45;
-				spriteSaltando[ 1 ].y=285;
-				spriteSaltando[ 1 ].w=23;
-				spriteSaltando[ 1 ].h=55;
-
-				spriteSaltando[ 2 ].x=85;
-				spriteSaltando[ 2 ].y=285;
-				spriteSaltando[ 2 ].w=23;
-				spriteSaltando[ 2 ].h=58;
-
-				spriteSaltando[ 3 ].x=120;
-				spriteSaltando[ 3 ].y=285;
-				spriteSaltando[ 3 ].w=27;
-				spriteSaltando[ 3 ].h=56;
-
-				spriteSaltando[ 4 ].x=120;
-				spriteSaltando[ 4 ].y=285;
-				spriteSaltando[ 4 ].w=27;
-				spriteSaltando[ 4 ].h=56;3;
-
-				spriteSaltando[ 5 ].x=120;
-				spriteSaltando[ 5 ].y=285;
-				spriteSaltando[ 5 ].w=27;
-				spriteSaltando[ 5 ].h=56;
-
-				spriteSaltando[ 6 ].x=120;
-				spriteSaltando[ 6 ].y=285;
-				spriteSaltando[ 6 ].w=27;
-				spriteSaltando[ 6 ].h=56;
-
-				spriteSaltando[ 7 ].x=120;
-				spriteSaltando[ 7 ].y=285;
-				spriteSaltando[ 7 ].w=27;
-				spriteSaltando[ 7 ].h=56;
-
-				spriteSaltando[ 8 ].x=155;
-				spriteSaltando[ 8 ].y=285;
-				spriteSaltando[ 8 ].w=34;
-				spriteSaltando[ 8 ].h=53;
-
-				spriteSaltando[ 9 ].x=195;
-				spriteSaltando[ 9 ].y=285;
-				spriteSaltando[ 9 ].w=32;
-				spriteSaltando[ 9 ].h=54;
-
-				spriteSaltando[ 10 ].x=235;
-				spriteSaltando[ 10 ].y=285;
-				spriteSaltando[ 10 ].w=30;
-				spriteSaltando[ 10 ].h=57;
-
-				spriteSaltando[ 11 ].x=272;
-				spriteSaltando[ 11 ].y=285;
-				spriteSaltando[ 11 ].w=31;
-				spriteSaltando[ 11 ].h=54;
-				imagCargada=true;
-
+				for (i = 0;i<ANIMACION_SALTANDO;i++){
+					spriteSaltando[ i ].x = i*60;
+					spriteSaltando[ i ].y = 0;
+					spriteSaltando[ i ].w = 60;
+					spriteSaltando[ i ].h = 80;
+				}
 			}
-
-			
 			return success;
-
 		}
-
 		
 
 		void liberarTextura(){
-			TEXTURA_PERSONAJE.free();
+			TEXTURA_PERSONAJE_SALTANDO.free();
+			TEXTURA_PERSONAJE_CORRIENDO.free();
+			TEXTURA_PERSONAJE_PARADO.free();
+
 		}
 		bool estaSaltando(){
 			return saltando;
 		}
+		int getX(){
+			return posx;
+		}
+		int getY(){
+			return posy;
+		}
+		int getAncho(){
+			return ancho;
+		}
+		int getAlto(){
+			return alto;
+		}
 };
 
-//class Posicion{}
+class Posicion
+{
+	private:
+		int x;
+		int y;
+		int alto;
+		int ancho;
+	public:
+		void asignarPos(int x2,int y2){
+			x=x2;
+			y=y2;
+		}
+		int getX(){
+			return x;
+		}
+		int getY(){
+			return y;
+		}
+};
 
 class Programa
 {
@@ -781,7 +446,7 @@ class Programa
 					}
 					else
 					{
-						//Initialize renderer color
+						//DRAWCOLOR ASI PONE TODO EN BLANCO
 						SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
 
 						//Initialize PNG loading
@@ -804,6 +469,7 @@ int main( int argc, char* args[] )
 	//Start up SDL and create window
 	Programa programa;
 	Personaje personaje;
+	Textura fondo;
 
 	if( !programa.iniciar() ){
 		printf( "Failed to initialize!\n" );
@@ -812,7 +478,7 @@ int main( int argc, char* args[] )
 	else
 	{
 		//Load media
-		if( !personaje.cargarImagenMegaman())
+		if( !personaje.cargarImagen() || !fondo.cargarImagen("imag/background/bg1.png"))
 		{
 			printf( "Failed to load media!\n" );
 		}
@@ -824,6 +490,7 @@ int main( int argc, char* args[] )
 			int flagCorriendo;
 			int flagQuieto;
 			bool seMovio;
+			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 			//Event handler
 			SDL_Event e;
@@ -842,23 +509,39 @@ int main( int argc, char* args[] )
 
 				}
 
-				//Borro la pantalla
-				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( renderizador );
-
 				//cambio a nueva posicion
 				seMovio = personaje.mover();
 
-				if (seMovio==true){
-					personaje.animacionCorrer();
-				} 
-				else {
-					personaje.animacionParado();
+				//Center the camera over the personaje
+				camera.x = ( personaje.getX() + personaje.getAncho() / 2 ) - SCREEN_WIDTH / 2;
+				camera.y = ( personaje.getY() + personaje.getAlto() / 2 ) - SCREEN_HEIGHT / 2;
+
+				//Keep the camera in bounds
+				if( camera.x < 0 )
+				{ 
+					camera.x = 0;
+				}
+				if( camera.y < 0 )
+				{
+					camera.y = 0;
+				}
+				if( camera.x > LEVEL_WIDTH - camera.w )
+				{
+					camera.x = LEVEL_WIDTH - camera.w;
+				}
+				if( camera.y > LEVEL_HEIGHT - camera.h )
+				{
+					camera.y = LEVEL_HEIGHT - camera.h;
 				}
 
-				if (personaje.estaSaltando()) personaje.animacionSaltando();
+				//Borro la pantalla
+				//DRAWCOLOR ASI PONE TODO EN BLANCO
+				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear( renderizador );
 
-				//Update screen
+				//Render background
+				fondo.render( 0, 0, &camera );
+				personaje.render(seMovio,camera.x,camera.y);
 				SDL_RenderPresent( renderizador );
 			}
 		}
