@@ -9,6 +9,7 @@
 #include "auxiliares.h"
 #include "Mensaje.h"
 #include "Log.h"
+#include <SDL2/SDL.h>
 #define MAX_CLIENTS 6
 
 using namespace std;
@@ -228,40 +229,64 @@ private:
         string emisor(emisorChar);
         emisor.erase(emisor.length()-1);
 
-        //me fijo cuanto mide el destinatario
-        int l=0;
-        for (l; l<=largo; l++){
-            if (textoInicial[l] == '$')
-                break;
+        int key;
+        int pressed;
+        string stream(textoInicial);
+
+        ProtocoloComando.parse(stream, &key, &pressed);
+
+        if ( pressed == SDL_KEYDOWN ) {
+            //Adjust the velocity
+            switch( key ) {
+
+                case SDLK_LEFT:
+                    // ToDo Actualizar personaje logico (con el nombre de usuario identifico que personaje tengo que actualizar)
+                    //velx -= Personaje_VEL;
+                    //derecha = false;*/
+
+                    // ToDo Crear Mensaje de UpdateVista correspondiente
+                    break;
+
+                case SDLK_RIGHT:
+                    //velx += Personaje_VEL;
+                    //derecha = true;*/
+                    break;
+
+                case SDLK_UP:
+                    //if (!saltando) saltando=true;
+                    //subiendo=true;*/
+                    break;
+            }
         }
 
-        //sabiendo el largo del destinatario se el largo del mensaje
-        char msg[largo-l];
-        char dest[l];
-        dest[l]='\0';
+        else if ( pressed == SDL_KEYUP ) {
 
-        //guardo el destinatario
-        for (int d=0;d<l;d++) dest[d]=textoInicial[d];
+            //Adjust the velocity
+            switch( key ) {
 
-        //guardo el mensaje
-        l++;
-        for(int m=0; l<=largo; m++){
-            msg[m]=textoInicial[l];
-            l++;
+                case SDLK_LEFT:
+                    //velx += Personaje_VEL;
+                    break;
+
+                case SDLK_RIGHT:
+                    //velx -= Personaje_VEL;
+                    break;
+
+                case SDLK_UP:
+                    break;
+            }
         }
-        string destinatario(dest);
-        string mensaje(msg);
-
 
         int result; // para el mutex
 
+        // ToDo Encolar el UpdateVista que se creo en alguno de los case de arriba
         for (auto kv : usuarios) {
-            Mensaje mensajeNuevo(emisor,kv.first,mensaje);
+            Mensaje mensajeNuevo(emisor, kv.first, mensaje);
 
             // Lockeo el mutex a mensajes
             result = pthread_mutex_lock(&mutex_mensajes);
             if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-            logger.loggearMsj(emisor,kv.first,mensaje);
+            logger.loggearMsj(emisor, kv.first, mensaje);
 
             mensajes.push_back(mensajeNuevo);
 
