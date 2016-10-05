@@ -24,9 +24,32 @@ string ProtocoloComando::toString() {
     string code = to_string(scancode);
     string tipo = to_string(type);
 
-    return (code + "$" + tipo + "\n");
+    string msj = code + "$" + tipo + "\n";
+    return msj;
 }
 
-static ProtocoloComando ProtocoloComando::parseComando(string stream){
+void ProtocoloComando::parse(string stream, int* key, int* pressed) {
 
+        string key_s = "";
+        string pressed_s = "";
+
+        string* variables[] = {&key_s, &pressed_s};
+
+        int j = 0;
+
+        for (int i=0; i<stream.size() - 1; i++) {
+
+            char actual = stream[i];
+
+            if (actual == '$') {
+                j++;
+                continue;
+            }
+
+            *(variables[j]) += actual;
+        }
+
+        *key = stoi(key_s);
+        *pressed = stoi(pressed_s);
 }
+

@@ -26,7 +26,7 @@ public:
 
     string toString();
 
-    static ProtocoloComando ProtocoloComando::parseComando(string stream);
+    static void parse(string stream, int* key, int* pressed);
 };
 
 #endif //METALZCURRA_PROTOCOLOCOMANDO_H

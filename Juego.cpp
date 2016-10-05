@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <iostream>
+#include <SDL2/SDL_thread.h>
 #include "Cliente.h"
 #include "VistaMarco.h"
 #include "ProtocoloComando.h"
@@ -21,6 +22,9 @@ class Juego {
 private:
 	SDL_Renderer* renderizador;
 	SDL_Window* ventana;
+	SDL_Rect* camera;
+	Cliente* cliente;
+	VistaMarco* personaje;
 
 public:
 
@@ -29,9 +33,9 @@ public:
 		ventana = NULL;
 	}
 
-	void close(VistaMarco personaje) {
+	void close() {
 		//Free loaded images
-		personaje.liberarTextura();
+		personaje->liberarTextura();
 
 		//Destroy window
 		SDL_DestroyRenderer( renderizador );
@@ -98,62 +102,154 @@ public:
 	SDL_Window* getVentana() {
 		return ventana;
 	}
+
+	SDL_Rect* getCamera(){
+		return camera;
+	}
+
+	Cliente* getCliente(){
+		return cliente;
+	}
+
+	VistaMarco* getPersonaje(){
+		return personaje;
+	}
+
+
+	void setCliente(Cliente* client){
+		cliente = client;
+	}
+
+	void setCamara(SDL_Rect* camara){
+		camera = camara;
+	}
+
+	void setPersonaje(VistaMarco* pj){
+		personaje = pj;
+	}
+
+	void conectar(){
+		cliente->conectar();
+	}
+
+	void handleEvent( SDL_Event& e) {
+
+		ProtocoloComando comando;
+		string msj;
+
+		//If a key was pressed
+		if( e.type == SDL_KEYDOWN && e.key.repeat == 0 ) {
+			//Adjust the velocity
+			switch( e.key.keysym.sym ) {
+
+				case SDLK_LEFT:
+					comando.setScancode(SDLK_LEFT);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					//velx -= Personaje_VEL;
+					//derecha = false;
+					break;
+
+				case SDLK_RIGHT:
+					comando.setScancode(SDLK_RIGHT);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					//velx += Personaje_VEL;
+					//derecha = true;
+					break;
+
+				case SDLK_UP:
+					comando.setScancode(SDLK_UP);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					//if (!saltando) saltando=true;
+					//subiendo=true;
+					break;
+			}
+		}
+
+			//If a key was released
+		else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
+
+			//Adjust the velocity
+			switch( e.key.keysym.sym ) {
+
+				case SDLK_LEFT:
+					comando.setScancode(SDLK_LEFT);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					//velx += Personaje_VEL;
+					break;
+
+				case SDLK_RIGHT:
+					comando.setScancode(SDLK_RIGHT);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					//velx -= Personaje_VEL;
+					break;
+
+				case SDLK_UP:
+					break;
+			}
+		}
+	}
+
+	void moverCamara(){
+
+		//Center the camera over the personaje
+		camera->x = ( personaje->getX() + personaje->getAncho() / 2 ) - SCREEN_WIDTH / 2;
+		camera->y = ( personaje->getY() + personaje->getAlto() / 2 ) - SCREEN_HEIGHT / 2;
+
+		//Keep the camera in bounds
+		if ( camera->x < 0 )
+			camera->x = 0;
+
+		if ( camera->y < 0 )
+			camera->y = 0;
+
+		if ( camera->x > LEVEL_WIDTH - camera->w )
+			camera->x = LEVEL_WIDTH - camera->w;
+
+		if ( camera->y > LEVEL_HEIGHT - camera->h )
+			camera->y = LEVEL_HEIGHT - camera->h;
+
+	}
 };
 
-void handleEvent( SDL_Event& e, Cliente &cliente) {
+typedef struct {
+	Juego* juego;
+	bool* quit;
+} controlador_t;
 
-	ProtocoloComando msj;
+int escucharEventos( void* arg ) {
 
-	//If a key was pressed
-	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 ) {
-		//Adjust the velocity
-		switch( e.key.keysym.sym ) {
+	controlador_t* arg2 = (controlador_t*) arg;
+	Juego* miJuego = (Juego*) arg2->juego;
+	bool* quit = (bool*) arg2->quit;
 
-			case SDLK_LEFT:
-				msj.setScancode(SDLK_LEFT);
-				msj.setType(0);
-				cliente.enviarAusuario("TODOS", msj.toString(), false);
-				//velx -= Personaje_VEL;
-				//derecha = false;
-				break;
+	//Event handler
+	SDL_Event e;
 
-			case SDLK_RIGHT:
-				msj = to_string(SDLK_RIGHT);
-				msj = msj + "\n";
-				cliente.enviarAusuario("TODOS", msj, false);
-				//velx += Personaje_VEL;
-				//derecha = true;
-				break;
+	while( !(*quit) ) {
 
-			case SDLK_UP:
-				msj = to_string(SDLK_UP);
-				msj = msj + "\n";
-				cliente.enviarAusuario("TODOS", msj, false);
-				//if (!saltando) saltando=true;
-				//subiendo=true;
-				break;
+		//MANEJA LA COLA DE EVENTOS
+		while (SDL_PollEvent(&e) != 0) {
+			if (e.type == SDL_QUIT) {
+				*quit = true;
+			}
+			miJuego->handleEvent(e);
+
 		}
 	}
 
-		//If a key was released
-	else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
-
-		//Adjust the velocity
-		switch( e.key.keysym.sym ) {
-
-			case SDLK_LEFT:
-				//velx += Personaje_VEL;
-				break;
-
-			case SDLK_RIGHT:
-				//velx -= Personaje_VEL;
-				break;
-
-			case SDLK_UP:
-				break;
-		}
-	}
+	return 0;
 }
+
 
 int main( int argc, char** argv) {
 
@@ -165,7 +261,9 @@ int main( int argc, char** argv) {
 	//Start up SDL and create window
 	Juego juego;
 	Cliente cliente(argv);
-	cliente.conectar();
+
+	juego.setCliente(&cliente);
+	juego.conectar();
 	//Textura fondo;
 
 	if( !juego.iniciar() ) {
@@ -174,6 +272,7 @@ int main( int argc, char** argv) {
 	}
 
 	VistaMarco personaje(juego.getRenderer());
+	juego.setPersonaje(&personaje);
 
 	//Load media
 	if ( !personaje.cargarImagen() ) {
@@ -184,42 +283,25 @@ int main( int argc, char** argv) {
 	//Main loop flag
 	bool quit = false;
 	bool seMovio;
-	SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-	//Event handler
-	SDL_Event e;
+	// Creo la camara
+	SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	juego.setCamara(&camera);
+
+	// Thread que escucha eventos
+	controlador_t* arg = new controlador_t;
+	arg->juego = &juego;
+	arg->quit = &quit;
+	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
 
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
 
-		//MANEJA LA COLA DE EVENTOS
-		while( SDL_PollEvent( &e ) != 0 ) {
-			if( e.type == SDL_QUIT ){
-				quit = true;
-			}
-			handleEvent( e , cliente );
-
-		}
-
 		//cambio a nueva posicion
 		seMovio = personaje.mover();
 
-		//Center the camera over the personaje
-		camera.x = ( personaje.getX() + personaje.getAncho() / 2 ) - SCREEN_WIDTH / 2;
-		camera.y = ( personaje.getY() + personaje.getAlto() / 2 ) - SCREEN_HEIGHT / 2;
-
-		//Keep the camera in bounds
-		if ( camera.x < 0 )
-			camera.x = 0;
-
-		if ( camera.y < 0 )
-			camera.y = 0;
-
-		if ( camera.x > LEVEL_WIDTH - camera.w )
-			camera.x = LEVEL_WIDTH - camera.w;
-
-		if ( camera.y > LEVEL_HEIGHT - camera.h )
-			camera.y = LEVEL_HEIGHT - camera.h;
+		//Muevo la camara
+		juego.moverCamara();
 
 		//Borro la pantalla
 		//DRAWCOLOR ASI PONE TODO EN BLANCO
@@ -230,10 +312,11 @@ int main( int argc, char** argv) {
 		//fondo.render( 0, 0, &camera );
 		personaje.render(seMovio,camera.x,camera.y);
 		SDL_RenderPresent( juego.getRenderer() );
+
 	}
 
 	//Free resources and close SDL
-	juego.close(personaje);
+	juego.close();
 	cliente.desconectar();
 
 	return 0;

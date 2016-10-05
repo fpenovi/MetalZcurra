@@ -66,7 +66,7 @@ bool VistaMarco::mover()
 }
 
 void VistaMarco::render(bool seMovio, int camx, int camy){
-	if (seMovio==true){
+	if (seMovio){
 			animacionCorrer(camx,camy);
 		}
 		else {
