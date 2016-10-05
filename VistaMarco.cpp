@@ -33,35 +33,6 @@ VistaMarco::VistaMarco(SDL_Renderer* renderizador2){
 	TEXTURA_PERSONAJE_CORRIENDO = new Textura(renderizador);
 }
 
-//maneja los eventos
-void VistaMarco::handleEvent( SDL_Event& e)
-{
-	//If a key was pressed
-	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
-	{
-		//Adjust the velocity
-		switch( e.key.keysym.sym )
-		{
-			case SDLK_LEFT: velx -= Personaje_VEL;derecha = false;break;
-			case SDLK_RIGHT:velx += Personaje_VEL;derecha = true;break;
-			case SDLK_UP:
-				if (!saltando) saltando=true; subiendo=true; break;
-		}
-	}
-
-		//If a key was released
-	else if( e.type == SDL_KEYUP && e.key.repeat == 0 )
-	{
-		//Adjust the velocity
-		switch( e.key.keysym.sym )
-		{
-			case SDLK_LEFT:velx += Personaje_VEL; break;
-			case SDLK_RIGHT:velx -= Personaje_VEL; break;
-			case SDLK_UP:break;
-		}
-	}
-}
-
 bool VistaMarco::estaQuieto(){
 	return quieto;
 }
@@ -75,14 +46,14 @@ bool VistaMarco::mover()
 	posx += velx;
 
 	//Que no salga de la pantalla
-	if( ( posx < 0 ) || ( posx + ancho > 4500  ) )
+	if( ( posx < 0 ) || ( posx + ancho > 4500  ) ) // ToDo el numero esta hardcodeado
 	{
 		posx -= velx;
 	}
 
 	posy += vely;
 
-	if( ( posy < 0 ) || ( posy + alto > 480 ) )
+	if( ( posy < 0 ) || ( posy + alto > 480 ) ) // ToDo el numero esta hardcodeado
 	{
 		//Move back
 		posy -= vely;

@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Cliente.h"
 #include "VistaMarco.h"
+#include "ProtocoloComando.h"
 using namespace std;
 
 //Screen dimension constants
@@ -99,6 +100,61 @@ public:
 	}
 };
 
+void handleEvent( SDL_Event& e, Cliente &cliente) {
+
+	ProtocoloComando msj;
+
+	//If a key was pressed
+	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 ) {
+		//Adjust the velocity
+		switch( e.key.keysym.sym ) {
+
+			case SDLK_LEFT:
+				msj.setScancode(SDLK_LEFT);
+				msj.setType(0);
+				cliente.enviarAusuario("TODOS", msj.toString(), false);
+				//velx -= Personaje_VEL;
+				//derecha = false;
+				break;
+
+			case SDLK_RIGHT:
+				msj = to_string(SDLK_RIGHT);
+				msj = msj + "\n";
+				cliente.enviarAusuario("TODOS", msj, false);
+				//velx += Personaje_VEL;
+				//derecha = true;
+				break;
+
+			case SDLK_UP:
+				msj = to_string(SDLK_UP);
+				msj = msj + "\n";
+				cliente.enviarAusuario("TODOS", msj, false);
+				//if (!saltando) saltando=true;
+				//subiendo=true;
+				break;
+		}
+	}
+
+		//If a key was released
+	else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
+
+		//Adjust the velocity
+		switch( e.key.keysym.sym ) {
+
+			case SDLK_LEFT:
+				//velx += Personaje_VEL;
+				break;
+
+			case SDLK_RIGHT:
+				//velx -= Personaje_VEL;
+				break;
+
+			case SDLK_UP:
+				break;
+		}
+	}
+}
+
 int main( int argc, char** argv) {
 
 	if (argc < 3) {
@@ -141,7 +197,7 @@ int main( int argc, char** argv) {
 			if( e.type == SDL_QUIT ){
 				quit = true;
 			}
-			personaje.handleEvent( e );
+			handleEvent( e , cliente );
 
 		}
 
@@ -182,3 +238,4 @@ int main( int argc, char** argv) {
 
 	return 0;
 }
+

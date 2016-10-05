@@ -239,6 +239,7 @@ private:
         char msg[largo-l];
         char dest[l];
         dest[l]='\0';
+
         //guardo el destinatario
         for (int d=0;d<l;d++) dest[d]=textoInicial[d];
 
@@ -253,37 +254,22 @@ private:
 
 
         int result; // para el mutex
-        if (destinatario == "TODOS") {
-            for (auto kv : usuarios) {
-                Mensaje mensajeNuevo(emisor,kv.first,mensaje);
 
-                // Lockeo el mutex a mensajes
-                result = pthread_mutex_lock(&mutex_mensajes);
-                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-                logger.loggearMsj(emisor,kv.first,mensaje);
+        for (auto kv : usuarios) {
+            Mensaje mensajeNuevo(emisor,kv.first,mensaje);
 
-                mensajes.push_back(mensajeNuevo);
-
-                // Unlockeo el mutex a mensajes
-                result = pthread_mutex_unlock(&mutex_mensajes);
-                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-            }
-        }
-        else {
-         
-            Mensaje mensajeNuevo(emisor,destinatario, mensaje);
-
-            // Lockeo el mutex a mensajess
+            // Lockeo el mutex a mensajes
             result = pthread_mutex_lock(&mutex_mensajes);
             if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-            logger.loggearMsj(emisor,destinatario,mensaje);
+            logger.loggearMsj(emisor,kv.first,mensaje);
+
             mensajes.push_back(mensajeNuevo);
 
             // Unlockeo el mutex a mensajes
             result = pthread_mutex_unlock(&mutex_mensajes);
             if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
         }
-        return;
+
     }
 
     static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos) {
