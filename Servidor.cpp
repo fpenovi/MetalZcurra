@@ -10,6 +10,7 @@
 #include "Mensaje.h"
 #include "Log.h"
 #include <SDL2/SDL.h>
+#include "ProtocoloComando.h"
 #define MAX_CLIENTS 6
 
 using namespace std;
@@ -233,7 +234,7 @@ private:
         int pressed;
         string stream(textoInicial);
 
-        ProtocoloComando.parse(stream, &key, &pressed);
+        ProtocoloComando::parse(stream, &key, &pressed);
 
         if ( pressed == SDL_KEYDOWN ) {
             //Adjust the velocity
