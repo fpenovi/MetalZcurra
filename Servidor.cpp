@@ -11,6 +11,8 @@
 #include "Log.h"
 #include <SDL2/SDL.h>
 #include "ProtocoloComando.h"
+#include "ProtocoloVistaUpdate.h"
+#include "Personaje.h"
 #define MAX_CLIENTS 6
 
 using namespace std;
@@ -48,6 +50,7 @@ private:
     static pthread_mutex_t mutex_mensajes;
     static pthread_mutex_t mutex_login;
     static Log logger;
+    static Personaje personaje;
 
     static void *controlInput(void *serverStatus) {
 
@@ -236,12 +239,18 @@ private:
 
         ProtocoloComando::parse(stream, &key, &pressed);
 
+        ProtocoloVistaUpdate update;
+        int aux;
+
         if ( pressed == SDL_KEYDOWN ) {
             //Adjust the velocity
             switch( key ) {
 
                 case SDLK_LEFT:
                     // ToDo Actualizar personaje logico (con el nombre de usuario identifico que personaje tengo que actualizar)
+                    aux = personaje.getVelx() - personaje.getPersonaje_VEL();
+                    personaje.setVelx(aux);
+                    personaje.mover();
                     //velx -= Personaje_VEL;
                     //derecha = false;*/
 
@@ -613,6 +622,7 @@ vector<Mensaje> Servidor::mensajes;
 pthread_mutex_t Servidor::mutex_mensajes;
 pthread_mutex_t Servidor::mutex_login;
 Log Servidor::logger(100);
+Personaje Servidor::personaje;
 
 int main(int argc, char** argv) {
 

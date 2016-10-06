@@ -12,7 +12,6 @@ using namespace std;
 //Screen dimension constants
 
 #define SCREEN_WIDTH 800
-#define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define LEVEL_WIDTH 4500
 #define LEVEL_HEIGHT 480
@@ -298,7 +297,9 @@ int main( int argc, char** argv) {
 	while( !quit ) {
 
 		//cambio a nueva posicion
-		seMovio = personaje.mover();
+		//seMovio = personaje.mover();
+
+
 
 		//Muevo la camara
 		juego.moverCamara();
