@@ -231,7 +231,6 @@ string Cliente::recibir_vista(){
     // 1 more than the largest file descriptor in any of the sets
     if (int rv = select(sockFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
 
-        cout << "ENTRO AL GETLINE" << endl;
         bytesLeidos = getline(&linea, &len, respuestaServidor);
 
         if (bytesLeidos <= 0) {

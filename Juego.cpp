@@ -146,7 +146,6 @@ public:
 					comando.setScancode(SDLK_LEFT);
 					comando.setType(1);
 					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
 					//velx -= Personaje_VEL;
 					//derecha = false;
 					break;
@@ -155,7 +154,6 @@ public:
 					comando.setScancode(SDLK_RIGHT);
 					comando.setType(1);
 					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
 					//velx += Personaje_VEL;
 					//derecha = true;
 					break;
@@ -164,11 +162,12 @@ public:
 					comando.setScancode(SDLK_UP);
 					comando.setType(1);
 					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
 					//if (!saltando) saltando=true;
 					//subiendo=true;
 					break;
 			}
+
+			cliente->enviarAusuario("TODOS", msj, false);
 		}
 
 			//If a key was released

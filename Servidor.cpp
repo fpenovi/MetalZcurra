@@ -393,20 +393,12 @@ private:
 
         logger.loggearRecepcion(receptor);
 
-        cout << "ENTRO A LA LISTA DE MENSAJES" << endl;
-
         for (it = mensajes.begin(); it != mensajes.end();) {
             if (it->getNameReceptor() == receptor) {
 
                 string mensajeEmisor = it->getMensaje();
                 const char* mensajeChar = mensajeEmisor.c_str();
 
-                //char *mensaje = new char[mensajeEmisor.length() + 1];
-                //strcpy(mensaje, mensajeEmisor.c_str());
-
-                //Mando el vector al cliente
-                cout << "MANDANDO MENSAJE" << endl;
-                cout << mensajeChar;
                 *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
 
                 if (*bytesEscritos < 0) {
@@ -423,8 +415,6 @@ private:
             }
             else it++;
         }
-
-        cout << "SALGO DE LA LISTA DE MSJS" << endl;
 
         // Unlockeo el mutex a mensajes
         result = pthread_mutex_unlock(&mutex_mensajes);
@@ -515,7 +505,7 @@ private:
                 break;
             }
 
-            cout << "debug: Mensaje recibido del cliente: " << linea;
+            //cout << "debug: Mensaje recibido del cliente: " << linea;
 
             // Opcion enviar mensaje
             if (strcmp(linea, "/E/\n") == 0) {
