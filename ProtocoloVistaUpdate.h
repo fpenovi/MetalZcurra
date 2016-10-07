@@ -37,7 +37,7 @@ public:
 
     string toString();
 
-    void parse(string stream, int* id, int* state, int* posx, int* posy);
+    static void parse(string stream, int* id, int* state, int* posx, int* posy);
 };
 
 #endif //METALZCURRA_PROTOCOLOVISTAUPDATE_H

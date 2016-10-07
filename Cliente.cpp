@@ -193,6 +193,72 @@ void Cliente::recibir_mensajes(){
     free(linea);
 }
 
+string Cliente::recibir_vista(){
+
+    if(! estado){
+        cout<<"No esta conectado al servidor"<<endl;
+        return ""; //ToDo Lanzar Excepcion
+    }
+
+    const char* opc = "/R/\n";
+    signal(SIGPIPE, SIG_IGN);
+    ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
+
+    if (bytesEsc < 0) {
+        perror("ERROR --> Has sido desconectado del servidor");
+        salir();
+    }
+
+    char* linea = NULL;
+    size_t len = 0;
+    ssize_t bytesLeidos;
+
+    //ToDo Hacer select para cuando no me muevo (43,47 ms en procs + render, equivale a 23 fps )
+
+    // Initialize file descriptor sets
+    fd_set read_fds, write_fds, except_fds;
+    FD_ZERO(&read_fds);
+    FD_ZERO(&write_fds);
+    FD_ZERO(&except_fds);
+    FD_SET(sockFileDescrpt, &read_fds);
+
+    // Seteo el timeout a 5 segundos
+    struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 40000;
+
+    // Wait for input to become ready or until the time out; the first parameter is
+    // 1 more than the largest file descriptor in any of the sets
+    if (int rv = select(sockFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
+
+        cout << "ENTRO AL GETLINE" << endl;
+        bytesLeidos = getline(&linea, &len, respuestaServidor);
+
+        if (bytesLeidos <= 0) {
+            perror("ERROR --> Se cerró el server");
+            salir();
+        }
+
+        string mensaje(linea);
+        cout << linea;
+        free(linea);
+        linea = NULL;
+
+        return mensaje;
+    }
+
+    else if(rv == 0)
+    {
+        cout << "TIMEOUT" << endl;
+        return "$\n";
+    }
+    else{
+        perror("ERROR --> select");
+        salir();
+    }
+
+}
+
 void Cliente::desconectar(){
     if (!estado) {
         perror("El cliente ya se encuentra desconectado");

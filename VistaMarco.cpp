@@ -206,3 +206,15 @@ int VistaMarco::getAlto(){
 	return alto;
 }
 
+void VistaMarco::setPosx(int posx) {
+	this->posx = posx;
+}
+
+void VistaMarco::setPosy(int posy) {
+	this->posy = posy;
+}
+
+void VistaMarco::setQuieto(bool quieto) {
+	this->quieto = quieto;
+}
+

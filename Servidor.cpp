@@ -235,14 +235,16 @@ private:
 
         int key;
         int pressed;
-        string stream(textoInicial);
+        string stream(&textoInicial[6]); //Esto hace magia NO TOCAR
 
         ProtocoloComando::parse(stream, &key, &pressed);
 
         ProtocoloVistaUpdate update;
         int aux;
 
-        if ( pressed == SDL_KEYDOWN ) {
+        cout << pressed << endl;
+
+        if ( pressed == 1 ) {
             //Adjust the velocity
             switch( key ) {
 
@@ -255,39 +257,94 @@ private:
                     //derecha = false;*/
 
                     // ToDo Crear Mensaje de UpdateVista correspondiente
+                    update.setEstado(personaje.getSeMovio());
+                    update.setX(personaje.getPosx());
+                    update.setY(personaje.getPosy());
+                    update.setObject_id(1);
+
                     break;
 
                 case SDLK_RIGHT:
+                    aux = personaje.getVelx() + personaje.getPersonaje_VEL();
+                    personaje.setVelx(aux);
+                    personaje.mover();
                     //velx += Personaje_VEL;
                     //derecha = true;*/
+
+                    cout << "SE MOVIO " << personaje.getSeMovio() << endl;
+                    cout << "POSX " << personaje.getPosx() << endl;
+                    cout << "POSY " << personaje.getPosy() << endl;
+
+                    update.setEstado(personaje.getSeMovio());
+                    update.setX(personaje.getPosx());
+                    update.setY(personaje.getPosy());
+                    update.setObject_id(1);
                     break;
 
                 case SDLK_UP:
                     //if (!saltando) saltando=true;
                     //subiendo=true;*/
                     break;
+
+                default:
+                    cout << "ESTOY EN DEFAULT DOWN" << endl;
+                    cout << key << endl;
             }
         }
 
-        else if ( pressed == SDL_KEYUP ) {
+        else if ( pressed == 0 ) {
 
             //Adjust the velocity
             switch( key ) {
 
                 case SDLK_LEFT:
+                    aux = personaje.getVelx() + personaje.getPersonaje_VEL();
+                    personaje.setVelx(aux);
+                    personaje.mover();
                     //velx += Personaje_VEL;
+
+                    update.setEstado(personaje.getSeMovio());
+                    update.setX(personaje.getPosx());
+                    update.setY(personaje.getPosy());
+                    update.setObject_id(1);
                     break;
 
                 case SDLK_RIGHT:
+                    aux = personaje.getVelx() - personaje.getPersonaje_VEL();
+                    personaje.setVelx(aux);
+                    personaje.mover();
                     //velx -= Personaje_VEL;
+
+                    cout << "SE MOVIO " << personaje.getSeMovio() << endl;
+                    cout << "POSX " << personaje.getPosx() << endl;
+                    cout << "POSY " << personaje.getPosy() << endl;
+
+                    update.setEstado(personaje.getSeMovio());
+                    update.setX(personaje.getPosx());
+                    update.setY(personaje.getPosy());
+                    update.setObject_id(1);
                     break;
 
                 case SDLK_UP:
                     break;
+
+                default:
+                    cout << "ESTOY EN DEFAULT UP" << endl;
+                    cout << key << endl;
             }
         }
 
         int result; // para el mutex
+
+        cout << "TO STRING" << endl;
+
+        cout << personaje.getSeMovio() << endl;
+        cout << personaje.getPosx() << endl;
+        cout << personaje.getPosy() << endl;
+
+        string mensaje = update.toString();
+
+        cout << mensaje;
 
         // ToDo Encolar el UpdateVista que se creo en alguno de los case de arriba
         for (auto kv : usuarios) {
@@ -336,26 +393,38 @@ private:
 
         logger.loggearRecepcion(receptor);
 
+        cout << "ENTRO A LA LISTA DE MENSAJES" << endl;
+
         for (it = mensajes.begin(); it != mensajes.end();) {
             if (it->getNameReceptor() == receptor) {
-                string nombreDelEmisor = it->getNameEmisor();
+
                 string mensajeEmisor = it->getMensaje();
-                string texto = nombreDelEmisor + " dice: " + mensajeEmisor;
-                char *mensaje = new char[texto.length() + 1];
-                strcpy(mensaje, texto.c_str());
+                const char* mensajeChar = mensajeEmisor.c_str();
+
+                //char *mensaje = new char[mensajeEmisor.length() + 1];
+                //strcpy(mensaje, mensajeEmisor.c_str());
 
                 //Mando el vector al cliente
-                *bytesEscritos = write(sockNewFileDescrpt, mensaje, texto.length());
-                delete mensaje;
+                cout << "MANDANDO MENSAJE" << endl;
+                cout << mensajeChar;
+                *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
 
                 if (*bytesEscritos < 0) {
                     perror("ERROR --> Cliente se desconectó inesperadamente");
                     break;
                 }
                 it = mensajes.erase(it);
+
+                // Unlockeo el mutex a mensajes
+                result = pthread_mutex_unlock(&mutex_mensajes);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+                return;
             }
             else it++;
         }
+
+        cout << "SALGO DE LA LISTA DE MSJS" << endl;
 
         // Unlockeo el mutex a mensajes
         result = pthread_mutex_unlock(&mutex_mensajes);

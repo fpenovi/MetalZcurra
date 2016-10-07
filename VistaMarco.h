@@ -67,6 +67,11 @@ public:
 
     int getAlto();
 
+    void setPosx(int posx);
+
+    void setPosy(int posy);
+
+    void setQuieto(bool quieto);
 };
 
 

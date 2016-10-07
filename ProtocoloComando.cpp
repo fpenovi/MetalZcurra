@@ -2,6 +2,7 @@
 // Created by duha on 04/10/16.
 //
 
+#include <iostream>
 #include "ProtocoloComando.h"
 
 int ProtocoloComando::getScancode() {

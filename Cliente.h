@@ -69,6 +69,8 @@ public:
     void activar_socket();
 
     void imprimir_usuarios();
+
+	string recibir_vista();
 };
 
 

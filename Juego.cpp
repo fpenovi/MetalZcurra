@@ -7,6 +7,7 @@
 #include "Cliente.h"
 #include "VistaMarco.h"
 #include "ProtocoloComando.h"
+#include "ProtocoloVistaUpdate.h"
 using namespace std;
 
 //Screen dimension constants
@@ -298,8 +299,20 @@ int main( int argc, char** argv) {
 
 		//cambio a nueva posicion
 		//seMovio = personaje.mover();
+		cout << "ESCUCHO MENSAJE" << endl;
 
+		string update = cliente.recibir_vista();
 
+		if (update != "$\n") {
+
+			int id, state, posx, posy;
+
+			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy);
+
+			personaje.setPosx(posx);
+			personaje.setPosy(posy);
+			seMovio = state;
+		}
 
 		//Muevo la camara
 		juego.moverCamara();
@@ -314,6 +327,7 @@ int main( int argc, char** argv) {
 		personaje.render(seMovio,camera.x,camera.y);
 		SDL_RenderPresent( juego.getRenderer() );
 
+		cout << "DIBUJO TODO" << endl;
 	}
 
 	//Free resources and close SDL

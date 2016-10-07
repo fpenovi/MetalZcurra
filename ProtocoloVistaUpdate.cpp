@@ -2,6 +2,7 @@
 // Created by juancho on 05/10/16.
 //
 
+#include <iostream>
 #include "ProtocoloVistaUpdate.h"
 
 int ProtocoloVistaUpdate::getObject_id() {
@@ -42,7 +43,7 @@ string ProtocoloVistaUpdate::toString(){
     string posx = to_string(x);
     string posy = to_string(y);
 
-    string msj = id + "$" + state + "$" + posx + "$" + posy;
+    string msj = id + "$" + state + "$" + posx + "$" + posy + "\n";
     return msj;
 }
 
