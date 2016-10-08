@@ -132,10 +132,10 @@ public:
 		cliente->conectar();
 	}
 
-	void handleEvent( SDL_Event& e) {
+	string handleEvent( SDL_Event& e) {
 
 		ProtocoloComando comando;
-		string msj;
+		string msj = "";
 
 		//If a key was pressed
 		if( e.type == SDL_KEYDOWN ) {
@@ -148,6 +148,7 @@ public:
 					msj = comando.toString();
 					//velx -= Personaje_VEL;
 					//derecha = false;
+					return msj;
 					break;
 
 				case SDLK_RIGHT:
@@ -156,6 +157,7 @@ public:
 					msj = comando.toString();
 					//velx += Personaje_VEL;
 					//derecha = true;
+					return msj;
 					break;
 
 				case SDLK_UP:
@@ -164,9 +166,10 @@ public:
 					msj = comando.toString();
 					//if (!saltando) saltando=true;
 					//subiendo=true;
+					return msj;
 					break;
 			}
-			cliente->enviarAusuario("TODOS", msj, false);
+			//cliente->enviarAusuario("TODOS", msj, false);
 		}
 
 			//If a key was released
@@ -180,6 +183,7 @@ public:
 					comando.setType(0);
 					msj = comando.toString();
 					//velx += Personaje_VEL;
+					return msj;
 					break;
 
 				case SDLK_RIGHT:
@@ -187,12 +191,14 @@ public:
 					comando.setType(0);
 					msj = comando.toString();
 					//velx -= Personaje_VEL;
+					return msj;
 					break;
 
 				case SDLK_UP:
+					return msj;
 					break;
 			}
-			cliente->enviarAusuario("TODOS", msj, false);
+			//cliente->enviarAusuario("TODOS", msj, false);
 		}
 	}
 
@@ -228,22 +234,28 @@ int escucharEventos( void* arg ) {
 	controlador_t* arg2 = (controlador_t*) arg;
 	Juego* miJuego = (Juego*) arg2->juego;
 	bool* quit = (bool*) arg2->quit;
+	Cliente* cliente = miJuego->getCliente();
 
 	//Event handler
 	SDL_Event e;
 
 	while( !(*quit) ) {
 
+		string msj;
+
 		//MANEJA LA COLA DE EVENTOS
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				*quit = true;
 			}
-			miJuego->handleEvent(e);
+			msj = miJuego->handleEvent(e);
+		}
+
+		if (msj != "") {
+			cliente->enviarAusuario("TODOS", msj, false);
 
 		}
 	}
-
 	return 0;
 }
 
