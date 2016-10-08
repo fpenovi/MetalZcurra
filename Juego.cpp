@@ -25,12 +25,14 @@ private:
 	SDL_Rect* camera;
 	Cliente* cliente;
 	VistaMarco* personaje;
+	int lastKeyPressed;
 
 public:
 
 	Juego() {
 		renderizador = NULL;
 		ventana = NULL;
+		lastKeyPressed = 0;
 	}
 
 	void close() {
@@ -137,45 +139,45 @@ public:
 		ProtocoloComando comando;
 		string msj = "";
 
-		//If a key was pressed
-		if( e.type == SDL_KEYDOWN ) {
-			//Adjust the velocity
+		// Si toco una tecla por la primera vez
+		if ( e.type == SDL_KEYDOWN && e.key.repeat == 0 ) {
+
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
 					comando.setScancode(SDLK_LEFT);
 					comando.setType(1);
 					msj = comando.toString();
+					lastKeyPressed = SDLK_LEFT;
 					//velx -= Personaje_VEL;
 					//derecha = false;
 					return msj;
-					break;
 
 				case SDLK_RIGHT:
 					comando.setScancode(SDLK_RIGHT);
 					comando.setType(1);
 					msj = comando.toString();
+					lastKeyPressed = SDLK_RIGHT;
 					//velx += Personaje_VEL;
 					//derecha = true;
 					return msj;
-					break;
 
 				case SDLK_UP:
 					comando.setScancode(SDLK_UP);
 					comando.setType(1);
 					msj = comando.toString();
+					lastKeyPressed = SDLK_UP;
 					//if (!saltando) saltando=true;
 					//subiendo=true;
 					return msj;
-					break;
 			}
-			//cliente->enviarAusuario("TODOS", msj, false);
 		}
 
-			//If a key was released
-		else if( e.type == SDL_KEYUP ) {
+		// Si suelto la tecla
+		else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
 
-			//Adjust the velocity
+			lastKeyPressed = 0;
+
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
@@ -184,7 +186,6 @@ public:
 					msj = comando.toString();
 					//velx += Personaje_VEL;
 					return msj;
-					break;
 
 				case SDLK_RIGHT:
 					comando.setScancode(SDLK_RIGHT);
@@ -192,13 +193,18 @@ public:
 					msj = comando.toString();
 					//velx -= Personaje_VEL;
 					return msj;
-					break;
 
 				case SDLK_UP:
 					return msj;
-					break;
 			}
-			//cliente->enviarAusuario("TODOS", msj, false);
+		}
+
+		// Estoy manteniendo apretado desde antes
+		else if (lastKeyPressed != 0) {
+			comando.setScancode(lastKeyPressed);
+			comando.setType(1);
+			msj = comando.toString();
+			return msj;
 		}
 	}
 
@@ -241,10 +247,12 @@ int escucharEventos( void* arg ) {
 
 	while( !(*quit) ) {
 
-		string msj;
+		string msj = "";
 
 		//MANEJA LA COLA DE EVENTOS
-		while (SDL_PollEvent(&e) != 0) {
+
+
+		while  (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				*quit = true;
 			}
@@ -253,7 +261,6 @@ int escucharEventos( void* arg ) {
 
 		if (msj != "") {
 			cliente->enviarAusuario("TODOS", msj, false);
-
 		}
 	}
 	return 0;
