@@ -8,6 +8,8 @@
 #include "VistaMarco.h"
 #include "ProtocoloComando.h"
 #include "ProtocoloVistaUpdate.h"
+#include "HandleKeyHold.h"
+
 using namespace std;
 
 //Screen dimension constants
@@ -26,12 +28,14 @@ private:
 	Cliente* cliente;
 	VistaMarco* personaje;
 	int lastKeyPressed;
+	HandleKeyHold* keyHoldHandler;
 
 public:
 
 	Juego() {
 		renderizador = NULL;
 		ventana = NULL;
+		keyHoldHandler = NULL;
 		lastKeyPressed = 0;
 	}
 
@@ -44,6 +48,7 @@ public:
 		SDL_DestroyWindow( ventana );
 		ventana = NULL;
 		renderizador = NULL;
+		delete keyHoldHandler;
 
 		//Quit SDL subsystems
 		IMG_Quit();
@@ -134,6 +139,12 @@ public:
 		cliente->conectar();
 	}
 
+	void crearKeyHoldHandler() {
+		keyHoldHandler = new HandleKeyHold(this->cliente);
+		keyHoldHandler->On();
+		keyHoldHandler->Pause();
+	}
+
 	string handleEvent( SDL_Event& e) {
 
 		ProtocoloComando comando;
@@ -149,6 +160,8 @@ public:
 					comando.setType(1);
 					msj = comando.toString();
 					lastKeyPressed = SDLK_LEFT;
+					keyHoldHandler->setKeyPressed(SDLK_LEFT);
+					keyHoldHandler->Resume();
 					//velx -= Personaje_VEL;
 					//derecha = false;
 					return msj;
@@ -158,6 +171,8 @@ public:
 					comando.setType(1);
 					msj = comando.toString();
 					lastKeyPressed = SDLK_RIGHT;
+					keyHoldHandler->setKeyPressed(SDLK_RIGHT);
+					keyHoldHandler->Resume();
 					//velx += Personaje_VEL;
 					//derecha = true;
 					return msj;
@@ -177,6 +192,8 @@ public:
 		else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
 
 			lastKeyPressed = 0;
+			keyHoldHandler->Pause();
+			keyHoldHandler->setKeyPressed(lastKeyPressed);
 
 			switch( e.key.keysym.sym ) {
 
@@ -199,13 +216,13 @@ public:
 			}
 		}
 
-		// Estoy manteniendo apretado desde antes
+		/*// Estoy manteniendo apretado desde antes
 		else if (lastKeyPressed != 0) {
 			comando.setScancode(lastKeyPressed);
 			comando.setType(1);
 			msj = comando.toString();
 			return msj;
-		}
+		}*/
 	}
 
 	void moverCamara(){
@@ -280,6 +297,7 @@ int main( int argc, char** argv) {
 
 	juego.setCliente(&cliente);
 	juego.conectar();
+	juego.crearKeyHoldHandler();
 	//Textura fondo;
 
 	if( !juego.iniciar() ) {
