@@ -138,7 +138,7 @@ public:
 		string msj;
 
 		//If a key was pressed
-		if( e.type == SDL_KEYDOWN && e.key.repeat == 0 ) {
+		if( e.type == SDL_KEYDOWN ) {
 			//Adjust the velocity
 			switch( e.key.keysym.sym ) {
 
@@ -166,12 +166,11 @@ public:
 					//subiendo=true;
 					break;
 			}
-
 			cliente->enviarAusuario("TODOS", msj, false);
 		}
 
 			//If a key was released
-		else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
+		else if( e.type == SDL_KEYUP ) {
 
 			//Adjust the velocity
 			switch( e.key.keysym.sym ) {
@@ -180,7 +179,6 @@ public:
 					comando.setScancode(SDLK_LEFT);
 					comando.setType(0);
 					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
 					//velx += Personaje_VEL;
 					break;
 
@@ -188,13 +186,13 @@ public:
 					comando.setScancode(SDLK_RIGHT);
 					comando.setType(0);
 					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
 					//velx -= Personaje_VEL;
 					break;
 
 				case SDLK_UP:
 					break;
 			}
+			cliente->enviarAusuario("TODOS", msj, false);
 		}
 	}
 

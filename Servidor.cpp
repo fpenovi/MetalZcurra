@@ -250,8 +250,7 @@ private:
 
                 case SDLK_LEFT:
                     // ToDo Actualizar personaje logico (con el nombre de usuario identifico que personaje tengo que actualizar)
-                    aux = personaje.getVelx() - personaje.getPersonaje_VEL();
-                    personaje.setVelx(aux);
+                    personaje.setVelx(-personaje.getPersonaje_VEL());
                     personaje.mover();
                     //velx -= Personaje_VEL;
                     //derecha = false;*/
@@ -265,8 +264,7 @@ private:
                     break;
 
                 case SDLK_RIGHT:
-                    aux = personaje.getVelx() + personaje.getPersonaje_VEL();
-                    personaje.setVelx(aux);
+                    personaje.setVelx(personaje.getPersonaje_VEL());
                     personaje.mover();
                     //velx += Personaje_VEL;
                     //derecha = true;*/
@@ -298,8 +296,7 @@ private:
             switch( key ) {
 
                 case SDLK_LEFT:
-                    aux = personaje.getVelx() + personaje.getPersonaje_VEL();
-                    personaje.setVelx(aux);
+                    personaje.setVelx(0);
                     personaje.mover();
                     //velx += Personaje_VEL;
 
@@ -310,8 +307,7 @@ private:
                     break;
 
                 case SDLK_RIGHT:
-                    aux = personaje.getVelx() - personaje.getPersonaje_VEL();
-                    personaje.setVelx(aux);
+                    personaje.setVelx(0);
                     personaje.mover();
                     //velx -= Personaje_VEL;
 
