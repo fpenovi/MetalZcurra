@@ -159,7 +159,6 @@ public:
 					comando.setScancode(SDLK_LEFT);
 					comando.setType(1);
 					msj = comando.toString();
-					lastKeyPressed = SDLK_LEFT;
 					keyHoldHandler->setKeyPressed(SDLK_LEFT);
 					keyHoldHandler->Resume();
 					//velx -= Personaje_VEL;
@@ -170,7 +169,6 @@ public:
 					comando.setScancode(SDLK_RIGHT);
 					comando.setType(1);
 					msj = comando.toString();
-					lastKeyPressed = SDLK_RIGHT;
 					keyHoldHandler->setKeyPressed(SDLK_RIGHT);
 					keyHoldHandler->Resume();
 					//velx += Personaje_VEL;
@@ -181,7 +179,6 @@ public:
 					comando.setScancode(SDLK_UP);
 					comando.setType(1);
 					msj = comando.toString();
-					lastKeyPressed = SDLK_UP;
 					//if (!saltando) saltando=true;
 					//subiendo=true;
 					return msj;
@@ -191,9 +188,8 @@ public:
 		// Si suelto la tecla
 		else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
 
-			lastKeyPressed = 0;
 			keyHoldHandler->Pause();
-			keyHoldHandler->setKeyPressed(lastKeyPressed);
+			keyHoldHandler->setKeyPressed(0);
 
 			switch( e.key.keysym.sym ) {
 
@@ -215,14 +211,6 @@ public:
 					return msj;
 			}
 		}
-
-		/*// Estoy manteniendo apretado desde antes
-		else if (lastKeyPressed != 0) {
-			comando.setScancode(lastKeyPressed);
-			comando.setType(1);
-			msj = comando.toString();
-			return msj;
-		}*/
 	}
 
 	void moverCamara(){

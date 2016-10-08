@@ -240,7 +240,6 @@ private:
         ProtocoloComando::parse(stream, &key, &pressed);
 
         ProtocoloVistaUpdate update;
-        int aux;
 
         cout << pressed << endl;
 
@@ -283,10 +282,6 @@ private:
                     //if (!saltando) saltando=true;
                     //subiendo=true;*/
                     break;
-
-                default:
-                    cout << "ESTOY EN DEFAULT DOWN" << endl;
-                    cout << key << endl;
             }
         }
 
@@ -323,10 +318,6 @@ private:
 
                 case SDLK_UP:
                     break;
-
-                default:
-                    cout << "ESTOY EN DEFAULT UP" << endl;
-                    cout << key << endl;
             }
         }
 
