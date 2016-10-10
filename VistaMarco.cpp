@@ -37,34 +37,6 @@ bool VistaMarco::estaQuieto(){
 	return quieto;
 }
 
-//Moves the Personaje
-bool VistaMarco::mover()
-{
-	int pos1 = posx;
-	int pos2 = posy;
-	//moverlo a derecha o izquierda
-	posx += velx;
-
-	//Que no salga de la pantalla
-	if( ( posx < 0 ) || ( posx + ancho > 4500  ) ) // ToDo el numero esta hardcodeado
-	{
-		posx -= velx;
-	}
-
-	posy += vely;
-
-	if( ( posy < 0 ) || ( posy + alto > 480 ) ) // ToDo el numero esta hardcodeado
-	{
-		//Move back
-		posy -= vely;
-	}
-	if (pos1 == posx && pos2 ==  posy) {
-		quieto = true;
-		return false;
-	}
-	return true;
-}
-
 void VistaMarco::render(bool seMovio, int camx, int camy){
 	if (seMovio){
 			animacionCorrer(camx,camy);
@@ -218,3 +190,6 @@ void VistaMarco::setQuieto(bool quieto) {
 	this->quieto = quieto;
 }
 
+void VistaMarco::setDerecha(bool derecha){
+	this->derecha = derecha;
+}

@@ -156,25 +156,15 @@ public:
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
-					//comando.setScancode(SDLK_LEFT);
-					//comando.setType(1);
-					//msj = comando.toString();
 					keyHoldHandler->setKeyPressed(SDLK_LEFT);
 					keyHoldHandler->Resume();
-					//velx -= Personaje_VEL;
-					//derecha = false;
-					//return msj;
+					personaje->setDerecha(false);
 					break;
 
 				case SDLK_RIGHT:
-					//comando.setScancode(SDLK_RIGHT);
-					//comando.setType(1);
-					//msj = comando.toString();
 					keyHoldHandler->setKeyPressed(SDLK_RIGHT);
 					keyHoldHandler->Resume();
-					//velx += Personaje_VEL;
-					//derecha = true;
-					//return msj;
+					personaje->setDerecha(true);
 					break;
 
 				case SDLK_UP:
@@ -201,8 +191,6 @@ public:
 					comando.setType(0);
 					msj = comando.toString();
 					cliente->enviarAusuario("TODOS", msj, false);
-					//velx += Personaje_VEL;
-					//return msj;
 					break;
 
 				case SDLK_RIGHT:
@@ -210,12 +198,9 @@ public:
 					comando.setType(0);
 					msj = comando.toString();
 					cliente->enviarAusuario("TODOS", msj, false);
-					//velx -= Personaje_VEL;
-					//return msj;
 					break;
 
 				case SDLK_UP:
-					//return msj;
 					break;
 			}
 		}
@@ -317,15 +302,8 @@ int main( int argc, char** argv) {
 	arg->quit = &quit;
 	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
 
-	SDL_Event e;
-
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
-
-		//cambio a nueva posicion
-		//seMovio = personaje.mover();
-
-		cout << "ESCUCHO MENSAJE" << endl;
 
 		string update = cliente.recibir_vista();
 
@@ -353,7 +331,6 @@ int main( int argc, char** argv) {
 		personaje.render(seMovio,camera.x,camera.y);
 		SDL_RenderPresent( juego.getRenderer() );
 
-		cout << "DIBUJO TODO" << endl;
 	}
 
 	//Free resources and close SDL

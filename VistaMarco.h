@@ -72,6 +72,8 @@ public:
     void setPosy(int posy);
 
     void setQuieto(bool quieto);
+
+    void setDerecha(bool derecha);
 };
 
 

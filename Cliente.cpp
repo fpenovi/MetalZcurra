@@ -217,8 +217,6 @@ string Cliente::recibir_vista(){
     size_t len = 0;
     ssize_t bytesLeidos;
 
-    //ToDo Hacer select para cuando no me muevo (43,47 ms en procs + render, equivale a 23 fps )
-
     // Initialize file descriptor sets
     fd_set read_fds, write_fds, except_fds;
     FD_ZERO(&read_fds);
@@ -226,13 +224,11 @@ string Cliente::recibir_vista(){
     FD_ZERO(&except_fds);
     FD_SET(sockFileDescrpt, &read_fds);
 
-    // Seteo el timeout a 5 segundos
+    // Seteo el timeout a 10 msegundos
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = 10000;
 
-    // Wait for input to become ready or until the time out; the first parameter is
-    // 1 more than the largest file descriptor in any of the sets
     if (int rv = select(sockFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
 
         bytesLeidos = getline(&linea, &len, respuestaServidor);
@@ -253,7 +249,6 @@ string Cliente::recibir_vista(){
 
     else if(rv == 0)
     {
-        cout << "TIMEOUT" << endl;
         result = pthread_mutex_unlock(&mutex_envios);
         if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         return "$\n";

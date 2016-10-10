@@ -241,20 +241,16 @@ private:
 
         ProtocoloVistaUpdate update;
 
-        cout << pressed << endl;
-
         if ( pressed == 1 ) {
             //Adjust the velocity
             switch( key ) {
 
                 case SDLK_LEFT:
-                    // ToDo Actualizar personaje logico (con el nombre de usuario identifico que personaje tengo que actualizar)
                     personaje.setVelx(-personaje.getPersonaje_VEL());
                     personaje.mover();
                     //velx -= Personaje_VEL;
                     //derecha = false;*/
 
-                    // ToDo Crear Mensaje de UpdateVista correspondiente
                     update.setEstado(personaje.getSeMovio());
                     update.setX(personaje.getPosx());
                     update.setY(personaje.getPosy());
@@ -267,10 +263,6 @@ private:
                     personaje.mover();
                     //velx += Personaje_VEL;
                     //derecha = true;*/
-
-                    cout << "SE MOVIO " << personaje.getSeMovio() << endl;
-                    cout << "POSX " << personaje.getPosx() << endl;
-                    cout << "POSY " << personaje.getPosy() << endl;
 
                     update.setEstado(personaje.getSeMovio());
                     update.setX(personaje.getPosx());
@@ -306,10 +298,6 @@ private:
                     personaje.mover();
                     //velx -= Personaje_VEL;
 
-                    cout << "SE MOVIO " << personaje.getSeMovio() << endl;
-                    cout << "POSX " << personaje.getPosx() << endl;
-                    cout << "POSY " << personaje.getPosy() << endl;
-
                     update.setEstado(personaje.getSeMovio());
                     update.setX(personaje.getPosx());
                     update.setY(personaje.getPosy());
@@ -322,12 +310,6 @@ private:
         }
 
         int result; // para el mutex
-
-        cout << "TO STRING" << endl;
-
-        cout << personaje.getSeMovio() << endl;
-        cout << personaje.getPosx() << endl;
-        cout << personaje.getPosy() << endl;
 
         string mensaje = update.toString();
 
@@ -412,13 +394,6 @@ private:
         if (result != 0)
             perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
-        /*const char* fin = "$\n";
-
-        if (*bytesEscritos >= 0)
-            if (write(sockNewFileDescrpt, fin, strlen(fin)) < 0 ) {
-                perror("ERROR --> Escritura de fin de mensajes");
-                // ToDo logger
-            }*/
     }
 
     static void *procesarMensajes(void *arg) {
