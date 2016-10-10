@@ -412,13 +412,13 @@ private:
         if (result != 0)
             perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
-        const char* fin = "$\n";
+        /*const char* fin = "$\n";
 
         if (*bytesEscritos >= 0)
             if (write(sockNewFileDescrpt, fin, strlen(fin)) < 0 ) {
                 perror("ERROR --> Escritura de fin de mensajes");
                 // ToDo logger
-            }
+            }*/
     }
 
     static void *procesarMensajes(void *arg) {

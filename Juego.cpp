@@ -312,10 +312,10 @@ int main( int argc, char** argv) {
 	juego.setCamara(&camera);
 
 	// Thread que escucha eventos
-	//controlador_t* arg = new controlador_t;
-	//arg->juego = &juego;
-	//arg->quit = &quit;
-	//SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
+	controlador_t* arg = new controlador_t;
+	arg->juego = &juego;
+	arg->quit = &quit;
+	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
 
 	SDL_Event e;
 
@@ -324,16 +324,6 @@ int main( int argc, char** argv) {
 
 		//cambio a nueva posicion
 		//seMovio = personaje.mover();
-		if  (SDL_PollEvent(&e) != 0) {
-
-			SDL_PumpEvents();
-			SDL_FlushEvent(SDL_KEYDOWN);
-
-			if (e.type == SDL_QUIT) {
-				quit = true;
-			}
-			juego.handleEvent(e);
-		}
 
 		cout << "ESCUCHO MENSAJE" << endl;
 
