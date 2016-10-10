@@ -145,10 +145,10 @@ public:
 		keyHoldHandler->Pause();
 	}
 
-	string handleEvent( SDL_Event& e) {
+	void handleEvent( SDL_Event& e) {
 
 		ProtocoloComando comando;
-		string msj = "";
+		string msj;
 
 		// Si toco una tecla por la primera vez
 		if ( e.type == SDL_KEYDOWN && e.key.repeat == 0 ) {
@@ -156,32 +156,35 @@ public:
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
-					comando.setScancode(SDLK_LEFT);
-					comando.setType(1);
-					msj = comando.toString();
+					//comando.setScancode(SDLK_LEFT);
+					//comando.setType(1);
+					//msj = comando.toString();
 					keyHoldHandler->setKeyPressed(SDLK_LEFT);
 					keyHoldHandler->Resume();
 					//velx -= Personaje_VEL;
 					//derecha = false;
-					return msj;
+					//return msj;
+					break;
 
 				case SDLK_RIGHT:
-					comando.setScancode(SDLK_RIGHT);
-					comando.setType(1);
-					msj = comando.toString();
+					//comando.setScancode(SDLK_RIGHT);
+					//comando.setType(1);
+					//msj = comando.toString();
 					keyHoldHandler->setKeyPressed(SDLK_RIGHT);
 					keyHoldHandler->Resume();
 					//velx += Personaje_VEL;
 					//derecha = true;
-					return msj;
+					//return msj;
+					break;
 
 				case SDLK_UP:
-					comando.setScancode(SDLK_UP);
-					comando.setType(1);
-					msj = comando.toString();
+					//comando.setScancode(SDLK_UP);
+					//comando.setType(1);
+					//msj = comando.toString();
 					//if (!saltando) saltando=true;
 					//subiendo=true;
-					return msj;
+					//return msj;
+					break;
 			}
 		}
 
@@ -199,7 +202,8 @@ public:
 					msj = comando.toString();
 					cliente->enviarAusuario("TODOS", msj, false);
 					//velx += Personaje_VEL;
-					return msj;
+					//return msj;
+					break;
 
 				case SDLK_RIGHT:
 					comando.setScancode(SDLK_RIGHT);
@@ -207,10 +211,12 @@ public:
 					msj = comando.toString();
 					cliente->enviarAusuario("TODOS", msj, false);
 					//velx -= Personaje_VEL;
-					return msj;
+					//return msj;
+					break;
 
 				case SDLK_UP:
-					return msj;
+					//return msj;
+					break;
 			}
 		}
 	}
@@ -306,16 +312,29 @@ int main( int argc, char** argv) {
 	juego.setCamara(&camera);
 
 	// Thread que escucha eventos
-	controlador_t* arg = new controlador_t;
-	arg->juego = &juego;
-	arg->quit = &quit;
-	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
+	//controlador_t* arg = new controlador_t;
+	//arg->juego = &juego;
+	//arg->quit = &quit;
+	//SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
+
+	SDL_Event e;
 
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
 
 		//cambio a nueva posicion
 		//seMovio = personaje.mover();
+		if  (SDL_PollEvent(&e) != 0) {
+
+			SDL_PumpEvents();
+			SDL_FlushEvent(SDL_KEYDOWN);
+
+			if (e.type == SDL_QUIT) {
+				quit = true;
+			}
+			juego.handleEvent(e);
+		}
+
 		cout << "ESCUCHO MENSAJE" << endl;
 
 		string update = cliente.recibir_vista();

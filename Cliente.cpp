@@ -20,11 +20,9 @@ Cliente::Cliente(char** argv){
     sockFileDescrpt = 0;
     FILE* respuestaServidor = NULL;
     estado=false;
-    mutex_mensajes = PTHREAD_MUTEX_INITIALIZER;
-    mutex_login = PTHREAD_MUTEX_INITIALIZER;
+    mutex_envios = PTHREAD_MUTEX_INITIALIZER;
     usuariosAenviar; //hash de usuarios
     int cantUsuarios = 0;
-    result=0;
     string aux(argv[1]);
     strcpy(IP,aux.c_str());
     aux= argv[2];
@@ -195,11 +193,11 @@ void Cliente::recibir_mensajes(){
 }
 
 string Cliente::recibir_vista(){
-    result = pthread_mutex_lock(&mutex_login);
+    int result = pthread_mutex_lock(&mutex_envios);
     if (result != 0) perror("Fallo el pthread_mutex_lock en login");
     if(! estado){
         cout<<"No esta conectado al servidor"<<endl;
-        result = pthread_mutex_unlock(&mutex_login);
+        result = pthread_mutex_unlock(&mutex_envios);
         if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         return ""; //ToDo Lanzar Excepcion
     }
@@ -210,7 +208,7 @@ string Cliente::recibir_vista(){
 
     if (bytesEsc < 0) {
         perror("ERROR --> Has sido desconectado del servidor");
-        result = pthread_mutex_unlock(&mutex_login);
+        result = pthread_mutex_unlock(&mutex_envios);
         if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         salir();
     }
@@ -248,7 +246,7 @@ string Cliente::recibir_vista(){
         cout << linea;
         free(linea);
         linea = NULL;
-        result = pthread_mutex_unlock(&mutex_login);
+        result = pthread_mutex_unlock(&mutex_envios);
         if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         return mensaje;
     }
@@ -256,17 +254,17 @@ string Cliente::recibir_vista(){
     else if(rv == 0)
     {
         cout << "TIMEOUT" << endl;
-        result = pthread_mutex_unlock(&mutex_login);
+        result = pthread_mutex_unlock(&mutex_envios);
         if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         return "$\n";
     }
     else{
         perror("ERROR --> select");
-        result = pthread_mutex_unlock(&mutex_login);
+        result = pthread_mutex_unlock(&mutex_envios);
         if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         salir();
     }
-    result = pthread_mutex_unlock(&mutex_login);
+    result = pthread_mutex_unlock(&mutex_envios);
     if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 }
 
@@ -381,7 +379,7 @@ void Cliente::enviar(){
 
 void Cliente::enviarAusuario(string usuario, string linea, bool debePedirRespuesta) {
 
-    int result = pthread_mutex_lock(&mutex_login);
+    int result = pthread_mutex_lock(&mutex_envios);
     if (result != 0) perror("Fallo el pthread_mutex_lock en login");
     ssize_t bytesLeidos;
     ssize_t bytesEsc;
@@ -416,7 +414,7 @@ void Cliente::enviarAusuario(string usuario, string linea, bool debePedirRespues
     }
 
     heartbeat->Resume();
-    result = pthread_mutex_unlock(&mutex_login);
+    result = pthread_mutex_unlock(&mutex_envios);
     if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 }
 

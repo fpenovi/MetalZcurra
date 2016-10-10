@@ -28,9 +28,7 @@ private:
     char port[8];
     char IP[8];
 	Heartbeat* heartbeat;
-	pthread_mutex_t mutex_mensajes;
-	pthread_mutex_t mutex_login;
-	int result;
+	pthread_mutex_t mutex_envios;
 
 public:
     Cliente(char** argv);
