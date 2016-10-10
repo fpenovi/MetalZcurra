@@ -334,13 +334,17 @@ private:
         cout << mensaje;
 
         // ToDo Encolar el UpdateVista que se creo en alguno de los case de arriba
-        for (auto kv : usuarios) {
-            Mensaje mensajeNuevo(emisor, kv.first, mensaje);
+        for (int i = 0; i < conectados.size() ; i++) {
+
+            string destino = conectados[i]->user;
+            destino.erase(destino.length()-1);
+
+            Mensaje mensajeNuevo(emisor, destino, mensaje);
 
             // Lockeo el mutex a mensajes
             result = pthread_mutex_lock(&mutex_mensajes);
             if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-            logger.loggearMsj(emisor, kv.first, mensaje);
+            logger.loggearMsj(emisor, destino, mensaje);
 
             mensajes.push_back(mensajeNuevo);
 
@@ -389,7 +393,7 @@ private:
                 *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
 
                 if (*bytesEscritos < 0) {
-                    perror("ERROR --> Cliente se desconectó inesperadamente");
+                    perror("ERROR --> Cliente se desconectó inecsperadamente");
                     break;
                 }
                 it = mensajes.erase(it);

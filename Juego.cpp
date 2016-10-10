@@ -197,6 +197,7 @@ public:
 					comando.setScancode(SDLK_LEFT);
 					comando.setType(0);
 					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					//velx += Personaje_VEL;
 					return msj;
 
@@ -204,6 +205,7 @@ public:
 					comando.setScancode(SDLK_RIGHT);
 					comando.setType(0);
 					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					//velx -= Personaje_VEL;
 					return msj;
 
@@ -252,21 +254,14 @@ int escucharEventos( void* arg ) {
 
 	while( !(*quit) ) {
 
-		string msj = "";
+		if  (SDL_PollEvent(&e) != 0) {
 
-		//MANEJA LA COLA DE EVENTOS
-
-
-		while  (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				*quit = true;
 			}
-			msj = miJuego->handleEvent(e);
+			miJuego->handleEvent(e);
 		}
 
-		if (msj != "") {
-			cliente->enviarAusuario("TODOS", msj, false);
-		}
 	}
 	return 0;
 }
