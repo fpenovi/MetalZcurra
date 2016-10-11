@@ -178,6 +178,14 @@ int VistaMarco::getAlto(){
 	return alto;
 }
 
+int VistaMarco::getId() {
+	return id;
+}
+
+bool VistaMarco::getSeMovio() {
+	return seMovio;
+}
+
 void VistaMarco::setPosx(int posx) {
 	this->posx = posx;
 }
@@ -192,4 +200,12 @@ void VistaMarco::setQuieto(bool quieto) {
 
 void VistaMarco::setDerecha(bool derecha){
 	this->derecha = derecha;
+}
+
+void VistaMarco::setId(int id) {
+	this->id = id;
+}
+
+void VistaMarco::setSeMovio(bool state) {
+	this->seMovio = state;
 }

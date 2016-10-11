@@ -35,6 +35,8 @@ private:
     const static int Personaje_VEL = 5;
     const static int Personaje_VEL_Y = 4;
     SDL_Renderer *renderizador;
+    int id;
+    bool seMovio;
 
 public:
     VistaMarco(SDL_Renderer *renderizador2);
@@ -67,6 +69,10 @@ public:
 
     int getAlto();
 
+    int getId();
+
+    bool getSeMovio();
+
     void setPosx(int posx);
 
     void setPosy(int posy);
@@ -74,6 +80,10 @@ public:
     void setQuieto(bool quieto);
 
     void setDerecha(bool derecha);
+
+    void setId(int id);
+
+    void setSeMovio(bool state);
 };
 
 

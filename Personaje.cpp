@@ -77,3 +77,11 @@ int Personaje::getPersonaje_VEL(){
 int Personaje::getPersonaje_VEL_Y(){
     return Personaje_VEL_Y;
 }
+
+int Personaje::getId() {
+    return id;
+}
+
+void Personaje::setId(int id) {
+    this->id = id;
+}

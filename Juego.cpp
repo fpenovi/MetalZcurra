@@ -26,6 +26,7 @@ private:
 	SDL_Window* ventana;
 	SDL_Rect* camera;
 	Cliente* cliente;
+	unordered_map<int, VistaMarco*> vistas;
 	VistaMarco* personaje;
 	int lastKeyPressed;
 	HandleKeyHold* keyHoldHandler;
@@ -41,7 +42,8 @@ public:
 
 	void close() {
 		//Free loaded images
-		personaje->liberarTextura();
+		for (auto kv : vistas)
+			kv.second->liberarTextura();
 
 		//Destroy window
 		SDL_DestroyRenderer( renderizador );
@@ -118,8 +120,8 @@ public:
 		return cliente;
 	}
 
-	VistaMarco* getPersonaje(){
-		return personaje;
+	VistaMarco* getPersonajeById(int id){
+		return vistas[id];
 	}
 
 
@@ -131,8 +133,12 @@ public:
 		camera = camara;
 	}
 
+	void addPersonaje(int id, VistaMarco* pj){
+		vistas[id] = pj;
+	}
+
 	void setPersonaje(VistaMarco* pj){
-		personaje = pj;
+		this->personaje = pj;
 	}
 
 	void conectar(){
@@ -226,6 +232,11 @@ public:
 			camera->y = LEVEL_HEIGHT - camera->h;
 
 	}
+
+	void renderizar(){
+		for (auto kv : vistas)
+			kv.second->render(kv.second->getSeMovio(), camera->x, camera->y);
+	}
 };
 
 typedef struct {
@@ -280,7 +291,11 @@ int main( int argc, char** argv) {
 	}
 
 	VistaMarco personaje(juego.getRenderer());
+	juego.addPersonaje(1, &personaje);
 	juego.setPersonaje(&personaje);
+
+	VistaMarco personaje2(juego.getRenderer());
+	juego.addPersonaje(2, &personaje2);
 
 	//Load media
 	if ( !personaje.cargarImagen() ) {
@@ -288,9 +303,13 @@ int main( int argc, char** argv) {
 		return 1;
 	}
 
+	if ( !personaje2.cargarImagen() ) {
+		printf("Failed to load media!\n");
+		return 1;
+	}
+
 	//Main loop flag
 	bool quit = false;
-	bool seMovio;
 
 	// Creo la camara
 	SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -313,9 +332,11 @@ int main( int argc, char** argv) {
 
 			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy);
 
-			personaje.setPosx(posx);
-			personaje.setPosy(posy);
-			seMovio = state;
+			VistaMarco* pj = juego.getPersonajeById(id);
+
+			pj->setPosx(posx);
+			pj->setPosy(posy);
+			pj->setSeMovio(state);
 		}
 
 		//Muevo la camara
@@ -328,7 +349,7 @@ int main( int argc, char** argv) {
 
 		//Render background
 		//fondo.render( 0, 0, &camera );
-		personaje.render(seMovio,camera.x,camera.y);
+		juego.renderizar();
 		SDL_RenderPresent( juego.getRenderer() );
 
 	}

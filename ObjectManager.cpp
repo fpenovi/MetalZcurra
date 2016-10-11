@@ -36,6 +36,7 @@ void ObjectManager::registerUser(string username) {
 
 	tablaUsuarios[username] = idActual;
 	Personaje* p = new Personaje();
+	p->setId(idActual);
 	addObject(p);
 }
 
