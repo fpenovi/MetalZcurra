@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp  ProtocoloComando.cpp ProtocoloVistaUpdate.cpp Personaje.cpp
+OBJS = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp  ProtocoloComando.cpp ProtocoloVistaUpdate.cpp Personaje.cpp GameObject.cpp ObjectManager.cpp
 OBJS2 = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp Cliente.cpp Textura.cpp VistaMarco.cpp ProtocoloComando.cpp ProtocoloVistaUpdate.cpp HandleKeyHold.cpp
 
 

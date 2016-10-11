@@ -13,6 +13,8 @@
 #include "ProtocoloComando.h"
 #include "ProtocoloVistaUpdate.h"
 #include "Personaje.h"
+#include "ObjectManager.h"
+
 #define MAX_CLIENTS 6
 
 using namespace std;
@@ -50,7 +52,7 @@ private:
     static pthread_mutex_t mutex_mensajes;
     static pthread_mutex_t mutex_login;
     static Log logger;
-    static Personaje personaje;
+    static ObjectManager* objectManager;
 
     static void *controlInput(void *serverStatus) {
 
@@ -65,6 +67,7 @@ private:
                 cerrarConexiones();
                 usleep(100000);
                 shutdown(fileDescrpt, SHUT_RDWR);
+                delete objectManager;
                 return NULL;
             }
         }
@@ -230,8 +233,12 @@ private:
             exit(1);
         }
 
+
         string emisor(emisorChar);
         emisor.erase(emisor.length()-1);
+
+        int idEmisor = objectManager->getIdByUsername(emisor);
+        Personaje* personaje = objectManager->getObject(idEmisor);
 
         int key;
         int pressed;
@@ -246,28 +253,28 @@ private:
             switch( key ) {
 
                 case SDLK_LEFT:
-                    personaje.setVelx(-personaje.getPersonaje_VEL());
-                    personaje.mover();
+                    personaje->setVelx(-personaje->getPersonaje_VEL());
+                    personaje->mover();
                     //velx -= Personaje_VEL;
                     //derecha = false;*/
 
-                    update.setEstado(personaje.getSeMovio());
-                    update.setX(personaje.getPosx());
-                    update.setY(personaje.getPosy());
-                    update.setObject_id(1);
+                    update.setEstado(personaje->getSeMovio());
+                    update.setX(personaje->getPosx());
+                    update.setY(personaje->getPosy());
+                    update.setObject_id(idEmisor);
 
                     break;
 
                 case SDLK_RIGHT:
-                    personaje.setVelx(personaje.getPersonaje_VEL());
-                    personaje.mover();
+                    personaje->setVelx(personaje->getPersonaje_VEL());
+                    personaje->mover();
                     //velx += Personaje_VEL;
                     //derecha = true;*/
 
-                    update.setEstado(personaje.getSeMovio());
-                    update.setX(personaje.getPosx());
-                    update.setY(personaje.getPosy());
-                    update.setObject_id(1);
+                    update.setEstado(personaje->getSeMovio());
+                    update.setX(personaje->getPosx());
+                    update.setY(personaje->getPosy());
+                    update.setObject_id(idEmisor);
                     break;
 
                 case SDLK_UP:
@@ -283,25 +290,25 @@ private:
             switch( key ) {
 
                 case SDLK_LEFT:
-                    personaje.setVelx(0);
-                    personaje.mover();
+                    personaje->setVelx(0);
+                    personaje->mover();
                     //velx += Personaje_VEL;
 
-                    update.setEstado(personaje.getSeMovio());
-                    update.setX(personaje.getPosx());
-                    update.setY(personaje.getPosy());
-                    update.setObject_id(1);
+                    update.setEstado(personaje->getSeMovio());
+                    update.setX(personaje->getPosx());
+                    update.setY(personaje->getPosy());
+                    update.setObject_id(idEmisor);
                     break;
 
                 case SDLK_RIGHT:
-                    personaje.setVelx(0);
-                    personaje.mover();
+                    personaje->setVelx(0);
+                    personaje->mover();
                     //velx -= Personaje_VEL;
 
-                    update.setEstado(personaje.getSeMovio());
-                    update.setX(personaje.getPosx());
-                    update.setY(personaje.getPosy());
-                    update.setObject_id(1);
+                    update.setEstado(personaje->getSeMovio());
+                    update.setX(personaje->getPosx());
+                    update.setY(personaje->getPosy());
+                    update.setObject_id(idEmisor);
                     break;
 
                 case SDLK_UP:
@@ -425,6 +432,10 @@ private:
         logger.loggearConexion(userCon);
         cout << "\033[1m\033[32mSe conectó \033[1m\033[32m" << ((argthread_t *) arg)->user << "\033[0m";
         mandarUsuarios(sockNewFileDescrpt);     // Mando lista de usuarios al cliente por unica vez
+
+        // REGISTRO EL USUARIO Y LE ASIGNO UN ID VINCULADO A UN PERSONAJE
+        cout << userCon << endl;
+        objectManager->registerUser(userCon);
 
         while (true) {
 
@@ -593,6 +604,12 @@ public:
 
     }
 
+    void initJuego() {
+
+        // ToDo agregar parametro XML
+
+    }
+
     void aceptarClientes() {
 
         while (serverOn) {
@@ -647,7 +664,7 @@ vector<Mensaje> Servidor::mensajes;
 pthread_mutex_t Servidor::mutex_mensajes;
 pthread_mutex_t Servidor::mutex_login;
 Log Servidor::logger(100);
-Personaje Servidor::personaje;
+ObjectManager* Servidor::objectManager = ObjectManager::getInstance();
 
 int main(int argc, char** argv) {
 
@@ -660,6 +677,7 @@ int main(int argc, char** argv) {
     unsigned short int numPuerto = (unsigned short) strtoull(argv[2], NULL, 0);
 
     Servidor server = Servidor(numPuerto, argv[1]);
+    server.initJuego();
     server.aceptarClientes();
     return 0;
 }

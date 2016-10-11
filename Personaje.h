@@ -4,6 +4,9 @@
 
 #ifndef METALZCURRA_PERSONAJE_H
 #define METALZCURRA_PERSONAJE_H
+
+#include "GameObject.h"
+
 #define LEVEL_WIDTH 4500
 #define LEVEL_HEIGHT 480
 
