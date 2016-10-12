@@ -27,11 +27,11 @@ void* handleJumpFunc(void* argKh) {
 
         if (*isKhOn && !(*isKhPaused)) {
 
-            for (int i = 0 ; i < 30 ; i++){
+            for (int i = 0 ; i < 20 ; i++){
                 string msj = to_string(*keyPressed);
                 msj += "$1\n";
                 cliente->enviarAusuario("TODOS", msj, false);
-                usleep(30000);
+                usleep(40000);
             }
             *isKhPaused = true;
         }

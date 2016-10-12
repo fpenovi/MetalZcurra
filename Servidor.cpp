@@ -278,7 +278,7 @@ private:
                     break;
 
                 case SDLK_UP:
-                    if (personaje->getPosy() <= 165){
+                    if (personaje->getPosy() <= 190){
                         personaje->setVely(personaje->getPersonaje_VEL_Y());
                         personaje->moverY();
                         personaje->moverX();

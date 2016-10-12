@@ -177,13 +177,11 @@ public:
 				case SDLK_LEFT:
 					keyHoldHandler->setKeyPressed(SDLK_LEFT);
 					keyHoldHandler->Resume();
-					personaje->setDerecha(false);
 					break;
 
 				case SDLK_RIGHT:
 					keyHoldHandler->setKeyPressed(SDLK_RIGHT);
 					keyHoldHandler->Resume();
-					personaje->setDerecha(true);
 					break;
 
 				case SDLK_UP:
@@ -354,6 +352,13 @@ int main( int argc, char** argv) {
 			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy);
 
 			VistaMarco* pj = juego.getPersonajeById(id);
+
+			if (pj->getX() < posx){
+				pj->setDerecha(true);
+			}
+			else if (pj->getX() > posx){
+				pj->setDerecha(false);
+			}
 
 			pj->setPosx(posx);
 			pj->setPosy(posy);
