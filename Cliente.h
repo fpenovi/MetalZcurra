@@ -72,6 +72,8 @@ public:
     void imprimir_usuarios();
 
 	string recibir_vista();
+
+	string recibir_nueva_vista();
 };
 
 

@@ -5,11 +5,12 @@
 #ifndef METALZCURRA_OBJECTMANAGER_H
 #define METALZCURRA_OBJECTMANAGER_H
 
-
+#include <string.h>
+#include <unistd.h>
 #include "GameObject.h"
 #include "Personaje.h"
 #include <unordered_map>
-
+#include "ProtocoloNuevaVista.h"
 
 using namespace std;
 
@@ -26,10 +27,12 @@ private:
 public:
 	~ObjectManager();
 	Personaje* getObject(int id);
-	void addObject(Personaje* object);
+	void addObject(int id, Personaje* object);
 	void registerUser(string username);
 	int getIdByUsername(string username);
 	static ObjectManager* getInstance();
+	void crearPersonajes(int cantidad);
+	void enviarPersonajes(int FD);
 };
 
 

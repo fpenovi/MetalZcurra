@@ -8,6 +8,7 @@
 #include "VistaMarco.h"
 #include "ProtocoloComando.h"
 #include "ProtocoloVistaUpdate.h"
+#include "ProtocoloNuevaVista.h"
 #include "HandleKeyHold.h"
 #include "HandleJump.h"
 
@@ -44,6 +45,8 @@ public:
 	}
 
 	void close() {
+		//ToDo Liberar personajes
+
 		//Free loaded images
 		for (auto kv : vistas)
 			kv.second->liberarTextura();
@@ -196,12 +199,11 @@ public:
 		// Si suelto la tecla
 		else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
 
-			keyHoldHandler->Pause();
-			keyHoldHandler->setKeyPressed(0);
-
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
+					keyHoldHandler->Pause();
+					keyHoldHandler->setKeyPressed(0);
 					comando.setScancode(SDLK_LEFT);
 					comando.setType(0);
 					msj = comando.toString();
@@ -209,6 +211,8 @@ public:
 					break;
 
 				case SDLK_RIGHT:
+					keyHoldHandler->Pause();
+					keyHoldHandler->setKeyPressed(0);
 					comando.setScancode(SDLK_RIGHT);
 					comando.setType(0);
 					msj = comando.toString();
@@ -301,23 +305,29 @@ int main( int argc, char** argv) {
 		return 1;
 	}
 
-	VistaMarco personaje(juego.getRenderer());
-	juego.addPersonaje(1, &personaje);
-	juego.setPersonaje(&personaje);
+	while (true){
 
-	VistaMarco personaje2(juego.getRenderer());
-	juego.addPersonaje(2, &personaje2);
+		string nuevaVista = cliente.recibir_nueva_vista();
 
-	//Load media
-	if ( !personaje.cargarImagen() ) {
-		printf("Failed to load media!\n");
-		return 1;
+		if (nuevaVista == "$\n") break;
+
+		int id, sprite, posx, posy;
+
+		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy);
+
+		VistaMarco* personaje = new VistaMarco(juego.getRenderer());
+		personaje->setId(id);
+		personaje->setPosx(posx);
+		personaje->setPosy(posy);
+		juego.addPersonaje(id, personaje);
+
+		if ( !personaje->cargarImagen() ) {
+			printf("Failed to load media!\n");
+			return 1;
+		}
 	}
 
-	if ( !personaje2.cargarImagen() ) {
-		printf("Failed to load media!\n");
-		return 1;
-	}
+	juego.setPersonaje(juego.getPersonajeById(1));
 
 	//Main loop flag
 	bool quit = false;

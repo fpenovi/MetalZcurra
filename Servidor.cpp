@@ -278,7 +278,7 @@ private:
                     break;
 
                 case SDLK_UP:
-                    if (personaje->getPosy() <= 150){
+                    if (personaje->getPosy() <= 165){
                         personaje->setVely(personaje->getPersonaje_VEL_Y());
                         personaje->moverY();
                         personaje->moverX();
@@ -467,6 +467,7 @@ private:
         // REGISTRO EL USUARIO Y LE ASIGNO UN ID VINCULADO A UN PERSONAJE
         cout << userCon << endl;
         objectManager->registerUser(userCon);
+        objectManager->enviarPersonajes(sockNewFileDescrpt);
 
         while (true) {
 
@@ -639,6 +640,7 @@ public:
 
         // ToDo agregar parametro XML
 
+        objectManager->crearPersonajes(4);
     }
 
     void aceptarClientes() {

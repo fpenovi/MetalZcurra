@@ -263,6 +263,32 @@ string Cliente::recibir_vista(){
     if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 }
 
+string Cliente::recibir_nueva_vista() {
+
+    char* linea = NULL;
+    size_t len = 0;
+    ssize_t bytesLeidos;
+
+    int result = pthread_mutex_lock(&mutex_envios);
+    if (result != 0) perror("Fallo el pthread_mutex_lock en login");
+
+    bytesLeidos = getline(&linea, &len, respuestaServidor);
+
+    result = pthread_mutex_unlock(&mutex_envios);
+    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
+
+    if (bytesLeidos <= 0) {
+        perror("ERROR --> Se cerró el server");
+        salir();
+    }
+
+    string mensaje(linea);
+    cout << linea;
+    free(linea);
+    linea = NULL;
+    return mensaje;
+}
+
 void Cliente::desconectar(){
     if (!estado) {
         perror("El cliente ya se encuentra desconectado");
