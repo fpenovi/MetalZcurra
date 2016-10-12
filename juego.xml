@@ -1,0 +1,11 @@
+<!DOCTYPE JUEGO SYSTEM "juego.dtd">
+<juego>
+	<ventana>
+		<ancho>800</ancho>
+		<alto>600</alto>
+	</ventana>
+	<nivel>
+		<ancho>4500</ancho>
+		<alto>480</alto>
+	</nivel>
+</juego>
