@@ -254,7 +254,7 @@ private:
 
                 case SDLK_LEFT:
                     personaje->setVelx(-personaje->getPersonaje_VEL());
-                    personaje->mover();
+                    personaje->moverX();
                     //velx -= Personaje_VEL;
                     //derecha = false;*/
 
@@ -267,7 +267,7 @@ private:
 
                 case SDLK_RIGHT:
                     personaje->setVelx(personaje->getPersonaje_VEL());
-                    personaje->mover();
+                    personaje->moverX();
                     //velx += Personaje_VEL;
                     //derecha = true;*/
 
@@ -278,8 +278,39 @@ private:
                     break;
 
                 case SDLK_UP:
+                    if (personaje->getPosy() <= 150){
+                        personaje->setVely(personaje->getPersonaje_VEL_Y());
+                        personaje->moverY();
+                        personaje->moverX();
+                        personaje->setVely(0);
+                        personaje->setBajando(true);
+                    }
+                    else if (personaje->getPosy() >= 240){
+                        personaje->setVely(-personaje->getPersonaje_VEL_Y());
+                        personaje->moverY();
+                        personaje->moverX();
+                        personaje->setVely(0);
+                        personaje->setBajando(false);
+                    }
+                    else if (personaje->getBajando()){
+                        personaje->setVely(personaje->getPersonaje_VEL_Y());
+                        personaje->moverY();
+                        personaje->moverX();
+                    }
+
+                    else if(!(personaje->getBajando())) {
+                        personaje->setVely(-personaje->getPersonaje_VEL_Y());
+                        personaje->moverY();
+                        personaje->moverX();
+                    }
+
                     //if (!saltando) saltando=true;
                     //subiendo=true;*/
+
+                    update.setEstado(personaje->getSeMovio());
+                    update.setX(personaje->getPosx());
+                    update.setY(personaje->getPosy());
+                    update.setObject_id(idEmisor);
                     break;
             }
         }
@@ -291,7 +322,7 @@ private:
 
                 case SDLK_LEFT:
                     personaje->setVelx(0);
-                    personaje->mover();
+                    personaje->moverX();
                     //velx += Personaje_VEL;
 
                     update.setEstado(personaje->getSeMovio());
@@ -302,7 +333,7 @@ private:
 
                 case SDLK_RIGHT:
                     personaje->setVelx(0);
-                    personaje->mover();
+                    personaje->moverX();
                     //velx -= Personaje_VEL;
 
                     update.setEstado(personaje->getSeMovio());

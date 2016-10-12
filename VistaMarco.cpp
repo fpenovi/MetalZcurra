@@ -38,13 +38,17 @@ bool VistaMarco::estaQuieto(){
 }
 
 void VistaMarco::render(bool seMovio, int camx, int camy){
+	if (estaSaltando()) {
+		animacionSaltando(camx, camy);
+		return;
+	}
 	if (seMovio){
-			animacionCorrer(camx,camy);
-		}
-		else {
-			animacionParado(camx,camy);
-		}
-		if (estaSaltando()) animacionSaltando(camx,camy);
+		animacionCorrer(camx,camy);
+	}
+	else {
+		animacionParado(camx,camy);
+	}
+
 }
 
 void VistaMarco::animacionParado(int camx,int camy){
@@ -84,21 +88,9 @@ int VistaMarco::animacionSaltando(int camx,int camy){
 	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando/4 ];
 	TEXTURA_PERSONAJE_SALTANDO->render( posx-camx, posy-camy, currentClip,0,NULL,flip);
 
-	if (frameSaltando/4  >= ANIMACION_SALTANDO/2){
-		subiendo=false;
-		bajando= true;
-		posy+=Personaje_VEL_Y;
-	}
-	else {
-		subiendo=true;
-		bajando=false;
-		posy-=Personaje_VEL_Y;
-	}
 	++frameSaltando;
 	if( frameSaltando/4 == ANIMACION_SALTANDO ){
 		frameSaltando = 0;
-		saltando=false;
-		bajando= false;
 	}
 }
 
@@ -163,7 +155,7 @@ void VistaMarco::liberarTextura(){
 
 }
 bool VistaMarco::estaSaltando(){
-	return saltando;
+	return (posy != 240);
 }
 int VistaMarco::getX(){
 	return posx;

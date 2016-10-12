@@ -9,6 +9,7 @@
 #include "ProtocoloComando.h"
 #include "ProtocoloVistaUpdate.h"
 #include "HandleKeyHold.h"
+#include "HandleJump.h"
 
 using namespace std;
 
@@ -30,6 +31,7 @@ private:
 	VistaMarco* personaje;
 	int lastKeyPressed;
 	HandleKeyHold* keyHoldHandler;
+	HandleJump* jumpHandler;
 
 public:
 
@@ -37,6 +39,7 @@ public:
 		renderizador = NULL;
 		ventana = NULL;
 		keyHoldHandler = NULL;
+		jumpHandler = NULL;
 		lastKeyPressed = 0;
 	}
 
@@ -51,6 +54,7 @@ public:
 		ventana = NULL;
 		renderizador = NULL;
 		delete keyHoldHandler;
+		delete jumpHandler;
 
 		//Quit SDL subsystems
 		IMG_Quit();
@@ -151,6 +155,12 @@ public:
 		keyHoldHandler->Pause();
 	}
 
+	void crearJumpHandler(){
+		jumpHandler = new HandleJump(this->cliente);
+		jumpHandler->On();
+		jumpHandler->Pause();
+	}
+
 	void handleEvent( SDL_Event& e) {
 
 		ProtocoloComando comando;
@@ -174,9 +184,8 @@ public:
 					break;
 
 				case SDLK_UP:
-					//comando.setScancode(SDLK_UP);
-					//comando.setType(1);
-					//msj = comando.toString();
+					jumpHandler->setKeyPressed(SDLK_UP);
+					jumpHandler->Resume();
 					//if (!saltando) saltando=true;
 					//subiendo=true;
 					//return msj;
@@ -207,6 +216,7 @@ public:
 					break;
 
 				case SDLK_UP:
+					jumpHandler->Pause();
 					break;
 			}
 		}
@@ -283,6 +293,7 @@ int main( int argc, char** argv) {
 	juego.setCliente(&cliente);
 	juego.conectar();
 	juego.crearKeyHoldHandler();
+	juego.crearJumpHandler();
 	//Textura fondo;
 
 	if( !juego.iniciar() ) {

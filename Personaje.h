@@ -20,12 +20,15 @@ private:
     int velx = 0;
     int vely = 0;
     const static int Personaje_VEL = 5;
-    const static int Personaje_VEL_Y = 4;
+    const static int Personaje_VEL_Y = 5;
     int seMovio;
     int id;
+    bool bajando = false;
 
 public:
-    void mover();
+    void moverX();
+
+    void moverY();
 
     int getPosx();
 
@@ -54,6 +57,10 @@ public:
     int getId();
 
     void setId(int id);
+
+    bool getBajando();
+
+    void setBajando(bool bajando);
 };
 
 #endif //METALZCURRA_PERSONAJE_H
