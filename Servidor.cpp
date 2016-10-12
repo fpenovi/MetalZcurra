@@ -14,6 +14,8 @@
 #include "ProtocoloVistaUpdate.h"
 #include "Personaje.h"
 #include "ObjectManager.h"
+#include "ParserXML.h"
+
 
 #define MAX_CLIENTS 6
 
@@ -53,6 +55,7 @@ private:
     static pthread_mutex_t mutex_login;
     static Log logger;
     static ObjectManager* objectManager;
+    ParserXML* parser;
 
     static void *controlInput(void *serverStatus) {
 
@@ -578,7 +581,7 @@ private:
     }
 
 public:
-    Servidor(unsigned short int numPuerto, string nombreArchivo) {
+    Servidor(unsigned short int numPuerto, string nombreArchivo , char* docname = "juego.xml") {
 
         nombreArchivoCsv = nombreArchivo;
         bzero(&attr, sizeof(attr));
@@ -632,14 +635,15 @@ public:
 
         serverOn = true;
         cargarUsuarios(nombreArchivo);
+        parser = new ParserXML(docname);
         logger.inicializoServer();
 
     }
 
     void initJuego() {
 
-        // ToDo agregar parametro XML
 
+        parser->TamVentana();
         objectManager->crearPersonajes(4);
     }
 
@@ -709,7 +713,7 @@ int main(int argc, char** argv) {
 
     unsigned short int numPuerto = (unsigned short) strtoull(argv[2], NULL, 0);
 
-    Servidor server = Servidor(numPuerto, argv[1]);
+    Servidor server = Servidor(numPuerto, argv[1],argv[3]);
     server.initJuego();
     server.aceptarClientes();
     return 0;
