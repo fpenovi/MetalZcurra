@@ -48,13 +48,15 @@ private:
     pthread_t threadControl;
     pthread_attr_t attr;
     bool serverOn = false;
-    static vector<argthread_t *> conectados;
+    static vector<argthread_t*> conectados;
     static unordered_map<string, string> usuarios;
     static vector<Mensaje> mensajes;
     static pthread_mutex_t mutex_mensajes;
     static pthread_mutex_t mutex_login;
     static Log logger;
     static ObjectManager* objectManager;
+    static unordered_map<string, vector<Mensaje>> conectadosHash;
+    static unordered_map<string, pthread_mutex_t> mutexesHash;
     ParserXML* parser;
 
     static void *controlInput(void *serverStatus) {
@@ -356,8 +358,7 @@ private:
 
         cout << mensaje;
 
-        // ToDo Encolar el UpdateVista que se creo en alguno de los case de arriba
-        for (int i = 0; i < conectados.size() ; i++) {
+        /*for (int i = 0; i < conectados.size() ; i++) {
 
             string destino = conectados[i]->user;
             destino.erase(destino.length()-1);
@@ -374,6 +375,19 @@ private:
             // Unlockeo el mutex a mensajes
             result = pthread_mutex_unlock(&mutex_mensajes);
             if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+        }*/
+
+        for (auto kv : conectadosHash) {
+
+            Mensaje* mensajeNuevo = new Mensaje(emisor, kv.first, mensaje);
+
+            //result = pthread_mutex_lock(&mutexesHash[kv.first]);
+            //if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+            kv.second.push_back(*mensajeNuevo);
+
+            //result = pthread_mutex_unlock(&mutexesHash[kv.first]);
+            //if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
         }
 
     }
@@ -395,9 +409,9 @@ private:
 
         string receptor(arg->user);
         receptor.erase(receptor.length() - 1);
-        vector<Mensaje>::iterator it;
-
         int result; //para el mutex
+        /*vector<Mensaje>::iterator it;
+
 
         // Lockeo el mutex a mensajes
         result = pthread_mutex_lock(&mutex_mensajes);
@@ -433,7 +447,35 @@ private:
         // Unlockeo el mutex a mensajes
         result = pthread_mutex_unlock(&mutex_mensajes);
         if (result != 0)
-            perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+            perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");*/
+
+
+
+
+        // obtengo la sublista de mi jugador
+        vector<Mensaje> auxLista = conectadosHash[receptor];
+
+        cout << auxLista.size() << endl;
+
+        if (auxLista.size() == 0)
+            return;
+
+        string mensajeEmisor = auxLista[0].getMensaje();
+        const char* mensajeChar = mensajeEmisor.c_str();
+
+        *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
+
+        if (*bytesEscritos < 0)
+            perror("ERROR --> Cliente se desconectó inecsperadamente");
+
+        // Lockeo el mutex para borrar de la lista del jugador
+        //result = pthread_mutex_lock(&mutexesHash[receptor]);
+        //if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+
+        auxLista.erase(mensajes.begin());
+
+        //result = pthread_mutex_unlock(&mutexesHash[receptor]);
+        //if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
 
     }
 
@@ -470,6 +512,8 @@ private:
         // REGISTRO EL USUARIO Y LE ASIGNO UN ID VINCULADO A UN PERSONAJE
         cout << userCon << endl;
         objectManager->registerUser(userCon);
+        conectadosHash[userCon] = vector<Mensaje>();
+        mutexesHash[userCon] = PTHREAD_MUTEX_INITIALIZER;
         objectManager->enviarPersonajes(sockNewFileDescrpt);
 
         while (true) {
@@ -702,6 +746,8 @@ pthread_mutex_t Servidor::mutex_mensajes;
 pthread_mutex_t Servidor::mutex_login;
 Log Servidor::logger(100);
 ObjectManager* Servidor::objectManager = ObjectManager::getInstance();
+unordered_map<string, vector<Mensaje>> Servidor::conectadosHash;
+unordered_map<string, pthread_mutex_t> Servidor::mutexesHash;
 
 int main(int argc, char** argv) {
 
