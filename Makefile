@@ -8,7 +8,7 @@ CC = g++
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
-COMPILER_FLAGS = -std=c++11
+COMPILER_FLAGS = -std=c++11 -o3
 
 #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS = -pthread -lxml2
