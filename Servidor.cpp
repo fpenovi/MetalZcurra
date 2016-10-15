@@ -393,30 +393,34 @@ private:
         // obtengo la sublista de mi jugador
         vector<Mensaje*>* auxLista = conectadosHash[receptor];
 
-        if (auxLista->size() == 0)
-            return;
 
-        for (int i = 0 ; i < auxLista->size()  ; i++) {
+        for (int i = 0 ; i < 5 ; i++) {
 
-            Mensaje *mensaje = auxLista->at(0);
-            string mensajeEmisor = mensaje->getMensaje();
-            const char *mensajeChar = mensajeEmisor.c_str();
+            if (auxLista->size() == 0) {
+                write(sockNewFileDescrpt, "$\n", 2);
+            }
 
-            *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
+            else {
+                Mensaje *mensaje = auxLista->at(0);
+                string mensajeEmisor = mensaje->getMensaje();
+                const char *mensajeChar = mensajeEmisor.c_str();
 
-            if (*bytesEscritos < 0)
-                perror("ERROR --> Cliente se desconectó inecsperadamente");
+                *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
 
-            // Lockeo el mutex para borrar de la lista del jugador
-            result = pthread_mutex_lock(&mutexesHash[receptor]);
-            if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+                if (*bytesEscritos < 0)
+                    perror("ERROR --> Cliente se desconectó inecsperadamente");
 
-            auxLista->erase(auxLista->begin());
+                // Lockeo el mutex para borrar de la lista del jugador
+                result = pthread_mutex_lock(&mutexesHash[receptor]);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
 
-            result = pthread_mutex_unlock(&mutexesHash[receptor]);
-            if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+                auxLista->erase(auxLista->begin());
 
-            delete mensaje;
+                result = pthread_mutex_unlock(&mutexesHash[receptor]);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+
+                delete mensaje;
+            }
         }
     }
 

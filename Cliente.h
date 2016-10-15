@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <unordered_map>
 #include "Heartbeat.h"
+#include <vector>
 
 using namespace std;
 
@@ -29,6 +30,8 @@ private:
     char IP[8];
 	Heartbeat* heartbeat;
 	pthread_mutex_t mutex_envios;
+	pthread_mutex_t mutex_mensajes;
+	vector<string> mensajes;
 
 public:
     Cliente(char** argv);
@@ -76,6 +79,8 @@ public:
 	string recibir_nueva_vista();
 
 	void encolar_vistas();
+
+	string desencolar_vista();
 };
 
 

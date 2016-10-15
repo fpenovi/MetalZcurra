@@ -258,6 +258,8 @@ typedef struct {
 
 int recibirVistas( void* arg){
 
+	cout << "ENTRO AL CONTROLADOR VISTA" << endl;
+
 	controlador_t* arg2 = (controlador_t*) arg;
 	Juego* miJuego = (Juego*) arg2->juego;
 	bool* quit = (bool*) arg2->quit;
@@ -265,12 +267,14 @@ int recibirVistas( void* arg){
 
 	while( !(*quit) ) {
 
-
+		cliente->encolar_vistas();
 
 	}
 }
 
 int escucharEventos( void* arg ) {
+
+	cout << "ENTRO AL CONTROLADOR" << endl;
 
 	controlador_t* arg2 = (controlador_t*) arg;
 	Juego* miJuego = (Juego*) arg2->juego;
@@ -331,6 +335,7 @@ int main( int argc, char** argv) {
 		personaje->setId(id);
 		personaje->setPosx(posx);
 		personaje->setPosy(posy);
+		personaje->setSeMovio(false);
 		juego.addPersonaje(id, personaje);
 
 		if ( !personaje->cargarImagen() ) {
@@ -353,13 +358,13 @@ int main( int argc, char** argv) {
 	arg->juego = &juego;
 	arg->quit = &quit;
 	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
-	//SDL_Thread* threadID = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
+	SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
 
 
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
 
-		string update = cliente.recibir_vista();
+		string update = cliente.desencolar_vista();
 
 		if (update != "$\n") {
 

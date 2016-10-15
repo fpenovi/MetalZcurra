@@ -21,6 +21,7 @@ Cliente::Cliente(char** argv){
     FILE* respuestaServidor = NULL;
     estado=false;
     mutex_envios = PTHREAD_MUTEX_INITIALIZER;
+    mutex_mensajes = PTHREAD_MUTEX_INITIALIZER;
     usuariosAenviar; //hash de usuarios
     int cantUsuarios = 0;
     string aux(argv[1]);
@@ -263,11 +264,37 @@ string Cliente::recibir_vista(){
     if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 }
 
+string Cliente::desencolar_vista() {
+
+    if (mensajes.size() == 0){
+        return "$\n";
+    }
+
+    string mensaje = mensajes.at(0);
+
+    int result = pthread_mutex_lock(&mutex_mensajes);
+    if (result != 0) perror("Fallo el pthread_mutex_lock en login");
+
+    mensajes.erase(mensajes.begin());
+
+    result = pthread_mutex_unlock(&mutex_mensajes);
+    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
+
+    return mensaje;
+}
+
 void Cliente::encolar_vistas() {
 
     const char* opc = "/R/\n";
+
+    int result = pthread_mutex_lock(&mutex_envios);
+    if (result != 0) perror("Fallo el pthread_mutex_lock en login");
+
     signal(SIGPIPE, SIG_IGN);
     ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
+
+    result = pthread_mutex_unlock(&mutex_envios);
+    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 
     if (bytesEsc < 0) {
         perror("ERROR --> Has sido desconectado del servidor");
@@ -278,7 +305,7 @@ void Cliente::encolar_vistas() {
     size_t len = 0;
     ssize_t bytesLeidos;
 
-    for (int i = 0; i < 3 ; i++) {
+    for (int i = 0; i < 5 ; i++) {
 
         bytesLeidos = getline(&linea, &len, respuestaServidor);
 
@@ -289,6 +316,18 @@ void Cliente::encolar_vistas() {
 
         string mensaje(linea);
         cout << linea;
+
+        if (mensaje != "$\n") {
+
+            int result = pthread_mutex_lock(&mutex_mensajes);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en login");
+
+            mensajes.push_back(mensaje);
+
+            result = pthread_mutex_unlock(&mutex_mensajes);
+            if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
+        }
+
         free(linea);
         linea = NULL;
     }
