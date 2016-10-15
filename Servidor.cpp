@@ -363,8 +363,8 @@ private:
 
             Mensaje* mensajeNuevo = new Mensaje(emisor, kv.first, mensaje);
 
-            //result = pthread_mutex_lock(&mutexesHash[kv.first]);
-            //if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+            result = pthread_mutex_lock(&mutexesHash[kv.first]);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
             kv.second->push_back(mensajeNuevo);
 
