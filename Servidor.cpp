@@ -396,24 +396,28 @@ private:
         if (auxLista->size() == 0)
             return;
 
-        Mensaje* mensaje = auxLista->at(0);
-        string mensajeEmisor = mensaje->getMensaje();
-        const char* mensajeChar = mensajeEmisor.c_str();
+        for (int i = 0 ; i < auxLista->size()  ; i++) {
 
-        *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
+            Mensaje *mensaje = auxLista->at(0);
+            string mensajeEmisor = mensaje->getMensaje();
+            const char *mensajeChar = mensajeEmisor.c_str();
 
-        if (*bytesEscritos < 0)
-            perror("ERROR --> Cliente se desconectó inecsperadamente");
+            *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
 
-        // Lockeo el mutex para borrar de la lista del jugador
-        result = pthread_mutex_lock(&mutexesHash[receptor]);
-        if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+            if (*bytesEscritos < 0)
+                perror("ERROR --> Cliente se desconectó inecsperadamente");
 
-        auxLista->erase(auxLista->begin());
-        result = pthread_mutex_unlock(&mutexesHash[receptor]);
-        if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+            // Lockeo el mutex para borrar de la lista del jugador
+            result = pthread_mutex_lock(&mutexesHash[receptor]);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
 
-        delete mensaje;
+            auxLista->erase(auxLista->begin());
+
+            result = pthread_mutex_unlock(&mutexesHash[receptor]);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+
+            delete mensaje;
+        }
     }
 
     static void *procesarMensajes(void *arg) {

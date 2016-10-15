@@ -74,6 +74,8 @@ public:
 	string recibir_vista();
 
 	string recibir_nueva_vista();
+
+	void encolar_vistas();
 };
 
 

@@ -263,6 +263,37 @@ string Cliente::recibir_vista(){
     if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 }
 
+void Cliente::encolar_vistas() {
+
+    const char* opc = "/R/\n";
+    signal(SIGPIPE, SIG_IGN);
+    ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
+
+    if (bytesEsc < 0) {
+        perror("ERROR --> Has sido desconectado del servidor");
+        salir();
+    }
+
+    char* linea = NULL;
+    size_t len = 0;
+    ssize_t bytesLeidos;
+
+    for (int i = 0; i < 3 ; i++) {
+
+        bytesLeidos = getline(&linea, &len, respuestaServidor);
+
+        if (bytesLeidos < 0) {
+            perror("ERROR --> Se cerró el server");
+            salir();
+        }
+
+        string mensaje(linea);
+        cout << linea;
+        free(linea);
+        linea = NULL;
+    }
+}
+
 string Cliente::recibir_nueva_vista() {
 
     char* linea = NULL;

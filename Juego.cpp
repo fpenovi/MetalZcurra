@@ -256,6 +256,20 @@ typedef struct {
 	bool* quit;
 } controlador_t;
 
+int recibirVistas( void* arg){
+
+	controlador_t* arg2 = (controlador_t*) arg;
+	Juego* miJuego = (Juego*) arg2->juego;
+	bool* quit = (bool*) arg2->quit;
+	Cliente* cliente = miJuego->getCliente();
+
+	while( !(*quit) ) {
+
+
+
+	}
+}
+
 int escucharEventos( void* arg ) {
 
 	controlador_t* arg2 = (controlador_t*) arg;
@@ -339,6 +353,8 @@ int main( int argc, char** argv) {
 	arg->juego = &juego;
 	arg->quit = &quit;
 	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
+	//SDL_Thread* threadID = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
+
 
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
