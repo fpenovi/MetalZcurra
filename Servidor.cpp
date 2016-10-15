@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <unordered_map>
 #include <vector>
+#include <list>
 #include "auxiliares.h"
 #include "Mensaje.h"
 #include "Log.h"
@@ -57,7 +58,7 @@ private:
     static pthread_mutex_t mutex_login;
     static Log logger;
     static ObjectManager* objectManager;
-    static unordered_map<string, vector<Mensaje*>*> conectadosHash;
+    static unordered_map<string, list<Mensaje*>*> conectadosHash;
     static unordered_map<string, pthread_mutex_t> mutexesHash;
     ParserXML* parser;
 
@@ -362,8 +363,8 @@ private:
 
             Mensaje* mensajeNuevo = new Mensaje(emisor, kv.first, mensaje);
 
-            result = pthread_mutex_lock(&mutexesHash[kv.first]);
-            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+            //result = pthread_mutex_lock(&mutexesHash[kv.first]);
+            //if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
             kv.second->push_back(mensajeNuevo);
 
@@ -396,13 +397,13 @@ private:
         int result; //para el mutex
 
         // obtengo la sublista de mi jugador
-        vector<Mensaje*>* auxLista = conectadosHash[receptor];
+        list<Mensaje*>* auxLista = conectadosHash[receptor];
 
         while(!(*quit)){
 
             if(auxLista->size() != 0){
 
-                Mensaje *mensaje = auxLista->at(0);
+                Mensaje* mensaje = auxLista->front();
                 string mensajeEmisor = mensaje->getMensaje();
                 const char *mensajeChar = mensajeEmisor.c_str();
 
@@ -414,17 +415,14 @@ private:
                     return NULL;
                 }
 
-                // Lockeo el mutex para borrar de la lista del jugador
+                //Lockeo el mutex para borrar de la lista del jugador
                 result = pthread_mutex_lock(&mutexesHash[receptor]);
                 if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
 
-                auxLista->erase(auxLista->begin());
+                auxLista->pop_front();
 
                 result = pthread_mutex_unlock(&mutexesHash[receptor]);
                 if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
-
-                delete mensaje;
-
             }
         }
         return NULL;
@@ -463,7 +461,7 @@ private:
         // REGISTRO EL USUARIO Y LE ASIGNO UN ID VINCULADO A UN PERSONAJE
         cout << userCon << endl;
         objectManager->registerUser(userCon);
-        conectadosHash[userCon] = new vector<Mensaje*>;
+        conectadosHash[userCon] = new list<Mensaje*>;
         mutexesHash[userCon] = PTHREAD_MUTEX_INITIALIZER;
         objectManager->enviarPersonajes(sockNewFileDescrpt);
 
@@ -474,39 +472,7 @@ private:
 
         while (true) {
 
-            // SETEO RESTRICCION DE TIMEOUT PARA EL PEDIDO DE INSTRUCCION/MENSAJES
-            fd_set read_fds, write_fds, except_fds;
-            FD_ZERO(&read_fds);
-            FD_ZERO(&write_fds);
-            FD_ZERO(&except_fds);
-            FD_SET(sockNewFileDescrpt, &read_fds);
-            struct timeval timeout;
-
-            timeout.tv_sec = 10;
-            timeout.tv_usec = 0;
-
-            // Uso el select para esperar el heartbeat del cliente
-            if (int rv = select(sockNewFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
-                // Primer getline para recibir instruccion
-                bytesLeidos = getline(&linea, &len, mensajeCliente);
-            }
-
-            else if (rv == 0) {
-                cout << "\033[1;31mSe perdió la conexión con " << ((argthread_t *) arg)->user << "\033[0m";
-                string userDesc(((argthread_t *) arg)->user);
-                userDesc.erase(userDesc.length()-1);
-                logger.loggearDesconexionViolenta(userDesc);
-                free(linea);
-                linea = NULL;
-                break;
-            }
-
-            else{
-                perror("ERROR --> select");
-                free(linea);
-                linea = NULL;
-                break;
-            }
+            bytesLeidos = getline(&linea, &len, mensajeCliente);
 
             if (bytesLeidos < 0) {
                 string userDesc(((argthread_t *) arg)->user);
@@ -517,7 +483,7 @@ private:
                 break;
             }
 
-            //cout << "debug: Mensaje recibido del cliente: " << linea;
+            cout << "debug: Mensaje recibido del cliente: " << linea;
 
             // Opcion enviar mensaje
             if (strcmp(linea, "/E/\n") == 0) {
@@ -529,13 +495,6 @@ private:
                 if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos) )
                     break;
             }
-
-                // Opcion recibir msjs
-            /*else if (strcmp(linea, "/R/\n") == 0) {
-                free(linea);
-                linea = NULL;
-                recibirMensajes((argthread_t*) arg, &bytesEscritos, sockNewFileDescrpt);
-            }*/
 
                 // Desconecto al cliente desde el servidor
             else if (strcmp(linea, "/D/\n") == 0) {
@@ -704,7 +663,7 @@ pthread_mutex_t Servidor::mutex_mensajes;
 pthread_mutex_t Servidor::mutex_login;
 Log Servidor::logger(100);
 ObjectManager* Servidor::objectManager = ObjectManager::getInstance();
-unordered_map<string, vector<Mensaje*>*> Servidor::conectadosHash;
+unordered_map<string, list<Mensaje*>*> Servidor::conectadosHash;
 unordered_map<string, pthread_mutex_t> Servidor::mutexesHash;
 
 int main(int argc, char** argv) {

@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <unordered_map>
 #include "Heartbeat.h"
-#include <vector>
+#include <list>
 
 using namespace std;
 
@@ -31,7 +31,7 @@ private:
 	Heartbeat* heartbeat;
 	pthread_mutex_t mutex_envios;
 	pthread_mutex_t mutex_mensajes;
-	vector<string> mensajes;
+	list<string> mensajes;
 
 public:
     Cliente(char** argv);

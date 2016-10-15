@@ -270,12 +270,14 @@ string Cliente::desencolar_vista() {
         return "$\n";
     }
 
-    string mensaje = mensajes.at(0);
+    cout << mensajes.size() << endl;
+
+    string mensaje = mensajes.front();
 
     int result = pthread_mutex_lock(&mutex_mensajes);
     if (result != 0) perror("Fallo el pthread_mutex_lock en login");
 
-    mensajes.erase(mensajes.begin());
+    mensajes.pop_front();
 
     result = pthread_mutex_unlock(&mutex_mensajes);
     if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
