@@ -258,8 +258,6 @@ typedef struct {
 
 int recibirVistas( void* arg){
 
-	cout << "ENTRO AL CONTROLADOR VISTA" << endl;
-
 	controlador_t* arg2 = (controlador_t*) arg;
 	Juego* miJuego = (Juego*) arg2->juego;
 	bool* quit = (bool*) arg2->quit;
@@ -270,11 +268,10 @@ int recibirVistas( void* arg){
 		cliente->encolar_vistas();
 
 	}
+	return 0;
 }
 
 int escucharEventos( void* arg ) {
-
-	cout << "ENTRO AL CONTROLADOR" << endl;
 
 	controlador_t* arg2 = (controlador_t*) arg;
 	Juego* miJuego = (Juego*) arg2->juego;

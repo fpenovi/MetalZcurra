@@ -285,56 +285,31 @@ string Cliente::desencolar_vista() {
 
 void Cliente::encolar_vistas() {
 
-    const char* opc = "/R/\n";
-
-    int result = pthread_mutex_lock(&mutex_envios);
-    if (result != 0) perror("Fallo el pthread_mutex_lock en login");
-
-    signal(SIGPIPE, SIG_IGN);
-    ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
-
-    result = pthread_mutex_unlock(&mutex_envios);
-    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
-
-    if (bytesEsc < 0) {
-        perror("ERROR --> Has sido desconectado del servidor");
-        salir();
-    }
-
     char* linea = NULL;
     size_t len = 0;
     ssize_t bytesLeidos;
-    bool hayMasMsjs = true;
 
-    while (hayMasMsjs) {
+    bytesLeidos = getline(&linea, &len, respuestaServidor);
 
-        bytesLeidos = getline(&linea, &len, respuestaServidor);
-
-        if (bytesLeidos < 0) {
-            perror("ERROR --> Se cerró el server");
-            salir();
-        }
-
-        string mensaje(linea);
-        cout << mensaje;
-
-        if (mensaje != "$\n") {
-
-            int result = pthread_mutex_lock(&mutex_mensajes);
-            if (result != 0) perror("Fallo el pthread_mutex_lock en login");
-
-            mensajes.push_back(mensaje);
-
-            result = pthread_mutex_unlock(&mutex_mensajes);
-            if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
-        }
-
-        else
-            hayMasMsjs = false;
-
-        free(linea);
-        linea = NULL;
+    if (bytesLeidos < 0) {
+        perror("ERROR --> Se cerró el server");
+        salir();
     }
+
+    string mensaje(linea);
+    cout << mensaje;
+
+    int result = pthread_mutex_lock(&mutex_mensajes);
+    if (result != 0) perror("Fallo el pthread_mutex_lock en login");
+
+    mensajes.push_back(mensaje);
+
+    result = pthread_mutex_unlock(&mutex_mensajes);
+    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
+
+    free(linea);
+    linea = NULL;
+
 }
 
 string Cliente::recibir_nueva_vista() {

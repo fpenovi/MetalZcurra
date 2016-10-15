@@ -10,6 +10,7 @@
 #include "Mensaje.h"
 #include "Log.h"
 #include <SDL2/SDL.h>
+#include <signal.h>
 #include "ProtocoloComando.h"
 #include "ProtocoloVistaUpdate.h"
 #include "Personaje.h"
@@ -26,6 +27,7 @@ struct argthread {
     pthread_t* thread= NULL;
     char* user=NULL;
     char* clave= NULL;
+    bool* quit = NULL;
 };
 
 
@@ -384,40 +386,48 @@ private:
 
     }
 
-    static void recibirMensajes(argthread_t* arg, ssize_t* bytesEscritos, int sockNewFileDescrpt) {
+    static void *recibirMensajes(void* arg) {
 
-        string receptor(arg->user);
+        int sockNewFileDescrpt = ((argthread_t *) arg)->clientFD;
+        string receptor = ((argthread_t *) arg)->user;
+        bool* quit= ((argthread_t *) arg)->quit;
+
         receptor.erase(receptor.length() - 1);
         int result; //para el mutex
 
         // obtengo la sublista de mi jugador
         vector<Mensaje*>* auxLista = conectadosHash[receptor];
 
+        while(!(*quit)){
 
-        for (int i = 0 ; i < auxLista->size() ; i++) {
+            if(auxLista->size() != 0){
 
-            Mensaje *mensaje = auxLista->at(0);
-            string mensajeEmisor = mensaje->getMensaje();
-            const char *mensajeChar = mensajeEmisor.c_str();
+                Mensaje *mensaje = auxLista->at(0);
+                string mensajeEmisor = mensaje->getMensaje();
+                const char *mensajeChar = mensajeEmisor.c_str();
 
-            *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
+                signal(SIGPIPE, SIG_IGN);
+                ssize_t bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
 
-            if (*bytesEscritos < 0)
-                perror("ERROR --> Cliente se desconectó inecsperadamente");
+                if (bytesEscritos <= 0) {
+                    perror("ERROR --> Cliente se desconectó inesperadamente");
+                    return NULL;
+                }
 
-            // Lockeo el mutex para borrar de la lista del jugador
-            result = pthread_mutex_lock(&mutexesHash[receptor]);
-            if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+                // Lockeo el mutex para borrar de la lista del jugador
+                result = pthread_mutex_lock(&mutexesHash[receptor]);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
 
-            auxLista->erase(auxLista->begin());
+                auxLista->erase(auxLista->begin());
 
-            result = pthread_mutex_unlock(&mutexesHash[receptor]);
-            if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+                result = pthread_mutex_unlock(&mutexesHash[receptor]);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
 
-            delete mensaje;
+                delete mensaje;
+
+            }
         }
-
-        write(sockNewFileDescrpt, "$\n", 2);
+        return NULL;
     }
 
     static void *procesarMensajes(void *arg) {
@@ -456,6 +466,11 @@ private:
         conectadosHash[userCon] = new vector<Mensaje*>;
         mutexesHash[userCon] = PTHREAD_MUTEX_INITIALIZER;
         objectManager->enviarPersonajes(sockNewFileDescrpt);
+
+        bool quit = false;
+        (((argthread_t *) arg)->quit) = &quit;
+        pthread_t *recibirThread = new pthread_t;
+        pthread_create(recibirThread, NULL, recibirMensajes, arg);
 
         while (true) {
 
@@ -516,11 +531,11 @@ private:
             }
 
                 // Opcion recibir msjs
-            else if (strcmp(linea, "/R/\n") == 0) {
+            /*else if (strcmp(linea, "/R/\n") == 0) {
                 free(linea);
                 linea = NULL;
                 recibirMensajes((argthread_t*) arg, &bytesEscritos, sockNewFileDescrpt);
-            }
+            }*/
 
                 // Desconecto al cliente desde el servidor
             else if (strcmp(linea, "/D/\n") == 0) {
@@ -559,8 +574,10 @@ private:
 
         close(sockNewFileDescrpt);
         kickearUsuario((argthread_t*) arg);
+        *(((argthread_t *) arg)->quit) = true;
         free(arg);
         free(thread);
+        free(recibirThread);
         fclose(mensajeCliente);
         return NULL;
     }
