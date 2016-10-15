@@ -304,8 +304,9 @@ void Cliente::encolar_vistas() {
     char* linea = NULL;
     size_t len = 0;
     ssize_t bytesLeidos;
+    bool hayMasMsjs = true;
 
-    for (int i = 0; i < 5 ; i++) {
+    while (hayMasMsjs) {
 
         bytesLeidos = getline(&linea, &len, respuestaServidor);
 
@@ -315,7 +316,7 @@ void Cliente::encolar_vistas() {
         }
 
         string mensaje(linea);
-        cout << linea;
+        cout << mensaje;
 
         if (mensaje != "$\n") {
 
@@ -327,6 +328,9 @@ void Cliente::encolar_vistas() {
             result = pthread_mutex_unlock(&mutex_mensajes);
             if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         }
+
+        else
+            hayMasMsjs = false;
 
         free(linea);
         linea = NULL;

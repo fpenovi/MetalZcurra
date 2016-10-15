@@ -394,34 +394,30 @@ private:
         vector<Mensaje*>* auxLista = conectadosHash[receptor];
 
 
-        for (int i = 0 ; i < 5 ; i++) {
+        for (int i = 0 ; i < auxLista->size() ; i++) {
 
-            if (auxLista->size() == 0) {
-                write(sockNewFileDescrpt, "$\n", 2);
-            }
+            Mensaje *mensaje = auxLista->at(0);
+            string mensajeEmisor = mensaje->getMensaje();
+            const char *mensajeChar = mensajeEmisor.c_str();
 
-            else {
-                Mensaje *mensaje = auxLista->at(0);
-                string mensajeEmisor = mensaje->getMensaje();
-                const char *mensajeChar = mensajeEmisor.c_str();
+            *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
 
-                *bytesEscritos = write(sockNewFileDescrpt, mensajeChar, mensajeEmisor.length());
+            if (*bytesEscritos < 0)
+                perror("ERROR --> Cliente se desconectó inecsperadamente");
 
-                if (*bytesEscritos < 0)
-                    perror("ERROR --> Cliente se desconectó inecsperadamente");
+            // Lockeo el mutex para borrar de la lista del jugador
+            result = pthread_mutex_lock(&mutexesHash[receptor]);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
 
-                // Lockeo el mutex para borrar de la lista del jugador
-                result = pthread_mutex_lock(&mutexesHash[receptor]);
-                if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+            auxLista->erase(auxLista->begin());
 
-                auxLista->erase(auxLista->begin());
+            result = pthread_mutex_unlock(&mutexesHash[receptor]);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
 
-                result = pthread_mutex_unlock(&mutexesHash[receptor]);
-                if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
-
-                delete mensaje;
-            }
+            delete mensaje;
         }
+
+        write(sockNewFileDescrpt, "$\n", 2);
     }
 
     static void *procesarMensajes(void *arg) {
