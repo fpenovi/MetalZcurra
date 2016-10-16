@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <iostream>
+#include <chrono>
 #include <SDL2/SDL_thread.h>
 #include "Cliente.h"
 #include "VistaMarco.h"
@@ -13,6 +14,7 @@
 #include "HandleJump.h"
 
 using namespace std;
+using namespace chrono;
 
 //Screen dimension constants
 
@@ -362,6 +364,10 @@ int main( int argc, char** argv) {
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
 
+		time_point<high_resolution_clock> start;
+		start = high_resolution_clock::now();
+		time_point<high_resolution_clock> actual;
+
 		string update = cliente.recibir_vista();
 
 		if (update != "$\n") {
@@ -397,6 +403,11 @@ int main( int argc, char** argv) {
 		juego.renderizar();
 		SDL_RenderPresent( juego.getRenderer() );
 
+		actual = high_resolution_clock::now();
+		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
+		auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
+
+		cout << "Elapsed ms: " << deltaTiempo.count() / 1000000.0 << endl;
 	}
 
 	//Free resources and close SDL

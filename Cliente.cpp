@@ -201,26 +201,22 @@ string Cliente::recibir_vista() {
     char* linea = NULL;
     size_t len = 0;
     ssize_t bytesLeidos;
-
-    //this->setNonBlocking();
-
-    bytesLeidos = getline(&linea, &len, respuestaServidor);
+    linea = (char*) malloc(500);
+    bzero(linea, 500);
 
     this->setBlocking();
 
-    if (bytesLeidos < 0) {
+    bytesLeidos = recv(sockFileDescrpt, linea, 499, 0);
+
+    if (bytesLeidos < 0 && errno == EWOULDBLOCK) {
+        cout << "EWOULDBLOCK" << endl;
         cout << bytesLeidos << endl;
-
-        if (linea != NULL) {
-            cout << linea << endl;
-        }
-
         free(linea);
         linea = NULL;
         return "$\n";
     }
 
-    if (bytesLeidos < 0) {
+    if (errno == EBADF) {
         perror("ERROR --> Se cerró el server");
         free(linea);
         linea = NULL;
@@ -228,9 +224,10 @@ string Cliente::recibir_vista() {
     }
 
     string mensaje(linea);
-    cout << mensaje;
     free(linea);
     linea = NULL;
+    cout << mensaje;
+
     return mensaje;
 
     /*if (int rv = select(sockFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
@@ -692,12 +689,9 @@ void Cliente::setNonBlocking() {
     if (nonBlocking)
         return;
 
-    // GUARDO FLAGS PARA PODER REVERTIR A BLOQUEANTE
-    if (flags == -1) {
-        flags = fcntl(sockFileDescrpt, F_GETFL, 0);
-        if (flags < 0)
-            perror("fcntl(F_GETFL)");
-    }
+    flags = fcntl(sockFileDescrpt, F_GETFL, 0);
+    if (flags < 0)
+        perror("fcntl(F_GETFL)");
 
     // SETEO FLAG DE FILE DESCRIPTOR NO BLOCKEANTE
     if (fcntl(sockFileDescrpt, F_SETFL, flags | O_NONBLOCK) < 0)
@@ -714,12 +708,9 @@ void Cliente::setBlocking() {
     if (!nonBlocking)
         return;
 
-    // GUARDO FLAGS PARA PODER REVERTIR A BLOQUEANTE
-    if (flags == -1) {
-        flags = fcntl(sockFileDescrpt, F_GETFL, 0);
-        if (flags < 0)
-            perror("fcntl(F_GETFL)");
-    }
+    flags = fcntl(sockFileDescrpt, F_GETFL, 0);
+    if (flags < 0)
+        perror("fcntl(F_GETFL)");
 
     // SETEO FLAG DE FILE DESCRIPTOR NO BLOCKEANTE
     if (fcntl(sockFileDescrpt, F_SETFL, flags & ~O_NONBLOCK) < 0)
