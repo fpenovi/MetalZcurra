@@ -193,28 +193,9 @@ void Cliente::recibir_mensajes(){
     free(linea);
 }
 
-string Cliente::recibir_vista(){
-    int result = pthread_mutex_lock(&mutex_envios);
-    if (result != 0) perror("Fallo el pthread_mutex_lock en login");
-    if(! estado){
-        cout<<"No esta conectado al servidor"<<endl;
-        result = pthread_mutex_unlock(&mutex_envios);
-        if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
-        return ""; //ToDo Lanzar Excepcion
-    }
+string Cliente::recibir_vista() {
 
-    const char* opc = "/R/\n";
-    signal(SIGPIPE, SIG_IGN);
-    ssize_t bytesEsc = write(sockFileDescrpt, opc, strlen(opc));
-
-    if (bytesEsc < 0) {
-        perror("ERROR --> Has sido desconectado del servidor");
-        result = pthread_mutex_unlock(&mutex_envios);
-        if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
-        salir();
-    }
-
-    char* linea = NULL;
+    char *linea = NULL;
     size_t len = 0;
     ssize_t bytesLeidos;
 
@@ -243,25 +224,16 @@ string Cliente::recibir_vista(){
         cout << linea;
         free(linea);
         linea = NULL;
-        result = pthread_mutex_unlock(&mutex_envios);
-        if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         return mensaje;
     }
 
-    else if(rv == 0)
-    {
-        result = pthread_mutex_unlock(&mutex_envios);
-        if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
+    else if (rv == 0) {
         return "$\n";
     }
-    else{
+    else {
         perror("ERROR --> select");
-        result = pthread_mutex_unlock(&mutex_envios);
-        if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
         salir();
     }
-    result = pthread_mutex_unlock(&mutex_envios);
-    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 }
 
 string Cliente::desencolar_vista() {

@@ -55,15 +55,15 @@ void VistaMarco::animacionParado(int camx,int camy){
 	if (saltando) return;
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
-	SDL_Rect* currentClip = &spriteParado[ frameParado /*/ 9*/];
+	SDL_Rect* currentClip = &spriteParado[ frameParado / 9];
 	TEXTURA_PERSONAJE_PARADO->render(posx-camx,posy-camy, currentClip,0,NULL,flip );;
 
-	/*++frameParado;
+	++frameParado;
 
 	if( frameParado / 9 >= ANIMACION_PARADO )
 	{
 		frameParado = 0;
-	}*/
+	}
 
 }
 void VistaMarco::animacionCorrer(int camx,int camy){
@@ -72,12 +72,12 @@ void VistaMarco::animacionCorrer(int camx,int camy){
 	if (!derecha) {
 		flip = SDL_FLIP_HORIZONTAL;
 	}
-	SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo /*/3*/ ];
+	SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo /3 ];
 	TEXTURA_PERSONAJE_CORRIENDO->render( posx-camx, posy-camy, currentClip,0,NULL,flip);
-	/*++frameCorriendo;
+	++frameCorriendo;
 	if( frameCorriendo /3 >= ANIMACION_CORRIENDO ){
 		frameCorriendo = 0;
-	}*/
+	}
 }
 
 int VistaMarco::animacionSaltando(int camx,int camy){
@@ -85,13 +85,13 @@ int VistaMarco::animacionSaltando(int camx,int camy){
 	if (!derecha) {
 		flip = SDL_FLIP_HORIZONTAL;
 	}
-	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando/*/4*/ ];
+	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando/4 ];
 	TEXTURA_PERSONAJE_SALTANDO->render( posx-camx, posy-camy, currentClip,0,NULL,flip);
 
-	/*++frameSaltando;
+	++frameSaltando;
 	if( frameSaltando/4 == ANIMACION_SALTANDO ){
 		frameSaltando = 0;
-	}*/
+	}
 }
 
 bool VistaMarco::cargarImagen(){

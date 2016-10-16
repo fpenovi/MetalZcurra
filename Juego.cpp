@@ -355,13 +355,13 @@ int main( int argc, char** argv) {
 	arg->juego = &juego;
 	arg->quit = &quit;
 	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
-	SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
+	//SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
 
 
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
 
-		string update = cliente.desencolar_vista();
+		string update = cliente.recibir_vista();
 
 		if (update != "$\n") {
 
