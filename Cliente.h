@@ -26,6 +26,8 @@ private:
     FILE* respuestaServidor;
     unordered_map<int, string> usuariosAenviar; //hash de usuarios
     bool estado;
+	bool nonBlocking;
+	int flags;
     char port[8];
     char IP[8];
 	Heartbeat* heartbeat;
@@ -81,6 +83,10 @@ public:
 	void encolar_vistas();
 
 	string desencolar_vista();
+
+	void setNonBlocking();
+
+	void setBlocking();
 };
 
 

@@ -357,6 +357,7 @@ int main( int argc, char** argv) {
 	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
 	//SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
 
+	cliente.setNonBlocking();
 
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {

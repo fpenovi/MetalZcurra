@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <chrono>
+#include <fcntl.h>
 
 using namespace std;
 using namespace chrono;
@@ -20,6 +21,8 @@ Cliente::Cliente(char** argv){
     sockFileDescrpt = 0;
     FILE* respuestaServidor = NULL;
     estado=false;
+    nonBlocking = false;
+    flags = -1;
     mutex_envios = PTHREAD_MUTEX_INITIALIZER;
     mutex_mensajes = PTHREAD_MUTEX_INITIALIZER;
     usuariosAenviar; //hash de usuarios
@@ -195,23 +198,42 @@ void Cliente::recibir_mensajes(){
 
 string Cliente::recibir_vista() {
 
-    char *linea = NULL;
+    char* linea = NULL;
     size_t len = 0;
     ssize_t bytesLeidos;
 
-    // Initialize file descriptor sets
-    fd_set read_fds, write_fds, except_fds;
-    FD_ZERO(&read_fds);
-    FD_ZERO(&write_fds);
-    FD_ZERO(&except_fds);
-    FD_SET(sockFileDescrpt, &read_fds);
+    //this->setNonBlocking();
 
-    // Seteo el timeout a 10 msegundos
-    struct timeval timeout;
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 10000;
+    bytesLeidos = getline(&linea, &len, respuestaServidor);
 
-    if (int rv = select(sockFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
+    this->setBlocking();
+
+    if (bytesLeidos < 0) {
+        cout << bytesLeidos << endl;
+
+        if (linea != NULL) {
+            cout << linea << endl;
+        }
+
+        free(linea);
+        linea = NULL;
+        return "$\n";
+    }
+
+    if (bytesLeidos < 0) {
+        perror("ERROR --> Se cerró el server");
+        free(linea);
+        linea = NULL;
+        salir();
+    }
+
+    string mensaje(linea);
+    cout << mensaje;
+    free(linea);
+    linea = NULL;
+    return mensaje;
+
+    /*if (int rv = select(sockFileDescrpt + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1) {
 
         bytesLeidos = getline(&linea, &len, respuestaServidor);
 
@@ -233,7 +255,7 @@ string Cliente::recibir_vista() {
     else {
         perror("ERROR --> select");
         salir();
-    }
+    }*/
 }
 
 string Cliente::desencolar_vista() {
@@ -613,6 +635,7 @@ void Cliente::activar_socket(){
         close(sockFileDescrpt);
         exit(1);
     }
+
     return ;
 }
 
@@ -659,6 +682,50 @@ void Cliente::conectar() {
         heartbeat = new Heartbeat(sockFileDescrpt);
         heartbeat->On();
     }
+}
+
+void Cliente::setNonBlocking() {
+
+    if (!estado)
+        return;
+
+    if (nonBlocking)
+        return;
+
+    // GUARDO FLAGS PARA PODER REVERTIR A BLOQUEANTE
+    if (flags == -1) {
+        flags = fcntl(sockFileDescrpt, F_GETFL, 0);
+        if (flags < 0)
+            perror("fcntl(F_GETFL)");
+    }
+
+    // SETEO FLAG DE FILE DESCRIPTOR NO BLOCKEANTE
+    if (fcntl(sockFileDescrpt, F_SETFL, flags | O_NONBLOCK) < 0)
+        perror("ERROR -> fcntl seteando non-blocking");
+
+    nonBlocking = true;
+}
+
+void Cliente::setBlocking() {
+
+    if (!estado)
+        return;
+
+    if (!nonBlocking)
+        return;
+
+    // GUARDO FLAGS PARA PODER REVERTIR A BLOQUEANTE
+    if (flags == -1) {
+        flags = fcntl(sockFileDescrpt, F_GETFL, 0);
+        if (flags < 0)
+            perror("fcntl(F_GETFL)");
+    }
+
+    // SETEO FLAG DE FILE DESCRIPTOR NO BLOCKEANTE
+    if (fcntl(sockFileDescrpt, F_SETFL, flags & ~O_NONBLOCK) < 0)
+        perror("ERROR -> fcntl seteando blocking");
+
+    nonBlocking = false;
 }
 
 /*int main(int argc, char** argv) {
