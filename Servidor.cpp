@@ -403,6 +403,8 @@ private:
 
             if(auxLista->size() != 0){
 
+                cout << receptor << ": " << auxLista->size() << endl;
+
                 Mensaje* mensaje = auxLista->front();
                 string mensajeEmisor = mensaje->getMensaje();
                 const char *mensajeChar = mensajeEmisor.c_str();
@@ -483,7 +485,7 @@ private:
                 break;
             }
 
-            cout << "debug: Mensaje recibido del cliente: " << linea;
+            // cout << "debug: Mensaje recibido del cliente: " << linea;
 
             // Opcion enviar mensaje
             if (strcmp(linea, "/E/\n") == 0) {
