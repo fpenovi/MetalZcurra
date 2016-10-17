@@ -8,4 +8,41 @@
 		<ancho>4500</ancho>
 		<alto>480</alto>
 	</nivel>
+	<sprites>
+		<sprite>
+			<id>1</id>
+			<path>imag/marco/quieto3.png</path>
+			<ancho>10</ancho>
+			<alto></alto>
+		</sprite>
+		<sprite>
+			<id>1</id>
+			<path>imag/marco/corriendo2.png</path>
+			<ancho>10</ancho>
+			<alto>10</alto>
+		</sprite>
+		<sprite>
+			<id>1</id>
+			<path>imag/marco/saltando3.png</path>
+			<ancho>10</ancho>
+			<alto>10</alto>
+		</sprite>
+	</sprites>
+	<capas>
+		<capa>
+			<path></path>
+			<ancho></ancho>
+			<zindex></zindex>
+		</capa>
+		<capa>
+			<path></path>
+			<ancho></ancho>
+			<zindex></zindex>
+		</capa>
+		<capa>
+			<path></path>
+			<ancho></ancho>
+			<zindex></zindex>
+		</capa>
+	</capas>
 </juego>

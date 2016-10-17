@@ -539,7 +539,7 @@ private:
     }
 
 public:
-    Servidor(unsigned short int numPuerto, string nombreArchivo , char* docname = "juego.xml") {
+    Servidor(unsigned short int numPuerto, string nombreArchivo , char* docname) {
 
         nombreArchivoCsv = nombreArchivo;
         bzero(&attr, sizeof(attr));
@@ -598,10 +598,20 @@ public:
 
     }
 
+    void leerXML(){
+        string tamVentana = parser->TamVentana();
+        string tamNivel = parser->tamNivel();
+        vector <string> sprites = parser->spritesPlayers();
+        if (tamVentana.length() == 0 || tamNivel.length() == 0 || sprites.empty() ){
+            parser->setearDefecto();
+            tamVentana = parser->TamVentana();
+            tamNivel = parser->tamNivel();
+            sprites = parser->spritesPlayers();
+        }
+    }
     void initJuego() {
 
-
-        parser->TamVentana();
+        leerXML();
         objectManager->crearPersonajes(4);
     }
 
@@ -665,7 +675,7 @@ unordered_map<string, pthread_mutex_t> Servidor::mutexesHash;
 
 int main(int argc, char** argv) {
 
-
+    char** xmlName;
     if (argc < 3) {
         fprintf(stderr, "Modo de Uso: %s <archivo-usuarios> <n° puerto>\n", argv[0]);
         exit(EXIT_SUCCESS);
@@ -673,7 +683,7 @@ int main(int argc, char** argv) {
 
     unsigned short int numPuerto = (unsigned short) strtoull(argv[2], NULL, 0);
 
-    Servidor server = Servidor(numPuerto, argv[1],argv[3]);
+    Servidor server = Servidor(numPuerto, argv[1], argv[3]);
     server.initJuego();
     server.aceptarClientes();
     return 0;
