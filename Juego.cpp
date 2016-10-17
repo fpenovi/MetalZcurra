@@ -90,7 +90,7 @@ public:
 
 			else {
 				//Create vsynced renderer for window
-				renderizador = SDL_CreateRenderer( ventana, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+				renderizador = SDL_CreateRenderer( ventana, -1, SDL_RENDERER_ACCELERATED);
 				if ( renderizador == NULL ) {
 					printf( "NO SE PUDO HACER EL RENDER! SDL Error: %s\n", SDL_GetError() );
 					success = false;
@@ -357,9 +357,7 @@ int main( int argc, char** argv) {
 	arg->juego = &juego;
 	arg->quit = &quit;
 	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
-	//SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
-
-	cliente.setNonBlocking();
+	SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
 
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
@@ -368,7 +366,7 @@ int main( int argc, char** argv) {
 		start = high_resolution_clock::now();
 		time_point<high_resolution_clock> actual;
 
-		string update = cliente.recibir_vista();
+		string update = cliente.desencolar_vista();
 
 		if (update != "$\n") {
 
