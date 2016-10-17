@@ -19,7 +19,7 @@ private:
     int alto = 80;
     int velx = 0;
     int vely = 0;
-    const static int Personaje_VEL = 5;
+    const static int Personaje_VEL = 7;
     const static int Personaje_VEL_Y = 5;
     int seMovio;
     int id;
