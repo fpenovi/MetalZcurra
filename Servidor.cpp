@@ -289,31 +289,26 @@ private:
                     if (personaje->getPosy() <= 190){
                         personaje->setVely(personaje->getPersonaje_VEL_Y());
                         personaje->moverY();
-                        personaje->moverX();
                         personaje->setVely(0);
                         personaje->setBajando(true);
                     }
                     else if (personaje->getPosy() >= 240){
                         personaje->setVely(-personaje->getPersonaje_VEL_Y());
                         personaje->moverY();
-                        personaje->moverX();
                         personaje->setVely(0);
                         personaje->setBajando(false);
                     }
                     else if (personaje->getBajando()){
                         personaje->setVely(personaje->getPersonaje_VEL_Y());
                         personaje->moverY();
-                        personaje->moverX();
                     }
 
                     else if(!(personaje->getBajando())) {
                         personaje->setVely(-personaje->getPersonaje_VEL_Y());
                         personaje->moverY();
-                        personaje->moverX();
                     }
 
-                    //if (!saltando) saltando=true;
-                    //subiendo=true;*/
+
 
                     update.setEstado(personaje->getSeMovio());
                     update.setX(personaje->getPosx());
