@@ -6,7 +6,7 @@
 #include <chrono>
 #include <SDL2/SDL_thread.h>
 #include "Cliente.h"
-#include "VistaMarco.h"
+#include "VistaPersonaje.h"
 #include "ProtocoloComando.h"
 #include "ProtocoloVistaUpdate.h"
 #include "ProtocoloNuevaVista.h"
@@ -367,7 +367,7 @@ int main( int argc, char** argv) {
 		return 1;
 	}
 
-	while (true){
+	while (true) {
 
 		string nuevaVista = cliente.recibir_nueva_vista();
 
@@ -377,7 +377,7 @@ int main( int argc, char** argv) {
 
 		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam);
 
-		VistaMarco* personaje = new VistaMarco(juego.getRenderer());
+		VistaMarco *personaje = new VistaMarco(juego.getRenderer());
 
 		personaje->setearSprites(sprite);
 		personaje->setId(id);
@@ -387,10 +387,11 @@ int main( int argc, char** argv) {
 		personaje->setSeMovio(false);
 		juego.addPersonaje(id, personaje);
 
-		if ( !personaje->cargarImagen() ) {
+		if (!personaje->cargarImagen()) {
 			printf("Failed to load media!\n");
 			return 1;
 		}
+
 	}
 
 	Background fondo(juego.getRenderer());
@@ -458,7 +459,7 @@ int main( int argc, char** argv) {
 		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
 		auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
 
-		cout << "Elapsed ms: " << deltaTiempo.count() / 1000000.0 << endl;
+		//cout << "Elapsed ms: " << deltaTiempo.count() / 1000000.0 << endl;
 	}
 
 	//Free resources and close SDL

@@ -41,7 +41,7 @@ private:
     int id;
     bool seMovio;
 
-    unordered_map<int, vector<string>> hashSprites;
+    unordered_map<int, vector<string>*> hashSprites;
 
     string pathQuieto;
     string pathCorriendo;

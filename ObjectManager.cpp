@@ -57,13 +57,15 @@ void ObjectManager::enviarPersonajes(int FD) {
 		ProtocoloNuevaVista protocolo;
 
 		protocolo.setObject_id(kv.first);
-		protocolo.setSpriteId(1);
+		protocolo.setSpriteId(kv.first);
 		protocolo.setX(kv.second->getPosx());
 		protocolo.setY(kv.second->getPosy());
 		protocolo.setCam(kv.second->getPosCamara());
 
 		string msj = protocolo.toString();
 		const char* mensajeChar = msj.c_str();
+
+		cout << msj;
 
 		ssize_t bytesEscritos = write(FD, mensajeChar, msj.size());
 		if (bytesEscritos < 0)
