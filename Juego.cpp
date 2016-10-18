@@ -56,10 +56,10 @@ public:
 		//Destroy window
 		SDL_DestroyRenderer( renderizador );
 		SDL_DestroyWindow( ventana );
-		ventana = NULL;
-		renderizador = NULL;
 		keyHoldHandler->Off();
 		jumpHandler->Off();
+		ventana = NULL;
+		renderizador = NULL;
 		delete keyHoldHandler;
 		delete jumpHandler;
 		//delete fondo;
@@ -211,6 +211,12 @@ public:
 					//subiendo=true;
 					//return msj;
 					break;
+
+				case SDLK_r:
+					keyHoldHandler->setKeyPressed(SDLK_r);
+					keyHoldHandler->Resume();
+					break;
+
 			}
 		}
 
@@ -240,6 +246,13 @@ public:
 				case SDLK_UP:
 					jumpHandler->Pause();
 					break;
+
+				case SDLK_r:
+					keyHoldHandler->Pause();
+					keyHoldHandler->setKeyPressed(0);
+					break;
+
+
 			}
 		}
 	}
@@ -297,7 +310,11 @@ public:
 		screenHeight = stoi(ventanaAlto);
 		levelWidth = stoi(nivelAncho);
 		levelHeight = stoi(nivelAlto);
+		cout <<"RECIBIENDO BACKGROUND"<< endl;
+		stream = cliente->recibir_nueva_vista();
 	}
+
+
 };
 
 typedef struct {
@@ -449,7 +466,7 @@ int main( int argc, char** argv) {
 			pj->setSeMovio(state);
 		}
 
-		//SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
+		SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( juego.getRenderer() );
 
 		fondo.render(juego.getPosX());
@@ -461,7 +478,7 @@ int main( int argc, char** argv) {
 		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
 		auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
 
-		cout << "Elapsed ms: " << deltaTiempo.count() / 1000000.0 << endl;
+		//cout << "Elapsed ms: " << deltaTiempo.count() / 1000000.0 << endl;
 	}
 
 	//Free resources and close SDL

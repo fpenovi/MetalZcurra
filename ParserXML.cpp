@@ -139,7 +139,7 @@ vector<string> ParserXML::capas(){
     xmlXPathObjectPtr result;
     vector<string> capas,fallo;
     cur = xmlDocGetRootElement(doc);
-    result = this->getnodeset ((xmlChar*)"//capas");
+    result = this->getnodeset ((xmlChar*)"//capa");
     string datosCapa;
     if (result) {
         nodeset = result->nodesetval;

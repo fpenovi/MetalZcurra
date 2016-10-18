@@ -128,3 +128,9 @@ int Personaje::getPosCamara() {
 void Personaje::setPosCamara(int camara) {
     this->posCamara = camara;
 }
+
+void Personaje::inicial(){
+    this->posx = 0;
+    this->posy = 360;
+    this->posCamara=0;
+}
