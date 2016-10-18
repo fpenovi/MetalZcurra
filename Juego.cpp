@@ -58,6 +58,8 @@ public:
 		SDL_DestroyWindow( ventana );
 		ventana = NULL;
 		renderizador = NULL;
+		keyHoldHandler->Off();
+		jumpHandler->Off();
 		delete keyHoldHandler;
 		delete jumpHandler;
 		//delete fondo;
@@ -447,7 +449,7 @@ int main( int argc, char** argv) {
 			pj->setSeMovio(state);
 		}
 
-		SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
+		//SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( juego.getRenderer() );
 
 		fondo.render(juego.getPosX());
@@ -459,7 +461,7 @@ int main( int argc, char** argv) {
 		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
 		auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
 
-		//cout << "Elapsed ms: " << deltaTiempo.count() / 1000000.0 << endl;
+		cout << "Elapsed ms: " << deltaTiempo.count() / 1000000.0 << endl;
 	}
 
 	//Free resources and close SDL
