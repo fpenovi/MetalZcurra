@@ -12,7 +12,6 @@
 #include "ProtocoloNuevaVista.h"
 #include "HandleKeyHold.h"
 #include "HandleJump.h"
-#include "LTimer.h"
 #include "Background.h"
 
 using namespace std;
@@ -24,7 +23,6 @@ using namespace chrono;
 #define SCREEN_HEIGHT 600
 #define LEVEL_WIDTH 4500
 #define LEVEL_HEIGHT 480
-
 
 class Juego {
 
@@ -380,21 +378,8 @@ int main( int argc, char** argv) {
 	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
 	SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
 
-	int countedFrames = 0;
-	LTimer fpsTimer;
-	LTimer capTimer;
-	fpsTimer.start();
-	const int SCREEN_FPS = 60;
-	const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
-
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
-
-		capTimer.start();
-
-		float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
-		if ( avgFPS > 2000000 )		// Si la division falla, corrijo el fps
-			avgFPS = 0;
 
 		time_point<high_resolution_clock> start;
 		start = high_resolution_clock::now();
@@ -435,13 +420,6 @@ int main( int argc, char** argv) {
 		fondo.render(juego.getPersonajeById(1)->getX());
 		juego.renderizar();
 		SDL_RenderPresent( juego.getRenderer() );
-
-		++countedFrames;	// luego de renderizar incremento los frames renderizados
-
-		// Si termine de renderizar antes de tiempo, espero el tiempo necesario
-		int frameTicks = capTimer.getTicks();
-		if ( frameTicks < SCREEN_TICKS_PER_FRAME )
-			SDL_Delay( SCREEN_TICKS_PER_FRAME - frameTicks );
 
 		actual = high_resolution_clock::now();
 		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
