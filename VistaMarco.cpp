@@ -100,7 +100,7 @@ bool VistaMarco::cargarImagen(){
 	int i;
 
 	//Load sprite sheet texture
-	if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/marco/quieto3.png") )
+	if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/marco/quieto.png") )
 	{
 		printf( "Fallo sprite parado\n" );
 		success = false;
@@ -116,7 +116,7 @@ bool VistaMarco::cargarImagen(){
 		}
 	}
 
-	if( !TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( "imag/marco/corriendo2.png") )
+	if( !TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( "imag/marco/corriendo.png") )
 	{
 		printf( "Fallo sprite corriendo\n" );
 		success = false;
@@ -130,7 +130,7 @@ bool VistaMarco::cargarImagen(){
 		}
 	}
 
-	if( !TEXTURA_PERSONAJE_SALTANDO->cargarImagen( "imag/marco/saltando3.png") )
+	if( !TEXTURA_PERSONAJE_SALTANDO->cargarImagen( "imag/marco/saltando.png") )
 	{
 		printf( "Fallo sprite saltando\n" );
 		success = false;
