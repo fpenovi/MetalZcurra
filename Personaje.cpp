@@ -4,49 +4,34 @@
 
 #include "Personaje.h"
 
-/*void Personaje::mover(){
+void Personaje::moverX(bool avanzar, int* posX) {
+    int pos1 = posCamara;
+    int pos2 = *posX;
 
-    int pos1 = posx;
-    int pos2 = posy;
     //moverlo a derecha o izquierda
-    posx += velx;
+    *posX += velx;
+    posCamara += velx;
 
     //Que no salga de la pantalla
-    if( ( posx < 0 ) || ( posx + ancho > LEVEL_WIDTH ) ) {
-        posx -= velx;
+    if( ( posCamara  < 0 ) || ( posCamara + ancho > SCREEN_WIDTH / 2) )  {
+        posCamara  -= velx;
     }
 
-    posy += vely;
-
-    if( ( posy < 0 ) || ( posy + alto > LEVEL_HEIGHT ) ) {
-        //Move back
-        posy -= vely;
+    if( ( *posX < 0 ) ) //|| ( *posX + ancho > SCREEN_WIDTH ) )
+    {
+        *posX -= velx;
     }
 
-    if (pos1 == posx && pos2 ==  posy) {
+    if (velx < 0 || posCamara + ancho + 4 != SCREEN_WIDTH / 2 || !avanzar){
+        *posX -= velx;
+    }
+
+    if (pos1 == posCamara && pos2 == *posX ) {
         seMovio = false;
         return;
     }
+
     seMovio = true;
-}*/
-
-void Personaje::moverX() {
-    int pos1 = posx;
-
-    //moverlo a derecha o izquierda
-    posx += velx;
-
-    //Que no salga de la pantalla
-    if( ( posx < 0 ) || ( posx + ancho > LEVEL_WIDTH ) ) {
-        posx -= velx;
-    }
-
-    if (pos1 == posx ) {
-        seMovio = false;
-        return;
-    }
-    seMovio = true;
-
 }
 
 void Personaje::moverY() {
@@ -134,4 +119,12 @@ bool Personaje::getBajando() {
 
 void Personaje::setBajando(bool bajando){
     this->bajando = bajando;
+}
+
+int Personaje::getPosCamara() {
+    return this->posCamara;
+}
+
+void Personaje::setPosCamara(int camara) {
+    this->posCamara = camara;
 }

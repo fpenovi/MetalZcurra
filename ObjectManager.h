@@ -23,6 +23,7 @@ private:
 	static ObjectManager* instancia;
 	int idActual;
 	ObjectManager();
+	int posx;
 
 public:
 	~ObjectManager();
@@ -33,6 +34,9 @@ public:
 	static ObjectManager* getInstance();
 	void crearPersonajes(int cantidad);
 	void enviarPersonajes(int FD);
+	int* getPosX();
+	bool puedoAvanzar();
+	void moverCamara(int id);
 };
 
 

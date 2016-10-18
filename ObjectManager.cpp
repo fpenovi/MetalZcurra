@@ -60,6 +60,7 @@ void ObjectManager::enviarPersonajes(int FD) {
 		protocolo.setSpriteId(kv.first);
 		protocolo.setX(kv.second->getPosx());
 		protocolo.setY(kv.second->getPosy());
+		protocolo.setCam(kv.second->getPosCamara());
 
 		string msj = protocolo.toString();
 		const char* mensajeChar = msj.c_str();
@@ -72,6 +73,28 @@ void ObjectManager::enviarPersonajes(int FD) {
 
 	write(FD, "$\n", 2);
 
+}
+
+int* ObjectManager::getPosX() {
+	return &posx;
+}
+
+bool ObjectManager::puedoAvanzar() {
+	for (auto kv : objects){
+		if (kv.second->getPosCamara() == 0){
+			return false;
+		}
+	}
+	return true;
+}
+
+void ObjectManager::moverCamara(int id){
+
+	for (auto kv : objects){
+		if (kv.second->getId() != id){
+			kv.second->setPosCamara(kv.second->getPosCamara()-7);
+		}
+	}
 }
 
 ObjectManager* ObjectManager::instancia;

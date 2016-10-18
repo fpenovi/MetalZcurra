@@ -16,6 +16,7 @@ private:
     int estado;
     int x;
     int y;
+    int posCamara;
 
 public:
 
@@ -27,6 +28,8 @@ public:
 
     int getY();
 
+    int getPosCamara();
+
     void setObject_id(int object_id);
 
     void setEstado(int estado);
@@ -35,9 +38,11 @@ public:
 
     void setY(int y);
 
+    void setPosCamara(int posCamara);
+
     string toString();
 
-    static void parse(string stream, int* id, int* state, int* posx, int* posy);
+    static void parse(string stream, int* id, int* state, int* posx, int* posy, int* posCamara);
 };
 
 #endif //METALZCURRA_PROTOCOLOVISTAUPDATE_H

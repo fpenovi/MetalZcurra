@@ -11,6 +11,7 @@ class VistaMarco {
 private:
     int posx, posy;
     int ancho, alto;
+    int posCamara;
     const static int ANIMACION_PARADO = 3;
     const static int ANIMACION_CORRIENDO = 9;
     const static int ANIMACION_SALTANDO = 10;
@@ -84,6 +85,10 @@ public:
     void setId(int id);
 
     void setSeMovio(bool state);
+
+    void setPosCamara(int camara);
+
+    int getPosCamara();
 };
 
 

@@ -6,9 +6,13 @@
 #define METALZCURRA_PERSONAJE_H
 
 #include "GameObject.h"
+#include <iostream>
 
 #define LEVEL_WIDTH 4500
 #define LEVEL_HEIGHT 480
+#define SCREEN_WIDTH 800
+
+using namespace std;
 
 class Personaje {
 
@@ -24,9 +28,10 @@ private:
     int seMovio;
     int id;
     bool bajando = false;
+    int posCamara;
 
 public:
-    void moverX();
+    void moverX(bool avanzar, int* posX);
 
     void moverY();
 
@@ -61,6 +66,10 @@ public:
     bool getBajando();
 
     void setBajando(bool bajando);
+
+    int getPosCamara();
+
+    void setPosCamara(int camara);
 };
 
 #endif //METALZCURRA_PERSONAJE_H

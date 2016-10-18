@@ -247,6 +247,8 @@ private:
 
         int idEmisor = objectManager->getIdByUsername(emisor);
         Personaje* personaje = objectManager->getObject(idEmisor);
+        bool avanzar = objectManager->puedoAvanzar();
+        int* posX = objectManager->getPosX();
 
         int key;
         int pressed;
@@ -255,6 +257,7 @@ private:
         ProtocoloComando::parse(stream, &key, &pressed);
 
         ProtocoloVistaUpdate update;
+        int aux;
 
         if ( pressed == 1 ) {
             //Adjust the velocity
@@ -262,27 +265,29 @@ private:
 
                 case SDLK_LEFT:
                     personaje->setVelx(-personaje->getPersonaje_VEL());
-                    personaje->moverX();
-                    //velx -= Personaje_VEL;
-                    //derecha = false;*/
+                    personaje->moverX(avanzar, posX);
 
                     update.setEstado(personaje->getSeMovio());
-                    update.setX(personaje->getPosx());
+                    update.setX(*posX);
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
-
+                    update.setPosCamara(personaje->getPosCamara());
                     break;
 
                 case SDLK_RIGHT:
+                    aux = *posX;
                     personaje->setVelx(personaje->getPersonaje_VEL());
-                    personaje->moverX();
-                    //velx += Personaje_VEL;
-                    //derecha = true;*/
+                    personaje->moverX(avanzar, posX);
+
+                    if (aux < *posX){
+                        objectManager->moverCamara(idEmisor);
+                    }
 
                     update.setEstado(personaje->getSeMovio());
-                    update.setX(personaje->getPosx());
+                    update.setX(*posX);
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
+                    update.setPosCamara(personaje->getPosCamara());
                     break;
 
                 case SDLK_UP:
@@ -309,9 +314,10 @@ private:
                     }
 
                     update.setEstado(personaje->getSeMovio());
-                    update.setX(personaje->getPosx());
+                    update.setX(*posX);
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
+                    update.setPosCamara(personaje->getPosCamara());
                     break;
             }
         }
@@ -323,24 +329,24 @@ private:
 
                 case SDLK_LEFT:
                     personaje->setVelx(0);
-                    personaje->moverX();
-                    //velx += Personaje_VEL;
+                    personaje->moverX(avanzar, posX);
 
                     update.setEstado(personaje->getSeMovio());
-                    update.setX(personaje->getPosx());
+                    update.setX(*posX);
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
+                    update.setPosCamara(personaje->getPosCamara());
                     break;
 
                 case SDLK_RIGHT:
                     personaje->setVelx(0);
-                    personaje->moverX();
-                    //velx -= Personaje_VEL;
+                    personaje->moverX(avanzar, posX);
 
                     update.setEstado(personaje->getSeMovio());
-                    update.setX(personaje->getPosx());
+                    update.setX(*posX);
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
+                    update.setPosCamara(personaje->getPosCamara());
                     break;
 
                 case SDLK_UP:
@@ -396,7 +402,7 @@ private:
 
             if(auxLista->size() != 0){
 
-                cout << receptor << ": " << auxLista->size() << endl;
+                //cout << receptor << ": " << auxLista->size() << endl;
 
                 Mensaje* mensaje = auxLista->front();
                 string mensajeEmisor = mensaje->getMensaje();
@@ -478,7 +484,7 @@ private:
                 break;
             }
 
-            cout << "debug: Mensaje recibido del cliente: " << linea;
+            //cout << "debug: Mensaje recibido del cliente: " << linea;
 
             // Opcion enviar mensaje
             if (strcmp(linea, "/E/\n") == 0) {
@@ -610,7 +616,7 @@ public:
     void initJuego() {
 
         leerXML();
-        objectManager->crearPersonajes(4);
+        objectManager->crearPersonajes(2);
     }
 
     void aceptarClientes() {

@@ -16,6 +16,7 @@ private:
     int object_id;
     int x;
     int y;
+    int cam;
     int spriteId;
 
 public:
@@ -28,6 +29,8 @@ public:
 
     int getSpriteId();
 
+    int getCam();
+
     void setObject_id(int object_id);
 
     void setX(int x);
@@ -36,9 +39,11 @@ public:
 
     void setSpriteId(int id);
 
+    void setCam(int camara);
+
     string toString();
 
-    static void parse(string stream, int* id, int* sprite, int* posx, int* posy);
+    static void parse(string stream, int* id, int* sprite, int* posx, int* posy, int* camara);
 };
 
 

@@ -37,6 +37,7 @@ private:
 	HandleKeyHold* keyHoldHandler;
 	HandleJump* jumpHandler;
 	Background* fondo;
+	int posx;
 
 public:
 
@@ -62,7 +63,7 @@ public:
 		renderizador = NULL;
 		delete keyHoldHandler;
 		delete jumpHandler;
-		delete fondo;
+		//delete fondo;
 
 		//Quit SDL subsystems
 		IMG_Quit();
@@ -136,8 +137,16 @@ public:
 		return fondo;
 	}
 
+	int getPosX(){
+		return posx;
+	}
+
 	VistaMarco* getPersonajeById(int id){
 		return vistas[id];
+	}
+
+	void setPosX(int x){
+		this->posx = x;
 	}
 
 	void setBackground(Background* fondo){
@@ -236,30 +245,27 @@ public:
 		}
 	}
 
-	void moverCamara(){
+	void moverCamara(int id){
 
-		//Center the camera over the personaje
-		camera->x = ( personaje->getX() + personaje->getAncho() / 2 ) - SCREEN_WIDTH / 2;
-		camera->y = ( personaje->getY() + personaje->getAlto() / 2 ) - SCREEN_HEIGHT / 2;
-
-		//Keep the camera in bounds
-		if ( camera->x < 0 )
-			camera->x = 0;
-
-		if ( camera->y < 0 )
-			camera->y = 0;
-
-		if ( camera->x > LEVEL_WIDTH - camera->w )
-			camera->x = LEVEL_WIDTH - camera->w;
-
-		if ( camera->y > LEVEL_HEIGHT - camera->h )
-			camera->y = LEVEL_HEIGHT - camera->h;
-
+		for (auto kv : vistas){
+			if (kv.second->getId() != id){
+				kv.second->setPosCamara(kv.second->getPosCamara()-7);
+			}
+		}
 	}
 
 	void renderizar(){
 		for (auto kv : vistas)
 			kv.second->render(kv.second->getSeMovio());
+	}
+
+	int getPersonajeMasMovido(){
+		int aux = 0;
+		for (auto kv : vistas){
+			int x = kv.second->getX();
+			if (x > aux) aux = x;
+		}
+		return aux;
 	}
 };
 
@@ -323,7 +329,6 @@ int main( int argc, char** argv) {
 	juego.conectar();
 	juego.crearKeyHoldHandler();
 	juego.crearJumpHandler();
-	//Textura fondo;
 
 	if( !juego.iniciar() ) {
 		printf("Failed to initialize!\n");
@@ -336,12 +341,14 @@ int main( int argc, char** argv) {
 
 		if (nuevaVista == "$\n") break;
 
-		int id, sprite, posx, posy;
+		int id, sprite, posx, posy, cam;
 
-		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy);
+		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam);
 
 		VistaMarco* personaje = new VistaMarco(juego.getRenderer());
+
 		personaje->setId(id);
+		personaje->setPosCamara(cam);
 		personaje->setPosx(posx);
 		personaje->setPosy(posy);
 		personaje->setSeMovio(false);
@@ -356,20 +363,14 @@ int main( int argc, char** argv) {
 	Background fondo(juego.getRenderer());
 	juego.setBackground(&fondo);
 
-	if(!fondo.agregar("imag/background/m1.png") || !fondo.agregar("imag/background/bg1.png")){
+	if(!fondo.agregar("imag/background/gris.png") || !fondo.agregar("imag/background/rojo.png")){
 		printf( "Failed to load media!\n" );
 	}
 
 	fondo.prepararEscenario();
 
-	juego.setPersonaje(juego.getPersonajeById(1));
-
 	//Main loop flag
 	bool quit = false;
-
-	// Creo la camara
-	//SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-	//juego.setCamara(&camera);
 
 	// Thread que escucha eventos
 	controlador_t* arg = new controlador_t;
@@ -389,36 +390,35 @@ int main( int argc, char** argv) {
 
 		if (update != "$\n") {
 
-			int id, state, posx, posy;
+			int id, state, posx, posy, posCam;
 
-			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy);
+			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam);
 
 			VistaMarco* pj = juego.getPersonajeById(id);
 
-			if (pj->getX() < posx){
+			if (pj->getPosCamara() < posCam){
 				pj->setDerecha(true);
 			}
-			else if (pj->getX() > posx){
+			else if (pj->getPosCamara() > posCam){
 				pj->setDerecha(false);
 			}
 
-			pj->setPosx(posx);
+			if (juego.getPosX() < posx){
+				juego.moverCamara(id);
+				juego.setPosX(posx);
+			}
+
+			pj->setPosCamara(posCam);
 			pj->setPosy(posy);
 			pj->setSeMovio(state);
 		}
 
-		//Muevo la camara
-		//juego.moverCamara();
-
-		//Borro la pantalla
-		//DRAWCOLOR ASI PONE TODO EN BLANCO
 		SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( juego.getRenderer() );
 
-		//Render background
-		//fondo.render( 0, 0, &camera );
-		fondo.render(juego.getPersonajeById(1)->getX());
+		//fondo.render(juego.getPosX());
 		juego.renderizar();
+
 		SDL_RenderPresent( juego.getRenderer() );
 
 		actual = high_resolution_clock::now();

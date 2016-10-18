@@ -21,6 +21,14 @@ int ProtocoloVistaUpdate::getY() {
     return y;
 }
 
+int ProtocoloVistaUpdate::getPosCamara(){
+    return posCamara;
+}
+
+void ProtocoloVistaUpdate::setPosCamara(int posCamara) {
+    this->posCamara = posCamara;
+}
+
 void ProtocoloVistaUpdate::setObject_id(int object_id) {
     this->object_id = object_id;
 }
@@ -42,19 +50,21 @@ string ProtocoloVistaUpdate::toString(){
     string state = to_string(estado);
     string posx = to_string(x);
     string posy = to_string(y);
+    string posCam = to_string(posCamara);
 
-    string msj = id + "$" + state + "$" + posx + "$" + posy + "\n";
+    string msj = id + "$" + state + "$" + posx + "$" + posy + "$" + posCam + "\n";
     return msj;
 }
 
-void ProtocoloVistaUpdate::parse(string stream, int* id, int* state, int* posx, int* posy) {
+void ProtocoloVistaUpdate::parse(string stream, int* id, int* state, int* posx, int* posy, int* posCamara) {
 
     string id_s = "";
     string state_s = "";
     string posx_s = "";
     string posy_s = "";
+    string posCamara_s = "";
 
-    string* variables[] = {&id_s, &state_s, &posx_s, &posy_s};
+    string* variables[] = {&id_s, &state_s, &posx_s, &posy_s, &posCamara_s};
 
     int j = 0;
 
@@ -74,4 +84,5 @@ void ProtocoloVistaUpdate::parse(string stream, int* id, int* state, int* posx, 
     *state = stoi(state_s);
     *posx = stoi(posx_s);
     *posy = stoi(posy_s);
+    *posCamara = stoi(posCamara_s);
 }
