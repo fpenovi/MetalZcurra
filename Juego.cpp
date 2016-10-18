@@ -13,6 +13,7 @@
 #include "HandleKeyHold.h"
 #include "HandleJump.h"
 #include "LTimer.h"
+#include "Background.h"
 
 using namespace std;
 using namespace chrono;
@@ -37,6 +38,7 @@ private:
 	int lastKeyPressed;
 	HandleKeyHold* keyHoldHandler;
 	HandleJump* jumpHandler;
+	Background* fondo;
 
 public:
 
@@ -62,6 +64,7 @@ public:
 		renderizador = NULL;
 		delete keyHoldHandler;
 		delete jumpHandler;
+		delete fondo;
 
 		//Quit SDL subsystems
 		IMG_Quit();
@@ -131,10 +134,17 @@ public:
 		return cliente;
 	}
 
+	Background* getBackground(){
+		return fondo;
+	}
+
 	VistaMarco* getPersonajeById(int id){
 		return vistas[id];
 	}
 
+	void setBackground(Background* fondo){
+		this->fondo = fondo;
+	}
 
 	void setCliente(Cliente* client){
 		cliente = client;
@@ -345,6 +355,15 @@ int main( int argc, char** argv) {
 		}
 	}
 
+	Background fondo(juego.getRenderer());
+	juego.setBackground(&fondo);
+
+	if(!fondo.agregar("imag/background/gris.png") || !fondo.agregar("imag/background/rojo.png")){
+		printf( "Failed to load media!\n" );
+	}
+
+	fondo.prepararEscenario();
+
 	juego.setPersonaje(juego.getPersonajeById(1));
 
 	//Main loop flag
@@ -413,6 +432,7 @@ int main( int argc, char** argv) {
 
 		//Render background
 		//fondo.render( 0, 0, &camera );
+		fondo.render(juego.getPersonajeById(1)->getX());
 		juego.renderizar();
 		SDL_RenderPresent( juego.getRenderer() );
 

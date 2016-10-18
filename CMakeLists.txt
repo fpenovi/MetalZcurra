@@ -8,4 +8,5 @@ set(SOURCE_FILES Servidor.cpp Cliente.cpp Cliente.h Mensaje.cpp Mensaje.h Log.cp
         ProtocoloComando.cpp ProtocoloComando.h ProtocoloVistaUpdate.cpp
         ProtocoloVistaUpdate.h Personaje.cpp Personaje.h HandleKeyHold.cpp HandleKeyHold.h ObjectManager.cpp
         ObjectManager.h GameObject.cpp GameObject.h HandleJump.cpp HandleJump.h ProtocoloNuevaVista.cpp ProtocoloNuevaVista.h LTimer.cpp LTimer.h)
+
 add_executable(MetalZcurra ${SOURCE_FILES})
