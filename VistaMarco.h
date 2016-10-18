@@ -1,6 +1,8 @@
 //
 // Created by juancho on 02/10/16.
 //
+#include <vector>
+#include <unordered_map>
 #include "Textura.h"
 
 #ifndef METALZCURRA_VISTAMARCO_H
@@ -38,6 +40,12 @@ private:
     SDL_Renderer *renderizador;
     int id;
     bool seMovio;
+
+    unordered_map<int, vector<string>> hashSprites;
+
+    string pathQuieto;
+    string pathCorriendo;
+    string pathSaltando;
 
 public:
     VistaMarco(SDL_Renderer *renderizador2);
@@ -89,6 +97,10 @@ public:
     void setPosCamara(int camara);
 
     int getPosCamara();
+
+    void crearHashSprites();
+
+    void setearSprites(int id);
 };
 
 

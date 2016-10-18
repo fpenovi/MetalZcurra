@@ -60,7 +60,7 @@ private:
     static ObjectManager* objectManager;
     static unordered_map<string, list<Mensaje*>*> conectadosHash;
     static unordered_map<string, pthread_mutex_t> mutexesHash;
-    ParserXML* parser;
+    static ParserXML* parser;
 
     static void *controlInput(void *serverStatus) {
 
@@ -464,6 +464,9 @@ private:
         objectManager->registerUser(userCon);
         conectadosHash[userCon] = new list<Mensaje*>;
         mutexesHash[userCon] = PTHREAD_MUTEX_INITIALIZER;
+
+        // ENVIO DATOS
+        objectManager->enviarEscenario(parser, sockNewFileDescrpt);
         objectManager->enviarPersonajes(sockNewFileDescrpt);
 
         bool quit = false;
@@ -676,6 +679,7 @@ Log Servidor::logger(100);
 ObjectManager* Servidor::objectManager = ObjectManager::getInstance();
 unordered_map<string, list<Mensaje*>*> Servidor::conectadosHash;
 unordered_map<string, pthread_mutex_t> Servidor::mutexesHash;
+ParserXML* Servidor::parser;
 
 int main(int argc, char** argv) {
 

@@ -17,13 +17,6 @@
 using namespace std;
 using namespace chrono;
 
-//Screen dimension constants
-
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-#define LEVEL_WIDTH 4500
-#define LEVEL_HEIGHT 480
-
 class Juego {
 
 private:
@@ -38,6 +31,10 @@ private:
 	HandleJump* jumpHandler;
 	Background* fondo;
 	int posx;
+	int screenWidth;
+	int screenHeight;
+	int levelWidth;
+	int levelHeight;
 
 public:
 
@@ -86,7 +83,7 @@ public:
 			}
 
 			//VENTANA
-			ventana = SDL_CreateWindow( "PERSONAJE1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+			ventana = SDL_CreateWindow( "PERSONAJE1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN );
 			if ( ventana == NULL ) {
 				printf( "NO SE PUDO CREAR LA VENTANA! SDL Error: %s\n", SDL_GetError() );
 				success = false;
@@ -267,6 +264,38 @@ public:
 		}
 		return aux;
 	}
+
+	void recibirEscenario(){
+		string stream = cliente->recibir_nueva_vista();
+
+		cout << stream;
+
+		string ventanaAncho = "";
+		string ventanaAlto = "";
+		string nivelAncho = "";
+		string nivelAlto = "";
+
+		string* variables[] = {&ventanaAncho, &ventanaAlto, &nivelAncho, &nivelAlto};
+
+		int j = 0;
+
+		for (int i=0; i<stream.size() - 1; i++) {
+
+			char actual = stream[i];
+
+			if (actual == '$') {
+				j++;
+				continue;
+			}
+
+			*(variables[j]) += actual;
+		}
+
+		screenWidth = stoi(ventanaAncho);
+		screenHeight = stoi(ventanaAlto);
+		levelWidth = stoi(nivelAncho);
+		levelHeight = stoi(nivelAlto);
+	}
 };
 
 typedef struct {
@@ -327,6 +356,9 @@ int main( int argc, char** argv) {
 
 	juego.setCliente(&cliente);
 	juego.conectar();
+
+	juego.recibirEscenario();
+
 	juego.crearKeyHoldHandler();
 	juego.crearJumpHandler();
 
@@ -347,6 +379,7 @@ int main( int argc, char** argv) {
 
 		VistaMarco* personaje = new VistaMarco(juego.getRenderer());
 
+		personaje->setearSprites(sprite);
 		personaje->setId(id);
 		personaje->setPosCamara(cam);
 		personaje->setPosx(posx);

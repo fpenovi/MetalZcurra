@@ -31,6 +31,8 @@ VistaMarco::VistaMarco(SDL_Renderer* renderizador2){
 	TEXTURA_PERSONAJE_PARADO = new Textura(renderizador);
 	TEXTURA_PERSONAJE_SALTANDO = new Textura(renderizador);
 	TEXTURA_PERSONAJE_CORRIENDO = new Textura(renderizador);
+
+	crearHashSprites();
 }
 
 bool VistaMarco::estaQuieto(){
@@ -100,7 +102,7 @@ bool VistaMarco::cargarImagen(){
 	int i;
 
 	//Load sprite sheet texture
-	if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/marco/quieto3.png") )
+	if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( pathQuieto) )
 	{
 		printf( "Fallo sprite parado\n" );
 		success = false;
@@ -116,7 +118,7 @@ bool VistaMarco::cargarImagen(){
 		}
 	}
 
-	if( !TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( "imag/marco/corriendo2.png") )
+	if( !TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( pathCorriendo) )
 	{
 		printf( "Fallo sprite corriendo\n" );
 		success = false;
@@ -130,7 +132,7 @@ bool VistaMarco::cargarImagen(){
 		}
 	}
 
-	if( !TEXTURA_PERSONAJE_SALTANDO->cargarImagen( "imag/marco/saltando3.png") )
+	if( !TEXTURA_PERSONAJE_SALTANDO->cargarImagen( pathSaltando) )
 	{
 		printf( "Fallo sprite saltando\n" );
 		success = false;
@@ -208,4 +210,22 @@ void VistaMarco::setPosCamara(int camara) {
 
 int VistaMarco::getPosCamara(){
 	return posCamara;
+}
+
+void VistaMarco::crearHashSprites() {
+
+	vector<string> spritesMarco;
+	spritesMarco.push_back("imag/marco/quieto3.png");
+	spritesMarco.push_back("imag/marco/corriendo2.png");
+	spritesMarco.push_back("imag/marco/saltando3.png");
+
+	hashSprites[1] = spritesMarco;
+}
+
+void VistaMarco::setearSprites(int id) {
+
+	pathQuieto = hashSprites[id][0];
+	pathCorriendo = hashSprites[id][1];
+	pathSaltando = hashSprites[id][2];
+
 }

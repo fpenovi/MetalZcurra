@@ -11,6 +11,7 @@
 #include "Personaje.h"
 #include <unordered_map>
 #include "ProtocoloNuevaVista.h"
+#include "ParserXML.h"
 
 using namespace std;
 
@@ -37,6 +38,7 @@ public:
 	int* getPosX();
 	bool puedoAvanzar();
 	void moverCamara(int id);
+	void enviarEscenario(ParserXML* parser, int FD);
 };
 
 

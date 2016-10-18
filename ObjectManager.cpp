@@ -57,7 +57,7 @@ void ObjectManager::enviarPersonajes(int FD) {
 		ProtocoloNuevaVista protocolo;
 
 		protocolo.setObject_id(kv.first);
-		protocolo.setSpriteId(kv.first);
+		protocolo.setSpriteId(1);
 		protocolo.setX(kv.second->getPosx());
 		protocolo.setY(kv.second->getPosy());
 		protocolo.setCam(kv.second->getPosCamara());
@@ -95,6 +95,18 @@ void ObjectManager::moverCamara(int id){
 			kv.second->setPosCamara(kv.second->getPosCamara()-7);
 		}
 	}
+}
+
+void ObjectManager::enviarEscenario(ParserXML *parser, int FD) {
+
+	string tamVentana = parser->TamVentana();
+	string tamNivel = parser->tamNivel();
+	string msj = tamVentana + tamNivel + "\n";
+	const char* mensajeChar = msj.c_str();
+
+	ssize_t bytesEscritos = write(FD, mensajeChar, msj.size());
+	if (bytesEscritos < 0)
+		perror("ERROR --> No se pudo envair personaje");
 }
 
 ObjectManager* ObjectManager::instancia;
