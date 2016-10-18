@@ -13,7 +13,7 @@
 //Initializes the variables
 VistaMarco::VistaMarco(SDL_Renderer* renderizador2){
 	posx = 0;
-	posy = 240;
+	posy = 360;
 	ancho=60;
 	alto=80;
 	frameCorriendo=0;
@@ -37,59 +37,59 @@ bool VistaMarco::estaQuieto(){
 	return quieto;
 }
 
-void VistaMarco::render(bool seMovio, int camx, int camy){
+void VistaMarco::render(bool seMovio){
 	if (estaSaltando()) {
-		animacionSaltando(camx, camy);
+		animacionSaltando();
 		return;
 	}
 	if (seMovio){
-		animacionCorrer(camx,camy);
+		animacionCorrer();
 	}
 	else {
-		animacionParado(camx,camy);
+		animacionParado();
 	}
 
 }
 
-void VistaMarco::animacionParado(int camx,int camy){
+void VistaMarco::animacionParado(){
 	if (saltando) return;
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
-	SDL_Rect* currentClip = &spriteParado[ frameParado / 9];
-	TEXTURA_PERSONAJE_PARADO->render(posx-camx,posy-camy, currentClip,0,NULL,flip );;
+	SDL_Rect* currentClip = &spriteParado[ frameParado / 81];
+	TEXTURA_PERSONAJE_PARADO->render(posx,posy, currentClip,0,NULL,flip );;
 
 	++frameParado;
 
-	if( frameParado / 9 >= ANIMACION_PARADO )
+	if( frameParado / 81 >= ANIMACION_PARADO )
 	{
 		frameParado = 0;
 	}
 
 }
-void VistaMarco::animacionCorrer(int camx,int camy){
+void VistaMarco::animacionCorrer(){
 	if (saltando) return;
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (!derecha) {
 		flip = SDL_FLIP_HORIZONTAL;
 	}
-	SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo /3 ];
-	TEXTURA_PERSONAJE_CORRIENDO->render( posx-camx, posy-camy, currentClip,0,NULL,flip);
+	SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo / 27 ];
+	TEXTURA_PERSONAJE_CORRIENDO->render( posx, posy, currentClip,0,NULL,flip);
 	++frameCorriendo;
-	if( frameCorriendo /3 >= ANIMACION_CORRIENDO ){
+	if( frameCorriendo / 27 >= ANIMACION_CORRIENDO ){
 		frameCorriendo = 0;
 	}
 }
 
-int VistaMarco::animacionSaltando(int camx,int camy){
+int VistaMarco::animacionSaltando(){
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (!derecha) {
 		flip = SDL_FLIP_HORIZONTAL;
 	}
-	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando/4 ];
-	TEXTURA_PERSONAJE_SALTANDO->render( posx-camx, posy-camy, currentClip,0,NULL,flip);
+	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando / 44];
+	TEXTURA_PERSONAJE_SALTANDO->render( posx, posy, currentClip,0,NULL,flip);
 
 	++frameSaltando;
-	if( frameSaltando/4 == ANIMACION_SALTANDO ){
+	if( frameSaltando / 44 == ANIMACION_SALTANDO ){
 		frameSaltando = 0;
 	}
 }
@@ -155,7 +155,7 @@ void VistaMarco::liberarTextura(){
 
 }
 bool VistaMarco::estaSaltando(){
-	return (posy != 240);
+	return (posy != 360);
 }
 int VistaMarco::getX(){
 	return posx;

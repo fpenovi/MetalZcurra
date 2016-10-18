@@ -47,13 +47,13 @@ public:
 
     bool mover();
 
-    void render(bool seMovio, int camx, int camy);
+    void render(bool seMovio);
 
-    void animacionParado(int camx, int camy);
+    void animacionParado();
 
-    void animacionCorrer(int camx, int camy);
+    void animacionCorrer();
 
-    int animacionSaltando(int camx, int camy);
+    int animacionSaltando();
 
     bool cargarImagen();
 

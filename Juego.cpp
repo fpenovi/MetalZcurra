@@ -259,7 +259,7 @@ public:
 
 	void renderizar(){
 		for (auto kv : vistas)
-			kv.second->render(kv.second->getSeMovio(), camera->x, camera->y);
+			kv.second->render(kv.second->getSeMovio());
 	}
 };
 
@@ -356,7 +356,7 @@ int main( int argc, char** argv) {
 	Background fondo(juego.getRenderer());
 	juego.setBackground(&fondo);
 
-	if(!fondo.agregar("imag/background/gris.png") || !fondo.agregar("imag/background/rojo.png")){
+	if(!fondo.agregar("imag/background/m1.png") || !fondo.agregar("imag/background/bg1.png")){
 		printf( "Failed to load media!\n" );
 	}
 
@@ -368,8 +368,8 @@ int main( int argc, char** argv) {
 	bool quit = false;
 
 	// Creo la camara
-	SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-	juego.setCamara(&camera);
+	//SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	//juego.setCamara(&camera);
 
 	// Thread que escucha eventos
 	controlador_t* arg = new controlador_t;
@@ -408,7 +408,7 @@ int main( int argc, char** argv) {
 		}
 
 		//Muevo la camara
-		juego.moverCamara();
+		//juego.moverCamara();
 
 		//Borro la pantalla
 		//DRAWCOLOR ASI PONE TODO EN BLANCO

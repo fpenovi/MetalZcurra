@@ -286,13 +286,13 @@ private:
                     break;
 
                 case SDLK_UP:
-                    if (personaje->getPosy() <= 190){
+                    if (personaje->getPosy() <= 310){
                         personaje->setVely(personaje->getPersonaje_VEL_Y());
                         personaje->moverY();
                         personaje->setVely(0);
                         personaje->setBajando(true);
                     }
-                    else if (personaje->getPosy() >= 240){
+                    else if (personaje->getPosy() >= 360){
                         personaje->setVely(-personaje->getPersonaje_VEL_Y());
                         personaje->moverY();
                         personaje->setVely(0);
@@ -307,8 +307,6 @@ private:
                         personaje->setVely(-personaje->getPersonaje_VEL_Y());
                         personaje->moverY();
                     }
-
-
 
                     update.setEstado(personaje->getSeMovio());
                     update.setX(personaje->getPosx());

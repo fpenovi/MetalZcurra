@@ -63,6 +63,11 @@ void Personaje::moverY() {
         seMovio = false;
         return;
     }
+
+    if (posy == 360){
+        seMovio = false;
+        return;
+    }
     seMovio = true;
 
 }
