@@ -50,6 +50,7 @@ private:
     pthread_t threadControl;
     pthread_attr_t attr;
     bool serverOn = false;
+    static int cantidadUsuarios;
     static vector<argthread_t*> conectados;
     static unordered_map<string, string> usuarios;
     static vector<Mensaje> mensajes;
@@ -485,6 +486,12 @@ private:
         mutexesHash[userCon] = PTHREAD_MUTEX_INITIALIZER;
         objectManager->conectarPersonaje(userCon);
 
+        // SALA DE ESPERA
+        while (conectadosHash.size() != cantidadUsuarios){
+            cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
+        }
+        write(sockNewFileDescrpt, "$\n", 2);
+
         // ENVIO DATOS
         objectManager->enviarEscenario(parser, sockNewFileDescrpt);
         objectManager->enviarPersonajes(sockNewFileDescrpt);
@@ -688,7 +695,9 @@ public:
     void initJuego() {
 
         leerXML();
-        objectManager->crearPersonajes(4);
+        //cantidadUsuarios = (int) parser->users().size();
+        cantidadUsuarios = 2;
+        objectManager->crearPersonajes(cantidadUsuarios);
     }
 
     void aceptarClientes() {
@@ -750,6 +759,7 @@ ObjectManager* Servidor::objectManager = ObjectManager::getInstance();
 unordered_map<string, list<Mensaje*>*> Servidor::conectadosHash;
 unordered_map<string, pthread_mutex_t> Servidor::mutexesHash;
 ParserXML* Servidor::parser;
+int Servidor::cantidadUsuarios;
 
 int main(int argc, char** argv) {
 
