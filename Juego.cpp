@@ -295,7 +295,16 @@ public:
 		}
 		return aux;
 	}
+	void jugadoresInicio(){
+		for ( auto kv : vistas){
+			kv.second->setPosCamara(0);
+			personaje->setPosx(0);
+			personaje->setPosy(360);
+			personaje->setSeMovio(true);
+			setPosX(0);
+		}
 
+	}
 	void recibirEscenario(){
 		string stream = cliente->recibir_nueva_vista();
 
@@ -523,6 +532,10 @@ int main( int argc, char** argv) {
 			int id, state, posx, posy, posCam, conectado;
 
 			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam, &conectado);
+			if (id == 9 ){
+				juego.jugadoresInicio();
+				continue;
+			}
 
 			VistaPersonaje* pj = juego.getPersonajeById(id);
 
