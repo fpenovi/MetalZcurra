@@ -63,7 +63,7 @@ void VistaPersonaje::animacionParado(){
 
 	++frameParado;
 
-	if( frameParado / (frameDivider*3) >= ANIMACION_PARADO )
+	if( frameParado / (frameDivider) >= ANIMACION_PARADO )
 	{
 		frameParado = 0;
 	}
@@ -88,7 +88,7 @@ int VistaPersonaje::animacionSaltando(){
 	if (!derecha) {
 		flip = SDL_FLIP_HORIZONTAL;
 	}
-	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando / (frameDivider*3)];
+	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando / ((frameDivider+1)*3)];
 	TEXTURA_PERSONAJE_SALTANDO->render( posCamara, posy, currentClip,0,NULL,flip);
 
 	++frameSaltando;
@@ -250,8 +250,8 @@ void VistaPersonaje::setFrameDivider(int divisor) {
 	if (divisor <= 0)
 		divisor = 3;
 
-	else if (divisor > 54)
-		divisor = 54;
+	else if (divisor > 90)
+		divisor = 90;
 
 	this->frameDivider = divisor;
 }

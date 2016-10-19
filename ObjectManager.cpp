@@ -100,15 +100,33 @@ void ObjectManager::moverCamara(int id){
 }
 
 void ObjectManager::enviarEscenario(ParserXML *parser, int FD) {
-
 	string tamVentana = parser->TamVentana();
 	string tamNivel = parser->tamNivel();
+	vector <string> sprites = parser->spritesPlayers();
+	vector<string> capas = parser->capas();
+	if (tamVentana.length() == 0 || tamNivel.length() == 0 || sprites.empty() || capas.empty() ) {
+		parser->setearDefecto();
+		tamVentana = parser->TamVentana();
+		tamNivel = parser->tamNivel();
+		sprites = parser->spritesPlayers();
+		capas = parser->capas();
+	}
 	string msj = tamVentana + tamNivel + "\n";
 	const char* mensajeChar = msj.c_str();
 
 	ssize_t bytesEscritos = write(FD, mensajeChar, msj.size());
 	if (bytesEscritos < 0)
 		perror("ERROR --> No se pudo envair personaje");
+	msj="";
+	for (int i=0; i<4 ; i++ ){
+		msj = msj + capas[i];
+	}
+	msj= msj +"\n";
+	const char* mensaje = msj.c_str();
+	bytesEscritos = write(FD, mensaje, msj.size());
+	if (bytesEscritos < 0)
+		perror("ERROR --> No se pudo envair personaje");
+
 }
 
 ObjectManager* ObjectManager::instancia;

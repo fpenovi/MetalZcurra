@@ -322,6 +322,18 @@ private:
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
                     break;
+                case SDLK_r:
+                        personaje->inicial();
+                        update.setEstado(true);
+                        update.setX(*posX);
+                        update.setY(personaje->getPosy());
+                        update.setObject_id(idEmisor);
+                        update.setPosCamara(personaje->getPosCamara());
+                        break;
+
+
+
+
             }
         }
 
@@ -333,7 +345,6 @@ private:
                 case SDLK_LEFT:
                     personaje->setVelx(0);
                     personaje->moverX(avanzar, posX);
-
                     update.setEstado(personaje->getSeMovio());
                     update.setX(*posX);
                     update.setY(personaje->getPosy());
@@ -344,7 +355,6 @@ private:
                 case SDLK_RIGHT:
                     personaje->setVelx(0);
                     personaje->moverX(avanzar, posX);
-
                     update.setEstado(personaje->getSeMovio());
                     update.setX(*posX);
                     update.setY(personaje->getPosy());
@@ -353,6 +363,8 @@ private:
                     break;
 
                 case SDLK_UP:
+                    break;
+                case SDLK_r:
                     break;
             }
         }
@@ -612,11 +624,13 @@ public:
         string tamVentana = parser->TamVentana();
         string tamNivel = parser->tamNivel();
         vector <string> sprites = parser->spritesPlayers();
-        if (tamVentana.length() == 0 || tamNivel.length() == 0 || sprites.empty() ){
+        vector<string> capas = parser->capas();
+        if (tamVentana.length() == 0 || tamNivel.length() == 0 || sprites.empty() || capas.empty() ){
             parser->setearDefecto();
             tamVentana = parser->TamVentana();
             tamNivel = parser->tamNivel();
             sprites = parser->spritesPlayers();
+            capas = parser->capas();
         }
     }
     void initJuego() {
@@ -667,6 +681,7 @@ public:
 
 
         }
+        // ToDo delete del parser...
         logger.cierroServer();
         logger.cerrarLog();
     }

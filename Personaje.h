@@ -70,6 +70,8 @@ public:
     int getPosCamara();
 
     void setPosCamara(int camara);
+
+    void inicial();
 };
 
 #endif //METALZCURRA_PERSONAJE_H

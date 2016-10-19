@@ -56,10 +56,10 @@ public:
 		//Destroy window
 		SDL_DestroyRenderer( renderizador );
 		SDL_DestroyWindow( ventana );
-		ventana = NULL;
-		renderizador = NULL;
 		keyHoldHandler->Off();
 		jumpHandler->Off();
+		ventana = NULL;
+		renderizador = NULL;
 		delete keyHoldHandler;
 		delete jumpHandler;
 		//delete fondo;
@@ -211,6 +211,12 @@ public:
 					//subiendo=true;
 					//return msj;
 					break;
+
+				case SDLK_r:
+					keyHoldHandler->setKeyPressed(SDLK_r);
+					keyHoldHandler->Resume();
+					break;
+
 			}
 		}
 
@@ -240,6 +246,13 @@ public:
 				case SDLK_UP:
 					jumpHandler->Pause();
 					break;
+
+				case SDLK_r:
+					keyHoldHandler->Pause();
+					keyHoldHandler->setKeyPressed(0);
+					break;
+
+
 			}
 		}
 	}
@@ -297,12 +310,15 @@ public:
 		screenHeight = stoi(ventanaAlto);
 		levelWidth = stoi(nivelAncho);
 		levelHeight = stoi(nivelAlto);
+		cout <<"RECIBIENDO BACKGROUND"<< endl;
+		stream = cliente->recibir_nueva_vista();
 	}
+
 
 	void setFPSCorrection(double ms, bool acelerar) {
 
 		int divisor = vistas[1]->getFrameDivider();
-		if (divisor == 0 || divisor == 54)
+		if (divisor == 0 || divisor == 90)
 			return;
 
 		(acelerar) ? divisor -= 5 : divisor += 5;
@@ -310,6 +326,7 @@ public:
 		for (auto kv : vistas)
 			kv.second->setFrameDivider(divisor);
 	}
+
 };
 
 typedef struct {
@@ -463,6 +480,7 @@ int main( int argc, char** argv) {
 			pj->setSeMovio(state);
 		}
 
+		SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( juego.getRenderer() );
 		fondo.render(juego.getPosX());
 		juego.renderizar();
