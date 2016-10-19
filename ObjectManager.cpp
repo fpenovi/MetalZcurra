@@ -108,6 +108,9 @@ void ObjectManager::moverCamara(int id){
 		if (kv.second->getId() != id && kv.second->getConectado() && kv.second->getPosCamara() != 0){
 			kv.second->setPosCamara(kv.second->getPosCamara()-7);
 		}
+		if (!(kv.second->getConectado()) && kv.second->getPosCamara() != 7 && kv.second->getPosCamara() != 0){
+			kv.second->setPosCamara(kv.second->getPosCamara()-7);
+		}
 	}
 }
 

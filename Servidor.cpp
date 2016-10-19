@@ -683,7 +683,7 @@ public:
     void initJuego() {
 
         leerXML();
-        objectManager->crearPersonajes(2);
+        objectManager->crearPersonajes(4);
     }
 
     void aceptarClientes() {

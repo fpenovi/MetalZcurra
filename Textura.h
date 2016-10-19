@@ -24,8 +24,7 @@ public:
     int getAncho();
     int getAlto();
     void free();
-
-
+    void setColor( Uint8 red, Uint8 green, Uint8 blue );
 };
 
 

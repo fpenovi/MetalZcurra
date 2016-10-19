@@ -29,7 +29,7 @@ private:
     int id;
     bool bajando = false;
     int posCamara = 0;
-    int conectado;
+    int conectado = false;
 
 public:
     void moverX(bool avanzar, int* posX);

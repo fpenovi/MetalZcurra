@@ -268,13 +268,23 @@ public:
 				else if (kv.second->getPosCamara() == 0 && !(kv.second->getConectado())){
 					kv.second->setPosCamara(kv.second->getPosCamara()+7);
 				}
+				if (!(kv.second->getConectado()) && kv.second->getPosCamara() != 7 && kv.second->getPosCamara() != 0){
+					kv.second->setPosCamara(kv.second->getPosCamara()-7);
+				}
 			}
 		}
 	}
 
-	void renderizar(){
-		for (auto kv : vistas)
+	void renderizar() {
+		for (auto kv : vistas) {
+			if (!(kv.second->getConectado()) && !(kv.second->getGris())) {
+				kv.second->ponerTexturaGris();
+			}
+			else if (kv.second->getConectado() && kv.second->getGris()) {
+				kv.second->sacarTexturaGris();
+			}
 			kv.second->render(kv.second->getSeMovio());
+		}
 	}
 
 	int getPersonajeMasMovido(){
@@ -416,8 +426,8 @@ int main( int argc, char** argv) {
 
 		VistaPersonaje *personaje = new VistaPersonaje(juego.getRenderer());
 
+		juego.setPosX(posx);
 		personaje->setearSprites(sprite);
-
 		personaje->setId(id);
 		personaje->setPosCamara(cam);
 		personaje->setPosx(posx);
@@ -425,6 +435,8 @@ int main( int argc, char** argv) {
 		personaje->setSeMovio(false);
 		personaje->setConectado(conectado);
 		juego.addPersonaje(id, personaje);
+
+		cout << "CONECTADO: " << conectado << endl;
 
 		if (!personaje->cargarImagen()) {
 			printf("Failed to load media!\n");
@@ -501,7 +513,7 @@ int main( int argc, char** argv) {
 		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
 		auto elapsed_ms = duration_cast<milliseconds>(deltaTiempo);
 
-		cout << "Elapsed ms: " << elapsed_ms.count() << "Diez ms: " << diezMs.count() << endl;
+		//cout << "Elapsed ms: " << elapsed_ms.count() << "Diez ms: " << diezMs.count() << endl;
 
 		if (cliente.getCantidadMensajesEncolados() > 3 || elapsed_ms.count() > diezMs.count())
 			juego.setFPSCorrection(elapsed_ms.count(), true);

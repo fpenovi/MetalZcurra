@@ -96,3 +96,7 @@ int Textura::getAncho(){
 int Textura::getAlto(){
 	return alto;
 }
+
+void Textura::setColor( Uint8 red, Uint8 green, Uint8 blue ) {
+	SDL_SetTextureColorMod( textura, red, green, blue );
+}

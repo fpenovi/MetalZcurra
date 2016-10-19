@@ -32,6 +32,7 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	TEXTURA_PERSONAJE_PARADO = new Textura(renderizador);
 	TEXTURA_PERSONAJE_SALTANDO = new Textura(renderizador);
 	TEXTURA_PERSONAJE_CORRIENDO = new Textura(renderizador);
+	gris = false;
 
 	crearHashSprites();
 }
@@ -266,4 +267,18 @@ void VistaPersonaje::setFrameDivider(int divisor) {
 
 int VistaPersonaje::getFrameDivider() {
 	return this->frameDivider;
+}
+
+void VistaPersonaje::ponerTexturaGris() {
+	TEXTURA_PERSONAJE_PARADO->setColor(128,128,128);
+	gris = true;
+}
+
+void VistaPersonaje::sacarTexturaGris() {
+	TEXTURA_PERSONAJE_PARADO->setColor(255,255,255);
+	gris = false;
+}
+
+bool VistaPersonaje::getGris() {
+	return gris;
 }

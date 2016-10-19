@@ -42,6 +42,7 @@ private:
     SDL_Renderer *renderizador;
     int id;
     bool seMovio;
+	bool gris;
 
     unordered_map<int, vector<string>*> hashSprites;
 
@@ -111,6 +112,12 @@ public:
 	void setFrameDivider(int divisor);
 
 	int getFrameDivider();
+
+	void ponerTexturaGris();
+
+	bool getGris();
+
+	void sacarTexturaGris();
 };
 
 
