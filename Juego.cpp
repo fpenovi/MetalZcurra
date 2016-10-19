@@ -326,8 +326,46 @@ public:
 		screenHeight = stoi(ventanaAlto);
 		levelWidth = stoi(nivelAncho);
 		levelHeight = stoi(nivelAlto);
+	}
+
+	void recibirCapas(){
 		cout <<"RECIBIENDO BACKGROUND"<< endl;
-		stream = cliente->recibir_nueva_vista();
+
+		while (true) {
+
+			string stream = cliente->recibir_nueva_vista();
+
+			if (stream == "$\n") break;
+
+			string path = "";
+			string ancho = "";
+			string zindex = "";
+
+			string* variables[] = {&path, &ancho, &zindex};
+
+			int j = 0;
+
+			for (int i=0; i<stream.size() - 1; i++) {
+
+				char actual = stream[i];
+
+				if (actual == '$') {
+					j++;
+					continue;
+				}
+
+				*(variables[j]) += actual;
+			}
+
+
+			char *path_c = new char[path.length() + 1];
+			strcpy(path_c, path.c_str());
+
+			if(!(fondo->agregar(path_c)) ){
+				printf( "Failed to load media!\n" );
+			}
+
+		}
 	}
 
 
@@ -414,6 +452,13 @@ int main( int argc, char** argv) {
 		return 1;
 	}
 
+	// Seteo el fondo
+	Background fondo(juego.getRenderer());
+	juego.setBackground(&fondo);
+	juego.recibirCapas();
+	fondo.prepararEscenario();
+
+
 	while (true) {
 
 		string nuevaVista = cliente.recibir_nueva_vista();
@@ -445,14 +490,6 @@ int main( int argc, char** argv) {
 
 	}
 
-	Background fondo(juego.getRenderer());
-	juego.setBackground(&fondo);
-
-	if(!fondo.agregar("imag/background/gris.png") || !fondo.agregar("imag/background/rojo.png")){
-		printf( "Failed to load media!\n" );
-	}
-
-	fondo.prepararEscenario();
 
 	//Main loop flag
 	bool quit = false;

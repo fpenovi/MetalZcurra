@@ -107,6 +107,7 @@ bool VistaPersonaje::cargarImagen(){
 	if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( pathQuieto) )
 	{
 		printf( "Fallo sprite parado\n" );
+		TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/quieto.png");
 		success = false;
 	}
 	else
@@ -123,6 +124,7 @@ bool VistaPersonaje::cargarImagen(){
 	if( !TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( pathCorriendo) )
 	{
 		printf( "Fallo sprite corriendo\n" );
+		TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/corriendo.png");
 		success = false;
 	}
 	else{
@@ -137,6 +139,7 @@ bool VistaPersonaje::cargarImagen(){
 	if( !TEXTURA_PERSONAJE_SALTANDO->cargarImagen( pathSaltando) )
 	{
 		printf( "Fallo sprite saltando\n" );
+		TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/saltando.png");
 		success = false;
 	}
 	else{

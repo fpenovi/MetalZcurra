@@ -141,15 +141,20 @@ void ObjectManager::enviarEscenario(ParserXML *parser, int FD) {
 	ssize_t bytesEscritos = write(FD, mensajeChar, msj.size());
 	if (bytesEscritos < 0)
 		perror("ERROR --> No se pudo envair personaje");
-	msj="";
-	for (int i=0; i<4 ; i++ ){
-		msj = msj + capas[i];
+
+	for (int i = 0 ; i < capas.size() ; i++){
+		msj = "";
+		msj = capas[i] + "\n";
+		const char* mensaje = msj.c_str();
+
+		bytesEscritos = write(FD, mensaje, msj.size());
+
+		if (bytesEscritos < 0)
+			perror("ERROR --> No se pudo envair personaje");
+
 	}
-	msj= msj +"\n";
-	const char* mensaje = msj.c_str();
-	bytesEscritos = write(FD, mensaje, msj.size());
-	if (bytesEscritos < 0)
-		perror("ERROR --> No se pudo envair personaje");
+
+	write(FD, "$\n", 2);
 
 }
 

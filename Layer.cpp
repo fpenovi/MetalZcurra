@@ -55,8 +55,9 @@ void Layer::scrollear(int posJugadorx){
 bool Layer::cargarImagen(char* path){
     if (!fondo->cargarImagen(path)){
         cout << "error cargando imagen, en agregar Background" << endl;
-        return false;
     }
+    if (!fondo->cargarImagen("imag/background/cruz.png"))
+        return false;
 
     ancho = fondo->getAncho();
     alto = fondo->getAlto();
