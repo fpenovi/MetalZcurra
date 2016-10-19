@@ -92,7 +92,7 @@ int VistaPersonaje::animacionSaltando(){
 	TEXTURA_PERSONAJE_SALTANDO->render( posCamara, posy, currentClip,0,NULL,flip);
 
 	++frameSaltando;
-	if( frameSaltando / (frameDivider*3) == ANIMACION_SALTANDO ){
+	if( frameSaltando / ((frameDivider+1)*3) == ANIMACION_SALTANDO ){
 		frameSaltando = 0;
 	}
 }
