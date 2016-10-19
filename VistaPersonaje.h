@@ -8,7 +8,7 @@
 #ifndef METALZCURRA_VISTAMARCO_H
 #define METALZCURRA_VISTAMARCO_H
 
-class VistaMarco {
+class VistaPersonaje {
 
 private:
     int posx, posy;
@@ -20,6 +20,7 @@ private:
     SDL_Rect spriteParado[ANIMACION_PARADO];
     SDL_Rect spriteCorriendo[ANIMACION_CORRIENDO];
     SDL_Rect spriteSaltando[ANIMACION_SALTANDO];
+	int frameDivider;
 
     int frameCorriendo;
     int frameParado;
@@ -48,7 +49,7 @@ private:
     string pathSaltando;
 
 public:
-    VistaMarco(SDL_Renderer *renderizador2);
+    VistaPersonaje(SDL_Renderer *renderizador2);
 
     void handleEvent(SDL_Event &e);
 
@@ -101,6 +102,10 @@ public:
     void crearHashSprites();
 
     void setearSprites(int id);
+
+	void setFrameDivider(int divisor);
+
+	int getFrameDivider();
 };
 
 

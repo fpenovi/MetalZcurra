@@ -11,7 +11,7 @@
 
 
 //Initializes the variables
-VistaMarco::VistaMarco(SDL_Renderer* renderizador2){
+VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	posx = 0;
 	posy = 360;
 	ancho=60;
@@ -19,6 +19,7 @@ VistaMarco::VistaMarco(SDL_Renderer* renderizador2){
 	frameCorriendo=0;
 	frameParado=0;
 	frameSaltando=0;
+	frameDivider=3;
 	velx = 0;
 	vely = 0;
 	derecha = true;
@@ -35,11 +36,11 @@ VistaMarco::VistaMarco(SDL_Renderer* renderizador2){
 	crearHashSprites();
 }
 
-bool VistaMarco::estaQuieto(){
+bool VistaPersonaje::estaQuieto(){
 	return quieto;
 }
 
-void VistaMarco::render(bool seMovio){
+void VistaPersonaje::render(bool seMovio){
 	if (estaSaltando()) {
 		animacionSaltando();
 		return;
@@ -53,50 +54,50 @@ void VistaMarco::render(bool seMovio){
 
 }
 
-void VistaMarco::animacionParado(){
+void VistaPersonaje::animacionParado(){
 	if (saltando) return;
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
-	SDL_Rect* currentClip = &spriteParado[ frameParado / 54];
+	SDL_Rect* currentClip = &spriteParado[ frameParado / frameDivider];
 	TEXTURA_PERSONAJE_PARADO->render(posCamara,posy, currentClip,0,NULL,flip );;
 
 	++frameParado;
 
-	if( frameParado / 54 >= ANIMACION_PARADO )
+	if( frameParado / (frameDivider*3) >= ANIMACION_PARADO )
 	{
 		frameParado = 0;
 	}
 
 }
-void VistaMarco::animacionCorrer(){
+void VistaPersonaje::animacionCorrer(){
 	if (saltando) return;
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (!derecha) {
 		flip = SDL_FLIP_HORIZONTAL;
 	}
-	SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo / 18 ];
+	SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo / (frameDivider*3) ];
 	TEXTURA_PERSONAJE_CORRIENDO->render( posCamara, posy, currentClip,0,NULL,flip);
 	++frameCorriendo;
-	if( frameCorriendo / 18 >= ANIMACION_CORRIENDO ){
+	if( frameCorriendo / (frameDivider*3) >= ANIMACION_CORRIENDO ){
 		frameCorriendo = 0;
 	}
 }
 
-int VistaMarco::animacionSaltando(){
+int VistaPersonaje::animacionSaltando(){
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (!derecha) {
 		flip = SDL_FLIP_HORIZONTAL;
 	}
-	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando / 24];
+	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando / (frameDivider*3)];
 	TEXTURA_PERSONAJE_SALTANDO->render( posCamara, posy, currentClip,0,NULL,flip);
 
 	++frameSaltando;
-	if( frameSaltando / 24 == ANIMACION_SALTANDO ){
+	if( frameSaltando / (frameDivider*3) == ANIMACION_SALTANDO ){
 		frameSaltando = 0;
 	}
 }
 
-bool VistaMarco::cargarImagen(){
+bool VistaPersonaje::cargarImagen(){
 	//Loading success flag
 	bool success = true;
 	int i;
@@ -150,69 +151,69 @@ bool VistaMarco::cargarImagen(){
 }
 
 
-void VistaMarco::liberarTextura(){
+void VistaPersonaje::liberarTextura(){
 	TEXTURA_PERSONAJE_SALTANDO->free();
 	TEXTURA_PERSONAJE_CORRIENDO->free();
 	TEXTURA_PERSONAJE_PARADO->free();
 
 }
-bool VistaMarco::estaSaltando(){
+bool VistaPersonaje::estaSaltando(){
 	return (posy != 360);
 }
-int VistaMarco::getX(){
+int VistaPersonaje::getX(){
 	return posx;
 }
-int VistaMarco::getY(){
+int VistaPersonaje::getY(){
 	return posy;
 }
-int VistaMarco::getAncho(){
+int VistaPersonaje::getAncho(){
 	return ancho;
 }
-int VistaMarco::getAlto(){
+int VistaPersonaje::getAlto(){
 	return alto;
 }
 
-int VistaMarco::getId() {
+int VistaPersonaje::getId() {
 	return id;
 }
 
-bool VistaMarco::getSeMovio() {
+bool VistaPersonaje::getSeMovio() {
 	return seMovio;
 }
 
-void VistaMarco::setPosx(int posx) {
+void VistaPersonaje::setPosx(int posx) {
 	this->posx = posx;
 }
 
-void VistaMarco::setPosy(int posy) {
+void VistaPersonaje::setPosy(int posy) {
 	this->posy = posy;
 }
 
-void VistaMarco::setQuieto(bool quieto) {
+void VistaPersonaje::setQuieto(bool quieto) {
 	this->quieto = quieto;
 }
 
-void VistaMarco::setDerecha(bool derecha){
+void VistaPersonaje::setDerecha(bool derecha){
 	this->derecha = derecha;
 }
 
-void VistaMarco::setId(int id) {
+void VistaPersonaje::setId(int id) {
 	this->id = id;
 }
 
-void VistaMarco::setSeMovio(bool state) {
+void VistaPersonaje::setSeMovio(bool state) {
 	this->seMovio = state;
 }
 
-void VistaMarco::setPosCamara(int camara) {
+void VistaPersonaje::setPosCamara(int camara) {
 	this->posCamara = camara;
 }
 
-int VistaMarco::getPosCamara(){
+int VistaPersonaje::getPosCamara(){
 	return posCamara;
 }
 
-void VistaMarco::crearHashSprites() {
+void VistaPersonaje::crearHashSprites() {
 
 	hashSprites[1] = new vector<string>;
 	hashSprites[1]->push_back("imag/marco/quieto.png");
@@ -220,14 +221,14 @@ void VistaMarco::crearHashSprites() {
 	hashSprites[1]->push_back("imag/marco/saltando.png");
 
 	hashSprites[2] = new vector<string>;
-	hashSprites[2] ->push_back("imag/goku/quieto.png");
-	hashSprites[2] ->push_back("imag/goku/corriendo.png");
-	hashSprites[2] ->push_back("imag/goku/saltando.png");
+	hashSprites[2]->push_back("imag/goku/quieto.png");
+	hashSprites[2]->push_back("imag/goku/corriendo.png");
+	hashSprites[2]->push_back("imag/goku/saltando.png");
 
 	hashSprites[3] = new vector<string>;
-	hashSprites[3] ->push_back("imag/jackson/quieto.png");
-	hashSprites[3] ->push_back("imag/jackson/corriendo.png");
-	hashSprites[3] ->push_back("imag/jackson/saltando.png");
+	hashSprites[3]->push_back("imag/jackson/quieto.png");
+	hashSprites[3]->push_back("imag/jackson/corriendo.png");
+	hashSprites[3]->push_back("imag/jackson/saltando.png");
 
 	hashSprites[4] = new vector<string>;
 	hashSprites[4]->push_back("imag/megaman/quieto.png");
@@ -236,10 +237,25 @@ void VistaMarco::crearHashSprites() {
 
 }
 
-void VistaMarco::setearSprites(int id) {
+void VistaPersonaje::setearSprites(int id) {
 
 	pathQuieto = (*hashSprites[id])[0];
 	pathCorriendo = (*hashSprites[id])[1];
 	pathSaltando = (*hashSprites[id])[2];
 
+}
+
+void VistaPersonaje::setFrameDivider(int divisor) {
+
+	if (divisor <= 0)
+		divisor = 3;
+
+	else if (divisor > 54)
+		divisor = 54;
+
+	this->frameDivider = divisor;
+}
+
+int VistaPersonaje::getFrameDivider() {
+	return this->frameDivider;
 }

@@ -87,6 +87,8 @@ public:
 	void setNonBlocking();
 
 	void setBlocking();
+
+	int getCantidadMensajesEncolados();
 };
 
 

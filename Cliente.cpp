@@ -684,6 +684,10 @@ void Cliente::setBlocking() {
     nonBlocking = false;
 }
 
+int Cliente::getCantidadMensajesEncolados() {
+    return this->mensajes.size();
+}
+
 /*int main(int argc, char** argv) {
 
     if (argc < 3) {
