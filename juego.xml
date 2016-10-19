@@ -50,4 +50,22 @@
 			<zindex>4</zindex>
 		</capa>
 	</capas>
+	<players>
+		<player>
+			<user>alan</user>
+			<pass>1234</pass>
+		</player>
+		<player>
+			<user>francisco</user>
+			<pass>1234</pass>
+		</player>
+		<player>
+			<user>agustin</user>
+			<pass>1234</pass>
+		</player>
+		<player>
+			<user>chelalita</user>
+			<pass>1234</pass>
+		</player>
+	</players>
 </juego>
