@@ -92,29 +92,27 @@ private:
             delete kv.second;
     }
 
-    void cargarUsuarios(string filename) {
-
-        char* linea = NULL;
-        size_t len = 0;
-        FILE *archivo = fopen(filename.c_str(), "r");
-
-        while (getline(&linea, &len, archivo) != -1) {
-            string usuario = strtok(linea, ",");
-            string password = strtok(NULL, ",");
+    void cargarUsuarios(vector<string> vectorUsuarios) {
+        vector<string>::iterator it;
+        for(it = vectorUsuarios.begin(); it != vectorUsuarios.end();it++){
+            char *cstr = new char[(*it).length() + 1];
+            strcpy(cstr, (*it).c_str());
+            string usuario = strtok(cstr, "$");
+            string password = strtok(NULL, "$");
             usuarios[usuario] = password;
-            free(linea);
-            linea = NULL;
-        }
 
-        free(linea);
-        fclose(archivo);
+        }
     }
 
     static bool esValido(string usuario, string clave) {
         cout << usuario << " " << clave << endl;
         usuario.erase(usuario.length() - 1);
-        if (usuarios.find(usuario) == usuarios.end())
+        clave.erase(clave.length() -1 );
+        if (usuarios.find(usuario) == usuarios.end()) {
+            printf("no user");
+
             return false;
+        }
 
         return (usuarios[usuario] == clave);
     }
@@ -608,9 +606,8 @@ private:
     }
 
 public:
-    Servidor(unsigned short int numPuerto, string nombreArchivo , char* docname) {
+    Servidor(unsigned short int numPuerto, char* docname) {
 
-        nombreArchivoCsv = nombreArchivo;
         bzero(&attr, sizeof(attr));
 
         pthread_attr_init(&attr);
@@ -660,8 +657,16 @@ public:
             throw NoSePudoCrearServidorException();
         }
 
+        parser = new ParserXML(docname);
+        vector<string> usuarios = parser->users();
+        if (usuarios.empty()){
+            printf("no hay ningun usuario cargado en el juego . IMPOSIBLE INICIALIZAR");
+            exit(1);
+        }
         serverOn = true;
-        cargarUsuarios(nombreArchivo);
+        cout<<" muero ALLI"<<endl;
+
+        cargarUsuarios(usuarios);
         parser = new ParserXML(docname);
         logger.inicializoServer();
 
@@ -749,14 +754,14 @@ ParserXML* Servidor::parser;
 int main(int argc, char** argv) {
 
     char** xmlName;
-    if (argc < 3) {
-        fprintf(stderr, "Modo de Uso: %s <archivo-usuarios> <n° puerto>\n", argv[0]);
+    if (argc < 2) {
+        fprintf(stderr, "Modo de Uso: %s <n° puerto> <xml(opcional)>\n", argv[0]);
         exit(EXIT_SUCCESS);
     }
 
-    unsigned short int numPuerto = (unsigned short) strtoull(argv[2], NULL, 0);
+    unsigned short int numPuerto = (unsigned short) strtoull(argv[1], NULL, 0);
 
-    Servidor server = Servidor(numPuerto, argv[1], argv[3]);
+    Servidor server = Servidor(numPuerto, argv[2]);
     server.initJuego();
     server.aceptarClientes();
     return 0;

@@ -28,6 +28,7 @@ public:
     vector<string> spritesPlayers();
     vector<string> capas();
     void setearDefecto();
+    vector<string> users();
 };
 
 

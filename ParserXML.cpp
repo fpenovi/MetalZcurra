@@ -126,10 +126,7 @@ vector<string> ParserXML::spritesPlayers(){
         xmlXPathFreeObject(result);
     }
     vector<string>::iterator it;
-    for (it = sprites.begin();it != sprites.end();){
-        cout<<*it;
-        it++;
-    }
+
     return sprites;
 }
 
@@ -169,16 +166,50 @@ vector<string> ParserXML::capas(){
         }
         xmlXPathFreeObject(result);
     }
-    vector<string>::iterator it;
-    for (it = capas.begin();it != capas.end();){
-        cout<<*it;
-        it++;
-    }
+
     return capas;
 }
 
 void ParserXML::setearDefecto() {
     doc = docDef;
+}
+
+
+
+vector<string> ParserXML::users() {
+    int i;
+    xmlNodeSetPtr nodeset;
+    xmlXPathObjectPtr result;
+    vector<string> fallo;
+    vector<string> users;
+    cur = xmlDocGetRootElement(doc);
+    result = this->getnodeset ((xmlChar*)"//player");
+    string datosUser;
+    if (result) {
+        nodeset = result->nodesetval;
+        for (i = 0; i < nodeset->nodeNr; i++) {
+            datosUser="";
+            act = nodeset->nodeTab[i]->xmlChildrenNode;
+            while (act != NULL) {
+                if ((!xmlStrcmp(act->name, (const xmlChar *) "user"))) {
+                    if (! act->xmlChildrenNode ) return fallo;
+                    datosUser += string((char*)xmlNodeListGetString(doc, act->xmlChildrenNode, 1));
+                    datosUser += "$";
+                }
+                if ((!xmlStrcmp(act->name, (const xmlChar *) "pass"))) {
+                    if (! act->xmlChildrenNode ) return fallo;
+                    datosUser +=  string((char*)xmlNodeListGetString(doc, act->xmlChildrenNode, 1));
+                    datosUser += "$";
+                }
+
+                act = act->next;
+            }
+            users.push_back(datosUser);
+
+        }
+        xmlXPathFreeObject(result);
+    }
+    return users;
 }
 xmlXPathObjectPtr ParserXML::getnodeset (xmlChar *xpath){
 
