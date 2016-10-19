@@ -87,6 +87,9 @@ private:
             argthread_t *actual = conectados[i];
             shutdown(actual->clientFD, SHUT_RDWR);
         }
+
+        for (auto kv : conectadosHash)
+            delete kv.second;
     }
 
     void cargarUsuarios(string filename) {

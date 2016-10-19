@@ -24,8 +24,8 @@ private:
 	SDL_Window* ventana;
 	SDL_Rect* camera;
 	Cliente* cliente;
-	unordered_map<int, VistaMarco*> vistas;
-	VistaMarco* personaje;
+	unordered_map<int, VistaPersonaje*> vistas;
+	VistaPersonaje* personaje;
 	int lastKeyPressed;
 	HandleKeyHold* keyHoldHandler;
 	HandleJump* jumpHandler;
@@ -140,7 +140,7 @@ public:
 		return posx;
 	}
 
-	VistaMarco* getPersonajeById(int id){
+	VistaPersonaje* getPersonajeById(int id){
 		return vistas[id];
 	}
 
@@ -160,11 +160,11 @@ public:
 		camera = camara;
 	}
 
-	void addPersonaje(int id, VistaMarco* pj){
+	void addPersonaje(int id, VistaPersonaje* pj){
 		vistas[id] = pj;
 	}
 
-	void setPersonaje(VistaMarco* pj){
+	void setPersonaje(VistaPersonaje* pj){
 		this->personaje = pj;
 	}
 
@@ -321,6 +321,18 @@ public:
 	}
 
 
+	void setFPSCorrection(double ms, bool acelerar) {
+
+		int divisor = vistas[1]->getFrameDivider();
+		if (divisor == 0 || divisor == 90)
+			return;
+
+		(acelerar) ? divisor -= 5 : divisor += 5;
+
+		for (auto kv : vistas)
+			kv.second->setFrameDivider(divisor);
+	}
+
 };
 
 typedef struct {
@@ -402,7 +414,7 @@ int main( int argc, char** argv) {
 
 		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado);
 
-		VistaMarco *personaje = new VistaMarco(juego.getRenderer());
+		VistaPersonaje *personaje = new VistaPersonaje(juego.getRenderer());
 
 		personaje->setearSprites(sprite);
 
@@ -439,6 +451,8 @@ int main( int argc, char** argv) {
 	arg->quit = &quit;
 	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
 	SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
+	milliseconds diezMs(10);
+	milliseconds cincoMs(5);
 
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
@@ -455,7 +469,7 @@ int main( int argc, char** argv) {
 
 			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam, &conectado);
 
-			VistaMarco* pj = juego.getPersonajeById(id);
+			VistaPersonaje* pj = juego.getPersonajeById(id);
 
 			if (pj->getPosCamara() < posCam){
 				pj->setDerecha(true);
@@ -477,22 +491,28 @@ int main( int argc, char** argv) {
 
 		SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( juego.getRenderer() );
-
 		fondo.render(juego.getPosX());
 		juego.renderizar();
-
 		SDL_RenderPresent( juego.getRenderer() );
 
+
+		// MIDO EL TIEMPO QUE TARDO EN RENDERIZAR
 		actual = high_resolution_clock::now();
 		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
-		auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
+		auto elapsed_ms = duration_cast<milliseconds>(deltaTiempo);
 
-		//cout << "Elapsed ms: " << deltaTiempo.count() / 1000000.0 << endl;
+		cout << "Elapsed ms: " << elapsed_ms.count() << "Diez ms: " << diezMs.count() << endl;
+
+		if (cliente.getCantidadMensajesEncolados() > 3 || elapsed_ms.count() > diezMs.count())
+			juego.setFPSCorrection(elapsed_ms.count(), true);
+
+		else if (elapsed_ms.count() < cincoMs.count())
+			juego.setFPSCorrection(elapsed_ms.count(), false);
 	}
 
 	//Free resources and close SDL
-	juego.close();
 	cliente.desconectar();
+	juego.close();
 
 	return 0;
 }

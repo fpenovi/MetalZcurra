@@ -11,7 +11,7 @@ ObjectManager::ObjectManager() {
 
 ObjectManager::~ObjectManager() {
 	for (auto kv : objects)
-		delete(kv.second);
+		delete kv.second;
 }
 
 ObjectManager* ObjectManager::getInstance() {
