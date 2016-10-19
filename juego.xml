@@ -30,7 +30,7 @@
 	</sprites>
 	<capas>
 		<capa>
-			<path>imag/background/marron.png</path>
+			<path>imag/background/fondoParalax.png</path>
 			<ancho>100</ancho>
 			<zindex>1</zindex>
 		</capa>

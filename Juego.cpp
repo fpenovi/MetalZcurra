@@ -367,12 +367,12 @@ public:
 
 		}
 	}
-
+/*
 	void salaDeEspera(){
 		cout << "ESPERANDO A TODOS LOS USUARIOS" << endl;
-		string stream = cliente->recibir_nueva_vista();
+		//string stream = cliente->recibir_nueva_vista();
 	}
-
+*/
 
 	void setFPSCorrection(double ms, bool acelerar) {
 
@@ -446,7 +446,7 @@ int main( int argc, char** argv) {
 
 	juego.setCliente(&cliente);
 	juego.conectar();
-	juego.salaDeEspera();
+	//juego.salaDeEspera();
 
 	juego.recibirEscenario();
 

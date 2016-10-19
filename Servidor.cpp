@@ -487,10 +487,10 @@ private:
         objectManager->conectarPersonaje(userCon);
 
         // SALA DE ESPERA
-        while (conectadosHash.size() != cantidadUsuarios){
-            cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
-        }
-        write(sockNewFileDescrpt, "$\n", 2);
+        //while (conectadosHash.size() != cantidadUsuarios){
+            //cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
+        //}
+        //write(sockNewFileDescrpt, "$\n", 2);
 
         // ENVIO DATOS
         objectManager->enviarEscenario(parser, sockNewFileDescrpt);
@@ -695,8 +695,8 @@ public:
     void initJuego() {
 
         leerXML();
-        //cantidadUsuarios = (int) parser->users().size();
-        cantidadUsuarios = 2;
+        cantidadUsuarios = (int) parser->users().size();
+        //cantidadUsuarios = 2;
         objectManager->crearPersonajes(cantidadUsuarios);
     }
 

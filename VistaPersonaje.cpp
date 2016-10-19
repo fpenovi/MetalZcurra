@@ -64,7 +64,7 @@ void VistaPersonaje::animacionParado(){
 
 	++frameParado;
 
-	if( frameParado / (frameDivider) >= ANIMACION_PARADO )
+	if( frameParado / frameDivider >= ANIMACION_PARADO )
 	{
 		frameParado = 0;
 	}
@@ -76,10 +76,10 @@ void VistaPersonaje::animacionCorrer(){
 	if (!derecha) {
 		flip = SDL_FLIP_HORIZONTAL;
 	}
-	SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo / (frameDivider*3) ];
+	SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo / frameDivider ];
 	TEXTURA_PERSONAJE_CORRIENDO->render( posCamara, posy, currentClip,0,NULL,flip);
 	++frameCorriendo;
-	if( frameCorriendo / (frameDivider*3) >= ANIMACION_CORRIENDO ){
+	if( frameCorriendo / frameDivider >= ANIMACION_CORRIENDO ){
 		frameCorriendo = 0;
 	}
 }
@@ -89,11 +89,11 @@ int VistaPersonaje::animacionSaltando(){
 	if (!derecha) {
 		flip = SDL_FLIP_HORIZONTAL;
 	}
-	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando / ((frameDivider+1)*3)];
+	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando / frameDivider];
 	TEXTURA_PERSONAJE_SALTANDO->render( posCamara, posy, currentClip,0,NULL,flip);
 
 	++frameSaltando;
-	if( frameSaltando / ((frameDivider+1)*3) == ANIMACION_SALTANDO ){
+	if( frameSaltando / frameDivider == ANIMACION_SALTANDO ){
 		frameSaltando = 0;
 	}
 }
@@ -262,8 +262,8 @@ void VistaPersonaje::setFrameDivider(int divisor) {
 	if (divisor <= 0)
 		divisor = 3;
 
-	else if (divisor > 90)
-		divisor = 90;
+	else if (divisor > 40)
+		divisor = 40;
 
 	this->frameDivider = divisor;
 }
