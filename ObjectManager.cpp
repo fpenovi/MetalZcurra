@@ -158,4 +158,8 @@ void ObjectManager::enviarEscenario(ParserXML *parser, int FD) {
 
 }
 
+void ObjectManager::setPosX(int i){
+	posx=i;
+}
+
 ObjectManager* ObjectManager::instancia;

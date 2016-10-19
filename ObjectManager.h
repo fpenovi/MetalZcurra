@@ -42,6 +42,7 @@ public:
 	void conectarPersonaje(string user);
 	void desconectarPersonaje(string user);
 	void moverDesconectados();
+	void setPosX(int i);
 };
 
 

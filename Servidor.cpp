@@ -325,14 +325,19 @@ private:
                     break;
 
                 case SDLK_r:
-                    personaje->inicial();
-                    update.setEstado(true);
+                    for ( int i= 1; i<5; i++ ){
+                        objectManager->getObject(i)->inicial();
+                    }
+
+                    objectManager->setPosX(0);
+
+                    //ssize_t bytesEscritos = write(fileDescrpt,"RELOAD\n",7);
+                    update.setEstado(personaje->getSeMovio());
                     update.setX(*posX);
                     update.setY(personaje->getPosy());
-                    update.setObject_id(idEmisor);
+                    update.setObject_id(9);
                     update.setPosCamara(personaje->getPosCamara());
                     update.setConectado(personaje->getConectado());
-
                     break;
             }
         }
