@@ -58,9 +58,10 @@ void ObjectManager::enviarPersonajes(int FD) {
 
 		protocolo.setObject_id(kv.first);
 		protocolo.setSpriteId(kv.first);
-		protocolo.setX(kv.second->getPosx());
+		protocolo.setX(posx);
 		protocolo.setY(kv.second->getPosy());
 		protocolo.setCam(kv.second->getPosCamara());
+		protocolo.setConectado(kv.second->getConectado());
 
 		string msj = protocolo.toString();
 		const char* mensajeChar = msj.c_str();
@@ -81,9 +82,20 @@ int* ObjectManager::getPosX() {
 	return &posx;
 }
 
+void ObjectManager::conectarPersonaje(string user) {
+	int id = getIdByUsername(user);
+	objects[id]->setConectado(true);
+}
+
+void ObjectManager::desconectarPersonaje(string user){
+	int id = getIdByUsername(user);
+	objects[id]->setConectado(false);
+}
+
 bool ObjectManager::puedoAvanzar() {
+
 	for (auto kv : objects){
-		if (kv.second->getPosCamara() == 0){
+		if (kv.second->getPosCamara() == 0 && kv.second->getConectado()){
 			return false;
 		}
 	}
@@ -93,8 +105,17 @@ bool ObjectManager::puedoAvanzar() {
 void ObjectManager::moverCamara(int id){
 
 	for (auto kv : objects){
-		if (kv.second->getId() != id){
+		if (kv.second->getId() != id && kv.second->getConectado() && kv.second->getPosCamara() != 0){
 			kv.second->setPosCamara(kv.second->getPosCamara()-7);
+		}
+	}
+}
+
+void ObjectManager::moverDesconectados() {
+
+	for (auto kv : objects){
+		if (kv.second->getPosCamara() == 0 && !(kv.second->getConectado())){
+			kv.second->setPosCamara(kv.second->getPosCamara()+7);
 		}
 	}
 }

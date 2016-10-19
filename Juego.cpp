@@ -261,7 +261,13 @@ public:
 
 		for (auto kv : vistas){
 			if (kv.second->getId() != id){
-				kv.second->setPosCamara(kv.second->getPosCamara()-7);
+
+				if (kv.second->getConectado() && kv.second->getPosCamara() != 0) {
+					kv.second->setPosCamara(kv.second->getPosCamara() - 7);
+				}
+				else if (kv.second->getPosCamara() == 0 && !(kv.second->getConectado())){
+					kv.second->setPosCamara(kv.second->getPosCamara()+7);
+				}
 			}
 		}
 	}
@@ -392,18 +398,20 @@ int main( int argc, char** argv) {
 
 		if (nuevaVista == "$\n") break;
 
-		int id, sprite, posx, posy, cam;
+		int id, sprite, posx, posy, cam, conectado;
 
-		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam);
+		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado);
 
 		VistaMarco *personaje = new VistaMarco(juego.getRenderer());
 
 		personaje->setearSprites(sprite);
+
 		personaje->setId(id);
 		personaje->setPosCamara(cam);
 		personaje->setPosx(posx);
 		personaje->setPosy(posy);
 		personaje->setSeMovio(false);
+		personaje->setConectado(conectado);
 		juego.addPersonaje(id, personaje);
 
 		if (!personaje->cargarImagen()) {
@@ -443,9 +451,9 @@ int main( int argc, char** argv) {
 
 		if (update != "$\n") {
 
-			int id, state, posx, posy, posCam;
+			int id, state, posx, posy, posCam, conectado;
 
-			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam);
+			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam, &conectado);
 
 			VistaMarco* pj = juego.getPersonajeById(id);
 
@@ -461,6 +469,7 @@ int main( int argc, char** argv) {
 				juego.setPosX(posx);
 			}
 
+			pj->setConectado(conectado);
 			pj->setPosCamara(posCam);
 			pj->setPosy(posy);
 			pj->setSeMovio(state);

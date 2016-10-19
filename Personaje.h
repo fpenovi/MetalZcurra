@@ -28,7 +28,8 @@ private:
     int seMovio;
     int id;
     bool bajando = false;
-    int posCamara;
+    int posCamara = 0;
+    int conectado;
 
 public:
     void moverX(bool avanzar, int* posX);
@@ -72,6 +73,10 @@ public:
     void setPosCamara(int camara);
 
     void inicial();
+
+    int getConectado();
+
+    void setConectado(int conexion);
 };
 
 #endif //METALZCURRA_PERSONAJE_H

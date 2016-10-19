@@ -13,6 +13,7 @@ class VistaMarco {
 private:
     int posx, posy;
     int ancho, alto;
+    bool conectado;
     int posCamara;
     const static int ANIMACION_PARADO = 3;
     const static int ANIMACION_CORRIENDO = 9;
@@ -101,6 +102,10 @@ public:
     void crearHashSprites();
 
     void setearSprites(int id);
+
+    int getConectado();
+
+    void setConectado(bool conexion);
 };
 
 

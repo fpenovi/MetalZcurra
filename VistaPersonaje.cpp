@@ -212,6 +212,14 @@ int VistaMarco::getPosCamara(){
 	return posCamara;
 }
 
+int VistaMarco::getConectado() {
+	return conectado;
+}
+
+void VistaMarco::setConectado(bool conexion) {
+	this->conectado = conexion;
+}
+
 void VistaMarco::crearHashSprites() {
 
 	hashSprites[1] = new vector<string>;

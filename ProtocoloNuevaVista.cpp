@@ -45,26 +45,32 @@ void ProtocoloNuevaVista::setCam(int camara) {
     this->cam = camara;
 }
 
+void ProtocoloNuevaVista::setConectado(int conectado) {
+    this->conectado = conectado;
+}
+
 string ProtocoloNuevaVista::toString(){
     string id = to_string(object_id);
     string sprite = to_string(spriteId);
     string posx = to_string(x);
     string posy = to_string(y);
     string camara = to_string(cam);
+    string conexion = to_string(conectado);
 
-    string msj = id + "$" + sprite + "$" + posx + "$" + posy + "$" + camara + "\n";
+    string msj = id + "$" + sprite + "$" + posx + "$" + posy + "$" + camara + "$" + conexion + "\n";
     return msj;
 }
 
-void ProtocoloNuevaVista::parse(string stream, int* id, int* sprite, int* posx, int* posy, int* camara) {
+void ProtocoloNuevaVista::parse(string stream, int* id, int* sprite, int* posx, int* posy, int* camara, int* conexion) {
 
     string id_s = "";
     string sprite_s = "";
     string posx_s = "";
     string posy_s = "";
     string cam_s = "";
+    string conectado_s = "";
 
-    string* variables[] = {&id_s, &sprite_s, &posx_s, &posy_s, &cam_s};
+    string* variables[] = {&id_s, &sprite_s, &posx_s, &posy_s, &cam_s, &conectado_s};
 
     int j = 0;
 
@@ -85,4 +91,5 @@ void ProtocoloNuevaVista::parse(string stream, int* id, int* sprite, int* posx, 
     *posx = stoi(posx_s);
     *posy = stoi(posy_s);
     *camara = stoi(cam_s);
+    *conexion = stoi(conectado_s);
 }

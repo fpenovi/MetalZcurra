@@ -31,7 +31,6 @@ struct argthread {
     bool* quit = NULL;
 };
 
-
 class NoSePudoCrearServidorException : public runtime_error {
 
 public:
@@ -272,6 +271,7 @@ private:
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
+                    update.setConectado(personaje->getConectado());
                     break;
 
                 case SDLK_RIGHT:
@@ -281,6 +281,7 @@ private:
 
                     if (aux < *posX){
                         objectManager->moverCamara(idEmisor);
+                        objectManager->moverDesconectados();
                     }
 
                     update.setEstado(personaje->getSeMovio());
@@ -288,6 +289,7 @@ private:
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
+                    update.setConectado(personaje->getConectado());
                     break;
 
                 case SDLK_UP:
@@ -318,19 +320,19 @@ private:
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
+                    update.setConectado(personaje->getConectado());
                     break;
+
                 case SDLK_r:
-                        personaje->inicial();
-                        update.setEstado(true);
-                        update.setX(*posX);
-                        update.setY(personaje->getPosy());
-                        update.setObject_id(idEmisor);
-                        update.setPosCamara(personaje->getPosCamara());
-                        break;
+                    personaje->inicial();
+                    update.setEstado(true);
+                    update.setX(*posX);
+                    update.setY(personaje->getPosy());
+                    update.setObject_id(idEmisor);
+                    update.setPosCamara(personaje->getPosCamara());
+                    update.setConectado(personaje->getConectado());
 
-
-
-
+                    break;
             }
         }
 
@@ -342,21 +344,25 @@ private:
                 case SDLK_LEFT:
                     personaje->setVelx(0);
                     personaje->moverX(avanzar, posX);
+
                     update.setEstado(personaje->getSeMovio());
                     update.setX(*posX);
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
+                    update.setConectado(personaje->getConectado());
                     break;
 
                 case SDLK_RIGHT:
                     personaje->setVelx(0);
                     personaje->moverX(avanzar, posX);
+
                     update.setEstado(personaje->getSeMovio());
                     update.setX(*posX);
                     update.setY(personaje->getPosy());
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
+                    update.setConectado(personaje->getConectado());
                     break;
 
                 case SDLK_UP:
@@ -476,6 +482,7 @@ private:
         objectManager->registerUser(userCon);
         conectadosHash[userCon] = new list<Mensaje*>;
         mutexesHash[userCon] = PTHREAD_MUTEX_INITIALIZER;
+        objectManager->conectarPersonaje(userCon);
 
         // ENVIO DATOS
         objectManager->enviarEscenario(parser, sockNewFileDescrpt);
@@ -493,6 +500,10 @@ private:
             if (bytesLeidos < 0) {
                 string userDesc(((argthread_t *) arg)->user);
                 userDesc.erase(userDesc.length()-1);
+
+                objectManager->desconectarPersonaje(userCon);
+                enviarDesconexion(userCon);
+
                 logger.loggearDesconexionViolenta(userDesc);
                 cout << "\033[1;31mSe desconectó MAL " << ((argthread_t *) arg)->user << "\033[0m";
                 free(linea);
@@ -518,6 +529,10 @@ private:
                 linea = NULL;
                 string userDesc(((argthread_t *) arg)->user);
                 userDesc.erase(userDesc.length()-1);
+
+                objectManager->desconectarPersonaje(userCon);
+                enviarDesconexion(userCon);
+
                 logger.loggearDesconexionNormal(userDesc);
                 cout << "\033[32mSe desconectó BIEN \033[32m" << ((argthread_t*) arg)->user << "\033[0m";
                 break;
@@ -555,6 +570,38 @@ private:
         free(recibirThread);
         fclose(mensajeCliente);
         return NULL;
+    }
+
+    static void enviarDesconexion(string emisor){
+
+        int idEmisor = objectManager->getIdByUsername(emisor);
+        Personaje* personaje = objectManager->getObject(idEmisor);
+        int* posX = objectManager->getPosX();
+
+        ProtocoloVistaUpdate update;
+        update.setEstado(personaje->getSeMovio());
+        update.setX(*posX);
+        update.setY(personaje->getPosy());
+        update.setObject_id(idEmisor);
+        update.setPosCamara(personaje->getPosCamara());
+        update.setConectado(personaje->getConectado());
+
+        int result;
+        string mensaje = update.toString();
+
+        for (auto kv : conectadosHash) {
+
+            Mensaje* mensajeNuevo = new Mensaje(emisor, kv.first, mensaje);
+
+            result = pthread_mutex_lock(&mutexesHash[kv.first]);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+            kv.second->push_back(mensajeNuevo);
+
+            result = pthread_mutex_unlock(&mutexesHash[kv.first]);
+            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+        }
+
     }
 
 public:

@@ -12,9 +12,9 @@
 #include <unordered_map>
 #include "ProtocoloNuevaVista.h"
 #include "ParserXML.h"
+#include "auxiliares.h"
 
 using namespace std;
-
 
 class ObjectManager {
 
@@ -39,6 +39,9 @@ public:
 	bool puedoAvanzar();
 	void moverCamara(int id);
 	void enviarEscenario(ParserXML* parser, int FD);
+	void conectarPersonaje(string user);
+	void desconectarPersonaje(string user);
+	void moverDesconectados();
 };
 
 

@@ -134,3 +134,11 @@ void Personaje::inicial(){
     this->posy = 360;
     this->posCamara=0;
 }
+
+int Personaje::getConectado() {
+    return conectado;
+}
+
+void Personaje::setConectado(int conexion) {
+    this->conectado = conexion;
+}

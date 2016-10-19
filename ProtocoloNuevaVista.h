@@ -18,6 +18,7 @@ private:
     int y;
     int cam;
     int spriteId;
+    int conectado;
 
 public:
 
@@ -41,9 +42,11 @@ public:
 
     void setCam(int camara);
 
+    void setConectado(int conectado);
+
     string toString();
 
-    static void parse(string stream, int* id, int* sprite, int* posx, int* posy, int* camara);
+    static void parse(string stream, int* id, int* sprite, int* posx, int* posy, int* camara, int* conectadp);
 };
 
 

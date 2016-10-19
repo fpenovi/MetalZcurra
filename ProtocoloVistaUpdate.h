@@ -17,6 +17,7 @@ private:
     int x;
     int y;
     int posCamara;
+    int conectado;
 
 public:
 
@@ -40,9 +41,11 @@ public:
 
     void setPosCamara(int posCamara);
 
+    void setConectado(int conectado);
+
     string toString();
 
-    static void parse(string stream, int* id, int* state, int* posx, int* posy, int* posCamara);
+    static void parse(string stream, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado);
 };
 
 #endif //METALZCURRA_PROTOCOLOVISTAUPDATE_H

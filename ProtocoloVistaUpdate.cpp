@@ -45,26 +45,32 @@ void ProtocoloVistaUpdate::setY(int y) {
     this->y = y;
 }
 
+void ProtocoloVistaUpdate::setConectado(int conectado) {
+    this->conectado = conectado;
+}
+
 string ProtocoloVistaUpdate::toString(){
     string id = to_string(object_id);
     string state = to_string(estado);
     string posx = to_string(x);
     string posy = to_string(y);
     string posCam = to_string(posCamara);
+    string conexion = to_string(conectado);
 
-    string msj = id + "$" + state + "$" + posx + "$" + posy + "$" + posCam + "\n";
+    string msj = id + "$" + state + "$" + posx + "$" + posy + "$" + posCam + "$" + conexion + "\n";
     return msj;
 }
 
-void ProtocoloVistaUpdate::parse(string stream, int* id, int* state, int* posx, int* posy, int* posCamara) {
+void ProtocoloVistaUpdate::parse(string stream, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado) {
 
     string id_s = "";
     string state_s = "";
     string posx_s = "";
     string posy_s = "";
     string posCamara_s = "";
+    string conectado_s = "";
 
-    string* variables[] = {&id_s, &state_s, &posx_s, &posy_s, &posCamara_s};
+    string* variables[] = {&id_s, &state_s, &posx_s, &posy_s, &posCamara_s, &conectado_s};
 
     int j = 0;
 
@@ -85,4 +91,5 @@ void ProtocoloVistaUpdate::parse(string stream, int* id, int* state, int* posx, 
     *posx = stoi(posx_s);
     *posy = stoi(posy_s);
     *posCamara = stoi(posCamara_s);
+    *conectado = stoi(conectado_s);
 }
