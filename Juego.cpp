@@ -62,7 +62,7 @@ public:
 		renderizador = NULL;
 		delete keyHoldHandler;
 		delete jumpHandler;
-		//delete fondo;
+		delete fondo;
 
 		//Quit SDL subsystems
 		IMG_Quit();
@@ -451,10 +451,10 @@ int main( int argc, char** argv) {
 	}
 
 	// Seteo el fondo
-	Background fondo(juego.getRenderer());
-	juego.setBackground(&fondo);
+	Background* fondo = new Background(juego.getRenderer());
+	juego.setBackground(fondo);
 	juego.recibirCapas();
-	fondo.prepararEscenario();
+	fondo->prepararEscenario();
 
 
 	while (true) {
@@ -545,7 +545,7 @@ int main( int argc, char** argv) {
 		//SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( juego.getRenderer() );
 
-		fondo.render(juego.getPosX());
+		fondo->render(juego.getPosX());
 		juego.renderizar();
 
 		SDL_RenderPresent( juego.getRenderer() );

@@ -27,7 +27,7 @@ void* handleJumpFunc(void* argKh) {
 
         if (*isKhOn && !(*isKhPaused)) {
 
-            for (int i = 0 ; i < 20 ; i++){
+            for (int i = 0 ; i < 22 ; i++){
                 string msj = to_string(*keyPressed);
                 msj += "$1\n";
                 cliente->enviarAusuario("TODOS", msj, false);

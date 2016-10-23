@@ -17,7 +17,7 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	ancho=60;
 	alto=80;
 	frameParado=0;
-	frameDivider=20;
+	frameDivider=30;
 	velx = 0;
 	vely = 0;
 	derecha = true;
