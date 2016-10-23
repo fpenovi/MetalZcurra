@@ -31,6 +31,11 @@ private:
     int posCamara = 0;
     int conectado = false;
 
+    int frameCorriendo = 0;
+    int frameSaltando = 0;
+    const static int ANIMACION_CORRIENDO = 9;
+    const static int ANIMACION_SALTANDO = 10;
+
 public:
     void moverX(bool avanzar, int* posX);
 
@@ -77,6 +82,14 @@ public:
     int getConectado();
 
     void setConectado(int conexion);
+
+    void setSpriteCorriendo();
+
+    int getFrameCorriendo();
+
+    void setSpriteSaltando();
+
+    int getSpriteSaltando();
 };
 
 #endif //METALZCURRA_PERSONAJE_H

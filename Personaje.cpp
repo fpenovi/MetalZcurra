@@ -31,6 +31,7 @@ void Personaje::moverX(bool avanzar, int* posX) {
         return;
     }
 
+    setSpriteCorriendo();
     seMovio = true;
 }
 
@@ -53,6 +54,8 @@ void Personaje::moverY() {
         seMovio = false;
         return;
     }
+
+    setSpriteSaltando();
     seMovio = true;
 
 }
@@ -141,4 +144,24 @@ int Personaje::getConectado() {
 
 void Personaje::setConectado(int conexion) {
     this->conectado = conexion;
+}
+
+void Personaje::setSpriteCorriendo() {
+    if( frameCorriendo >= ANIMACION_CORRIENDO ) frameCorriendo = 0;
+
+    frameCorriendo++;
+}
+
+int Personaje::getFrameCorriendo() {
+    return frameCorriendo;
+}
+
+void Personaje::setSpriteSaltando() {
+    if( frameSaltando >= ANIMACION_SALTANDO ) frameSaltando = 0;
+
+    frameSaltando++;
+}
+
+int Personaje::getSpriteSaltando() {
+    return frameSaltando;
 }

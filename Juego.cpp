@@ -195,13 +195,11 @@ public:
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
-					keyHoldHandler->Pause();
 					keyHoldHandler->setKeyPressed(SDLK_LEFT);
 					keyHoldHandler->Resume();
 					break;
 
 				case SDLK_RIGHT:
-					keyHoldHandler->Pause();
 					keyHoldHandler->setKeyPressed(SDLK_RIGHT);
 					keyHoldHandler->Resume();
 					break;
@@ -212,8 +210,10 @@ public:
 					break;
 
 				case SDLK_r:
-					keyHoldHandler->setKeyPressed(SDLK_r);
-					keyHoldHandler->Resume();
+					comando.setScancode(SDLK_r);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 			}
@@ -247,8 +247,6 @@ public:
 					break;
 
 				case SDLK_r:
-					keyHoldHandler->Pause();
-					keyHoldHandler->setKeyPressed(0);
 					break;
 
 
@@ -300,6 +298,7 @@ public:
 			personaje->setPosx(0);
 			personaje->setPosy(360);
 			personaje->setSeMovio(true);
+			personaje->setDerecha(true);
 			setPosX(0);
 		}
 
@@ -375,25 +374,6 @@ public:
 
 		}
 	}
-/*
-	void salaDeEspera(){
-		cout << "ESPERANDO A TODOS LOS USUARIOS" << endl;
-		//string stream = cliente->recibir_nueva_vista();
-	}
-*/
-
-	void setFPSCorrection(double ms, bool acelerar) {
-
-		int divisor = vistas[1]->getFrameDivider();
-		if (divisor == 0 || divisor == 90)
-			return;
-
-		(acelerar) ? divisor -= 5 : divisor += 5;
-
-		for (auto kv : vistas)
-			kv.second->setFrameDivider(divisor);
-	}
-
 };
 
 typedef struct {
@@ -528,9 +508,10 @@ int main( int argc, char** argv) {
 
 		if (update != "$\n") {
 
-			int id, state, posx, posy, posCam, conectado;
+			int id, state, posx, posy, posCam, conectado, spriteIdx;
 
-			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam, &conectado);
+			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam, &conectado, &spriteIdx);
+
 			if (id == 9 ){
 				juego.jugadoresInicio();
 				continue;
@@ -550,16 +531,19 @@ int main( int argc, char** argv) {
 				juego.setPosX(posx);
 			}
 
+			pj->setSpriteIndex(spriteIdx);
 			pj->setConectado(conectado);
 			pj->setPosCamara(posCam);
 			pj->setPosy(posy);
 			pj->setSeMovio(state);
 		}
 
-		SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
+		//SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( juego.getRenderer() );
+
 		fondo.render(juego.getPosX());
 		juego.renderizar();
+
 		SDL_RenderPresent( juego.getRenderer() );
 
 
@@ -570,12 +554,6 @@ int main( int argc, char** argv) {
 		auto time = elapsed_ms.count()/1000000.0;
 
 		cout << "Elapsed ms: " << time << endl;
-/*
-		if (cliente.getCantidadMensajesEncolados() > 3 || elapsed_ms.count() > diezMs.count())
-			juego.setFPSCorrection(elapsed_ms.count(), true);
-
-		else if (elapsed_ms.count() < cincoMs.count())
-			juego.setFPSCorrection(elapsed_ms.count(), false);*/
 	}
 
 	//Free resources and close SDL

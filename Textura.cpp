@@ -38,7 +38,7 @@ bool Textura::cargarImagen( std::string path){
 	else
 	{
 		//Si la imagen tiene un fondito de color se la saca
-		SDL_SetColorKey( imagenCargada, SDL_TRUE, SDL_MapRGB( imagenCargada->format,0xFF, 0xFF, 0xFF ) );
+		//SDL_SetColorKey( imagenCargada, SDL_TRUE, SDL_MapRGB( imagenCargada->format,0xFF, 0xFF, 0xFF ) );
 
 		//Create texture from surface pixels
 		texturaFinal = SDL_CreateTextureFromSurface( renderizador, imagenCargada );

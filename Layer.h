@@ -15,7 +15,7 @@ class Layer {
 
 private:
     Textura* fondo;
-    double scroll;
+    int scroll;
     int ancho;
     int alto;
     int vuelta;

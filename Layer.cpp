@@ -29,16 +29,17 @@ void Layer::render(int x, int y ){
 
 void Layer::scrollear(int posJugadorx){
     //calculo lo que tiene que scrollear el fondo segun su velocidad
-    posJugadorx = posJugadorx/velocidad;
+    int aux = posJugadorx/velocidad;
+    //posJugadorx = posJugadorx/velocidad;
 
     //para qeu no se vaya al chori
-    if (scroll > posJugadorx) scroll = -posJugadorx;
+    if (scroll > aux) scroll = -aux;
 
     //cuanto tiene que moverse
-    int movimiento = posJugadorx - ultimaPos;
+    int movimiento = aux - ultimaPos;
 
     //guardo ultima pos nueva
-    ultimaPos = posJugadorx;
+    ultimaPos = aux;
 
     //scrolleo
     scroll -= movimiento;

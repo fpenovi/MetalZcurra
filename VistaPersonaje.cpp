@@ -19,7 +19,7 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	frameCorriendo=0;
 	frameParado=0;
 	frameSaltando=0;
-	frameDivider=15;
+	frameDivider=20;
 	velx = 0;
 	vely = 0;
 	derecha = true;
@@ -64,7 +64,7 @@ void VistaPersonaje::animacionParado(){
 	if( index >= ANIMACION_PARADO ) frameParado = 0;
 
 	currentClip = &spriteParado[ index ];
-	TEXTURA_PERSONAJE_PARADO->render(posCamara,posy, currentClip,0,NULL,flip );;
+	TEXTURA_PERSONAJE_PARADO->render(posCamara,posy, currentClip,0,NULL,flip );
 
 	frameParado++;
 }
@@ -73,26 +73,17 @@ void VistaPersonaje::animacionCorrer(){
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
 	else flip = SDL_FLIP_NONE;
 
-	int index = frameCorriendo / frameDivider;
-	if( index >= ANIMACION_CORRIENDO ) frameCorriendo = 0;
-
 	currentClip = &spriteCorriendo[ index ];
 	TEXTURA_PERSONAJE_CORRIENDO->render( posCamara, posy, currentClip,0,NULL,flip);
 
-	frameCorriendo++;
 }
 
 int VistaPersonaje::animacionSaltando(){
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
 	else flip = SDL_FLIP_NONE;
 
-	int index = frameSaltando / frameDivider;
-	if( index >= ANIMACION_SALTANDO ) frameSaltando = 0;
-
 	currentClip = &spriteSaltando[ index ];
 	TEXTURA_PERSONAJE_SALTANDO->render( posCamara, posy, currentClip,0,NULL,flip);
-
-	frameSaltando++;
 }
 
 bool VistaPersonaje::cargarImagen(){
@@ -104,8 +95,8 @@ bool VistaPersonaje::cargarImagen(){
 	if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( pathQuieto) )
 	{
 		printf( "Fallo sprite parado\n" );
-		TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/quieto.png");
-		success = false;
+		if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/quieto.png"))
+			success = false;
 	}
 	else
 	{
@@ -121,8 +112,8 @@ bool VistaPersonaje::cargarImagen(){
 	if( !TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( pathCorriendo) )
 	{
 		printf( "Fallo sprite corriendo\n" );
-		TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/corriendo.png");
-		success = false;
+		if (!TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/corriendo.png"))
+			success = false;
 	}
 	else{
 		for (i = 0;i<ANIMACION_CORRIENDO;i++){
@@ -136,8 +127,8 @@ bool VistaPersonaje::cargarImagen(){
 	if( !TEXTURA_PERSONAJE_SALTANDO->cargarImagen( pathSaltando) )
 	{
 		printf( "Fallo sprite saltando\n" );
-		TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/saltando.png");
-		success = false;
+		if (!TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/saltando.png"))
+			success = false;
 	}
 	else{
 
@@ -254,21 +245,6 @@ void VistaPersonaje::setearSprites(int id) {
 
 }
 
-void VistaPersonaje::setFrameDivider(int divisor) {
-
-	if (divisor <= 0)
-		divisor = 3;
-
-	else if (divisor > 40)
-		divisor = 40;
-
-	this->frameDivider = divisor;
-}
-
-int VistaPersonaje::getFrameDivider() {
-	return this->frameDivider;
-}
-
 void VistaPersonaje::ponerTexturaGris() {
 	TEXTURA_PERSONAJE_PARADO->setColor(128,128,128);
 	gris = true;
@@ -281,4 +257,8 @@ void VistaPersonaje::sacarTexturaGris() {
 
 bool VistaPersonaje::getGris() {
 	return gris;
+}
+
+void VistaPersonaje::setSpriteIndex(int idx) {
+	this->index = idx;
 }

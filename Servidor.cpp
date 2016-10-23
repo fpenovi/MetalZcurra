@@ -261,7 +261,7 @@ private:
         int aux;
 
         if ( pressed == 1 ) {
-            //Adjust the velocity
+
             switch( key ) {
 
                 case SDLK_LEFT:
@@ -274,6 +274,7 @@ private:
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
                     update.setConectado(personaje->getConectado());
+                    update.setSpriteIndex(personaje->getFrameCorriendo());
                     break;
 
                 case SDLK_RIGHT:
@@ -292,6 +293,7 @@ private:
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
                     update.setConectado(personaje->getConectado());
+                    update.setSpriteIndex(personaje->getFrameCorriendo());
                     break;
 
                 case SDLK_UP:
@@ -323,6 +325,7 @@ private:
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
                     update.setConectado(personaje->getConectado());
+                    update.setSpriteIndex(personaje->getSpriteSaltando());
                     break;
 
                 case SDLK_r:
@@ -339,6 +342,7 @@ private:
                     update.setObject_id(9);
                     update.setPosCamara(personaje->getPosCamara());
                     update.setConectado(personaje->getConectado());
+                    update.setSpriteIndex(personaje->getFrameCorriendo());
                     break;
             }
         }
@@ -358,6 +362,7 @@ private:
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
                     update.setConectado(personaje->getConectado());
+                    update.setSpriteIndex(personaje->getFrameCorriendo());
                     break;
 
                 case SDLK_RIGHT:
@@ -370,6 +375,7 @@ private:
                     update.setObject_id(idEmisor);
                     update.setPosCamara(personaje->getPosCamara());
                     update.setConectado(personaje->getConectado());
+                    update.setSpriteIndex(personaje->getFrameCorriendo());
                     break;
 
                 case SDLK_UP:

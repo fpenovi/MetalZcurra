@@ -52,6 +52,7 @@ private:
 
 	SDL_RendererFlip flip;
 	SDL_Rect* currentClip;
+	int index;
 
 public:
     VistaPersonaje(SDL_Renderer *renderizador2);
@@ -112,15 +113,13 @@ public:
 
     void setConectado(bool conexion);
 
-	void setFrameDivider(int divisor);
-
-	int getFrameDivider();
-
 	void ponerTexturaGris();
 
 	bool getGris();
 
 	void sacarTexturaGris();
+
+	void setSpriteIndex(int idx);
 };
 
 
