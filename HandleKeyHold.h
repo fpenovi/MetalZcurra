@@ -50,6 +50,8 @@ public:
 	void Resume();
 
 	void setKeyPressed(int key);
+
+	int getKeyPressed();
 };
 
 

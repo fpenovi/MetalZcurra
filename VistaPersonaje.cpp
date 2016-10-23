@@ -16,9 +16,7 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	posy = 360;
 	ancho=60;
 	alto=80;
-	frameCorriendo=0;
 	frameParado=0;
-	frameSaltando=0;
 	frameDivider=20;
 	velx = 0;
 	vely = 0;
@@ -27,7 +25,6 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	saltando = false;
 	subiendo = false;
 	bajando = false;
-	frameSaltando=0;
 	renderizador = renderizador2;
 	TEXTURA_PERSONAJE_PARADO = new Textura(renderizador);
 	TEXTURA_PERSONAJE_SALTANDO = new Textura(renderizador);

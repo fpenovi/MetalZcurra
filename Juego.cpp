@@ -225,21 +225,25 @@ public:
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
-					keyHoldHandler->Pause();
-					keyHoldHandler->setKeyPressed(0);
-					comando.setScancode(SDLK_LEFT);
-					comando.setType(0);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
+					if (keyHoldHandler->getKeyPressed() == SDLK_LEFT) {
+						keyHoldHandler->Pause();
+						keyHoldHandler->setKeyPressed(0);
+						comando.setScancode(SDLK_LEFT);
+						comando.setType(0);
+						msj = comando.toString();
+						cliente->enviarAusuario("TODOS", msj, false);
+					}
 					break;
 
 				case SDLK_RIGHT:
-					keyHoldHandler->Pause();
-					keyHoldHandler->setKeyPressed(0);
-					comando.setScancode(SDLK_RIGHT);
-					comando.setType(0);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
+					if (keyHoldHandler->getKeyPressed() == SDLK_RIGHT) {
+						keyHoldHandler->Pause();
+						keyHoldHandler->setKeyPressed(0);
+						comando.setScancode(SDLK_RIGHT);
+						comando.setType(0);
+						msj = comando.toString();
+						cliente->enviarAusuario("TODOS", msj, false);
+					}
 					break;
 
 				case SDLK_UP:

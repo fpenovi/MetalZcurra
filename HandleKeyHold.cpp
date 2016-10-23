@@ -112,3 +112,7 @@ void HandleKeyHold::Resume() {
 void HandleKeyHold::setKeyPressed(int key) {
 	this->keyPressed = key;
 }
+
+int HandleKeyHold::getKeyPressed() {
+	return  this->keyPressed;
+}
