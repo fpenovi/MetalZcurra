@@ -195,11 +195,13 @@ public:
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
+					keyHoldHandler->Pause();
 					keyHoldHandler->setKeyPressed(SDLK_LEFT);
 					keyHoldHandler->Resume();
 					break;
 
 				case SDLK_RIGHT:
+					keyHoldHandler->Pause();
 					keyHoldHandler->setKeyPressed(SDLK_RIGHT);
 					keyHoldHandler->Resume();
 					break;
@@ -207,9 +209,6 @@ public:
 				case SDLK_UP:
 					jumpHandler->setKeyPressed(SDLK_UP);
 					jumpHandler->Resume();
-					//if (!saltando) saltando=true;
-					//subiendo=true;
-					//return msj;
 					break;
 
 				case SDLK_r:
@@ -429,7 +428,7 @@ int escucharEventos( void* arg ) {
 
 	while( !(*quit) ) {
 
-		if  (SDL_PollEvent(&e) != 0) {
+		while (SDL_PollEvent(&e) != 0) {
 
 			if (e.type == SDL_QUIT) {
 				*quit = true;
@@ -567,15 +566,16 @@ int main( int argc, char** argv) {
 		// MIDO EL TIEMPO QUE TARDO EN RENDERIZAR
 		actual = high_resolution_clock::now();
 		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
-		auto elapsed_ms = duration_cast<milliseconds>(deltaTiempo);
+		auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
+		auto time = elapsed_ms.count()/1000000.0;
 
-		//cout << "Elapsed ms: " << elapsed_ms.count() << "Diez ms: " << diezMs.count() << endl;
-
+		cout << "Elapsed ms: " << time << endl;
+/*
 		if (cliente.getCantidadMensajesEncolados() > 3 || elapsed_ms.count() > diezMs.count())
 			juego.setFPSCorrection(elapsed_ms.count(), true);
 
 		else if (elapsed_ms.count() < cincoMs.count())
-			juego.setFPSCorrection(elapsed_ms.count(), false);
+			juego.setFPSCorrection(elapsed_ms.count(), false);*/
 	}
 
 	//Free resources and close SDL

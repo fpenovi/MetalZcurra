@@ -19,7 +19,7 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	frameCorriendo=0;
 	frameParado=0;
 	frameSaltando=0;
-	frameDivider=3;
+	frameDivider=15;
 	velx = 0;
 	vely = 0;
 	derecha = true;
@@ -33,6 +33,7 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	TEXTURA_PERSONAJE_SALTANDO = new Textura(renderizador);
 	TEXTURA_PERSONAJE_CORRIENDO = new Textura(renderizador);
 	gris = false;
+	SDL_RendererFlip flip = SDL_FLIP_NONE;
 
 	crearHashSprites();
 }
@@ -56,46 +57,42 @@ void VistaPersonaje::render(bool seMovio){
 }
 
 void VistaPersonaje::animacionParado(){
-	if (saltando) return;
-	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
-	SDL_Rect* currentClip = &spriteParado[ frameParado / frameDivider];
+	else flip = SDL_FLIP_NONE;
+
+	int index = frameParado / frameDivider;
+	if( index >= ANIMACION_PARADO ) frameParado = 0;
+
+	currentClip = &spriteParado[ index ];
 	TEXTURA_PERSONAJE_PARADO->render(posCamara,posy, currentClip,0,NULL,flip );;
 
-	++frameParado;
-
-	if( frameParado / frameDivider >= ANIMACION_PARADO )
-	{
-		frameParado = 0;
-	}
-
+	frameParado++;
 }
+
 void VistaPersonaje::animacionCorrer(){
-	if (saltando) return;
-	SDL_RendererFlip flip = SDL_FLIP_NONE;
-	if (!derecha) {
-		flip = SDL_FLIP_HORIZONTAL;
-	}
-	SDL_Rect* currentClip = &spriteCorriendo[ frameCorriendo / frameDivider ];
+	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
+	else flip = SDL_FLIP_NONE;
+
+	int index = frameCorriendo / frameDivider;
+	if( index >= ANIMACION_CORRIENDO ) frameCorriendo = 0;
+
+	currentClip = &spriteCorriendo[ index ];
 	TEXTURA_PERSONAJE_CORRIENDO->render( posCamara, posy, currentClip,0,NULL,flip);
-	++frameCorriendo;
-	if( frameCorriendo / frameDivider >= ANIMACION_CORRIENDO ){
-		frameCorriendo = 0;
-	}
+
+	frameCorriendo++;
 }
 
 int VistaPersonaje::animacionSaltando(){
-	SDL_RendererFlip flip = SDL_FLIP_NONE;
-	if (!derecha) {
-		flip = SDL_FLIP_HORIZONTAL;
-	}
-	SDL_Rect* currentClip = &spriteSaltando[ frameSaltando / frameDivider];
+	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
+	else flip = SDL_FLIP_NONE;
+
+	int index = frameSaltando / frameDivider;
+	if( index >= ANIMACION_SALTANDO ) frameSaltando = 0;
+
+	currentClip = &spriteSaltando[ index ];
 	TEXTURA_PERSONAJE_SALTANDO->render( posCamara, posy, currentClip,0,NULL,flip);
 
-	++frameSaltando;
-	if( frameSaltando / frameDivider == ANIMACION_SALTANDO ){
-		frameSaltando = 0;
-	}
+	frameSaltando++;
 }
 
 bool VistaPersonaje::cargarImagen(){

@@ -45,11 +45,12 @@ void Layer::scrollear(int posJugadorx){
 
     //si me termine el layer empiezo denuevo
     if (-scroll > ancho) scroll = 0 ;
+
     //renderizo la pos del layer
     render(scroll,0);
 
     //renderizo tambien lo de adelante para que sea infinito
-    render(scroll+ancho,0);
+    //render(scroll+ancho,0);
 }
 
 bool Layer::cargarImagen(char* path){
@@ -67,8 +68,8 @@ bool Layer::cargarImagen(char* path){
 void Layer::asignarVelocidad(double anchomax){
 
     velocidad = anchomax/ancho;
-    vuelta = int(anchomax) / ancho;
-    velocidad = velocidad / vuelta;
+    //vuelta = int(anchomax) / ancho;
+    //velocidad = velocidad / vuelta;
     cout << velocidad << endl;
     cout << vuelta << endl;
 }

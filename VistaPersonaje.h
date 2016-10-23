@@ -50,6 +50,9 @@ private:
     string pathCorriendo;
     string pathSaltando;
 
+	SDL_RendererFlip flip;
+	SDL_Rect* currentClip;
+
 public:
     VistaPersonaje(SDL_Renderer *renderizador2);
 
