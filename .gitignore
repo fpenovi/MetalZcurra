@@ -17,13 +17,6 @@
 out/
 *.iml
 
-# Eclipse Trash Files:
-bin/
-.metadata/
-*.classpath
-*.project
-*.settings
-
 # Ant Build Files:
 /build
 /libs
@@ -32,6 +25,8 @@ bin/
 # Ejecutables
 servidor
 juego
+/Debug
+/Release
 
 # Log
 log.txt
