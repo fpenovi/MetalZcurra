@@ -496,18 +496,28 @@ int main( int argc, char** argv) {
 	controlador_t* arg = new controlador_t;
 	arg->juego = &juego;
 	arg->quit = &quit;
-	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
+	//SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
 	SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
 	milliseconds diezMs(10);
 	milliseconds cincoMs(5);
 
-	juego.salaDeEspera();
+	//juego.salaDeEspera();
+
+	SDL_Event e;
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
 
 		time_point<high_resolution_clock> start;
 		start = high_resolution_clock::now();
 		time_point<high_resolution_clock> actual;
+
+		if (SDL_PollEvent(&e) != 0) {
+
+			if (e.type == SDL_QUIT) {
+				quit = true;
+			}
+			juego.handleEvent(e);
+		}
 
 		string update = cliente.desencolar_vista();
 
