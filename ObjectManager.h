@@ -43,6 +43,7 @@ public:
 	void desconectarPersonaje(string user);
 	void moverDesconectados();
 	void setPosX(int i);
+	void reinicializarEscenario();
 };
 
 

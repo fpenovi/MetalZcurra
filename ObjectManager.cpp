@@ -123,6 +123,13 @@ void ObjectManager::moverDesconectados() {
 	}
 }
 
+void ObjectManager::reinicializarEscenario() {
+	for (auto kv : objects){
+		kv.second->inicial();
+	}
+	setPosX(0);
+}
+
 void ObjectManager::enviarEscenario(ParserXML *parser, int FD) {
 	string tamVentana = parser->TamVentana();
 	string tamNivel = parser->tamNivel();

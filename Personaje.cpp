@@ -158,7 +158,6 @@ int Personaje::getFrameCorriendo() {
 
 void Personaje::setSpriteSaltando() {
     double index = frameSaltando * 1.2;
-    cout << index << endl;
     if( index >= ANIMACION_SALTANDO ) frameSaltando = 0;
     frameSaltando++;
 }

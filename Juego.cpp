@@ -25,7 +25,6 @@ private:
 	SDL_Rect* camera;
 	Cliente* cliente;
 	unordered_map<int, VistaPersonaje*> vistas;
-	VistaPersonaje* personaje;
 	int lastKeyPressed;
 	HandleKeyHold* keyHoldHandler;
 	HandleJump* jumpHandler;
@@ -164,10 +163,6 @@ public:
 		vistas[id] = pj;
 	}
 
-	void setPersonaje(VistaPersonaje* pj){
-		this->personaje = pj;
-	}
-
 	void conectar(){
 		cliente->conectar();
 	}
@@ -296,16 +291,16 @@ public:
 		}
 		return aux;
 	}
+
 	void jugadoresInicio(){
 		for ( auto kv : vistas){
 			kv.second->setPosCamara(0);
-			personaje->setPosx(0);
-			personaje->setPosy(360);
-			personaje->setSeMovio(true);
-			personaje->setDerecha(true);
-			setPosX(0);
+			kv.second->setPosx(0);
+			kv.second->setPosy(360);
+			kv.second->setSeMovio(false);
+			kv.second->setDerecha(true);
 		}
-
+		setPosX(0);
 	}
 
 	void salaDeEspera(){
@@ -522,7 +517,7 @@ int main( int argc, char** argv) {
 
 			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam, &conectado, &spriteIdx);
 
-			if (id == 9 ){
+			if (id == 100 ){
 				juego.jugadoresInicio();
 				continue;
 			}

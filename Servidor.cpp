@@ -330,20 +330,15 @@ private:
                     break;
 
                 case SDLK_r:
-                    for ( int i= 1; i<5; i++ ){
-                        objectManager->getObject(i)->inicial();
-                    }
+                    objectManager->reinicializarEscenario();
 
-                    objectManager->setPosX(0);
-
-                    //ssize_t bytesEscritos = write(fileDescrpt,"RELOAD\n",7);
-                    update.setEstado(personaje->getSeMovio());
-                    update.setX(*posX);
-                    update.setY(personaje->getPosy());
-                    update.setObject_id(9);
-                    update.setPosCamara(personaje->getPosCamara());
-                    update.setConectado(personaje->getConectado());
-                    update.setSpriteIndex(personaje->getFrameCorriendo());
+                    update.setObject_id(100);
+                    update.setEstado(0);
+                    update.setX(0);
+                    update.setY(0);
+                    update.setPosCamara(0);
+                    update.setConectado(0);
+                    update.setSpriteIndex(0);
                     break;
             }
         }
@@ -504,6 +499,7 @@ private:
         objectManager->enviarEscenario(parser, sockNewFileDescrpt);
         objectManager->enviarPersonajes(sockNewFileDescrpt);
 
+        int cant;
         // SALA DE ESPERA
         while (conectadosHash.size() != cantidadUsuarios){
             cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
@@ -709,8 +705,8 @@ public:
     void initJuego() {
 
         leerXML();
-        cantidadUsuarios = (int) parser->users().size();
-        //cantidadUsuarios = 2;
+        //cantidadUsuarios = (int) parser->users().size();
+        cantidadUsuarios = 2;
         objectManager->crearPersonajes(cantidadUsuarios);
     }
 
