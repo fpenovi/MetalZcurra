@@ -1,0 +1,5 @@
+src/utils/protocolos/ProtocoloNuevaVista.o: \
+ ../src/utils/protocolos/ProtocoloNuevaVista.cpp \
+ ../src/utils/protocolos/ProtocoloNuevaVista.h
+
+../src/utils/protocolos/ProtocoloNuevaVista.h:

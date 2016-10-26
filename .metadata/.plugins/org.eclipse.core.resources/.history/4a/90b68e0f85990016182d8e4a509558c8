@@ -1,0 +1,18 @@
+/*
+ * Log.cpp
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#include "utils/Log.h"
+
+Log::Log() {
+	// TODO Auto-generated constructor stub
+
+}
+
+Log::~Log() {
+	// TODO Auto-generated destructor stub
+}
+

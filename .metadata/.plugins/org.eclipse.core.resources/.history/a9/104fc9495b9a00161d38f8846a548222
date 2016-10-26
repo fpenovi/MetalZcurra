@@ -1,0 +1,17 @@
+/*
+ * HandleKeyHold.h
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#ifndef HANDLEKEYHOLD_H_
+#define HANDLEKEYHOLD_H_
+
+class HandleKeyHold {
+public:
+	HandleKeyHold();
+	virtual ~HandleKeyHold();
+};
+
+#endif /* HANDLEKEYHOLD_H_ */

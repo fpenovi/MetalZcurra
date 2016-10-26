@@ -1,0 +1,17 @@
+/*
+ * HandleJump.h
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#ifndef HANDLEJUMP_H_
+#define HANDLEJUMP_H_
+
+class HandleJump {
+public:
+	HandleJump();
+	virtual ~HandleJump();
+};
+
+#endif /* HANDLEJUMP_H_ */

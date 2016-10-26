@@ -1,0 +1,8 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+USER_OBJS := /home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/Release/src/utils/protocolos/ProtocoloComando.d /home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/Release/src/utils/protocolos/ProtocoloNuevaVista.d /home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/Release/src/utils/protocolos/ProtocoloVistaUpdate.d
+
+LIBS := -lSDL2 -lSDL2_image
+

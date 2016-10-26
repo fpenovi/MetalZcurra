@@ -1,0 +1,64 @@
+/*
+ * Servidor.cpp
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#include <stddef.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <iostream>
+#include "utils/Calculadora.h"
+
+using namespace std;
+
+
+typedef struct control {
+	bool* quit;
+	Calculadora* calculadora;
+} control_t;
+
+
+void* threadFunction(void* arg) {
+
+	bool* quit = ((control_t*) arg)->quit;
+	Calculadora* calculadora = ((control_t*) arg)->calculadora;
+
+	size_t calculo = calculadora->calcular(10000000);
+	size_t* result = &calculo;
+	cout << calculo << endl;
+	*quit = true;
+
+	cout << sizeof(void*) << endl;
+	cout << sizeof(size_t*) << endl;
+
+	return ((void*) result);
+}
+
+
+int main() {
+
+	pthread_t* thread = new pthread_t;
+	control_t* arg = new control_t;
+	bool asd = false;
+	arg->quit = &asd;
+	arg->calculadora = new Calculadora();
+
+	pthread_create(thread, NULL, threadFunction, arg);
+
+	while (!(*(arg->quit))){
+		cout << "No terminó de calcular todavia" << endl;
+	}
+
+
+	void* result;
+	pthread_join(*thread, &result);
+	cout << "Termino de calcular" << endl;
+
+	cout << "Resultado del thread: " << *((size_t*) result) << endl;
+	delete thread;
+	delete arg->calculadora;
+	delete arg;
+	return 0;
+}

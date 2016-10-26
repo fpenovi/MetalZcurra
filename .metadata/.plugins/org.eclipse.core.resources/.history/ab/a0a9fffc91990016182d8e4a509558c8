@@ -1,0 +1,17 @@
+/*
+ * ProtocoloComando.h
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#ifndef PROTOCOLOCOMANDO_H_
+#define PROTOCOLOCOMANDO_H_
+
+class ProtocoloComando {
+public:
+	ProtocoloComando();
+	virtual ~ProtocoloComando();
+};
+
+#endif /* PROTOCOLOCOMANDO_H_ */

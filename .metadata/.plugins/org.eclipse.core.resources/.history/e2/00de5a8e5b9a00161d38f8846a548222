@@ -1,0 +1,18 @@
+/*
+ * HandleKeyHold.cpp
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#include "HandleKeyHold.h"
+
+HandleKeyHold::HandleKeyHold() {
+	// TODO Auto-generated constructor stub
+
+}
+
+HandleKeyHold::~HandleKeyHold() {
+	// TODO Auto-generated destructor stub
+}
+

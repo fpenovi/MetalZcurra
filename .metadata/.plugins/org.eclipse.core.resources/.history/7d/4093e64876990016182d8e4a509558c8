@@ -1,0 +1,17 @@
+/*
+ * Calculadora.h
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#ifndef CALCULADORA_H_
+#define CALCULADORA_H_
+
+class Calculadora {
+public:
+	Calculadora();
+	virtual ~Calculadora();
+};
+
+#endif /* CALCULADORA_H_ */

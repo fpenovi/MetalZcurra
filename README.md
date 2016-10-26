@@ -1,9 +1,11 @@
-**PARA COMPILAR SERVIDOR y ClIENTE**
+**VERSION EN ECLIPSE CON SUBDIRECTORIOS**
 
-$ make
+Proyecto subido con archivos de configuracion de eclipse para que el workspace les quede configurado una vez bajado.
 
-Después ejecutar primero **./servidor usuarios.csv 5001** y luego en otra terminal **./cliente 127.0.0.1 5001**
+Para evitar problemas de compatibilidad, clonar el repo en:
 
-$ make clean --> borra ejecutables
+/home/<username>/neonWorkspaces/Taller1
 
-Borro branch MultithreadClient
+
+Link de version de Eclipse a utilizar:
+http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/neon/1a/eclipse-cpp-neon-1a-linux-gtk-x86_64.tar.gz&mirror_id=576

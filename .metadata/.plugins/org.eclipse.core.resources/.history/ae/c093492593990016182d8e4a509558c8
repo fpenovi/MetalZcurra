@@ -1,0 +1,17 @@
+/*
+ * Personaje.h
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#ifndef PERSONAJE_H_
+#define PERSONAJE_H_
+
+class Personaje {
+public:
+	Personaje();
+	virtual ~Personaje();
+};
+
+#endif /* PERSONAJE_H_ */

@@ -1,0 +1,3 @@
+src/Servidor.o: ../src/Servidor.cpp ../src/utils/Calculadora.h
+
+../src/utils/Calculadora.h:

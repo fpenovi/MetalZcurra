@@ -1,0 +1,17 @@
+/*
+ * ProtocoloVistaUpdate.h
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#ifndef PROTOCOLOVISTAUPDATE_H_
+#define PROTOCOLOVISTAUPDATE_H_
+
+class ProtocoloVistaUpdate {
+public:
+	ProtocoloVistaUpdate();
+	virtual ~ProtocoloVistaUpdate();
+};
+
+#endif /* PROTOCOLOVISTAUPDATE_H_ */

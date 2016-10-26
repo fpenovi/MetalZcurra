@@ -1,0 +1,17 @@
+/*
+ * ProtocoloNuevaVista.h
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#ifndef PROTOCOLONUEVAVISTA_H_
+#define PROTOCOLONUEVAVISTA_H_
+
+class ProtocoloNuevaVista {
+public:
+	ProtocoloNuevaVista();
+	virtual ~ProtocoloNuevaVista();
+};
+
+#endif /* PROTOCOLONUEVAVISTA_H_ */

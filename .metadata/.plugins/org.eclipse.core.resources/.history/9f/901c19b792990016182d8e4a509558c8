@@ -1,0 +1,18 @@
+/*
+ * ProtocoloComando.cpp
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#include "ProtocoloComando.h"
+
+ProtocoloComando::ProtocoloComando() {
+	// TODO Auto-generated constructor stub
+
+}
+
+ProtocoloComando::~ProtocoloComando() {
+	// TODO Auto-generated destructor stub
+}
+

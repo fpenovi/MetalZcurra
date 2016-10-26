@@ -1,0 +1,30 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables 
+CPP_SRCS += \
+../src/utils/HandleJump.cpp \
+../src/utils/HandleKeyHold.cpp \
+../src/utils/Heartbeat.cpp 
+
+OBJS += \
+./src/utils/HandleJump.o \
+./src/utils/HandleKeyHold.o \
+./src/utils/Heartbeat.o 
+
+CPP_DEPS += \
+./src/utils/HandleJump.d \
+./src/utils/HandleKeyHold.d \
+./src/utils/Heartbeat.d 
+
+
+# Each subdirectory must supply rules for building sources it contributes
+src/utils/%.o: ../src/utils/%.cpp
+	@echo 'Building file: $<'
+	@echo 'Invoking: GCC C++ Compiler'
+	g++ -std=c++1y -I"/home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/src/utils/protocolos" -O3 -g3 -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+

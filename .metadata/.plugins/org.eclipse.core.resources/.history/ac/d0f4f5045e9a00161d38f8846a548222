@@ -1,0 +1,17 @@
+/*
+ * Textura.h
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#ifndef TEXTURA_H_
+#define TEXTURA_H_
+
+class Textura {
+public:
+	Textura();
+	virtual ~Textura();
+};
+
+#endif /* TEXTURA_H_ */

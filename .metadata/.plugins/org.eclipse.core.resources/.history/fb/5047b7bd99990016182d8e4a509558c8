@@ -1,0 +1,36 @@
+/*
+ * ParserXML.cpp
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#include "ParserXML.h"
+
+ParserXML::ParserXML(char* docname) {
+    doc = xmlParseFile(docname);
+    docDef = xmlParseFile("juego.xml");
+    if (doc == NULL ) {
+        fprintf(stderr,"Document not parsed successfully. \n");
+        setearDefecto();
+    }
+
+    cur = xmlDocGetRootElement(doc);
+
+    if (cur == NULL) {
+        fprintf(stderr,"empty document\n");
+        xmlFreeDoc(doc);
+        setearDefecto();
+    }
+
+    if (xmlStrcmp(cur->name, (const xmlChar *) "juego")) {
+        fprintf(stderr,"document of the wrong type, root node != juego ");
+        xmlFreeDoc(doc);
+        setearDefecto();
+    }
+}
+
+ParserXML::~ParserXML() {
+	// TODO Auto-generated destructor stub
+}
+

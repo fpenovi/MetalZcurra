@@ -1,0 +1,8 @@
+src/views/Background.o: ../src/views/Background.cpp \
+ ../src/views/Background.h ../src/views/Layer.h ../src/views/Textura.h
+
+../src/views/Background.h:
+
+../src/views/Layer.h:
+
+../src/views/Textura.h:

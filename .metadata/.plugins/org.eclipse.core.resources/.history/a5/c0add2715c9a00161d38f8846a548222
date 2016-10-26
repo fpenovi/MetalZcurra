@@ -1,0 +1,18 @@
+/*
+ * HandleJump.cpp
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#include "HandleJump.h"
+
+HandleJump::HandleJump() {
+	// TODO Auto-generated constructor stub
+
+}
+
+HandleJump::~HandleJump() {
+	// TODO Auto-generated destructor stub
+}
+

@@ -1,0 +1,1 @@
+src/Servidor.o: ../src/Servidor.cpp

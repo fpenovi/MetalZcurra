@@ -1,0 +1,18 @@
+/*
+ * ProtocoloNuevaVista.cpp
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#include "ProtocoloNuevaVista.h"
+
+ProtocoloNuevaVista::ProtocoloNuevaVista() {
+	// TODO Auto-generated constructor stub
+
+}
+
+ProtocoloNuevaVista::~ProtocoloNuevaVista() {
+	// TODO Auto-generated destructor stub
+}
+

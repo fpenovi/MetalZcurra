@@ -1,0 +1,31 @@
+src/Juego.o: ../src/Juego.cpp ../src/Cliente.h ../src/utils/Heartbeat.h \
+ ../src/views/VistaPersonaje.h ../src/views/Textura.h \
+ /home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/src/utils/protocolos/ProtocoloComando.h \
+ /home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/src/utils/protocolos/ProtocoloVistaUpdate.h \
+ /home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/src/utils/protocolos/ProtocoloNuevaVista.h \
+ ../src/utils/HandleKeyHold.h ../src/utils/../Cliente.h \
+ ../src/utils/HandleJump.h ../src/views/Background.h ../src/views/Layer.h
+
+../src/Cliente.h:
+
+../src/utils/Heartbeat.h:
+
+../src/views/VistaPersonaje.h:
+
+../src/views/Textura.h:
+
+/home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/src/utils/protocolos/ProtocoloComando.h:
+
+/home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/src/utils/protocolos/ProtocoloVistaUpdate.h:
+
+/home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/src/utils/protocolos/ProtocoloNuevaVista.h:
+
+../src/utils/HandleKeyHold.h:
+
+../src/utils/../Cliente.h:
+
+../src/utils/HandleJump.h:
+
+../src/views/Background.h:
+
+../src/views/Layer.h:

@@ -1,0 +1,30 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables 
+CPP_SRCS += \
+../src/utils/protocolos/ProtocoloComando.cpp \
+../src/utils/protocolos/ProtocoloNuevaVista.cpp \
+../src/utils/protocolos/ProtocoloVistaUpdate.cpp 
+
+OBJS += \
+./src/utils/protocolos/ProtocoloComando.o \
+./src/utils/protocolos/ProtocoloNuevaVista.o \
+./src/utils/protocolos/ProtocoloVistaUpdate.o 
+
+CPP_DEPS += \
+./src/utils/protocolos/ProtocoloComando.d \
+./src/utils/protocolos/ProtocoloNuevaVista.d \
+./src/utils/protocolos/ProtocoloVistaUpdate.d 
+
+
+# Each subdirectory must supply rules for building sources it contributes
+src/utils/protocolos/%.o: ../src/utils/protocolos/%.cpp
+	@echo 'Building file: $<'
+	@echo 'Invoking: GCC C++ Compiler'
+	g++ -std=c++11 -I/usr/include/libxml2 -O3 -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+

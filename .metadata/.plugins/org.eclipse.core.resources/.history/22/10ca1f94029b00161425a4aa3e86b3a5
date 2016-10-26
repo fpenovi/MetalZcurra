@@ -1,0 +1,4 @@
+src/utils/Heartbeat.o: ../src/utils/Heartbeat.cpp \
+ ../src/utils/Heartbeat.h
+
+../src/utils/Heartbeat.h:

@@ -1,0 +1,5 @@
+src/utils/protocolos/ProtocoloComando.o: \
+ ../src/utils/protocolos/ProtocoloComando.cpp \
+ ../src/utils/protocolos/ProtocoloComando.h
+
+../src/utils/protocolos/ProtocoloComando.h:

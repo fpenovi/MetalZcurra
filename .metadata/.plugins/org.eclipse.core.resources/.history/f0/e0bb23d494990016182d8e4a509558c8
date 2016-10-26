@@ -1,0 +1,17 @@
+/*
+ * ObjectManager.h
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#ifndef OBJECTMANAGER_H_
+#define OBJECTMANAGER_H_
+
+class ObjectManager {
+public:
+	ObjectManager();
+	virtual ~ObjectManager();
+};
+
+#endif /* OBJECTMANAGER_H_ */

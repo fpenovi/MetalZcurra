@@ -1,0 +1,65 @@
+/*
+ * HandleKeyHold.cpp
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#include <chrono>
+#include <signal.h>
+#include "HandleKeyHold.h"
+
+
+using namespace chrono;
+
+struct argkh {
+	Cliente* cliente;
+	int* keyPressed;
+	bool* isKhOn;
+	bool* isKhPaused;
+};
+
+
+void* handleKeyHoldFunc(void* argKh) {
+
+	bool* isKhOn = ( (argkh_t*) argKh )->isKhOn;
+	bool* isKhPaused = ( (argkh_t*) argKh)->isKhPaused;
+	int* keyPressed = ( (argkh_t*) argKh)->keyPressed;
+	Cliente* cliente = ( (argkh_t*) argKh)->cliente;
+
+	time_point<high_resolution_clock> start;
+	start = high_resolution_clock::now();
+	microseconds intervalo(40000);	// 40ms
+
+	while (*isKhOn) {
+		time_point<high_resolution_clock> actual;
+		actual = high_resolution_clock::now();
+
+		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
+		auto elapsed_ms = duration_cast<microseconds>(deltaTiempo);
+
+		if (elapsed_ms.count() >= intervalo.count()) {
+
+			if (*isKhOn && !(*isKhPaused)) {
+				string msj = to_string(*keyPressed);
+				msj += "$1\n";
+				cliente->enviarAusuario("TODOS", msj, false);
+			}
+
+			start = chrono::system_clock::now();
+		}
+	}
+
+	return NULL;
+}
+
+
+HandleKeyHold::HandleKeyHold() {
+	// TODO Auto-generated constructor stub
+
+}
+
+HandleKeyHold::~HandleKeyHold() {
+	// TODO Auto-generated destructor stub
+}
+

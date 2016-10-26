@@ -1,0 +1,7 @@
+01:38:29 **** Clean-only build of configuration Release for project juego ****
+make clean 
+rm -rf  ./src/views/Background.o ./src/views/Layer.o ./src/views/Textura.o ./src/views/VistaPersonaje.o  ./src/utils/HandleJump.o ./src/utils/HandleKeyHold.o ./src/utils/Heartbeat.o  ./src/Cliente.o ./src/Juego.o  ./src/views/Background.d ./src/views/Layer.d ./src/views/Textura.d ./src/views/VistaPersonaje.d  ./src/utils/HandleJump.d ./src/utils/HandleKeyHold.d ./src/utils/Heartbeat.d  ./src/Cliente.d ./src/Juego.d  juego
+ 
+
+01:38:29 Build Finished (took 95ms)
+

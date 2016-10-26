@@ -1,0 +1,17 @@
+/*
+ * Heartbeat.h
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#ifndef HEARTBEAT_H_
+#define HEARTBEAT_H_
+
+class Heartbeat {
+public:
+	Heartbeat();
+	virtual ~Heartbeat();
+};
+
+#endif /* HEARTBEAT_H_ */

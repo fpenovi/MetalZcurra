@@ -1,0 +1,17 @@
+/*
+ * ParserXML.h
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#ifndef PARSERXML_H_
+#define PARSERXML_H_
+
+class ParserXML {
+public:
+	ParserXML();
+	virtual ~ParserXML();
+};
+
+#endif /* PARSERXML_H_ */

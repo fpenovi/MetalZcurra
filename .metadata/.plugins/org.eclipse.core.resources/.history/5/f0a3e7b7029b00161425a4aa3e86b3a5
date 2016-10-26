@@ -1,0 +1,6 @@
+src/Cliente.o: ../src/Cliente.cpp ../src/Cliente.h \
+ ../src/utils/Heartbeat.h
+
+../src/Cliente.h:
+
+../src/utils/Heartbeat.h:

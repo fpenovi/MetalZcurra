@@ -1,0 +1,4 @@
+src/model/Personaje.o: ../src/model/Personaje.cpp \
+ ../src/model/Personaje.h
+
+../src/model/Personaje.h:

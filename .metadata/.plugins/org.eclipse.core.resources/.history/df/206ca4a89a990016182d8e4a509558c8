@@ -1,0 +1,37 @@
+/*
+ * Log.h
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#ifndef LOG_H_
+#define LOG_H_
+
+#include <string>
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+class Log {
+private:
+	fstream archlog;
+	string getHora();
+	int maxtext;
+
+public:
+    Log(int);
+    void loggearMsj(string cliente , string receptor, string texto);
+    void loggearConexion(string);
+    void loggearDesconexionViolenta(string);
+    void loggearDesconexionNormal(string);
+    void inicializoServer();
+    void cierroServer();
+    void error(string);
+    void cerrarLog();
+    void loggearRecepcion(string);
+	virtual ~Log();
+};
+
+#endif /* LOG_H_ */

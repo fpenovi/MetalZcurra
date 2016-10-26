@@ -1,0 +1,38 @@
+/*
+ * VistaPersonaje.cpp
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#include "VistaPersonaje.h"
+
+//Initializes the variables
+VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
+	posx = 0;
+	posy = 360;
+	ancho=60;
+	alto=80;
+	frameParado=0;
+	frameDivider=20;
+	velx = 0;
+	vely = 0;
+	derecha = true;
+	quieto = true;
+	saltando = false;
+	subiendo = false;
+	bajando = false;
+	renderizador = renderizador2;
+	TEXTURA_PERSONAJE_PARADO = new Textura(renderizador);
+	TEXTURA_PERSONAJE_SALTANDO = new Textura(renderizador);
+	TEXTURA_PERSONAJE_CORRIENDO = new Textura(renderizador);
+	gris = false;
+	SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+	crearHashSprites();
+}
+
+VistaPersonaje::~VistaPersonaje() {
+	// TODO Auto-generated destructor stub
+}
+

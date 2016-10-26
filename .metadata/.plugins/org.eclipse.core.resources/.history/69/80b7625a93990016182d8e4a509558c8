@@ -1,0 +1,18 @@
+/*
+ * Personaje.cpp
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#include "Personaje.h"
+
+Personaje::Personaje() {
+	// TODO Auto-generated constructor stub
+
+}
+
+Personaje::~Personaje() {
+	// TODO Auto-generated destructor stub
+}
+

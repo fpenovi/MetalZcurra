@@ -1,0 +1,9 @@
+src/utils/HandleKeyHold.o: ../src/utils/HandleKeyHold.cpp \
+ ../src/utils/HandleKeyHold.h ../src/utils/../Cliente.h \
+ ../src/utils/../utils/Heartbeat.h
+
+../src/utils/HandleKeyHold.h:
+
+../src/utils/../Cliente.h:
+
+../src/utils/../utils/Heartbeat.h:

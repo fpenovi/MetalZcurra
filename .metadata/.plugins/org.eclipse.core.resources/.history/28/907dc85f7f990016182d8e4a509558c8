@@ -1,0 +1,18 @@
+/*
+ * Mensaje.cpp
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#include "Mensaje.h"
+
+Mensaje::Mensaje() {
+	// TODO Auto-generated constructor stub
+
+}
+
+Mensaje::~Mensaje() {
+	// TODO Auto-generated destructor stub
+}
+

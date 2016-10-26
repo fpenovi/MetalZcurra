@@ -1,0 +1,17 @@
+/*
+ * Log.h
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#ifndef LOG_H_
+#define LOG_H_
+
+class Log {
+public:
+	Log();
+	virtual ~Log();
+};
+
+#endif /* LOG_H_ */

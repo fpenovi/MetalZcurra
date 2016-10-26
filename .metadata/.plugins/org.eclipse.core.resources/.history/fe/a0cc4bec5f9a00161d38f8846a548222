@@ -1,0 +1,18 @@
+/*
+ * Layer.cpp
+ *
+ *  Created on: Oct 25, 2016
+ *      Author: franch
+ */
+
+#include "Layer.h"
+
+Layer::Layer() {
+	// TODO Auto-generated constructor stub
+
+}
+
+Layer::~Layer() {
+	// TODO Auto-generated destructor stub
+}
+

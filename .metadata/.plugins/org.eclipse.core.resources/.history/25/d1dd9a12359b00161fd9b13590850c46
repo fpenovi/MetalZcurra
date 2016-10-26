@@ -1,0 +1,6 @@
+src/views/Layer.o: ../src/views/Layer.cpp ../src/views/Layer.h \
+ ../src/views/Textura.h
+
+../src/views/Layer.h:
+
+../src/views/Textura.h:

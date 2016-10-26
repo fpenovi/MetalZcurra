@@ -1,0 +1,3 @@
+src/views/Textura.o: ../src/views/Textura.cpp ../src/views/Textura.h
+
+../src/views/Textura.h:

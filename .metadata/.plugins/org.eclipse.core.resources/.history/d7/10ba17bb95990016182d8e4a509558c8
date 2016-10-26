@@ -1,0 +1,18 @@
+/*
+ * ObjectManager.cpp
+ *
+ *  Created on: Oct 23, 2016
+ *      Author: franch
+ */
+
+#include "ObjectManager.h"
+
+ObjectManager::ObjectManager() {
+	// TODO Auto-generated constructor stub
+
+}
+
+ObjectManager::~ObjectManager() {
+	// TODO Auto-generated destructor stub
+}
+

@@ -1,0 +1,24 @@
+/*
+ * Heartbeat.cpp
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#include "Heartbeat.h"
+
+struct arghb {
+	int* fd;
+	bool* ishbOn;
+	bool* ishbPaused;
+};
+
+Heartbeat::Heartbeat(int FD) {
+	// TODO Auto-generated constructor stub
+
+}
+
+Heartbeat::~Heartbeat() {
+	// TODO Auto-generated destructor stub
+}
+

@@ -1,0 +1,20 @@
+/*
+ * Textura.cpp
+ *
+ *  Created on: Oct 24, 2016
+ *      Author: franch
+ */
+
+#include "Textura.h"
+
+Textura::Textura(SDL_Renderer* renderizador2){
+	textura = NULL;
+	ancho = 0;
+	alto = 0;
+	renderizador = renderizador2;
+}
+
+Textura::~Textura() {
+	// TODO Auto-generated destructor stub
+}
+
