@@ -23,8 +23,6 @@ out/
 .ant-targets-build.xml
 
 # Ejecutables
-servidor
-juego
 /Debug
 /Release
 
