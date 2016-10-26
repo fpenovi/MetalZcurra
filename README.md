@@ -4,7 +4,7 @@ Proyecto subido con archivos de configuracion de eclipse para que el workspace l
 
 Para evitar problemas de compatibilidad, clonar el repo en:
 
-/home/<username>/neonWorkspaces/Taller1
+/home/[usuario]/neonWorkspaces/Taller1
 
 
 Link de version de Eclipse a utilizar:
