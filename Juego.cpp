@@ -307,6 +307,12 @@ public:
 		}
 
 	}
+
+	void salaDeEspera(){
+		cout << "ESPERANDO A TODOS LOS USUARIOS" << endl;
+		string stream = cliente->recibir_nueva_vista();
+	}
+
 	void recibirEscenario(){
 		string stream = cliente->recibir_nueva_vista();
 
@@ -438,7 +444,6 @@ int main( int argc, char** argv) {
 
 	juego.setCliente(&cliente);
 	juego.conectar();
-	//juego.salaDeEspera();
 
 	juego.recibirEscenario();
 
@@ -501,6 +506,7 @@ int main( int argc, char** argv) {
 	milliseconds diezMs(10);
 	milliseconds cincoMs(5);
 
+	juego.salaDeEspera();
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
 

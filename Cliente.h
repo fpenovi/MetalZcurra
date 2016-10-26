@@ -29,7 +29,7 @@ private:
 	bool nonBlocking;
 	int flags;
     char port[8];
-    char IP[8];
+    char IP[16];
 	Heartbeat* heartbeat;
 	pthread_mutex_t mutex_envios;
 	pthread_mutex_t mutex_mensajes;

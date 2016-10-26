@@ -51,7 +51,7 @@ void Layer::scrollear(int posJugadorx){
     render(scroll,0);
 
     //renderizo tambien lo de adelante para que sea infinito
-    //render(scroll+ancho,0);
+    render(scroll+ancho,0);
 }
 
 bool Layer::cargarImagen(char* path){

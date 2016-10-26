@@ -17,6 +17,7 @@
 #include "Personaje.h"
 #include "ObjectManager.h"
 #include "ParserXML.h"
+#include "HandleKeyHold.h"
 
 
 #define MAX_CLIENTS 6
@@ -455,6 +456,8 @@ private:
 
                 result = pthread_mutex_unlock(&mutexesHash[receptor]);
                 if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+
+                delete mensaje;
             }
         }
         return NULL;
@@ -497,15 +500,15 @@ private:
         mutexesHash[userCon] = PTHREAD_MUTEX_INITIALIZER;
         objectManager->conectarPersonaje(userCon);
 
-        // SALA DE ESPERA
-        //while (conectadosHash.size() != cantidadUsuarios){
-            //cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
-        //}
-        //write(sockNewFileDescrpt, "$\n", 2);
-
         // ENVIO DATOS
         objectManager->enviarEscenario(parser, sockNewFileDescrpt);
         objectManager->enviarPersonajes(sockNewFileDescrpt);
+
+        // SALA DE ESPERA
+        while (conectadosHash.size() != cantidadUsuarios){
+            cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
+        }
+        write(sockNewFileDescrpt, "$\n", 2);
 
         bool quit = false;
         (((argthread_t *) arg)->quit) = &quit;
