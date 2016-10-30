@@ -37,7 +37,7 @@ typedef struct argkh argkh_t;
 class HandleJumpServer {
 
 private:
-    pthread_t* handleKeyHoldTH;
+    pthread_t* handleJumpTH;
     argkh_t* argKeyHold;
     bool isOn;
     bool isPaused;

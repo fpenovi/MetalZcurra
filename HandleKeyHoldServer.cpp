@@ -29,7 +29,7 @@ void* handleKeyHoldFunc(void* argKh) {
 
     time_point<high_resolution_clock> start;
     start = high_resolution_clock::now();
-    microseconds intervalo(40000);	// 40ms
+    microseconds intervalo(30000);	// 40ms
 
     while (*isKhOn) {
         time_point<high_resolution_clock> actual;

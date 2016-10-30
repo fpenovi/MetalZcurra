@@ -101,21 +101,21 @@ HandleJumpServer::HandleJumpServer(ObjectManager* objectManager) {
     this->objectManager = objectManager;
     isOn = false;
     argKeyHold = NULL;
-    handleKeyHoldTH = NULL;
+    handleJumpTH = NULL;
     keyPressed = 0;
     emisor;
 }
 
 HandleJumpServer::~HandleJumpServer() {
-    delete handleKeyHoldTH;
+    delete handleJumpTH;
     delete argKeyHold;
 }
 
 void HandleJumpServer::On() {
 
-    handleKeyHoldTH = new pthread_t;
+    handleJumpTH = new pthread_t;
 
-    if (!handleKeyHoldTH)
+    if (!handleJumpTH)
         throw NoSePudoCrearThreadHandleJumpServerException();
 
     argKeyHold = new argkh_t;
@@ -134,7 +134,7 @@ void HandleJumpServer::On() {
     argKeyHold->conectadosHash = conectadosHash;
     argKeyHold->mutexesHash = mutexesHash;
 
-    if (pthread_create(handleKeyHoldTH, NULL, handleJumpFunc, argKeyHold))
+    if (pthread_create(handleJumpTH, NULL, handleJumpFunc, argKeyHold))
         throw NoSePudoCrearThreadHandleJumpServerException();
 }
 
@@ -143,6 +143,7 @@ void HandleJumpServer::Off() {
         return;
 
     isOn = false;
+    pthread_join(*handleJumpTH, NULL);
 }
 
 void HandleJumpServer::Pause() {

@@ -26,8 +26,6 @@ private:
 	Cliente* cliente;
 	unordered_map<int, VistaPersonaje*> vistas;
 	int lastKeyPressed;
-	//HandleKeyHold* keyHoldHandler;
-	//HandleJump* jumpHandler;
 	Background* fondo;
 	int posx;
 	int screenWidth;
@@ -40,8 +38,6 @@ public:
 	Juego() {
 		renderizador = NULL;
 		ventana = NULL;
-		//keyHoldHandler = NULL;
-		//jumpHandler = NULL;
 		lastKeyPressed = 0;
 	}
 
@@ -55,12 +51,8 @@ public:
 		//Destroy window
 		SDL_DestroyRenderer( renderizador );
 		SDL_DestroyWindow( ventana );
-		//keyHoldHandler->Off();
-		//jumpHandler->Off();
 		ventana = NULL;
 		renderizador = NULL;
-		//delete keyHoldHandler;
-		//delete jumpHandler;
 		delete fondo;
 
 		//Quit SDL subsystems
@@ -166,18 +158,6 @@ public:
 	void conectar(){
 		cliente->conectar();
 	}
-
-/*	void crearKeyHoldHandler() {
-		keyHoldHandler = new HandleKeyHold(this->cliente);
-		keyHoldHandler->On();
-		keyHoldHandler->Pause();
-	}*/
-/*
-	void crearJumpHandlerJumpHandler(){
-		jumpHandler = new HandleJump(this->cliente);
-		jumpHandler->On();
-		jumpHandler->Pause();
-	}*/
 
 	void handleEvent( SDL_Event& e) {
 
@@ -380,6 +360,41 @@ public:
 
 		}
 	}
+
+	void recibirPersonajes(){
+
+		while (true) {
+
+			string nuevaVista = cliente->recibir_nueva_vista();
+
+			if (nuevaVista == "$\n") break;
+
+			int id, sprite, posx, posy, cam, conectado;
+
+			ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado);
+
+			VistaPersonaje *personaje = new VistaPersonaje(getRenderer());
+
+			setPosX(posx);
+			personaje->setearSprites(sprite);
+			personaje->setId(id);
+			personaje->setPosCamara(cam);
+			personaje->setPosx(posx);
+			personaje->setPosy(posy);
+			personaje->setSeMovio(false);
+			personaje->setConectado(conectado);
+			addPersonaje(id, personaje);
+
+			cout << "CONECTADO: " << conectado << endl;
+
+			if (!personaje->cargarImagen()) {
+				printf("Failed to load media!\n");
+				exit(1);
+			}
+
+		}
+
+	}
 };
 
 typedef struct {
@@ -387,7 +402,7 @@ typedef struct {
 	bool* quit;
 } controlador_t;
 
-int recibirVistas( void* arg){
+void* recibirVistas( void* arg){
 
 	controlador_t* arg2 = (controlador_t*) arg;
 	Juego* miJuego = (Juego*) arg2->juego;
@@ -399,7 +414,7 @@ int recibirVistas( void* arg){
 		cliente->encolar_vistas();
 
 	}
-	return 0;
+	return NULL;
 }
 
 int escucharEventos( void* arg ) {
@@ -443,9 +458,6 @@ int main( int argc, char** argv) {
 
 	juego.recibirEscenario();
 
-	//juego.crearKeyHoldHandler();
-	//juego.crearJumpHandler();
-
 	if( !juego.iniciar() ) {
 		printf("Failed to initialize!\n");
 		return 1;
@@ -457,50 +469,27 @@ int main( int argc, char** argv) {
 	juego.recibirCapas();
 	fondo->prepararEscenario();
 
-
-	while (true) {
-
-		string nuevaVista = cliente.recibir_nueva_vista();
-
-		if (nuevaVista == "$\n") break;
-
-		int id, sprite, posx, posy, cam, conectado;
-
-		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado);
-
-		VistaPersonaje *personaje = new VistaPersonaje(juego.getRenderer());
-
-		juego.setPosX(posx);
-		personaje->setearSprites(sprite);
-		personaje->setId(id);
-		personaje->setPosCamara(cam);
-		personaje->setPosx(posx);
-		personaje->setPosy(posy);
-		personaje->setSeMovio(false);
-		personaje->setConectado(conectado);
-		juego.addPersonaje(id, personaje);
-
-		cout << "CONECTADO: " << conectado << endl;
-
-		if (!personaje->cargarImagen()) {
-			printf("Failed to load media!\n");
-			return 1;
-		}
-
-	}
-
+	// Recibir personajes
+	juego.recibirPersonajes();
 
 	//Main loop flag
 	bool quit = false;
 
-	// Thread que escucha eventos
 	controlador_t* arg = new controlador_t;
 	arg->juego = &juego;
 	arg->quit = &quit;
-	//SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
-	SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
-	milliseconds diezMs(10);
-	milliseconds cincoMs(5);
+
+	// Thread que escucha eventos
+	pthread_attr_t attr;
+	bzero(&attr, sizeof(attr));
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	pthread_t* recibirThread = new pthread_t;
+	if (pthread_create(recibirThread, NULL, recibirVistas, arg) != 0 ){
+		cerr << "ERROR --> No se pudo crear thread de control" << endl;
+		pthread_attr_destroy(&attr);
+		exit(1);
+	}
 
 	//juego.salaDeEspera();
 
@@ -572,6 +561,8 @@ int main( int argc, char** argv) {
 	}
 
 	//Free resources and close SDL
+	delete recibirThread;
+	pthread_attr_destroy(&attr);
 	cliente.desconectar();
 	juego.close();
 

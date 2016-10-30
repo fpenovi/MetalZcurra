@@ -238,7 +238,7 @@ string Cliente::desencolar_vista() {
         return "$\n";
     }
 
-    cout << mensajes.size() << endl;
+    //cout << mensajes.size() << endl;
 
     string mensaje = mensajes.front();
 
@@ -261,7 +261,7 @@ void Cliente::encolar_vistas() {
     }
 
     string mensaje(linea);
-    cout << mensaje;
+    //cout << mensaje;
 
     mensajes.push_back(mensaje);
 

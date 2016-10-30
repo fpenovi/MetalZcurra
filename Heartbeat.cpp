@@ -49,6 +49,7 @@ void Heartbeat::Off() {
 		return;
 
 	isOn = false;
+	pthread_join(*heartBeatTh, NULL);
 }
 
 void Heartbeat::Pause() {
