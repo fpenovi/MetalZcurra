@@ -44,8 +44,8 @@ private:
     int keyPressed;
     ObjectManager* objectManager;
     string emisor;
-    unordered_map<string, list<Mensaje*>*> conectadosHash;
-    unordered_map<string, pthread_mutex_t> mutexesHash;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash;
+    unordered_map<string, pthread_mutex_t>* mutexesHash;
 
 public:
     HandleKeyHoldServer(ObjectManager* objectManager);
@@ -66,9 +66,9 @@ public:
 
     void setEmisor(string name);
 
-    void setConectadosHash(unordered_map<string, list<Mensaje*>*> hash);
+    void setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash);
 
-    void setMutexesHash(unordered_map<string, pthread_mutex_t> hash);
+    void setMutexesHash(unordered_map<string, pthread_mutex_t>* hash);
 };
 
 

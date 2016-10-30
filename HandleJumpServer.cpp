@@ -12,8 +12,8 @@ struct argkh {
     bool* isKhPaused;
     ObjectManager* objectMan;
     string* emisor;
-    unordered_map<string, list<Mensaje*>*> conectadosHash;
-    unordered_map<string, pthread_mutex_t> mutexesHash;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash;
+    unordered_map<string, pthread_mutex_t>* mutexesHash;
 };
 
 
@@ -24,8 +24,8 @@ void* handleJumpFunc(void* argKh) {
     int* keyPressed = ( (argkh_t*) argKh)->keyPressed;
     ObjectManager* objectManager = ( (argkh_t*) argKh)->objectMan;
     string* emisor = ( (argkh_t*) argKh)->emisor;
-    unordered_map<string, list<Mensaje*>*> conectadosHash = ( (argkh_t*) argKh)->conectadosHash;
-    unordered_map<string, pthread_mutex_t> mutexesHash = ( (argkh_t*) argKh)->mutexesHash;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argkh_t*) argKh)->conectadosHash;
+    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argkh_t*) argKh)->mutexesHash;
 
     while (*isKhOn) {
 
@@ -74,16 +74,16 @@ void* handleJumpFunc(void* argKh) {
                 int result;
                 string mensaje = update.toString();
 
-                for (auto kv : conectadosHash) {
+                for (auto kv : *conectadosHash) {
 
                     Mensaje* mensajeNuevo = new Mensaje(*emisor, kv.first, mensaje);
 
-                    result = pthread_mutex_lock(&mutexesHash[kv.first]);
+                    result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
                     if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
                     kv.second->push_back(mensajeNuevo);
 
-                    result = pthread_mutex_unlock(&mutexesHash[kv.first]);
+                    result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
                     if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
                 }
 
@@ -171,10 +171,10 @@ void HandleJumpServer::setEmisor(string name) {
     this->emisor = name;
 }
 
-void HandleJumpServer::setConectadosHash(unordered_map<string, list<Mensaje*>*> hash) {
+void HandleJumpServer::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
     this->conectadosHash = hash;
 }
 
-void HandleJumpServer::setMutexesHash(unordered_map<string, pthread_mutex_t> hash) {
+void HandleJumpServer::setMutexesHash(unordered_map<string, pthread_mutex_t>* hash) {
     this->mutexesHash = hash;
 }

@@ -487,8 +487,8 @@ private:
         // Creo thread de movimiento
         HandleKeyHoldServer* handleKeyHoldServer = new HandleKeyHoldServer(objectManager);
         handleKeyHoldServer->setEmisor(userCon);
-        handleKeyHoldServer->setConectadosHash(conectadosHash);
-        handleKeyHoldServer->setMutexesHash(mutexesHash);
+        handleKeyHoldServer->setConectadosHash(&conectadosHash);
+        handleKeyHoldServer->setMutexesHash(&mutexesHash);
         handleKeyHoldServer->On();
         handleKeyHoldServer->Pause();
 
@@ -496,8 +496,8 @@ private:
         HandleJumpServer* handleJumpServer = new HandleJumpServer(objectManager);
         handleJumpServer->setKeyPressed(SDLK_UP);
         handleJumpServer->setEmisor(userCon);
-        handleJumpServer->setConectadosHash(conectadosHash);
-        handleJumpServer->setMutexesHash(mutexesHash);
+        handleJumpServer->setConectadosHash(&conectadosHash);
+        handleJumpServer->setMutexesHash(&mutexesHash);
         handleJumpServer->On();
         handleJumpServer->Pause();
 
