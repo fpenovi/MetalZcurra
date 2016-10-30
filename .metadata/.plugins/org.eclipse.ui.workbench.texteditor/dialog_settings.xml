@@ -2,20 +2,20 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="delete fondo" key="selection"/>
+		<item value="cout &lt;&lt; &quot;deb" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="cout &lt;&lt; &quot;deb"/>
+			<item value="leerXML"/>
 			<item value="delete fondo"/>
 			<item value="main"/>
 			<item value="Cliente("/>
 			<item value="cliente"/>
 			<item value="malloc"/>
 			<item value="ProtocoloNueva"/>
-			<item value="pthread_mutex_lock"/>
-			<item value="mutex"/>
 		</list>
 		<list key="replacehistory">
 		</list>

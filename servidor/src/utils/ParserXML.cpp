@@ -90,8 +90,7 @@ vector<string> ParserXML::spritesPlayers(){
     int i;
     xmlNodeSetPtr nodeset;
     xmlXPathObjectPtr result;
-    vector<string> fallo;
-    vector<string> sprites;
+    vector<string> sprites, fallo;
     cur = xmlDocGetRootElement(doc);
     result = this->getnodeset ((xmlChar*)"//sprite");
     string datosSprite;
@@ -128,7 +127,6 @@ vector<string> ParserXML::spritesPlayers(){
         }
         xmlXPathFreeObject(result);
     }
-    vector<string>::iterator it;
 
     return sprites;
 }

@@ -1,7 +1,7 @@
-01:38:29 **** Clean-only build of configuration Release for project servidor ****
+12:15:20 **** Clean-only build of configuration Release for project servidor ****
 make clean 
 rm -rf  ./src/utils/protocolos/ProtocoloComando.o ./src/utils/protocolos/ProtocoloNuevaVista.o ./src/utils/protocolos/ProtocoloVistaUpdate.o  ./src/utils/Log.o ./src/utils/ObjectManager.o ./src/utils/ParserXML.o  ./src/model/Personaje.o  ./src/Mensaje.o ./src/Servidor.o  ./src/utils/protocolos/ProtocoloComando.d ./src/utils/protocolos/ProtocoloNuevaVista.d ./src/utils/protocolos/ProtocoloVistaUpdate.d  ./src/utils/Log.d ./src/utils/ObjectManager.d ./src/utils/ParserXML.d  ./src/model/Personaje.d  ./src/Mensaje.d ./src/Servidor.d  servidor
  
 
-01:38:29 Build Finished (took 88ms)
+12:15:20 Build Finished (took 72ms)
 

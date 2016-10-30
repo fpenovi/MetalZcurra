@@ -27,7 +27,6 @@ Cliente::Cliente(char** argv){
     flags = -1;
     mutex_envios = PTHREAD_MUTEX_INITIALIZER;
     mutex_mensajes = PTHREAD_MUTEX_INITIALIZER;
-    usuariosAenviar; //hash de usuarios
     int cantUsuarios = 0;
     string aux(argv[1]);
     strcpy(IP,aux.c_str());
