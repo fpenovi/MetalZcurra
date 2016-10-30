@@ -1,9 +1,9 @@
 //
-// Created by nestor on 26/10/16.
+// Created by nestor on 29/10/16.
 //
 
-#ifndef METALZCURRA_HANDLEKEYHOLDSERVER_H
-#define METALZCURRA_HANDLEKEYHOLDSERVER_H
+#ifndef METALZCURRA_HANDLEJUMPSERVER_H
+#define METALZCURRA_HANDLEJUMPSERVER_H
 
 #include <stdexcept>
 #include <pthread.h>
@@ -19,22 +19,22 @@
 
 using namespace std;
 
-class NoSePudoCrearThreadHandleKeyHoldServerException : public runtime_error {
+class NoSePudoCrearThreadHandleJumpServerException : public runtime_error {
 
 public:
-    NoSePudoCrearThreadHandleKeyHoldServerException() : runtime_error("No se pudo crear el thread HandleKeyHold") {	}
+    NoSePudoCrearThreadHandleJumpServerException() : runtime_error("No se pudo crear el thread HandleJump") {	}
 };
 
-class NoSePudoCerrarThreadHandleKeyHoldServerException : public runtime_error {
+class NoSePudoCerrarThreadHandleJumpServerException : public runtime_error {
 
 public:
-    NoSePudoCerrarThreadHandleKeyHoldServerException() : runtime_error("No se pudo cerrar el thread HandleKeyHold") {	}
+    NoSePudoCerrarThreadHandleJumpServerException() : runtime_error("No se pudo cerrar el thread HandleJump") {	}
 };
 
 
 typedef struct argkh argkh_t;
 
-class HandleKeyHoldServer {
+class HandleJumpServer {
 
 private:
     pthread_t* handleKeyHoldTH;
@@ -48,9 +48,9 @@ private:
     unordered_map<string, pthread_mutex_t> mutexesHash;
 
 public:
-    HandleKeyHoldServer(ObjectManager* objectManager);
+    HandleJumpServer(ObjectManager* objectManager);
 
-    ~HandleKeyHoldServer();
+    ~HandleJumpServer();
 
     void On();
 
@@ -72,4 +72,4 @@ public:
 };
 
 
-#endif //METALZCURRA_HANDLEKEYHOLDSERVER_H
+#endif //METALZCURRA_HANDLEJUMPSERVER_H

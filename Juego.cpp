@@ -26,8 +26,8 @@ private:
 	Cliente* cliente;
 	unordered_map<int, VistaPersonaje*> vistas;
 	int lastKeyPressed;
-	HandleKeyHold* keyHoldHandler;
-	HandleJump* jumpHandler;
+	//HandleKeyHold* keyHoldHandler;
+	//HandleJump* jumpHandler;
 	Background* fondo;
 	int posx;
 	int screenWidth;
@@ -40,8 +40,8 @@ public:
 	Juego() {
 		renderizador = NULL;
 		ventana = NULL;
-		keyHoldHandler = NULL;
-		jumpHandler = NULL;
+		//keyHoldHandler = NULL;
+		//jumpHandler = NULL;
 		lastKeyPressed = 0;
 	}
 
@@ -55,12 +55,12 @@ public:
 		//Destroy window
 		SDL_DestroyRenderer( renderizador );
 		SDL_DestroyWindow( ventana );
-		keyHoldHandler->Off();
-		jumpHandler->Off();
+		//keyHoldHandler->Off();
+		//jumpHandler->Off();
 		ventana = NULL;
 		renderizador = NULL;
-		delete keyHoldHandler;
-		delete jumpHandler;
+		//delete keyHoldHandler;
+		//delete jumpHandler;
 		delete fondo;
 
 		//Quit SDL subsystems
@@ -167,17 +167,17 @@ public:
 		cliente->conectar();
 	}
 
-	void crearKeyHoldHandler() {
+/*	void crearKeyHoldHandler() {
 		keyHoldHandler = new HandleKeyHold(this->cliente);
 		keyHoldHandler->On();
 		keyHoldHandler->Pause();
-	}
-
-	void crearJumpHandler(){
+	}*/
+/*
+	void crearJumpHandlerJumpHandler(){
 		jumpHandler = new HandleJump(this->cliente);
 		jumpHandler->On();
 		jumpHandler->Pause();
-	}
+	}*/
 
 	void handleEvent( SDL_Event& e) {
 
@@ -190,18 +190,24 @@ public:
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
-					keyHoldHandler->setKeyPressed(SDLK_LEFT);
-					keyHoldHandler->Resume();
+					comando.setScancode(SDLK_LEFT);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_RIGHT:
-					keyHoldHandler->setKeyPressed(SDLK_RIGHT);
-					keyHoldHandler->Resume();
+					comando.setScancode(SDLK_RIGHT);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_UP:
-					jumpHandler->setKeyPressed(SDLK_UP);
-					jumpHandler->Resume();
+					comando.setScancode(SDLK_UP);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_r:
@@ -220,29 +226,24 @@ public:
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
-					if (keyHoldHandler->getKeyPressed() == SDLK_LEFT) {
-						keyHoldHandler->Pause();
-						keyHoldHandler->setKeyPressed(0);
-						comando.setScancode(SDLK_LEFT);
-						comando.setType(0);
-						msj = comando.toString();
-						cliente->enviarAusuario("TODOS", msj, false);
-					}
+					comando.setScancode(SDLK_LEFT);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_RIGHT:
-					if (keyHoldHandler->getKeyPressed() == SDLK_RIGHT) {
-						keyHoldHandler->Pause();
-						keyHoldHandler->setKeyPressed(0);
-						comando.setScancode(SDLK_RIGHT);
-						comando.setType(0);
-						msj = comando.toString();
-						cliente->enviarAusuario("TODOS", msj, false);
-					}
+					comando.setScancode(SDLK_RIGHT);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_UP:
-					jumpHandler->Pause();
+					comando.setScancode(SDLK_UP);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_r:
@@ -442,8 +443,8 @@ int main( int argc, char** argv) {
 
 	juego.recibirEscenario();
 
-	juego.crearKeyHoldHandler();
-	juego.crearJumpHandler();
+	//juego.crearKeyHoldHandler();
+	//juego.crearJumpHandler();
 
 	if( !juego.iniciar() ) {
 		printf("Failed to initialize!\n");
@@ -560,7 +561,6 @@ int main( int argc, char** argv) {
 		juego.renderizar();
 
 		SDL_RenderPresent( juego.getRenderer() );
-
 
 		// MIDO EL TIEMPO QUE TARDO EN RENDERIZAR
 		actual = high_resolution_clock::now();
