@@ -10,7 +10,6 @@ struct argkh {
     int* keyPressed;
     bool* isKhOn;
     bool* isKhPaused;
-    ObjectManager* objectMan;
     string* emisor;
     unordered_map<string, list<Mensaje*>*>* conectadosHash;
     unordered_map<string, pthread_mutex_t>* mutexesHash;
@@ -22,14 +21,14 @@ void* handleKeyHoldFunc(void* argKh) {
     bool* isKhOn = ( (argkh_t*) argKh )->isKhOn;
     bool* isKhPaused = ( (argkh_t*) argKh)->isKhPaused;
     int* keyPressed = ( (argkh_t*) argKh)->keyPressed;
-    ObjectManager* objectManager = ( (argkh_t*) argKh)->objectMan;
+    ObjectManager* objectManager = ObjectManager::getInstance();
     string* emisor = ( (argkh_t*) argKh)->emisor;
     unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argkh_t*) argKh)->conectadosHash;
     unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argkh_t*) argKh)->mutexesHash;
 
     time_point<high_resolution_clock> start;
     start = high_resolution_clock::now();
-    microseconds intervalo(30000);	// 40ms
+    microseconds intervalo(30000);	// 30ms
 
     while (*isKhOn) {
         time_point<high_resolution_clock> actual;
@@ -111,8 +110,7 @@ void* handleKeyHoldFunc(void* argKh) {
 }
 
 
-HandleKeyHoldServer::HandleKeyHoldServer(ObjectManager* objectManager) {
-    this->objectManager = objectManager;
+HandleKeyHoldServer::HandleKeyHoldServer() {
     isOn = false;
     argKeyHold = NULL;
     handleKeyHoldTH = NULL;
@@ -140,7 +138,6 @@ void HandleKeyHoldServer::On() {
     isOn = true;
     isPaused = false;
 
-    argKeyHold->objectMan = objectManager;
     argKeyHold->isKhOn = &isOn;
     argKeyHold->isKhPaused = &isPaused;
     argKeyHold->keyPressed = &keyPressed;

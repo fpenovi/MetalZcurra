@@ -543,7 +543,6 @@ int main( int argc, char** argv) {
 			pj->setSeMovio(state);
 		}
 
-		//SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( juego.getRenderer() );
 
 		fondo->render(juego.getPosX());

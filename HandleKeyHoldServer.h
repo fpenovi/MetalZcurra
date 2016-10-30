@@ -42,13 +42,12 @@ private:
     bool isOn;
     bool isPaused;
     int keyPressed;
-    ObjectManager* objectManager;
     string emisor;
     unordered_map<string, list<Mensaje*>*>* conectadosHash;
     unordered_map<string, pthread_mutex_t>* mutexesHash;
 
 public:
-    HandleKeyHoldServer(ObjectManager* objectManager);
+    HandleKeyHoldServer();
 
     ~HandleKeyHoldServer();
 

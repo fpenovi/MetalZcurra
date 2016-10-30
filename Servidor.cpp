@@ -473,7 +473,7 @@ private:
 
         int cant;
         // SALA DE ESPERA
-/*        while (conectadosHash.size() != cantidadUsuarios){
+     /*   while (conectadosHash.size() != cantidadUsuarios){
             cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
         }
         write(sockNewFileDescrpt, "$\n", 2);
@@ -485,7 +485,7 @@ private:
         pthread_create(recibirThread, NULL, recibirMensajes, arg);
 
         // Creo thread de movimiento
-        HandleKeyHoldServer* handleKeyHoldServer = new HandleKeyHoldServer(objectManager);
+        HandleKeyHoldServer* handleKeyHoldServer = new HandleKeyHoldServer();
         handleKeyHoldServer->setEmisor(userCon);
         handleKeyHoldServer->setConectadosHash(&conectadosHash);
         handleKeyHoldServer->setMutexesHash(&mutexesHash);
@@ -699,8 +699,8 @@ public:
     void initJuego() {
 
         leerXML();
-        cantidadUsuarios = (int) parser->users().size();
-        //cantidadUsuarios = 2;
+        //cantidadUsuarios = (int) parser->users().size();
+        cantidadUsuarios = 2;
         objectManager->crearPersonajes(cantidadUsuarios);
     }
 
