@@ -16,17 +16,17 @@ Instalando...
 * Crear acceso directo:
   * Ejecutar $  sudo gedit /usr/share/applications/eclipse-neon-cpp.desktop
   * Pegar las lineas: 
-        [Desktop Entry] 
-        Encoding=UTF-8 
-        Exec=/opt/eclipse-neon-cpp/eclipse 
-        Icon=/opt/eclipse-neon-cpp/icon.xpm 
-        Type=Application 
-        Terminal=false 
-        Comment=Eclipse Integrated Development Environment 
-        Name=Eclipse Neon 
-        GenericName=eclipse-4.6 
-        StartupNotify=false 
-        Categories=Development;IDE;C++; 
+        [Desktop Entry] <br />
+        Encoding=UTF-8 <br />
+        Exec=/opt/eclipse-neon-cpp/eclipse <br />
+        Icon=/opt/eclipse-neon-cpp/icon.xpm <br />
+        Type=Application <br />
+        Terminal=false <br />
+        Comment=Eclipse Integrated Development Environment <br />
+        Name=Eclipse Neon <br />
+        GenericName=eclipse-4.6 <br />
+        StartupNotify=false <br />
+        Categories=Development;IDE;C++; <br />
   
   *Guardar gedit y cerrarlo
   * Hacer Log Out y volver a Logearse y ya va a aparecer en la busqueda el Eclipse Neon :)
