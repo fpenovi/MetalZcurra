@@ -14,10 +14,11 @@ http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/rel
 
 ![Imagen de workspace](http://img.ctrlv.in/img/16/10/31/5816b81ab172d.png)
 
-2) Seleccionando tipo de Ejecutable a compilar
+**2) Seleccionando tipo de Ejecutable a compilar**
 
 ![Imagen de seleccion](http://img.ctrlv.in/img/16/10/31/5816b89805d8e.png)
 
+_Project -> Build Configuration -> Set Active -> Debug/Release_
 **Seleccionar ambos proyectos al mismo tiempo y asegurarse de cambiarle a ambos para que esten en el mismo**
 
 **3) Compilacion**
