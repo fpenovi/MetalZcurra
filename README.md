@@ -19,10 +19,10 @@ http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/rel
 **Seleccionar ambos proyectos al mismo tiempo y asegurarse de cambiarle a ambos para que esten en el mismo**
 
 3) Compilacion
-Boton derecho en __Juego -> Build Project__
+Boton derecho en _Juego -> Build Project_
 
 4) Ejecucion
-__Click en la flechita para abajo (del bichito para debugger o del play para ejecucion normal y seleccionar el perfil de ejecución)__
+_Click en la flechita para abajo (del bichito para debugger o del play para ejecucion normal y seleccionar el perfil de ejecución)_
 
 5) Clean
-__Boton derecho en Ambos proyectos -> Clean Project y si se quiere borrar las carpetas Release y Debug de ambos proyectos__
+_Boton derecho en Ambos proyectos -> Clean Project y si se quiere borrar las carpetas Release y Debug de ambos proyectos_
