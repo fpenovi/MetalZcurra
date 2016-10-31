@@ -1,0 +1,18 @@
+/*
+ * HandleKeyHoldServer.cpp
+ *
+ *  Created on: Oct 30, 2016
+ *      Author: franch
+ */
+
+#include "HandleKeyHoldServer.h"
+
+HandleKeyHoldServer::HandleKeyHoldServer() {
+	// TODO Auto-generated constructor stub
+
+}
+
+HandleKeyHoldServer::~HandleKeyHoldServer() {
+	// TODO Auto-generated destructor stub
+}
+

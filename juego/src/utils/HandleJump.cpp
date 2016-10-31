@@ -81,6 +81,7 @@ void HandleJump::Off() {
         return;
 
     isOn = false;
+    pthread_join(*handleJumpTH, NULL);
 }
 
 void HandleJump::Pause() {

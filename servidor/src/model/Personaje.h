@@ -37,9 +37,8 @@ private:
     const static int ANIMACION_SALTANDO = 10;
 
 public:
-	Personaje();
+    Personaje();
 
-public:
     void moverX(bool avanzar, int* posX);
 
     void moverY();

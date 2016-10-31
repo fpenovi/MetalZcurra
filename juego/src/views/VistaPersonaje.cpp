@@ -91,6 +91,16 @@ bool VistaPersonaje::cargarImagen(){
 		printf( "Fallo sprite parado\n" );
 		if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/quieto.png"))
 			success = false;
+		else
+		{
+			//SPRITE PARADO
+			for (i = 0;i<ANIMACION_PARADO;i++){
+				spriteParado[ i ].x = i*60;
+				spriteParado[ i ].y = 0;
+				spriteParado[ i ].w = 60;
+				spriteParado[ i ].h = 80;
+			}
+		}
 	}
 	else
 	{
@@ -106,8 +116,16 @@ bool VistaPersonaje::cargarImagen(){
 	if( !TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( pathCorriendo) )
 	{
 		printf( "Fallo sprite corriendo\n" );
-		if (!TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/corriendo.png"))
+		if (!TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( "imag/cruz/corriendo.png"))
 			success = false;
+		else{
+			for (i = 0;i<ANIMACION_CORRIENDO;i++){
+				spriteCorriendo[ i ].x = i*60;
+				spriteCorriendo[ i ].y = 0;
+				spriteCorriendo[ i ].w = 60;
+				spriteCorriendo[ i ].h = 80;
+			}
+		}
 	}
 	else{
 		for (i = 0;i<ANIMACION_CORRIENDO;i++){
@@ -121,8 +139,17 @@ bool VistaPersonaje::cargarImagen(){
 	if( !TEXTURA_PERSONAJE_SALTANDO->cargarImagen( pathSaltando) )
 	{
 		printf( "Fallo sprite saltando\n" );
-		if (!TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/saltando.png"))
+		if (!TEXTURA_PERSONAJE_SALTANDO->cargarImagen( "imag/cruz/saltando.png"))
 			success = false;
+		else{
+
+			for (i = 0;i<ANIMACION_SALTANDO;i++){
+				spriteSaltando[ i ].x = i*60;
+				spriteSaltando[ i ].y = 0;
+				spriteSaltando[ i ].w = 60;
+				spriteSaltando[ i ].h = 80;
+			}
+		}
 	}
 	else{
 
@@ -210,24 +237,24 @@ void VistaPersonaje::setConectado(bool conexion) {
 void VistaPersonaje::crearHashSprites() {
 
 	hashSprites[1] = new vector<string>;
-	hashSprites[1]->push_back("imag/marco/quieto.png");
-	hashSprites[1]->push_back("imag/marco/corriendo.png");
-	hashSprites[1]->push_back("imag/marco/saltando.png");
+	hashSprites[1]->push_back("resources/imag/marco/quieto.png");
+	hashSprites[1]->push_back("resources/imag/marco/corriendo.png");
+	hashSprites[1]->push_back("resources/imag/marco/saltando.png");
 
 	hashSprites[2] = new vector<string>;
-	hashSprites[2]->push_back("imag/goku/quieto.png");
-	hashSprites[2]->push_back("imag/goku/corriendo.png");
-	hashSprites[2]->push_back("imag/goku/saltando.png");
+	hashSprites[2]->push_back("resources/imag/goku/quieto.png");
+	hashSprites[2]->push_back("resources/imag/goku/corriendo.png");
+	hashSprites[2]->push_back("resources/imag/goku/saltando.png");
 
 	hashSprites[3] = new vector<string>;
-	hashSprites[3]->push_back("imag/jackson/quieto.png");
-	hashSprites[3]->push_back("imag/jackson/corriendo.png");
-	hashSprites[3]->push_back("imag/jackson/saltando.png");
+	hashSprites[3]->push_back("resources/imag/jackson/quieto.png");
+	hashSprites[3]->push_back("resources/imag/jackson/corriendo.png");
+	hashSprites[3]->push_back("resources/imag/jackson/saltando.png");
 
 	hashSprites[4] = new vector<string>;
-	hashSprites[4]->push_back("imag/megaman/quieto.png");
-	hashSprites[4]->push_back("imag/megaman/corriendo.png");
-	hashSprites[4]->push_back("imag/megaman/saltando.png");
+	hashSprites[4]->push_back("resources/imag/megaman/quieto.png");
+	hashSprites[4]->push_back("resources/imag/megaman/corriendo.png");
+	hashSprites[4]->push_back("resources/imag/megaman/saltando.png");
 
 }
 

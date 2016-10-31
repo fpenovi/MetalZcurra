@@ -91,6 +91,7 @@ void HandleKeyHold::Off() {
 		return;
 
 	isOn = false;
+	pthread_join(*handleKeyHoldTH, NULL);
 }
 
 void HandleKeyHold::Pause() {

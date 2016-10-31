@@ -35,10 +35,7 @@ private:
 	SDL_Rect* camera;
 	Cliente* cliente;
 	unordered_map<int, VistaPersonaje*> vistas;
-	VistaPersonaje* personaje;
 	int lastKeyPressed;
-	HandleKeyHold* keyHoldHandler;
-	HandleJump* jumpHandler;
 	Background* fondo;
 	int posx;
 	int screenWidth;
@@ -51,33 +48,27 @@ public:
 	Juego() {
 		renderizador = NULL;
 		ventana = NULL;
-		keyHoldHandler = NULL;
-		jumpHandler = NULL;
 		lastKeyPressed = 0;
 	}
 
 	void close() {
-		//ToDo Liberar personajes
+			//ToDo Liberar personajes
 
-		//Free loaded images
-		for (auto kv : vistas)
-			kv.second->liberarTextura();
+			//Free loaded images
+			for (auto kv : vistas)
+				kv.second->liberarTextura();
 
-		//Destroy window
-		SDL_DestroyRenderer( renderizador );
-		SDL_DestroyWindow( ventana );
-		keyHoldHandler->Off();
-		jumpHandler->Off();
-		ventana = NULL;
-		renderizador = NULL;
-		delete keyHoldHandler;
-		delete jumpHandler;
-		delete fondo;
+			//Destroy window
+			SDL_DestroyRenderer( renderizador );
+			SDL_DestroyWindow( ventana );
+			ventana = NULL;
+			renderizador = NULL;
+			delete fondo;
 
-		//Quit SDL subsystems
-		IMG_Quit();
-		SDL_Quit();
-	}
+			//Quit SDL subsystems
+			IMG_Quit();
+			SDL_Quit();
+		}
 
 	bool iniciar() {
 		//flag
@@ -174,24 +165,8 @@ public:
 		vistas[id] = pj;
 	}
 
-	void setPersonaje(VistaPersonaje* pj){
-		this->personaje = pj;
-	}
-
 	void conectar(){
 		cliente->conectar();
-	}
-
-	void crearKeyHoldHandler() {
-		keyHoldHandler = new HandleKeyHold(this->cliente);
-		keyHoldHandler->On();
-		keyHoldHandler->Pause();
-	}
-
-	void crearJumpHandler(){
-		jumpHandler = new HandleJump(this->cliente);
-		jumpHandler->On();
-		jumpHandler->Pause();
 	}
 
 	void handleEvent( SDL_Event& e) {
@@ -205,18 +180,24 @@ public:
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
-					keyHoldHandler->setKeyPressed(SDLK_LEFT);
-					keyHoldHandler->Resume();
+					comando.setScancode(SDLK_LEFT);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_RIGHT:
-					keyHoldHandler->setKeyPressed(SDLK_RIGHT);
-					keyHoldHandler->Resume();
+					comando.setScancode(SDLK_RIGHT);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_UP:
-					jumpHandler->setKeyPressed(SDLK_UP);
-					jumpHandler->Resume();
+					comando.setScancode(SDLK_UP);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_r:
@@ -235,29 +216,24 @@ public:
 			switch( e.key.keysym.sym ) {
 
 				case SDLK_LEFT:
-					if (keyHoldHandler->getKeyPressed() == SDLK_LEFT) {
-						keyHoldHandler->Pause();
-						keyHoldHandler->setKeyPressed(0);
-						comando.setScancode(SDLK_LEFT);
-						comando.setType(0);
-						msj = comando.toString();
-						cliente->enviarAusuario("TODOS", msj, false);
-					}
+					comando.setScancode(SDLK_LEFT);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_RIGHT:
-					if (keyHoldHandler->getKeyPressed() == SDLK_RIGHT) {
-						keyHoldHandler->Pause();
-						keyHoldHandler->setKeyPressed(0);
-						comando.setScancode(SDLK_RIGHT);
-						comando.setType(0);
-						msj = comando.toString();
-						cliente->enviarAusuario("TODOS", msj, false);
-					}
+					comando.setScancode(SDLK_RIGHT);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_UP:
-					jumpHandler->Pause();
+					comando.setScancode(SDLK_UP);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
 				case SDLK_r:
@@ -306,17 +282,23 @@ public:
 		}
 		return aux;
 	}
+
 	void jugadoresInicio(){
 		for ( auto kv : vistas){
 			kv.second->setPosCamara(0);
-			personaje->setPosx(0);
-			personaje->setPosy(360);
-			personaje->setSeMovio(true);
-			personaje->setDerecha(true);
-			setPosX(0);
+			kv.second->setPosx(0);
+			kv.second->setPosy(360);
+			kv.second->setSeMovio(false);
+			kv.second->setDerecha(true);
 		}
-
+		setPosX(0);
 	}
+
+	void salaDeEspera(){
+		cout << "ESPERANDO A TODOS LOS USUARIOS" << endl;
+		string stream = cliente->recibir_nueva_vista();
+	}
+
 	void recibirEscenario(){
 		string stream = cliente->recibir_nueva_vista();
 
@@ -388,6 +370,41 @@ public:
 
 		}
 	}
+
+	void recibirPersonajes(){
+
+		while (true) {
+
+			string nuevaVista = cliente->recibir_nueva_vista();
+
+			if (nuevaVista == "$\n") break;
+
+			int id, sprite, posx, posy, cam, conectado;
+
+			ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado);
+
+			VistaPersonaje *personaje = new VistaPersonaje(getRenderer());
+
+			setPosX(posx);
+			personaje->setearSprites(sprite);
+			personaje->setId(id);
+			personaje->setPosCamara(cam);
+			personaje->setPosx(posx);
+			personaje->setPosy(posy);
+			personaje->setSeMovio(false);
+			personaje->setConectado(conectado);
+			addPersonaje(id, personaje);
+
+			cout << "CONECTADO: " << conectado << endl;
+
+			if (!personaje->cargarImagen()) {
+				printf("Failed to load media!\n");
+				exit(1);
+			}
+
+		}
+
+	}
 };
 
 typedef struct {
@@ -395,7 +412,7 @@ typedef struct {
 	bool* quit;
 } controlador_t;
 
-int recibirVistas( void* arg){
+void* recibirVistas( void* arg){
 
 	controlador_t* arg2 = (controlador_t*) arg;
 	Juego* miJuego = (Juego*) arg2->juego;
@@ -407,7 +424,7 @@ int recibirVistas( void* arg){
 		cliente->encolar_vistas();
 
 	}
-	return 0;
+	return NULL;
 }
 
 int escucharEventos( void* arg ) {
@@ -442,20 +459,14 @@ int main( int argc, char** argv) {
 		exit(0);
 	}
 
-	cout << "llego 1" << endl;
-
 	//Start up SDL and create window
 	Juego juego;
 	Cliente cliente(argv);
 
 	juego.setCliente(&cliente);
 	juego.conectar();
-	//juego.salaDeEspera();
 
 	juego.recibirEscenario();
-
-	juego.crearKeyHoldHandler();
-	juego.crearJumpHandler();
 
 	if( !juego.iniciar() ) {
 		printf("Failed to initialize!\n");
@@ -468,57 +479,45 @@ int main( int argc, char** argv) {
 	juego.recibirCapas();
 	fondo->prepararEscenario();
 
-
-	while (true) {
-
-		string nuevaVista = cliente.recibir_nueva_vista();
-
-		if (nuevaVista == "$\n") break;
-
-		int id, sprite, posx, posy, cam, conectado;
-
-		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado);
-
-		VistaPersonaje *personaje = new VistaPersonaje(juego.getRenderer());
-
-		juego.setPosX(posx);
-		personaje->setearSprites(sprite);
-		personaje->setId(id);
-		personaje->setPosCamara(cam);
-		personaje->setPosx(posx);
-		personaje->setPosy(posy);
-		personaje->setSeMovio(false);
-		personaje->setConectado(conectado);
-		juego.addPersonaje(id, personaje);
-
-		cout << "CONECTADO: " << conectado << endl;
-
-		if (!personaje->cargarImagen()) {
-			printf("Failed to load media!\n");
-			return 1;
-		}
-
-	}
-
+	// Recibir personajes
+	juego.recibirPersonajes();
 
 	//Main loop flag
 	bool quit = false;
 
-	// Thread que escucha eventos
 	controlador_t* arg = new controlador_t;
 	arg->juego = &juego;
 	arg->quit = &quit;
-	SDL_Thread* threadID = SDL_CreateThread( escucharEventos, "EscucharEventos", arg );
-	SDL_Thread* threadID2 = SDL_CreateThread( recibirVistas, "RecibirVistas", arg );
-	milliseconds diezMs(10);
-	milliseconds cincoMs(5);
 
+	// Thread que escucha eventos
+	pthread_attr_t attr;
+	bzero(&attr, sizeof(attr));
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	pthread_t* recibirThread = new pthread_t;
+	if (pthread_create(recibirThread, NULL, recibirVistas, arg) != 0 ){
+		cerr << "ERROR --> No se pudo crear thread de control" << endl;
+		pthread_attr_destroy(&attr);
+		exit(1);
+	}
+
+	//juego.salaDeEspera();
+
+	SDL_Event e;
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
 
 		time_point<high_resolution_clock> start;
 		start = high_resolution_clock::now();
 		time_point<high_resolution_clock> actual;
+
+		if (SDL_PollEvent(&e) != 0) {
+
+			if (e.type == SDL_QUIT) {
+				quit = true;
+			}
+			juego.handleEvent(e);
+		}
 
 		string update = cliente.desencolar_vista();
 
@@ -528,7 +527,7 @@ int main( int argc, char** argv) {
 
 			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam, &conectado, &spriteIdx);
 
-			if (id == 9 ){
+			if (id == 100 ){
 				juego.jugadoresInicio();
 				continue;
 			}
@@ -554,14 +553,12 @@ int main( int argc, char** argv) {
 			pj->setSeMovio(state);
 		}
 
-		//SDL_SetRenderDrawColor( juego.getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
 		SDL_RenderClear( juego.getRenderer() );
 
 		fondo->render(juego.getPosX());
 		juego.renderizar();
 
 		SDL_RenderPresent( juego.getRenderer() );
-
 
 		// MIDO EL TIEMPO QUE TARDO EN RENDERIZAR
 		actual = high_resolution_clock::now();
@@ -573,6 +570,8 @@ int main( int argc, char** argv) {
 	}
 
 	//Free resources and close SDL
+	delete recibirThread;
+	pthread_attr_destroy(&attr);
 	cliente.desconectar();
 	juego.close();
 

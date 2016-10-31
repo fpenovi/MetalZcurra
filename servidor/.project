@@ -3,6 +3,7 @@
 	<name>servidor</name>
 	<comment></comment>
 	<projects>
+		<project>juego</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

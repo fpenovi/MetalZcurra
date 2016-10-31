@@ -1,0 +1,18 @@
+/*
+ * HandleJumpServer.cpp
+ *
+ *  Created on: Oct 30, 2016
+ *      Author: franch
+ */
+
+#include "HandleJumpServer.h"
+
+HandleJumpServer::HandleJumpServer(ObjectManager* objectManager) {
+	// TODO Auto-generated constructor stub
+
+}
+
+HandleJumpServer::~HandleJumpServer() {
+	// TODO Auto-generated destructor stub
+}
+

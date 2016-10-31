@@ -1,7 +1,7 @@
-12:15:20 **** Clean-only build of configuration Release for project servidor ****
+23:49:56 **** Clean-only build of configuration Release for project servidor ****
 make clean 
-rm -rf  ./src/utils/protocolos/ProtocoloComando.o ./src/utils/protocolos/ProtocoloNuevaVista.o ./src/utils/protocolos/ProtocoloVistaUpdate.o  ./src/utils/Log.o ./src/utils/ObjectManager.o ./src/utils/ParserXML.o  ./src/model/Personaje.o  ./src/Mensaje.o ./src/Servidor.o  ./src/utils/protocolos/ProtocoloComando.d ./src/utils/protocolos/ProtocoloNuevaVista.d ./src/utils/protocolos/ProtocoloVistaUpdate.d  ./src/utils/Log.d ./src/utils/ObjectManager.d ./src/utils/ParserXML.d  ./src/model/Personaje.d  ./src/Mensaje.d ./src/Servidor.d  servidor
+rm -rf  ./src/utils/threads/HandleJumpServer.o ./src/utils/threads/HandleKeyHoldServer.o  ./src/utils/protocolos/ProtocoloComando.o ./src/utils/protocolos/ProtocoloNuevaVista.o ./src/utils/protocolos/ProtocoloVistaUpdate.o  ./src/utils/Log.o ./src/utils/ObjectManager.o ./src/utils/ParserXML.o  ./src/model/Personaje.o  ./src/Mensaje.o ./src/Servidor.o  ./src/utils/threads/HandleJumpServer.d ./src/utils/threads/HandleKeyHoldServer.d  ./src/utils/protocolos/ProtocoloComando.d ./src/utils/protocolos/ProtocoloNuevaVista.d ./src/utils/protocolos/ProtocoloVistaUpdate.d  ./src/utils/Log.d ./src/utils/ObjectManager.d ./src/utils/ParserXML.d  ./src/model/Personaje.d  ./src/Mensaje.d ./src/Servidor.d  servidor
  
 
-12:15:20 Build Finished (took 72ms)
+23:49:56 Build Finished (took 72ms)
 

@@ -22,7 +22,7 @@ void Personaje::moverX(bool avanzar, int* posX) {
     posCamara += velx;
 
     //Que no salga de la pantalla
-    if( ( posCamara  < 0 ) || ( posCamara + ancho > SCREEN_WIDTH / 2) )  {
+    if( ( posCamara  < 0 ) || ( posCamara + ancho > SCREEN_WIDTH *3/4) )  {
         posCamara  -= velx;
     }
 
@@ -31,7 +31,7 @@ void Personaje::moverX(bool avanzar, int* posX) {
         *posX -= velx;
     }
 
-    if (velx < 0 || posCamara + ancho + 4 != SCREEN_WIDTH / 2 || !avanzar){
+    if (velx < 0 || posCamara + ancho + 1 != SCREEN_WIDTH *3/4 || !avanzar){
         *posX -= velx;
     }
 
@@ -167,7 +167,6 @@ int Personaje::getFrameCorriendo() {
 
 void Personaje::setSpriteSaltando() {
     double index = frameSaltando * 1.2;
-    cout << index << endl;
     if( index >= ANIMACION_SALTANDO ) frameSaltando = 0;
     frameSaltando++;
 }

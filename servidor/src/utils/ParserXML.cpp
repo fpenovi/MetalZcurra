@@ -6,10 +6,13 @@
  */
 
 #include "ParserXML.h"
+#include <strings.h>
+#include <unistd.h>
 
 ParserXML::ParserXML(char* docname) {
+
     doc = xmlParseFile(docname);
-    docDef = xmlParseFile("juego.xml");
+    docDef = xmlParseFile("resources/juego.xml");
     if (doc == NULL ) {
         fprintf(stderr,"Document not parsed successfully. \n");
         setearDefecto();

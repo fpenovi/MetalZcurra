@@ -1,4 +1,0 @@
-src/utils/Calculadora.o: ../src/utils/Calculadora.cpp \
- ../src/utils/Calculadora.h
-
-../src/utils/Calculadora.h:

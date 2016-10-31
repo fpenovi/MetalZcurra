@@ -16,6 +16,8 @@
 #include "utils/ObjectManager.h"
 #include "utils/ParserXML.h"
 #include "utils/Log.h"
+#include "utils/threads/HandleKeyHoldServer.h"
+#include "utils/threads/HandleJumpServer.h"
 
 
 #define MAX_CLIENTS 6
@@ -234,13 +236,12 @@ private:
         if (result != 0) perror("Fallo el pthread_mutex_unlock en kick");
     }
 
-    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo) {
+    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo, HandleKeyHoldServer* handleKeyHold, HandleJumpServer* handleJump) {
 
         if (textoInicial == NULL){
             printf("ERROR");
             exit(1);
         }
-
 
         string emisor(emisorChar);
         emisor.erase(emisor.length()-1);
@@ -258,90 +259,40 @@ private:
 
         ProtocoloVistaUpdate update;
         int aux;
+        bool enviar;
 
         if ( pressed == 1 ) {
 
             switch( key ) {
 
                 case SDLK_LEFT:
-                    personaje->setVelx(-personaje->getPersonaje_VEL());
-                    personaje->moverX(avanzar, posX);
-
-                    update.setEstado(personaje->getSeMovio());
-                    update.setX(*posX);
-                    update.setY(personaje->getPosy());
-                    update.setObject_id(idEmisor);
-                    update.setPosCamara(personaje->getPosCamara());
-                    update.setConectado(personaje->getConectado());
-                    update.setSpriteIndex(personaje->getFrameCorriendo());
+                    handleKeyHold->setKeyPressed(SDLK_LEFT);
+                    handleKeyHold->Resume();
+                    enviar = false;
                     break;
 
                 case SDLK_RIGHT:
-                    aux = *posX;
-                    personaje->setVelx(personaje->getPersonaje_VEL());
-                    personaje->moverX(avanzar, posX);
-
-                    if (aux < *posX){
-                        objectManager->moverCamara(idEmisor);
-                        objectManager->moverDesconectados();
-                    }
-
-                    update.setEstado(personaje->getSeMovio());
-                    update.setX(*posX);
-                    update.setY(personaje->getPosy());
-                    update.setObject_id(idEmisor);
-                    update.setPosCamara(personaje->getPosCamara());
-                    update.setConectado(personaje->getConectado());
-                    update.setSpriteIndex(personaje->getFrameCorriendo());
+                    handleKeyHold->setKeyPressed(SDLK_RIGHT);
+                    handleKeyHold->Resume();
+                    enviar = false;
                     break;
 
                 case SDLK_UP:
-                    if (personaje->getPosy() <= 305){
-                        personaje->setVely(personaje->getPersonaje_VEL_Y());
-                        personaje->moverY();
-                        personaje->setVely(0);
-                        personaje->setBajando(true);
-                    }
-                    else if (personaje->getPosy() >= 360){
-                        personaje->setVely(-personaje->getPersonaje_VEL_Y());
-                        personaje->moverY();
-                        personaje->setVely(0);
-                        personaje->setBajando(false);
-                    }
-                    else if (personaje->getBajando()){
-                        personaje->setVely(personaje->getPersonaje_VEL_Y());
-                        personaje->moverY();
-                    }
-
-                    else if(!(personaje->getBajando())) {
-                        personaje->setVely(-personaje->getPersonaje_VEL_Y());
-                        personaje->moverY();
-                    }
-
-                    update.setEstado(personaje->getSeMovio());
-                    update.setX(*posX);
-                    update.setY(personaje->getPosy());
-                    update.setObject_id(idEmisor);
-                    update.setPosCamara(personaje->getPosCamara());
-                    update.setConectado(personaje->getConectado());
-                    update.setSpriteIndex(personaje->getSpriteSaltando());
+                    handleJump->Resume();
+                    enviar = false;
                     break;
 
                 case SDLK_r:
-                    for ( int i= 1; i<5; i++ ){
-                        objectManager->getObject(i)->inicial();
-                    }
+                    objectManager->reinicializarEscenario();
 
-                    objectManager->setPosX(0);
-
-                    //ssize_t bytesEscritos = write(fileDescrpt,"RELOAD\n",7);
-                    update.setEstado(personaje->getSeMovio());
-                    update.setX(*posX);
-                    update.setY(personaje->getPosy());
-                    update.setObject_id(9);
-                    update.setPosCamara(personaje->getPosCamara());
-                    update.setConectado(personaje->getConectado());
-                    update.setSpriteIndex(personaje->getFrameCorriendo());
+                    update.setObject_id(100);
+                    update.setEstado(0);
+                    update.setX(0);
+                    update.setY(0);
+                    update.setPosCamara(0);
+                    update.setConectado(0);
+                    update.setSpriteIndex(0);
+                    enviar = true;
                     break;
             }
         }
@@ -352,58 +303,74 @@ private:
             switch( key ) {
 
                 case SDLK_LEFT:
-                    personaje->setVelx(0);
-                    personaje->moverX(avanzar, posX);
+                    if (handleKeyHold->getKeyPressed() == SDLK_LEFT) {
+                        handleKeyHold->Pause();
+                        handleKeyHold->setKeyPressed(0);
 
-                    update.setEstado(personaje->getSeMovio());
-                    update.setX(*posX);
-                    update.setY(personaje->getPosy());
-                    update.setObject_id(idEmisor);
-                    update.setPosCamara(personaje->getPosCamara());
-                    update.setConectado(personaje->getConectado());
-                    update.setSpriteIndex(personaje->getFrameCorriendo());
+                        personaje->setVelx(0);
+                        personaje->moverX(avanzar, posX);
+
+                        update.setEstado(personaje->getSeMovio());
+                        update.setX(*posX);
+                        update.setY(personaje->getPosy());
+                        update.setObject_id(idEmisor);
+                        update.setPosCamara(personaje->getPosCamara());
+                        update.setConectado(personaje->getConectado());
+                        update.setSpriteIndex(personaje->getFrameCorriendo());
+                        enviar = true;
+                    }
                     break;
 
                 case SDLK_RIGHT:
-                    personaje->setVelx(0);
-                    personaje->moverX(avanzar, posX);
+                    if (handleKeyHold->getKeyPressed() == SDLK_RIGHT) {
+                        handleKeyHold->Pause();
+                        handleKeyHold->setKeyPressed(0);
 
-                    update.setEstado(personaje->getSeMovio());
-                    update.setX(*posX);
-                    update.setY(personaje->getPosy());
-                    update.setObject_id(idEmisor);
-                    update.setPosCamara(personaje->getPosCamara());
-                    update.setConectado(personaje->getConectado());
-                    update.setSpriteIndex(personaje->getFrameCorriendo());
+                        personaje->setVelx(0);
+                        personaje->moverX(avanzar, posX);
+
+                        update.setEstado(personaje->getSeMovio());
+                        update.setX(*posX);
+                        update.setY(personaje->getPosy());
+                        update.setObject_id(idEmisor);
+                        update.setPosCamara(personaje->getPosCamara());
+                        update.setConectado(personaje->getConectado());
+                        update.setSpriteIndex(personaje->getFrameCorriendo());
+                        enviar = true;
+                    }
                     break;
 
                 case SDLK_UP:
+                    handleJump->Pause();
+                    enviar = false;
                     break;
+
                 case SDLK_r:
                     break;
             }
         }
 
-        int result; // para el mutex
+        if (enviar) {
+            int result; // para el mutex
 
-        string mensaje = update.toString();
+            string mensaje = update.toString();
 
-        for (auto kv : conectadosHash) {
+            for (auto kv : conectadosHash) {
 
-            Mensaje* mensajeNuevo = new Mensaje(emisor, kv.first, mensaje);
+                Mensaje *mensajeNuevo = new Mensaje(emisor, kv.first, mensaje);
 
-            result = pthread_mutex_lock(&mutexesHash[kv.first]);
-            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                result = pthread_mutex_lock(&mutexesHash[kv.first]);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
-            kv.second->push_back(mensajeNuevo);
+                kv.second->push_back(mensajeNuevo);
 
-            result = pthread_mutex_unlock(&mutexesHash[kv.first]);
-            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                result = pthread_mutex_unlock(&mutexesHash[kv.first]);
+                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+            }
         }
-
     }
 
-    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos) {
+    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos, HandleKeyHoldServer* handler, HandleJumpServer* handleJump) {
 
         if (*bytesLeidos < 0) {
             cout << " SE DESCONECTÓ " << arg->user << endl;
@@ -411,7 +378,7 @@ private:
             return false;
         }
 
-        agregarMensaje(arg->user, linea, *bytesLeidos);
+        agregarMensaje(arg->user, linea, *bytesLeidos, handler, handleJump);
         return true;
 
     }
@@ -454,6 +421,8 @@ private:
 
                 result = pthread_mutex_unlock(&mutexesHash[receptor]);
                 if (result != 0) perror("Fallo el pthread_mutex_lock en recibir msj");
+
+                delete mensaje;
             }
         }
         return NULL;
@@ -496,20 +465,39 @@ private:
         mutexesHash[userCon] = PTHREAD_MUTEX_INITIALIZER;
         objectManager->conectarPersonaje(userCon);
 
-        // SALA DE ESPERA
-        //while (conectadosHash.size() != cantidadUsuarios){
-            //cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
-        //}
-        //write(sockNewFileDescrpt, "$\n", 2);
-
         // ENVIO DATOS
         objectManager->enviarEscenario(parser, sockNewFileDescrpt);
         objectManager->enviarPersonajes(sockNewFileDescrpt);
 
+        int cant;
+        // SALA DE ESPERA
+     /*   while (conectadosHash.size() != cantidadUsuarios){
+            cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
+        }
+        write(sockNewFileDescrpt, "$\n", 2);
+*/
+        // Creo thread para enviar mensajes al cliente
         bool quit = false;
         (((argthread_t *) arg)->quit) = &quit;
         pthread_t *recibirThread = new pthread_t;
         pthread_create(recibirThread, NULL, recibirMensajes, arg);
+
+        // Creo thread de movimiento
+        HandleKeyHoldServer* handleKeyHoldServer = new HandleKeyHoldServer();
+        handleKeyHoldServer->setEmisor(userCon);
+        handleKeyHoldServer->setConectadosHash(&conectadosHash);
+        handleKeyHoldServer->setMutexesHash(&mutexesHash);
+        handleKeyHoldServer->On();
+        handleKeyHoldServer->Pause();
+
+        // Creo thread de salto
+        HandleJumpServer* handleJumpServer = new HandleJumpServer(objectManager);
+        handleJumpServer->setKeyPressed(SDLK_UP);
+        handleJumpServer->setEmisor(userCon);
+        handleJumpServer->setConectadosHash(&conectadosHash);
+        handleJumpServer->setMutexesHash(&mutexesHash);
+        handleJumpServer->On();
+        handleJumpServer->Pause();
 
         while (true) {
 
@@ -528,7 +516,7 @@ private:
                 break;
             }
 
-            cout << "debug: Mensaje recibido del cliente: " << linea;
+            //cout << "debug: Mensaje recibido del cliente: " << linea;
 
             // Opcion enviar mensaje
             if (strcmp(linea, "/E/\n") == 0) {
@@ -537,7 +525,7 @@ private:
                 bytesLeidos = getline(&linea, &len, mensajeCliente);
 
                 // ENVIO MENSAJE
-                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos) )
+                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos, handleKeyHoldServer, handleJumpServer) )
                     break;
             }
 
@@ -580,6 +568,10 @@ private:
 
         }
 
+        handleKeyHoldServer->Off();
+        delete handleKeyHoldServer;
+        handleJumpServer->Off();
+        delete handleJumpServer;
         close(sockNewFileDescrpt);
         kickearUsuario((argthread_t*) arg);
         *(((argthread_t *) arg)->quit) = true;
@@ -705,8 +697,8 @@ public:
     void initJuego() {
 
         leerXML();
-        cantidadUsuarios = (int) parser->users().size();
-        //cantidadUsuarios = 2;
+        //cantidadUsuarios = (int) parser->users().size();
+        cantidadUsuarios = 2;
         objectManager->crearPersonajes(cantidadUsuarios);
     }
 

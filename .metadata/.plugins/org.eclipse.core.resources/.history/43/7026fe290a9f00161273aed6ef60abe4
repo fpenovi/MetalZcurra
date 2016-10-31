@@ -1,0 +1,17 @@
+/*
+ * HandleKeyHoldServer.h
+ *
+ *  Created on: Oct 30, 2016
+ *      Author: franch
+ */
+
+#ifndef HANDLEKEYHOLDSERVER_H_
+#define HANDLEKEYHOLDSERVER_H_
+
+class HandleKeyHoldServer {
+public:
+	HandleKeyHoldServer();
+	virtual ~HandleKeyHoldServer();
+};
+
+#endif /* HANDLEKEYHOLDSERVER_H_ */

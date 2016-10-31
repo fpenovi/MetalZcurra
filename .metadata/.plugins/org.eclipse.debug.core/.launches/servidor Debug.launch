@@ -3,8 +3,8 @@
 <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
 <stringAttribute key="org.eclipse.cdt.launch.COREFILE_PATH" value=""/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_REGISTER_GROUPS" value=""/>
-<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_ARGUMENTS" value="5001 /home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/resources/juego.xml"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="/home/franch/neonWorkspaces/Taller1/MetalZcurra/servidor/Debug/servidor"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_ARGUMENTS" value="5001 resources/juego.xml"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug/servidor"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="servidor"/>
 <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="true"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="cdt.managedbuild.config.gnu.exe.debug.207930374"/>

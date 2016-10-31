@@ -1,0 +1,27 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables 
+CPP_SRCS += \
+../src/utils/threads/HandleJumpServer.cpp \
+../src/utils/threads/HandleKeyHoldServer.cpp 
+
+OBJS += \
+./src/utils/threads/HandleJumpServer.o \
+./src/utils/threads/HandleKeyHoldServer.o 
+
+CPP_DEPS += \
+./src/utils/threads/HandleJumpServer.d \
+./src/utils/threads/HandleKeyHoldServer.d 
+
+
+# Each subdirectory must supply rules for building sources it contributes
+src/utils/threads/%.o: ../src/utils/threads/%.cpp
+	@echo 'Building file: $<'
+	@echo 'Invoking: GCC C++ Compiler'
+	g++ -std=c++11 -I/usr/include/libxml2 -O0 -g3 -c -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+

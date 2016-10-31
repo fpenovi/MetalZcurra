@@ -55,7 +55,10 @@ void Layer::scrollear(int posJugadorx){
     render(scroll,0);
 
     //renderizo tambien lo de adelante para que sea infinito
-    //render(scroll+ancho,0);
+    if (-scroll + 800 > ancho) {  //PONGO 800 PORQUE ES EL SCREEN-WIDTH
+        //cout << "entre al render"<<endl;
+        render(scroll+ancho,0);
+    }
 }
 
 bool Layer::cargarImagen(char* path){

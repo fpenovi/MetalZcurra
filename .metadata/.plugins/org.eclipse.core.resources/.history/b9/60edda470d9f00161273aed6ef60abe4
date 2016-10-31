@@ -1,0 +1,17 @@
+/*
+ * HandleJumpServer.h
+ *
+ *  Created on: Oct 30, 2016
+ *      Author: franch
+ */
+
+#ifndef HANDLEJUMPSERVER_H_
+#define HANDLEJUMPSERVER_H_
+
+class HandleJumpServer {
+public:
+	HandleJumpServer();
+	virtual ~HandleJumpServer();
+};
+
+#endif /* HANDLEJUMPSERVER_H_ */

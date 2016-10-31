@@ -42,7 +42,7 @@ private:
 	list<string> mensajes;
 
 public:
-	Cliente(char** argv);
+    Cliente(char** argv);
 
     void enviarAusuario(string usuario, string linea, bool debePedirRespuesta);
 

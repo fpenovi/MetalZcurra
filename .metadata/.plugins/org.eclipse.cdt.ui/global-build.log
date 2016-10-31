@@ -1,8 +1,8 @@
-12:15:20 **** Clean-only build of configuration Release for project servidor ****
-make clean 
-rm -rf  ./src/utils/protocolos/ProtocoloComando.o ./src/utils/protocolos/ProtocoloNuevaVista.o ./src/utils/protocolos/ProtocoloVistaUpdate.o  ./src/utils/Log.o ./src/utils/ObjectManager.o ./src/utils/ParserXML.o  ./src/model/Personaje.o  ./src/Mensaje.o ./src/Servidor.o  ./src/utils/protocolos/ProtocoloComando.d ./src/utils/protocolos/ProtocoloNuevaVista.d ./src/utils/protocolos/ProtocoloVistaUpdate.d  ./src/utils/Log.d ./src/utils/ObjectManager.d ./src/utils/ParserXML.d  ./src/model/Personaje.d  ./src/Mensaje.d ./src/Servidor.d  servidor
- 
-12:15:20 **** Clean-only build of configuration Release for project juego ****
+23:49:56 **** Clean-only build of configuration Release for project juego ****
 make clean 
 rm -rf  ./src/views/Background.o ./src/views/Layer.o ./src/views/Textura.o ./src/views/VistaPersonaje.o  ./src/utils/HandleJump.o ./src/utils/HandleKeyHold.o ./src/utils/Heartbeat.o  ./src/Cliente.o ./src/Juego.o  ./src/views/Background.d ./src/views/Layer.d ./src/views/Textura.d ./src/views/VistaPersonaje.d  ./src/utils/HandleJump.d ./src/utils/HandleKeyHold.d ./src/utils/Heartbeat.d  ./src/Cliente.d ./src/Juego.d  juego
+ 
+23:49:56 **** Clean-only build of configuration Release for project servidor ****
+make clean 
+rm -rf  ./src/utils/threads/HandleJumpServer.o ./src/utils/threads/HandleKeyHoldServer.o  ./src/utils/protocolos/ProtocoloComando.o ./src/utils/protocolos/ProtocoloNuevaVista.o ./src/utils/protocolos/ProtocoloVistaUpdate.o  ./src/utils/Log.o ./src/utils/ObjectManager.o ./src/utils/ParserXML.o  ./src/model/Personaje.o  ./src/Mensaje.o ./src/Servidor.o  ./src/utils/threads/HandleJumpServer.d ./src/utils/threads/HandleKeyHoldServer.d  ./src/utils/protocolos/ProtocoloComando.d ./src/utils/protocolos/ProtocoloNuevaVista.d ./src/utils/protocolos/ProtocoloVistaUpdate.d  ./src/utils/Log.d ./src/utils/ObjectManager.d ./src/utils/ParserXML.d  ./src/model/Personaje.d  ./src/Mensaje.d ./src/Servidor.d  servidor
  
