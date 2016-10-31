@@ -26,6 +26,9 @@ out/
 /Debug
 /Release
 
+# Archivos de configuracion de Eclipse
+.metadata
+
 # Log
 log.txt
 
