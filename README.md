@@ -28,8 +28,8 @@ __Instalando...__
         StartupNotify=false <br />
         Categories=Development;IDE;C++; <br />
   
-  *Guardar gedit y cerrarlo
-  * Hacer Log Out y volver a Logearse y ya va a aparecer en la busqueda el Eclipse Neon :)
+* Guardar gedit y cerrarlo
+* Hacer Log Out y volver a Logearse y ya va a aparecer en la busqueda el Eclipse Neon :)
 
 **1) Seleccionando Workspace**
 
