@@ -10,7 +10,7 @@ Proyecto subido con archivos de configuracion de eclipse para que el workspace l
 ### Link de version de Eclipse a utilizar:
 http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/neon/1a/eclipse-cpp-neon-1a-linux-gtk-x86_64.tar.gz&mirror_id=576
 
-1) Seleccionando Workspace
+**1) Seleccionando Workspace**
 
 ![Imagen de workspace](http://img.ctrlv.in/img/16/10/31/5816b81ab172d.png)
 
@@ -20,14 +20,14 @@ http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/rel
 
 **Seleccionar ambos proyectos al mismo tiempo y asegurarse de cambiarle a ambos para que esten en el mismo**
 
-3) Compilacion
+**3) Compilacion**
 
 Boton derecho en _Juego -> Build Project_
 
-4) Ejecucion
+**4) Ejecucion**
 
 _Click en la flechita para abajo (del bichito para debugger o del play para ejecucion normal y seleccionar el perfil de ejecución)_
 
-5) Clean
+**5) Clean**
 
 _Boton derecho en Ambos proyectos -> Clean Project y si se quiere borrar las carpetas Release y Debug de ambos proyectos_
