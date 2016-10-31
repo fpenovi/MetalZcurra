@@ -10,13 +10,13 @@ Proyecto subido con archivos de configuracion de eclipse para que el workspace l
 ### Link de version de Eclipse a utilizar:
 http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/neon/1a/eclipse-cpp-neon-1a-linux-gtk-x86_64.tar.gz&mirror_id=576
 
-Instalando...
+__Instalando...__
 * Bajar y descomprimir en escritorio
 * Mover a la carpeta opt: $   sudo mv eclipse-neon-cpp /opt
 * Crear acceso directo:
   * Ejecutar $  sudo gedit /usr/share/applications/eclipse-neon-cpp.desktop
-  * Pegar las lineas: 
-        [Desktop Entry] <br />
+  * Pegar las lineas: <br />
+        [Desktop Entry]
         Encoding=UTF-8 <br />
         Exec=/opt/eclipse-neon-cpp/eclipse <br />
         Icon=/opt/eclipse-neon-cpp/icon.xpm <br />
