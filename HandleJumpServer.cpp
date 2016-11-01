@@ -6,11 +6,10 @@
 
 using namespace chrono;
 
-struct argkh {
+struct argjump {
     int* keyPressed;
     bool* isKhOn;
     bool* isKhPaused;
-    ObjectManager* objectMan;
     string* emisor;
     unordered_map<string, list<Mensaje*>*>* conectadosHash;
     unordered_map<string, pthread_mutex_t>* mutexesHash;
@@ -19,13 +18,13 @@ struct argkh {
 
 void* handleJumpFunc(void* argKh) {
 
-    bool* isKhOn = ( (argkh_t*) argKh )->isKhOn;
-    bool* isKhPaused = ( (argkh_t*) argKh)->isKhPaused;
-    int* keyPressed = ( (argkh_t*) argKh)->keyPressed;
-    ObjectManager* objectManager = ( (argkh_t*) argKh)->objectMan;
-    string* emisor = ( (argkh_t*) argKh)->emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argkh_t*) argKh)->conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argkh_t*) argKh)->mutexesHash;
+    bool* isKhOn = ( (argjump_t*) argKh )->isKhOn;
+    bool* isKhPaused = ( (argjump_t*) argKh)->isKhPaused;
+    int* keyPressed = ( (argjump_t*) argKh)->keyPressed;
+    ObjectManager* objectManager = ObjectManager::getInstance();
+    string* emisor = ( (argjump_t*) argKh)->emisor;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argjump_t*) argKh)->conectadosHash;
+    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argjump_t*) argKh)->mutexesHash;
 
     while (*isKhOn) {
 
@@ -97,10 +96,9 @@ void* handleJumpFunc(void* argKh) {
 }
 
 
-HandleJumpServer::HandleJumpServer(ObjectManager* objectManager) {
-    this->objectManager = objectManager;
+HandleJumpServer::HandleJumpServer() {
     isOn = false;
-    argKeyHold = NULL;
+    argJump = NULL;
     handleJumpTH = NULL;
     keyPressed = 0;
     emisor;
@@ -108,7 +106,7 @@ HandleJumpServer::HandleJumpServer(ObjectManager* objectManager) {
 
 HandleJumpServer::~HandleJumpServer() {
     delete handleJumpTH;
-    delete argKeyHold;
+    delete argJump;
 }
 
 void HandleJumpServer::On() {
@@ -118,23 +116,22 @@ void HandleJumpServer::On() {
     if (!handleJumpTH)
         throw NoSePudoCrearThreadHandleJumpServerException();
 
-    argKeyHold = new argkh_t;
+    argJump = new argjump_t;
 
-    if (!argKeyHold)
+    if (!argJump)
         throw NoSePudoCrearThreadHandleJumpServerException();
 
     isOn = true;
     isPaused = false;
 
-    argKeyHold->objectMan = objectManager;
-    argKeyHold->isKhOn = &isOn;
-    argKeyHold->isKhPaused = &isPaused;
-    argKeyHold->keyPressed = &keyPressed;
-    argKeyHold->emisor = &emisor;
-    argKeyHold->conectadosHash = conectadosHash;
-    argKeyHold->mutexesHash = mutexesHash;
+    argJump->isKhOn = &isOn;
+    argJump->isKhPaused = &isPaused;
+    argJump->keyPressed = &keyPressed;
+    argJump->emisor = &emisor;
+    argJump->conectadosHash = conectadosHash;
+    argJump->mutexesHash = mutexesHash;
 
-    if (pthread_create(handleJumpTH, NULL, handleJumpFunc, argKeyHold))
+    if (pthread_create(handleJumpTH, NULL, handleJumpFunc, argJump))
         throw NoSePudoCrearThreadHandleJumpServerException();
 }
 

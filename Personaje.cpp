@@ -165,3 +165,14 @@ void Personaje::setSpriteSaltando() {
 int Personaje::getSpriteSaltando() {
     return frameSaltando;
 }
+
+void Personaje::setSpriteParado() {
+    double index = frameParado;
+    if ( index >= ANIMACION_PARADO ) frameParado = 0;
+
+    frameParado++;
+}
+
+int Personaje::getSpriteParado() {
+    return frameParado;
+}

@@ -10,8 +10,6 @@
 #include "ProtocoloComando.h"
 #include "ProtocoloVistaUpdate.h"
 #include "ProtocoloNuevaVista.h"
-#include "HandleKeyHold.h"
-#include "HandleJump.h"
 #include "Background.h"
 
 using namespace std;
@@ -493,6 +491,12 @@ int main( int argc, char** argv) {
 
 	//juego.salaDeEspera();
 
+	// Dibujo por primera vez (es necesario)
+	SDL_RenderClear( juego.getRenderer() );
+	fondo->render(juego.getPosX());
+	juego.renderizar();
+	SDL_RenderPresent( juego.getRenderer() );
+
 	SDL_Event e;
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
@@ -541,14 +545,16 @@ int main( int argc, char** argv) {
 			pj->setPosCamara(posCam);
 			pj->setPosy(posy);
 			pj->setSeMovio(state);
+
+			SDL_RenderClear( juego.getRenderer() );
+
+			fondo->render(juego.getPosX());
+			juego.renderizar();
+
+			SDL_RenderPresent( juego.getRenderer() );
+
 		}
 
-		SDL_RenderClear( juego.getRenderer() );
-
-		fondo->render(juego.getPosX());
-		juego.renderizar();
-
-		SDL_RenderPresent( juego.getRenderer() );
 
 		// MIDO EL TIEMPO QUE TARDO EN RENDERIZAR
 		actual = high_resolution_clock::now();
@@ -556,7 +562,7 @@ int main( int argc, char** argv) {
 		auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
 		auto time = elapsed_ms.count()/1000000.0;
 
-		cout << "Elapsed ms: " << time << endl;
+		//cout << "Elapsed ms: " << time << endl;
 	}
 
 	//Free resources and close SDL

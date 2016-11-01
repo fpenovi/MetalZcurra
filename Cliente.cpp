@@ -261,7 +261,7 @@ void Cliente::encolar_vistas() {
     }
 
     string mensaje(linea);
-    //cout << mensaje;
+    cout << mensaje;
 
     mensajes.push_back(mensaje);
 

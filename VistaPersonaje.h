@@ -52,7 +52,7 @@ private:
 
 	SDL_RendererFlip flip;
 	SDL_Rect* currentClip;
-	int index;
+	int index = 0;
 
 public:
     VistaPersonaje(SDL_Renderer *renderizador2);

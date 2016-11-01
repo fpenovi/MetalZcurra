@@ -33,8 +33,10 @@ private:
 
     int frameCorriendo = 0;
     int frameSaltando = 0;
+    int frameParado = 0;
     const static int ANIMACION_CORRIENDO = 9;
     const static int ANIMACION_SALTANDO = 10;
+    const static int ANIMACION_PARADO = 3;
 
 public:
     void moverX(bool avanzar, int* posX);
@@ -90,6 +92,10 @@ public:
     void setSpriteSaltando();
 
     int getSpriteSaltando();
+
+    void setSpriteParado();
+
+    int getSpriteParado();
 };
 
 #endif //METALZCURRA_PERSONAJE_H

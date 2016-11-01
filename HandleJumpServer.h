@@ -32,23 +32,22 @@ public:
 };
 
 
-typedef struct argkh argkh_t;
+typedef struct argjump argjump_t;
 
 class HandleJumpServer {
 
 private:
     pthread_t* handleJumpTH;
-    argkh_t* argKeyHold;
+    argjump_t* argJump;
     bool isOn;
     bool isPaused;
     int keyPressed;
-    ObjectManager* objectManager;
     string emisor;
     unordered_map<string, list<Mensaje*>*>* conectadosHash;
     unordered_map<string, pthread_mutex_t>* mutexesHash;
 
 public:
-    HandleJumpServer(ObjectManager* objectManager);
+    HandleJumpServer();
 
     ~HandleJumpServer();
 
