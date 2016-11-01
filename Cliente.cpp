@@ -261,7 +261,7 @@ void Cliente::encolar_vistas() {
     }
 
     string mensaje(linea);
-    cout << mensaje;
+    cout << "ENCOLO NUEVA VISTA: " << mensaje;
 
     mensajes.push_back(mensaje);
 
@@ -290,7 +290,7 @@ string Cliente::recibir_nueva_vista() {
     }
 
     string mensaje(linea);
-    cout << linea;
+    cout << "NUEVA VISTA: " << linea;
     free(linea);
     linea = NULL;
     return mensaje;

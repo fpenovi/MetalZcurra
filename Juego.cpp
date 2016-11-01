@@ -393,11 +393,69 @@ public:
 		}
 
 	}
+
+	void recibirNuevoBackground(){
+
+		delete fondo;
+
+		// Seteo el fondo
+		Background* fondo = new Background(getRenderer());
+		setBackground(fondo);
+		recibirNuevasCapas();
+		fondo->prepararEscenario();
+
+		SDL_RenderClear( getRenderer() );
+		fondo->render(getPosX());
+		renderizar();
+		SDL_RenderPresent( getRenderer() );
+
+	}
+
+	void recibirNuevasCapas(){
+		cout <<"RECIBIENDO BACKGROUND"<< endl;
+
+		while (true) {
+
+			string stream = cliente->desencolar_vista();
+
+			if (stream == "$\n") break;
+
+			string path = "";
+			string ancho = "";
+			string zindex = "";
+
+			string* variables[] = {&path, &ancho, &zindex};
+
+			int j = 0;
+
+			for (int i=0; i<stream.size() - 1; i++) {
+
+				char actual = stream[i];
+
+				if (actual == '$') {
+					j++;
+					continue;
+				}
+
+				*(variables[j]) += actual;
+			}
+
+
+			char *path_c = new char[path.length() + 1];
+			strcpy(path_c, path.c_str());
+
+			if(!(fondo->agregar(path_c)) ){
+				printf( "Failed to load media!\n" );
+			}
+
+		}
+	}
 };
 
 typedef struct {
 	Juego* juego;
 	bool* quit;
+	bool* pauseRecibir;
 } controlador_t;
 
 void* recibirVistas( void* arg){
@@ -405,12 +463,14 @@ void* recibirVistas( void* arg){
 	controlador_t* arg2 = (controlador_t*) arg;
 	Juego* miJuego = (Juego*) arg2->juego;
 	bool* quit = (bool*) arg2->quit;
+	bool* pauseRecibir = (bool*) arg2->pauseRecibir;
 	Cliente* cliente = miJuego->getCliente();
 
 	while( !(*quit) ) {
 
-		cliente->encolar_vistas();
-
+		if (!(*pauseRecibir)) {
+			cliente->encolar_vistas();
+		}
 	}
 	return NULL;
 }
@@ -472,10 +532,12 @@ int main( int argc, char** argv) {
 
 	//Main loop flag
 	bool quit = false;
+	bool pauseRecibir = false;
 
 	controlador_t* arg = new controlador_t;
 	arg->juego = &juego;
 	arg->quit = &quit;
+	arg->pauseRecibir = &pauseRecibir;
 
 	// Thread que escucha eventos
 	pthread_attr_t attr;
@@ -489,7 +551,7 @@ int main( int argc, char** argv) {
 		exit(1);
 	}
 
-	//juego.salaDeEspera();
+	juego.salaDeEspera();
 
 	// Dibujo por primera vez (es necesario)
 	SDL_RenderClear( juego.getRenderer() );
@@ -500,6 +562,7 @@ int main( int argc, char** argv) {
 	SDL_Event e;
 	//WHILE APLICACION CORRIENDO
 	while( !quit ) {
+		pauseRecibir = false;
 
 		time_point<high_resolution_clock> start;
 		start = high_resolution_clock::now();
@@ -523,6 +586,10 @@ int main( int argc, char** argv) {
 
 			if (id == 100 ){
 				juego.jugadoresInicio();
+				usleep(100000);
+				pauseRecibir = true;
+				juego.recibirNuevoBackground();
+				cout << "RECIBI TODO" << endl;
 				continue;
 			}
 

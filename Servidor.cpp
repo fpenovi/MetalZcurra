@@ -238,7 +238,7 @@ private:
         if (result != 0) perror("Fallo el pthread_mutex_unlock en kick");
     }
 
-    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo, HandleKeyHoldServer* handleKeyHold, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto) {
+    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo, HandleKeyHoldServer* handleKeyHold, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto, int FD) {
 
         if (textoInicial == NULL){
             printf("ERROR");
@@ -288,6 +288,7 @@ private:
                     break;
 
                 case SDLK_r:
+                    handleQuieto->Pause();
                     objectManager->reinicializarEscenario();
 
                     update.setObject_id(100);
@@ -351,10 +352,14 @@ private:
                 result = pthread_mutex_unlock(&mutexesHash[kv.first]);
                 if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
             }
+
+            delete parser;
+            parser = new ParserXML((char *) "juego.xml");
+            objectManager->enviarNuevoBackground(parser, &conectadosHash, &mutexesHash, emisor);
         }
     }
 
-    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos, HandleKeyHoldServer* handler, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto) {
+    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos, HandleKeyHoldServer* handler, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto, int FD) {
 
         if (*bytesLeidos < 0) {
             cout << " SE DESCONECTÓ " << arg->user << endl;
@@ -362,7 +367,7 @@ private:
             return false;
         }
 
-        agregarMensaje(arg->user, linea, *bytesLeidos, handler, handleJump, handleQuieto);
+        agregarMensaje(arg->user, linea, *bytesLeidos, handler, handleJump, handleQuieto, FD);
         return true;
 
     }
@@ -455,11 +460,12 @@ private:
 
         int cant;
         // SALA DE ESPERA
-     /*   while (conectadosHash.size() != cantidadUsuarios){
+        while (conectadosHash.size() != cantidadUsuarios){
             cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
         }
+        usleep(100000);
         write(sockNewFileDescrpt, "$\n", 2);
-*/
+
         // Creo thread para enviar mensajes al cliente
         bool quit = false;
         (((argthread_t *) arg)->quit) = &quit;
@@ -516,7 +522,7 @@ private:
                 bytesLeidos = getline(&linea, &len, mensajeCliente);
 
                 // ENVIO MENSAJE
-                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos, handleKeyHoldServer, handleJumpServer, handleQuietoServer) )
+                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos, handleKeyHoldServer, handleJumpServer, handleQuietoServer, sockNewFileDescrpt) )
                     break;
             }
 
@@ -667,7 +673,6 @@ public:
             exit(1);
         }
         serverOn = true;
-        cout<<" muero ALLI"<<endl;
 
         cargarUsuarios(usuarios);
         parser = new ParserXML(docname);
@@ -690,9 +695,8 @@ public:
     }
     void initJuego() {
 
-        leerXML();
-        cantidadUsuarios = (int) parser->users().size();
-        //cantidadUsuarios = 2;
+        //cantidadUsuarios = (int) parser->users().size();
+        cantidadUsuarios = 2;
         objectManager->crearPersonajes(cantidadUsuarios);
     }
 
