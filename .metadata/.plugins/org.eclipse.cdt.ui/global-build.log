@@ -1,8 +1,72 @@
-23:49:56 **** Clean-only build of configuration Release for project juego ****
-make clean 
-rm -rf  ./src/views/Background.o ./src/views/Layer.o ./src/views/Textura.o ./src/views/VistaPersonaje.o  ./src/utils/HandleJump.o ./src/utils/HandleKeyHold.o ./src/utils/Heartbeat.o  ./src/Cliente.o ./src/Juego.o  ./src/views/Background.d ./src/views/Layer.d ./src/views/Textura.d ./src/views/VistaPersonaje.d  ./src/utils/HandleJump.d ./src/utils/HandleKeyHold.d ./src/utils/Heartbeat.d  ./src/Cliente.d ./src/Juego.d  juego
+19:56:30 **** Incremental Build of configuration Release for project servidor ****
+make all 
+make: No se hace nada para 'all'.
+19:56:30 **** Incremental Build of configuration Release for project juego ****
+make all 
+Building file: ../src/Juego.cpp
+Invoking: GCC C++ Compiler
+g++ -std=c++11 -I"/home/nestor/neonWorkspaces/Taller1/MetalZcurra/servidor/src/utils/protocolos" -O2 -c -MMD -MP -MF"src/Juego.d" -MT"src/Juego.o" -o "src/Juego.o" "../src/Juego.cpp"
+Finished building: ../src/Juego.cpp
  
-23:49:56 **** Clean-only build of configuration Release for project servidor ****
-make clean 
-rm -rf  ./src/utils/threads/HandleJumpServer.o ./src/utils/threads/HandleKeyHoldServer.o  ./src/utils/protocolos/ProtocoloComando.o ./src/utils/protocolos/ProtocoloNuevaVista.o ./src/utils/protocolos/ProtocoloVistaUpdate.o  ./src/utils/Log.o ./src/utils/ObjectManager.o ./src/utils/ParserXML.o  ./src/model/Personaje.o  ./src/Mensaje.o ./src/Servidor.o  ./src/utils/threads/HandleJumpServer.d ./src/utils/threads/HandleKeyHoldServer.d  ./src/utils/protocolos/ProtocoloComando.d ./src/utils/protocolos/ProtocoloNuevaVista.d ./src/utils/protocolos/ProtocoloVistaUpdate.d  ./src/utils/Log.d ./src/utils/ObjectManager.d ./src/utils/ParserXML.d  ./src/model/Personaje.d  ./src/Mensaje.d ./src/Servidor.d  servidor
+Building target: juego
+Invoking: GCC C++ Linker
+g++ -pthread  -o "juego"  ./src/views/Background.o ./src/views/Layer.o ./src/views/Textura.o ./src/views/VistaPersonaje.o  ./src/utils/Heartbeat.o  ./src/Cliente.o ./src/Juego.o  /home/nestor/neonWorkspaces/Taller1/MetalZcurra/servidor/Release/src/utils/protocolos/ProtocoloComando.o /home/nestor/neonWorkspaces/Taller1/MetalZcurra/servidor/Release/src/utils/protocolos/ProtocoloNuevaVista.o /home/nestor/neonWorkspaces/Taller1/MetalZcurra/servidor/Release/src/utils/protocolos/ProtocoloVistaUpdate.o -lSDL2 -lSDL2_image
+Finished building target: juego
  
+19:56:31 **** Incremental Build of configuration Release for project servidor ****
+make all 
+Building file: ../src/Servidor.cpp
+Invoking: GCC C++ Compiler
+g++ -std=c++11 -I/usr/include/libxml2 -O2 -c -MMD -MP -MF"src/Servidor.d" -MT"src/Servidor.o" -o "src/Servidor.o" "../src/Servidor.cpp"
+../src/Servidor.cpp: In static member function ‘static void* Servidor::procesarMensajes(void*)’:
+../src/Servidor.cpp:467:44: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+         write(sockNewFileDescrpt, "$\n", 2);
+                                            ^
+Finished building: ../src/Servidor.cpp
+ 
+Building target: servidor
+Invoking: GCC C++ Linker
+g++ -pthread -L/usr/include/libxml2 -o "servidor"  ./src/utils/threads/HandleJumpServer.o ./src/utils/threads/HandleKeyHoldServer.o ./src/utils/threads/HandleQuietoServer.o  ./src/utils/protocolos/ProtocoloComando.o ./src/utils/protocolos/ProtocoloNuevaVista.o ./src/utils/protocolos/ProtocoloVistaUpdate.o  ./src/utils/Log.o ./src/utils/ObjectManager.o ./src/utils/ParserXML.o  ./src/model/Personaje.o  ./src/Mensaje.o ./src/Servidor.o   -lxml2
+Finished building target: servidor
+ 
+19:56:51 **** Incremental Build of configuration Release for project servidor ****
+make all 
+make: No se hace nada para 'all'.
+19:57:06 **** Incremental Build of configuration Release for project servidor ****
+make all 
+make: No se hace nada para 'all'.
+19:57:16 **** Incremental Build of configuration Release for project servidor ****
+make all 
+make: No se hace nada para 'all'.
+19:57:29 **** Incremental Build of configuration Release for project servidor ****
+make all 
+make: No se hace nada para 'all'.
+19:57:33 **** Incremental Build of configuration Release for project servidor ****
+make all 
+Building file: ../src/Servidor.cpp
+Invoking: GCC C++ Compiler
+g++ -std=c++11 -I/usr/include/libxml2 -O2 -c -MMD -MP -MF"src/Servidor.d" -MT"src/Servidor.o" -o "src/Servidor.o" "../src/Servidor.cpp"
+../src/Servidor.cpp: In static member function ‘static void* Servidor::procesarMensajes(void*)’:
+../src/Servidor.cpp:467:44: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+         write(sockNewFileDescrpt, "$\n", 2);
+                                            ^
+Finished building: ../src/Servidor.cpp
+ 
+Building target: servidor
+Invoking: GCC C++ Linker
+g++ -pthread -L/usr/include/libxml2 -o "servidor"  ./src/utils/threads/HandleJumpServer.o ./src/utils/threads/HandleKeyHoldServer.o ./src/utils/threads/HandleQuietoServer.o  ./src/utils/protocolos/ProtocoloComando.o ./src/utils/protocolos/ProtocoloNuevaVista.o ./src/utils/protocolos/ProtocoloVistaUpdate.o  ./src/utils/Log.o ./src/utils/ObjectManager.o ./src/utils/ParserXML.o  ./src/model/Personaje.o  ./src/Mensaje.o ./src/Servidor.o   -lxml2
+Finished building target: servidor
+ 
+19:57:36 **** Incremental Build of configuration Release for project juego ****
+make all 
+Building target: juego
+Invoking: GCC C++ Linker
+g++ -pthread  -o "juego"  ./src/views/Background.o ./src/views/Layer.o ./src/views/Textura.o ./src/views/VistaPersonaje.o  ./src/utils/Heartbeat.o  ./src/Cliente.o ./src/Juego.o  /home/nestor/neonWorkspaces/Taller1/MetalZcurra/servidor/Release/src/utils/protocolos/ProtocoloComando.o /home/nestor/neonWorkspaces/Taller1/MetalZcurra/servidor/Release/src/utils/protocolos/ProtocoloNuevaVista.o /home/nestor/neonWorkspaces/Taller1/MetalZcurra/servidor/Release/src/utils/protocolos/ProtocoloVistaUpdate.o -lSDL2 -lSDL2_image
+Finished building target: juego
+ 
+19:57:55 **** Incremental Build of configuration Release for project servidor ****
+make all 
+make: No se hace nada para 'all'.
+19:57:55 **** Incremental Build of configuration Release for project juego ****
+make all 
+make: No se hace nada para 'all'.

@@ -170,6 +170,55 @@ void ObjectManager::setPosX(int i){
 	posx=i;
 }
 
+void ObjectManager::enviarNuevoBackground(ParserXML* parser, unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash, string emisor) {
+	string tamVentana = parser->TamVentana();
+	string tamNivel = parser->tamNivel();
+	vector <string> sprites = parser->spritesPlayers();
+	vector<string> capas = parser->capas();
+	if (tamVentana.length() == 0 || tamNivel.length() == 0 || sprites.empty() || capas.empty() ) {
+		parser->setearDefecto();
+		tamVentana = parser->TamVentana();
+		tamNivel = parser->tamNivel();
+		sprites = parser->spritesPlayers();
+		capas = parser->capas();
+	}
+
+	string msj;
+	int result;
+
+	for (int i = 0 ; i < capas.size() ; i++){
+		msj = "";
+		msj = capas[i] + "\n";
+
+		for (auto kv : *conectadosHash) {
+
+			Mensaje *mensajeNuevo = new Mensaje(emisor, kv.first, msj);
+
+			result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+			if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+			kv.second->push_back(mensajeNuevo);
+
+			result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+			if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+		}
+	}
+
+	string fin = "$\n";
+	for (auto kv : *conectadosHash) {
+
+		Mensaje *mensajeNuevo = new Mensaje(emisor, kv.first, fin);
+
+		result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+		kv.second->push_back(mensajeNuevo);
+
+		result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+	}
+}
+
 ObjectManager::~ObjectManager() {
 	for (auto kv : objects)
 		delete kv.second;

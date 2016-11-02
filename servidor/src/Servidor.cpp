@@ -18,6 +18,7 @@
 #include "utils/Log.h"
 #include "utils/threads/HandleKeyHoldServer.h"
 #include "utils/threads/HandleJumpServer.h"
+#include "utils/threads/HandleQuietoServer.h"
 
 
 #define MAX_CLIENTS 6
@@ -236,7 +237,7 @@ private:
         if (result != 0) perror("Fallo el pthread_mutex_unlock en kick");
     }
 
-    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo, HandleKeyHoldServer* handleKeyHold, HandleJumpServer* handleJump) {
+    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo, HandleKeyHoldServer* handleKeyHold, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto, int FD) {
 
         if (textoInicial == NULL){
             printf("ERROR");
@@ -266,23 +267,27 @@ private:
             switch( key ) {
 
                 case SDLK_LEFT:
+                	handleQuieto->Pause();
                     handleKeyHold->setKeyPressed(SDLK_LEFT);
                     handleKeyHold->Resume();
                     enviar = false;
                     break;
 
                 case SDLK_RIGHT:
+                	handleQuieto->Pause();
                     handleKeyHold->setKeyPressed(SDLK_RIGHT);
                     handleKeyHold->Resume();
                     enviar = false;
                     break;
 
                 case SDLK_UP:
+                	handleQuieto->Pause();
                     handleJump->Resume();
                     enviar = false;
                     break;
 
                 case SDLK_r:
+                	handleQuieto->Pause();
                     objectManager->reinicializarEscenario();
 
                     update.setObject_id(100);
@@ -306,18 +311,7 @@ private:
                     if (handleKeyHold->getKeyPressed() == SDLK_LEFT) {
                         handleKeyHold->Pause();
                         handleKeyHold->setKeyPressed(0);
-
-                        personaje->setVelx(0);
-                        personaje->moverX(avanzar, posX);
-
-                        update.setEstado(personaje->getSeMovio());
-                        update.setX(*posX);
-                        update.setY(personaje->getPosy());
-                        update.setObject_id(idEmisor);
-                        update.setPosCamara(personaje->getPosCamara());
-                        update.setConectado(personaje->getConectado());
-                        update.setSpriteIndex(personaje->getFrameCorriendo());
-                        enviar = true;
+                        handleQuieto->Resume();
                     }
                     break;
 
@@ -325,23 +319,13 @@ private:
                     if (handleKeyHold->getKeyPressed() == SDLK_RIGHT) {
                         handleKeyHold->Pause();
                         handleKeyHold->setKeyPressed(0);
-
-                        personaje->setVelx(0);
-                        personaje->moverX(avanzar, posX);
-
-                        update.setEstado(personaje->getSeMovio());
-                        update.setX(*posX);
-                        update.setY(personaje->getPosy());
-                        update.setObject_id(idEmisor);
-                        update.setPosCamara(personaje->getPosCamara());
-                        update.setConectado(personaje->getConectado());
-                        update.setSpriteIndex(personaje->getFrameCorriendo());
-                        enviar = true;
+                        handleQuieto->Resume();
                     }
                     break;
 
                 case SDLK_UP:
                     handleJump->Pause();
+                    handleQuieto->Resume();
                     enviar = false;
                     break;
 
@@ -367,10 +351,15 @@ private:
                 result = pthread_mutex_unlock(&mutexesHash[kv.first]);
                 if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
             }
+
+            delete parser;
+            parser = new ParserXML((char *) "juego.xml");
+            objectManager->enviarNuevoBackground(parser, &conectadosHash, &mutexesHash, emisor);
+
         }
     }
 
-    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos, HandleKeyHoldServer* handler, HandleJumpServer* handleJump) {
+    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos, HandleKeyHoldServer* handler, HandleJumpServer* handleJump,  HandleQuietoServer* handleQuieto, int FD) {
 
         if (*bytesLeidos < 0) {
             cout << " SE DESCONECTÓ " << arg->user << endl;
@@ -378,7 +367,7 @@ private:
             return false;
         }
 
-        agregarMensaje(arg->user, linea, *bytesLeidos, handler, handleJump);
+        agregarMensaje(arg->user, linea, *bytesLeidos, handler, handleJump, handleQuieto, FD);
         return true;
 
     }
@@ -471,11 +460,12 @@ private:
 
         int cant;
         // SALA DE ESPERA
-     /*   while (conectadosHash.size() != cantidadUsuarios){
+        while (conectadosHash.size() != cantidadUsuarios){
             cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
         }
+        usleep(100000);
         write(sockNewFileDescrpt, "$\n", 2);
-*/
+
         // Creo thread para enviar mensajes al cliente
         bool quit = false;
         (((argthread_t *) arg)->quit) = &quit;
@@ -491,13 +481,20 @@ private:
         handleKeyHoldServer->Pause();
 
         // Creo thread de salto
-        HandleJumpServer* handleJumpServer = new HandleJumpServer(objectManager);
+        HandleJumpServer* handleJumpServer = new HandleJumpServer();
         handleJumpServer->setKeyPressed(SDLK_UP);
         handleJumpServer->setEmisor(userCon);
         handleJumpServer->setConectadosHash(&conectadosHash);
         handleJumpServer->setMutexesHash(&mutexesHash);
         handleJumpServer->On();
         handleJumpServer->Pause();
+
+        // Creo thread de personaje quieto
+        HandleQuietoServer* handleQuietoServer = new HandleQuietoServer();
+        handleQuietoServer->setEmisor(userCon);
+        handleQuietoServer->setConectadosHash(&conectadosHash);
+        handleQuietoServer->setMutexesHash(&mutexesHash);
+        handleQuietoServer->On();
 
         while (true) {
 
@@ -525,7 +522,7 @@ private:
                 bytesLeidos = getline(&linea, &len, mensajeCliente);
 
                 // ENVIO MENSAJE
-                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos, handleKeyHoldServer, handleJumpServer) )
+                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos, handleKeyHoldServer, handleJumpServer, handleQuietoServer, sockNewFileDescrpt) )
                     break;
             }
 
@@ -568,6 +565,9 @@ private:
 
         }
 
+        pthread_join(*recibirThread, NULL);
+        handleQuietoServer->Off();
+        delete handleQuietoServer;
         handleKeyHoldServer->Off();
         delete handleKeyHoldServer;
         handleJumpServer->Off();
@@ -673,7 +673,6 @@ public:
             exit(1);
         }
         serverOn = true;
-        cout<<" muero ALLI"<<endl;
 
         cargarUsuarios(usuarios);
         parser = new ParserXML(docname);
@@ -696,7 +695,6 @@ public:
     }
     void initJuego() {
 
-        leerXML();
         //cantidadUsuarios = (int) parser->users().size();
         cantidadUsuarios = 2;
         objectManager->crearPersonajes(cantidadUsuarios);

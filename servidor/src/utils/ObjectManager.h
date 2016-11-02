@@ -12,7 +12,8 @@
 #include <unordered_map>
 #include "../model/Personaje.h"
 #include "ParserXML.h"
-
+#include "../Mensaje.h"
+#include <list>
 
 using namespace std;
 
@@ -44,6 +45,7 @@ public:
 	void moverDesconectados();
 	void setPosX(int i);
 	void reinicializarEscenario();
+	void enviarNuevoBackground(ParserXML* parser, unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash, string emisor );
 };
 
 #endif /* OBJECTMANAGER_H_ */

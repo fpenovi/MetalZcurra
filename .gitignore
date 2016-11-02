@@ -23,14 +23,18 @@ out/
 .ant-targets-build.xml
 
 # Ejecutables
-/Debug
-/Release
+juego/Debug
+juego/Release
+servidor/Debug
+servidor/Release
 
 # Archivos de configuracion de Eclipse
 .metadata
+/RemoteSystemsTempFiles
 
 # Log
 log.txt
 
 # Archivos editables de Gimp
 *.xcf
+

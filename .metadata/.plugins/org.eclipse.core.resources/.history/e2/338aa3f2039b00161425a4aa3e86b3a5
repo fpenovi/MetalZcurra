@@ -1,5 +1,0 @@
-src/utils/protocolos/ProtocoloVistaUpdate.o: \
- ../src/utils/protocolos/ProtocoloVistaUpdate.cpp \
- ../src/utils/protocolos/ProtocoloVistaUpdate.h
-
-../src/utils/protocolos/ProtocoloVistaUpdate.h:

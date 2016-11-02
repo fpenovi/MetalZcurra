@@ -54,13 +54,8 @@ void VistaPersonaje::animacionParado(){
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
 	else flip = SDL_FLIP_NONE;
 
-	int index = frameParado / frameDivider;
-	if( index >= ANIMACION_PARADO ) frameParado = 0;
-
 	currentClip = &spriteParado[ index ];
 	TEXTURA_PERSONAJE_PARADO->render(posCamara,posy, currentClip,0,NULL,flip );
-
-	frameParado++;
 }
 
 void VistaPersonaje::animacionCorrer(){

@@ -33,7 +33,7 @@ void* handleKeyHoldFunc(void* argKh) {
 
     time_point<high_resolution_clock> start;
     start = high_resolution_clock::now();
-    microseconds intervalo(30000);	// 30ms
+    microseconds intervalo(35000);	// 35ms
 
     while (*isKhOn) {
         time_point<high_resolution_clock> actual;
@@ -85,7 +85,10 @@ void* handleKeyHoldFunc(void* argKh) {
                         update.setObject_id(idEmisor);
                         update.setPosCamara(personaje->getPosCamara());
                         update.setConectado(personaje->getConectado());
-                        update.setSpriteIndex(personaje->getFrameCorriendo());
+
+                        if (personaje->getSeMovio()) update.setSpriteIndex(personaje->getFrameCorriendo());
+                        else update.setSpriteIndex(personaje->getSpriteParado());
+
                         break;
 
                 }

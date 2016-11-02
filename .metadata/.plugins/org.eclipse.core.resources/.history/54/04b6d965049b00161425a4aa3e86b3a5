@@ -1,9 +1,0 @@
-src/utils/HandleJump.o: ../src/utils/HandleJump.cpp \
- ../src/utils/HandleJump.h ../src/utils/../Cliente.h \
- ../src/utils/../utils/Heartbeat.h
-
-../src/utils/HandleJump.h:
-
-../src/utils/../Cliente.h:
-
-../src/utils/../utils/Heartbeat.h:

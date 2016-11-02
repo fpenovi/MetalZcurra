@@ -1,6 +1,0 @@
-src/views/VistaPersonaje.o: ../src/views/VistaPersonaje.cpp \
- ../src/views/VistaPersonaje.h ../src/views/Textura.h
-
-../src/views/VistaPersonaje.h:
-
-../src/views/Textura.h:

@@ -33,6 +33,8 @@ private:
 
     int frameCorriendo = 0;
     int frameSaltando = 0;
+    int frameParado = 0;
+    const static int ANIMACION_PARADO = 3;
     const static int ANIMACION_CORRIENDO = 9;
     const static int ANIMACION_SALTANDO = 10;
 
@@ -92,6 +94,10 @@ public:
     void setSpriteSaltando();
 
     int getSpriteSaltando();
+
+    void setSpriteParado();
+
+    int getSpriteParado();
 
 	virtual ~Personaje();
 };

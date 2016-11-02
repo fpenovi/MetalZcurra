@@ -55,10 +55,10 @@
 		<item value="org.eclipse.search.internal.ui.text.TextSearchPage" key="PREVIOUS_PAGE"/>
 	</section>
 	<section name="DialogBounds_SearchDialog">
-		<item value="597" key="DIALOG_WIDTH"/>
+		<item value="617" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="486" key="DIALOG_HEIGHT"/>
+		<item value="534" key="DIALOG_HEIGHT"/>
 		<item value="599" key="DIALOG_X_ORIGIN"/>
-		<item value="219" key="DIALOG_Y_ORIGIN"/>
+		<item value="210" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

@@ -1,3 +1,0 @@
-src/utils/Log.o: ../src/utils/Log.cpp ../src/utils/Log.h
-
-../src/utils/Log.h:
