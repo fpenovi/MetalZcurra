@@ -243,7 +243,13 @@ string Cliente::desencolar_vista() {
 
     string mensaje = mensajes.front();
 
+    int result = pthread_mutex_lock(&mutex_envios);
+    if (result != 0) perror("Fallo el pthread_mutex_lock en login");
+
     mensajes.pop_front();
+
+    result = pthread_mutex_unlock(&mutex_envios);
+    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 
     return mensaje;
 }
@@ -264,7 +270,13 @@ void Cliente::encolar_vistas() {
     string mensaje(linea);
     cout << "ENCOLO NUEVA VISTA: " << mensaje;
 
+    int result = pthread_mutex_lock(&mutex_envios);
+    if (result != 0) perror("Fallo el pthread_mutex_lock en login");
+
     mensajes.push_back(mensaje);
+
+    result = pthread_mutex_unlock(&mutex_envios);
+    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 
     free(linea);
     linea = NULL;
@@ -277,13 +289,7 @@ string Cliente::recibir_nueva_vista() {
     size_t len = 0;
     ssize_t bytesLeidos;
 
-    int result = pthread_mutex_lock(&mutex_envios);
-    if (result != 0) perror("Fallo el pthread_mutex_lock en login");
-
     bytesLeidos = getline(&linea, &len, respuestaServidor);
-
-    result = pthread_mutex_unlock(&mutex_envios);
-    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
 
     if (bytesLeidos <= 0) {
         perror("ERROR --> Se cerró el server");
