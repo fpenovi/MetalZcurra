@@ -2,11 +2,6 @@
 // Created by juancho on 02/10/16.
 //
 
-#include <SDL2/SDL_image.h>
-#include <stdio.h>
-#include <SDL2/SDL.h>
-#include <string>
-#include <iostream>
 #include "Textura.h"
 
 Textura::Textura(SDL_Renderer* renderizador2){
@@ -99,4 +94,39 @@ int Textura::getAlto(){
 
 void Textura::setColor( Uint8 red, Uint8 green, Uint8 blue ) {
 	SDL_SetTextureColorMod( textura, red, green, blue );
+}
+
+bool Textura::loadFromText( string texto, SDL_Color colorTexto, TTF_Font* gFont)
+{
+	//Get rid of preexisting texture
+	free();
+
+	//Render text surface
+	SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, texto.c_str(), colorTexto );
+	if( textSurface != NULL )
+	{
+		//Create texture from surface pixels
+		textura = SDL_CreateTextureFromSurface( renderizador, textSurface );
+		if( textura == NULL )
+		{
+			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
+		}
+		else
+		{
+			//Get image dimensions
+			ancho = textSurface->w;
+			alto = textSurface->h;
+		}
+
+		//Get rid of old surface
+		SDL_FreeSurface( textSurface );
+	}
+	else
+	{
+		printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+	}
+
+
+	//Return success
+	return textura != NULL;
 }

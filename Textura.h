@@ -5,6 +5,16 @@
 #ifndef METALZCURRA_TEXTURA_H
 #define METALZCURRA_TEXTURA_H
 
+#include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_clipboard.h>
+#include <SDL2/SDL_image.h>
+#include <stdio.h>
+#include <SDL2/SDL.h>
+#include <string>
+#include <iostream>
+#include <SDL2/SDL_ttf.h>
+
 using namespace std;
 
 class Textura{
@@ -25,6 +35,7 @@ public:
     int getAlto();
     void free();
     void setColor( Uint8 red, Uint8 green, Uint8 blue );
+    bool loadFromText( string texto, SDL_Color colorTexto, TTF_Font* gFont);
 };
 
 

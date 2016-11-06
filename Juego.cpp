@@ -11,6 +11,8 @@
 #include "ProtocoloVistaUpdate.h"
 #include "ProtocoloNuevaVista.h"
 #include "Background.h"
+#include "Texto.h"
+#include "Textura.h"
 
 using namespace std;
 using namespace chrono;
@@ -30,6 +32,19 @@ private:
 	int screenHeight;
 	int levelWidth;
 	int levelHeight;
+
+	Textura* neoGeo = new Textura(renderizador);
+	Textura* esperando = new Textura(renderizador);
+	Textura* fondoInicial = new Textura(renderizador);
+	Textura* TEXTURA_EXPLOSION1 = new Textura(renderizador);
+	Textura* TEXTURA_EXPLOSION2 = new Textura(renderizador);
+	Textura* TEXTURA_EXPLOSION3 = new Textura(renderizador);
+	Textura* TEXTURA_METAL = new Textura(renderizador);
+	SDL_Rect spriteEntrada1[ 10 ];
+	SDL_Rect spriteEntrada2[ 10 ];
+	SDL_Rect spriteEntrada3[ 10 ];
+	SDL_Rect spriteMetal[ 7 ];
+
 
 public:
 
@@ -57,6 +72,249 @@ public:
 		IMG_Quit();
 		SDL_Quit();
 	}
+
+	void presentacion(){
+		//ESTE METODO ES EL QUE PIDE IP PUERTO Y NOMBRE
+		Uint32 start = 0;
+		Texto* textoip = new Texto("IP: ", renderizador);
+		textoip->cargarTitulo();
+		Texto* textopuerto = new Texto("Puerto: ", renderizador);
+		textopuerto->cargarTitulo();
+		Texto* textonombre = new Texto("Nombre: ", renderizador);
+		textonombre->cargarTitulo();
+
+		SDL_Event e;
+		bool quit = false;
+
+		if( !neoGeo->cargarImagen("imag/entrada/neogeo.png"))
+		{
+			printf( "Failed to load presentacion!\n" );
+		}
+		else{
+
+			while(!quit)
+			{
+				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
+				SDL_RenderClear( renderizador );
+				neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
+				quit=textoip->pedir();
+				SDL_RenderPresent( renderizador );
+			}
+			quit=false;
+			while(!quit)
+			{
+				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
+				SDL_RenderClear( renderizador );
+				neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
+				quit=textopuerto->pedir();
+				SDL_RenderPresent( renderizador );
+			}
+			quit=false;
+			while(!quit)
+			{
+				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
+				SDL_RenderClear( renderizador );
+				neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
+				quit=textonombre->pedir();
+				SDL_RenderPresent( renderizador );
+			}
+			quit=false;
+
+			while( !quit )
+			{
+				//MANEJA LA COLA DE EVENTOS
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					if( e.type == SDL_QUIT ){
+						quit = true;
+					}
+					if( e.type == SDL_KEYDOWN )
+					{
+						if (e.key.keysym.sym == SDLK_RETURN) quit = true;
+					}
+				}
+				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
+				SDL_RenderClear( renderizador );
+
+				//Render background
+				neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
+				esperando->render(180,400,NULL, 0.0, NULL, SDL_FLIP_NONE);
+
+				SDL_RenderPresent( renderizador );
+			}
+		}
+	}
+
+	void cargarEntrada(){
+		//Loading success flag
+		int i;
+
+		//Load sprite sheet texture
+		if( !TEXTURA_EXPLOSION1->cargarImagen( "imag/entrada/entrada1.png") )
+		{
+			printf( "Fallo sprite EXPLOSION1\n" );
+		}
+		else
+		{
+			for (i = 0;i<10;i++){
+				spriteEntrada1[ i ].x = i*800;
+				spriteEntrada1[ i ].y = 0;
+				spriteEntrada1[ i ].w = 800;
+				spriteEntrada1[ i ].h = 600;
+			}
+		}
+
+		//Load sprite sheet texture
+		if( !TEXTURA_EXPLOSION2->cargarImagen( "imag/entrada/entrada2.png") )
+		{
+			printf( "Fallo sprite EXPLOSION2\n" );
+		}
+		else
+		{
+			for (i = 0;i<10;i++){
+				spriteEntrada2[ i ].x = i*800;
+				spriteEntrada2[ i ].y = 0;
+				spriteEntrada2[ i ].w = 800;
+				spriteEntrada2[ i ].h = 600;
+			}
+		}
+		if( !TEXTURA_EXPLOSION3->cargarImagen( "imag/entrada/entrada3.png") )
+		{
+			printf( "Fallo sprite EXPLOSION3\n" );
+		}
+		else
+		{
+			for (i = 0;i<10;i++){
+				spriteEntrada3[ i ].x = i*800;
+				spriteEntrada3[ i ].y = 0;
+				spriteEntrada3[ i ].w = 800;
+				spriteEntrada3[ i ].h = 600;
+			}
+		}
+
+		if (!fondoInicial->cargarImagen("imag/entrada/fondito.png")){
+			cout << "error cargando fondito"<<endl;
+		}
+		if (!esperando->cargarImagen("imag/entrada/esperando.png")){
+			cout << "error cargando esperando"<<endl;
+		}
+		if (!TEXTURA_METAL->cargarImagen("imag/entrada/MetalSlug.png")){
+			cout << "error cargando metal slug"<<endl;
+		}
+		else
+		{
+			for (i = 0;i<7;i++){
+				spriteMetal[ i ].x = i*640;
+				spriteMetal[ i ].y = 0;
+				spriteMetal[ i ].w = 640;
+				spriteMetal[ i ].h = 377;
+			}
+		}
+	}
+
+	void entrada(){
+		//ESTE METODO HACE LA PRESENTACION Y LA SALA DE ESPERA
+		//PRIMERO HAY QUE LLAMAR A CARGARENTRADA()
+
+		SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+		SDL_RenderClear( renderizador );
+		int frame=0;
+		int contador=0;
+		while (frame < 10){
+			//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_RenderClear( renderizador );
+			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+			SDL_Rect* currentClip = &spriteEntrada1[ frame];
+			TEXTURA_EXPLOSION1->render( 0, 0,currentClip, 0.0, NULL, SDL_FLIP_NONE);
+			SDL_RenderPresent( renderizador );
+			if (contador % 5 == 0) frame++;
+			contador++;
+		}
+		frame=0;
+		while (frame < 10){
+			//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_RenderClear( renderizador );
+			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+			SDL_Rect* currentClip = &spriteEntrada2[ frame ];
+			TEXTURA_EXPLOSION2->render( 0, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+			SDL_RenderPresent( renderizador );
+			if (contador % 5 == 0) frame++;
+			contador++;
+		}
+		frame=0;
+		while (frame < 10){
+			//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_RenderClear( renderizador );
+			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+			SDL_Rect* currentClip = &spriteEntrada3[ frame ];
+			TEXTURA_EXPLOSION3->render( 0, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+			SDL_RenderPresent( renderizador );
+			if (contador%5 == 0) frame++;
+			contador++;
+		}
+
+		frame=0;
+		while (frame < 7){
+			//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_RenderClear( renderizador );
+			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+			SDL_Rect* currentClip = &spriteMetal[ frame ];
+			TEXTURA_METAL->render( 150, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+			SDL_RenderPresent( renderizador );
+			if (contador % 4 == 0) frame++;
+			contador++;
+		}
+
+		bool quit = false;
+		SDL_Event e;
+		Texto* esperandoTexto = new Texto("Esperando jugadores ", renderizador);
+		esperandoTexto->cargarTitulo();
+		Texto* puntitos = new Texto(".", renderizador);
+		puntitos->cargarTitulo();
+
+		int vueltas=0;
+
+		while (!quit){
+			while( SDL_PollEvent( &e ) != 0 )
+			{
+				if( e.type == SDL_QUIT )
+				{
+					quit = true;
+					continue;
+				}
+				else if( e.type == SDL_KEYDOWN )
+				{
+					if (e.key.keysym.sym == SDLK_RETURN){
+						quit = true;
+						continue;
+					}
+				}
+			}
+
+			SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_RenderClear( renderizador );
+			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+			SDL_Rect* currentClip = &spriteMetal[ frame-1 ];
+			TEXTURA_METAL->render( 115, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+			//esperando.render(180,400);
+			esperandoTexto->renderTitulo(180,400);
+			//puntitos.renderTitulo(550,400);
+			if (vueltas % 100 <= 33) puntitos->renderTitulo(550,400);
+			else if (vueltas % 100<= 66){
+				puntitos->renderTitulo(550,400);
+				puntitos->renderTitulo(560,400);
+			}
+			else {
+				puntitos->renderTitulo(550,400);
+				puntitos->renderTitulo(560,400);
+				puntitos->renderTitulo(570,400);
+			}
+			SDL_RenderPresent( renderizador );
+			vueltas++;
+		}
+
+	}
+
 
 	bool iniciar() {
 		//flag
