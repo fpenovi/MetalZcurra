@@ -33,8 +33,13 @@ private:
 	int levelWidth;
 	int levelHeight;
 
+	// Atributos para sala de espera
+	Texto* textoip;
+	Texto* textopuerto;
+	Texto* textonombre;
+	Texto* esperandoTexto;
+	Texto* puntitos;
 	Textura* neoGeo;
-	Textura* esperando;
 	Textura* fondoInicial;
 	Textura* TEXTURA_EXPLOSION1;
 	Textura* TEXTURA_EXPLOSION2;
@@ -79,14 +84,13 @@ public:
 	void presentacion(){
 		//ESTE METODO ES EL QUE PIDE IP PUERTO Y NOMBRE
 		neoGeo = new Textura(renderizador);
-		esperando = new Textura(renderizador);
 
 		Uint32 start = 0;
-		Texto* textoip = new Texto("IP: ", renderizador);
+		textoip = new Texto("IP: ", renderizador);
 		textoip->cargarTitulo();
-		Texto* textopuerto = new Texto("Puerto: ", renderizador);
+		textopuerto = new Texto("Puerto: ", renderizador);
 		textopuerto->cargarTitulo();
-		Texto* textonombre = new Texto("Nombre: ", renderizador);
+		textonombre = new Texto("Nombre: ", renderizador);
 		textonombre->cargarTitulo();
 
 		SDL_Event e;
@@ -147,11 +151,17 @@ public:
 
 				//Render background
 				neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
-				esperando->render(180,400,NULL, 0.0, NULL, SDL_FLIP_NONE);
 
 				SDL_RenderPresent( renderizador );
 			}
 		}
+	}
+
+	void liberarPresentacion(){
+		delete neoGeo;
+		delete textoip;
+		delete textopuerto;
+		delete textonombre;
 	}
 
 	void cargarEntrada(){
@@ -209,9 +219,6 @@ public:
 
 		if (!fondoInicial->cargarImagen("imag/entrada/fondito.png")){
 			cout << "error cargando fondito"<<endl;
-		}
-		if (!esperando->cargarImagen("imag/entrada/esperando.png")){
-			cout << "error cargando esperando"<<endl;
 		}
 		if (!TEXTURA_METAL->cargarImagen("imag/entrada/MetalSlug.png")){
 			cout << "error cargando metal slug"<<endl;
@@ -282,9 +289,9 @@ public:
 
 		bool quit = false;
 		SDL_Event e;
-		Texto* esperandoTexto = new Texto("Esperando jugadores ", renderizador);
+		esperandoTexto = new Texto("Esperando jugadores ", renderizador);
 		esperandoTexto->cargarTitulo();
-		Texto* puntitos = new Texto(".", renderizador);
+		puntitos = new Texto(".", renderizador);
 		puntitos->cargarTitulo();
 
 		int vueltas=0;
@@ -330,6 +337,15 @@ public:
 
 	}
 
+	void liberarEntrada(){
+		delete esperandoTexto;
+		delete puntitos;
+		delete fondoInicial;
+		delete TEXTURA_EXPLOSION1;
+		delete TEXTURA_EXPLOSION2;
+		delete TEXTURA_EXPLOSION3;
+		delete TEXTURA_METAL;
+	}
 
 	bool iniciar() {
 		//flag
@@ -810,6 +826,8 @@ int main( int argc, char** argv) {
 	juego.setCliente(&cliente);
 	juego.conectar();
 
+	juego.liberarPresentacion();
+
 	juego.recibirEscenario();
 
 	// Seteo el fondo
@@ -851,6 +869,8 @@ int main( int argc, char** argv) {
 	fondo->render(juego.getPosX());
 	juego.renderizar();
 	SDL_RenderPresent( juego.getRenderer() );
+
+	juego.liberarEntrada();
 
 	SDL_Event e;
 	//WHILE APLICACION CORRIENDO

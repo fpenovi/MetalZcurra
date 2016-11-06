@@ -123,3 +123,8 @@ void Texto::renderTitulo(int x,int y){
 
     texturaTitulo->render(x,y,NULL, 0.0, NULL, SDL_FLIP_NONE);
 }
+
+Texto::~Texto() {
+    delete texturaInput;
+    delete texturaTitulo;
+}

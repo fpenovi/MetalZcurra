@@ -37,6 +37,8 @@ public:
     string getTexto();
 
     void renderTitulo(int x, int y);
+
+    ~Texto();
 };
 
 #endif //METALZCURRA_TEXTO_H

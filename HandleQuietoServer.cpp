@@ -29,7 +29,7 @@ void* handleQuietoFunc(void* argKh) {
 
     time_point<high_resolution_clock> start;
     start = high_resolution_clock::now();
-    microseconds intervalo(130000);	// 120ms
+    microseconds intervalo(150000);	// 150ms
 
     while (*isKhOn) {
         time_point<high_resolution_clock> actual;
