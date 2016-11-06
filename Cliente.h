@@ -36,7 +36,7 @@ private:
 	list<string> mensajes;
 
 public:
-    Cliente(char** argv);
+    Cliente(string ip, string puerto);
 
     void enviarAusuario(string usuario, string linea, bool debePedirRespuesta);
 
@@ -70,7 +70,7 @@ public:
 
     void mostrar_menu();
 
-    void conectar();
+    void conectar(string nombre);
 
     void activar_socket();
 

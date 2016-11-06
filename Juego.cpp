@@ -28,22 +28,25 @@ private:
 	int lastKeyPressed;
 	Background* fondo;
 	int posx;
-	int screenWidth;
-	int screenHeight;
+	int screenWidth = 800;
+	int screenHeight = 600;
 	int levelWidth;
 	int levelHeight;
 
-	Textura* neoGeo = new Textura(renderizador);
-	Textura* esperando = new Textura(renderizador);
-	Textura* fondoInicial = new Textura(renderizador);
-	Textura* TEXTURA_EXPLOSION1 = new Textura(renderizador);
-	Textura* TEXTURA_EXPLOSION2 = new Textura(renderizador);
-	Textura* TEXTURA_EXPLOSION3 = new Textura(renderizador);
-	Textura* TEXTURA_METAL = new Textura(renderizador);
+	Textura* neoGeo;
+	Textura* esperando;
+	Textura* fondoInicial;
+	Textura* TEXTURA_EXPLOSION1;
+	Textura* TEXTURA_EXPLOSION2;
+	Textura* TEXTURA_EXPLOSION3;
+	Textura* TEXTURA_METAL;
 	SDL_Rect spriteEntrada1[ 10 ];
 	SDL_Rect spriteEntrada2[ 10 ];
 	SDL_Rect spriteEntrada3[ 10 ];
 	SDL_Rect spriteMetal[ 7 ];
+	string ip;
+	string puerto;
+	string nombre;
 
 
 public:
@@ -75,6 +78,9 @@ public:
 
 	void presentacion(){
 		//ESTE METODO ES EL QUE PIDE IP PUERTO Y NOMBRE
+		neoGeo = new Textura(renderizador);
+		esperando = new Textura(renderizador);
+
 		Uint32 start = 0;
 		Texto* textoip = new Texto("IP: ", renderizador);
 		textoip->cargarTitulo();
@@ -100,6 +106,7 @@ public:
 				quit=textoip->pedir();
 				SDL_RenderPresent( renderizador );
 			}
+			ip = textoip->getTexto();
 			quit=false;
 			while(!quit)
 			{
@@ -109,6 +116,7 @@ public:
 				quit=textopuerto->pedir();
 				SDL_RenderPresent( renderizador );
 			}
+			puerto = textopuerto->getTexto();
 			quit=false;
 			while(!quit)
 			{
@@ -118,6 +126,7 @@ public:
 				quit=textonombre->pedir();
 				SDL_RenderPresent( renderizador );
 			}
+			nombre = textonombre->getTexto();
 			quit=false;
 
 			while( !quit )
@@ -146,6 +155,12 @@ public:
 	}
 
 	void cargarEntrada(){
+		fondoInicial = new Textura(renderizador);
+		TEXTURA_EXPLOSION1 = new Textura(renderizador);
+		TEXTURA_EXPLOSION2 = new Textura(renderizador);
+		TEXTURA_EXPLOSION3 = new Textura(renderizador);
+		TEXTURA_METAL = new Textura(renderizador);
+
 		//Loading success flag
 		int i;
 
@@ -356,6 +371,10 @@ public:
 						printf( "NO SE PUDO INICIARLIZAR LA IMAGEN! SDL_image Error: %s\n", IMG_GetError() );
 						success = false;
 					}
+					if( TTF_Init() == -1 ) {
+						printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+						success = false;
+					}
 				}
 			}
 		}
@@ -391,6 +410,18 @@ public:
 		return vistas[id];
 	}
 
+	string getIp(){
+		return ip;
+	}
+
+	string getPuerto(){
+		return puerto;
+	}
+
+	string getNombre(){
+		return nombre;
+	}
+
 	void setPosX(int x){
 		this->posx = x;
 	}
@@ -412,7 +443,7 @@ public:
 	}
 
 	void conectar(){
-		cliente->conectar();
+		cliente->conectar(nombre);
 	}
 
 	void handleEvent( SDL_Event& e) {
@@ -767,17 +798,19 @@ int main( int argc, char** argv) {
 
 	//Start up SDL and create window
 	Juego juego;
-	Cliente cliente(argv);
-
-	juego.setCliente(&cliente);
-	juego.conectar();
-
-	juego.recibirEscenario();
 
 	if( !juego.iniciar() ) {
 		printf("Failed to initialize!\n");
 		return 1;
 	}
+
+	juego.presentacion();
+
+	Cliente cliente(juego.getIp(), juego.getPuerto());
+	juego.setCliente(&cliente);
+	juego.conectar();
+
+	juego.recibirEscenario();
 
 	// Seteo el fondo
 	Background* fondo = new Background(juego.getRenderer());
@@ -809,6 +842,8 @@ int main( int argc, char** argv) {
 		exit(1);
 	}
 
+	juego.cargarEntrada();
+	juego.entrada();
 	juego.salaDeEspera();
 
 	// Dibujo por primera vez (es necesario)

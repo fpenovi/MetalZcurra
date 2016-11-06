@@ -14,7 +14,7 @@
 using namespace std;
 using namespace chrono;
 
-Cliente::Cliente(char** argv){
+Cliente::Cliente(string ip, string puerto){
     name = NULL;
     clave = NULL;
     heartbeat = NULL;
@@ -27,10 +27,10 @@ Cliente::Cliente(char** argv){
     mutex_mensajes = PTHREAD_MUTEX_INITIALIZER;
     usuariosAenviar; //hash de usuarios
     int cantUsuarios = 0;
-    string aux(argv[1]);
-    strcpy(IP,aux.c_str());
-    aux= argv[2];
-    strcpy(port,aux.c_str());
+    //string aux(argv[1]);
+    strcpy(IP,ip.c_str());
+    //aux= argv[2];
+    strcpy(port,puerto.c_str());
 }
 
 void Cliente::solicitarUserClave(){
@@ -620,7 +620,7 @@ void Cliente::mostrar_menu() {
 
         cin >> opcion;
 
-        if (opcion=="1") conectar();
+        if (opcion=="1") /*conectar()*/;
         else if (opcion=="2") desconectar();
         else if (opcion=="3") salir();
         else if (opcion=="4") enviar();
@@ -630,7 +630,7 @@ void Cliente::mostrar_menu() {
     }
 }
 
-void Cliente::conectar() {
+void Cliente::conectar(string nombre) {
     if (estado == true) {
         cout << "el cliente ya esta conectado" << endl;
         return;
@@ -638,7 +638,10 @@ void Cliente::conectar() {
     activar_socket();
     asignarFD();
     // solicito usuario y contrasena al cliente
-    solicitarUserClave();
+    //solicitarUserClave();
+    string aux = nombre + "\n";
+    name = (char *) aux.c_str();
+    clave = (char *) "1234\n";
     //mando el usuario y clave al servidor y manejo respuesta
     if (mandar_credencial_a_servidor()) {
         heartbeat = new Heartbeat(sockFileDescrpt);
