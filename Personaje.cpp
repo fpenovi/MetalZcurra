@@ -4,7 +4,10 @@
 
 #include "Personaje.h"
 
-void Personaje::moverX(bool avanzar, int* posX) {
+void Personaje::moverX() {
+    ObjectManager* objectManager = ObjectManager::getInstance();
+    int* posX = objectManager->getPosX();
+
     int pos1 = posCamara;
     int pos2 = *posX;
 
@@ -22,7 +25,7 @@ void Personaje::moverX(bool avanzar, int* posX) {
         *posX -= velx;
     }
 
-    if (velx < 0 || posCamara + ancho + 1 != SCREEN_WIDTH *3/4 || !avanzar){
+    if (velx < 0 || posCamara + ancho + 1 != SCREEN_WIDTH *3/4 || !(objectManager->puedoAvanzar())){
         *posX -= velx;
     }
 

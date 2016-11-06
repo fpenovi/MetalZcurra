@@ -10,7 +10,7 @@ ObjectManager::ObjectManager() {
 }
 
 ObjectManager::~ObjectManager() {
-	for (auto kv : objects)
+	for (auto kv : personajes)
 		delete kv.second;
 }
 
@@ -22,11 +22,11 @@ ObjectManager* ObjectManager::getInstance() {
 }
 
 void ObjectManager::addObject(int id, Personaje* object) {
-	objects[id] = object;
+	personajes[id] = object;
 }
 
 Personaje* ObjectManager::getObject(int id) {
-	return objects[id];
+	return personajes[id];
 }
 
 void ObjectManager::registerUser(string username) {
@@ -53,7 +53,7 @@ void ObjectManager::crearPersonajes(int cantidad) {
 
 void ObjectManager::enviarPersonajes(int FD) {
 
-	for (auto kv : objects){
+	for (auto kv : personajes){
 		ProtocoloNuevaVista protocolo;
 
 		protocolo.setObject_id(kv.first);
@@ -84,17 +84,17 @@ int* ObjectManager::getPosX() {
 
 void ObjectManager::conectarPersonaje(string user) {
 	int id = getIdByUsername(user);
-	objects[id]->setConectado(true);
+	personajes[id]->setConectado(true);
 }
 
 void ObjectManager::desconectarPersonaje(string user){
 	int id = getIdByUsername(user);
-	objects[id]->setConectado(false);
+	personajes[id]->setConectado(false);
 }
 
 bool ObjectManager::puedoAvanzar() {
 
-	for (auto kv : objects){
+	for (auto kv : personajes){
 		if (kv.second->getPosCamara() == 0 && kv.second->getConectado()){
 			return false;
 		}
@@ -104,7 +104,7 @@ bool ObjectManager::puedoAvanzar() {
 
 void ObjectManager::moverCamara(int id){
 
-	for (auto kv : objects){
+	for (auto kv : personajes){
 		if (kv.second->getId() != id && kv.second->getConectado() && kv.second->getPosCamara() != 0){
 			kv.second->setPosCamara(kv.second->getPosCamara()-7);
 		}
@@ -116,7 +116,7 @@ void ObjectManager::moverCamara(int id){
 
 void ObjectManager::moverDesconectados() {
 
-	for (auto kv : objects){
+	for (auto kv : personajes){
 		if (kv.second->getPosCamara() == 0 && !(kv.second->getConectado())){
 			kv.second->setPosCamara(kv.second->getPosCamara()+7);
 		}
@@ -124,7 +124,7 @@ void ObjectManager::moverDesconectados() {
 }
 
 void ObjectManager::reinicializarEscenario() {
-	for (auto kv : objects){
+	for (auto kv : personajes){
 		kv.second->inicial();
 	}
 	setPosX(0);

@@ -43,7 +43,6 @@ void* handleKeyHoldFunc(void* argKh) {
 
                 int idEmisor = objectManager->getIdByUsername(*emisor);
                 Personaje* personaje = objectManager->getObject(idEmisor);
-                bool avanzar = objectManager->puedoAvanzar();
                 int* posX = objectManager->getPosX();
 
                 ProtocoloVistaUpdate update;
@@ -53,7 +52,7 @@ void* handleKeyHoldFunc(void* argKh) {
 
                     case SDLK_LEFT:
                         personaje->setVelx(-personaje->getPersonaje_VEL());
-                        personaje->moverX(avanzar, posX);
+                        personaje->moverX();
 
                         update.setEstado(personaje->getSeMovio());
                         update.setX(*posX);
@@ -67,7 +66,7 @@ void* handleKeyHoldFunc(void* argKh) {
                     case SDLK_RIGHT:
                         aux = *posX;
                         personaje->setVelx(personaje->getPersonaje_VEL());
-                        personaje->moverX(avanzar, posX);
+                        personaje->moverX();
 
                         if (aux < *posX){
                             objectManager->moverCamara(idEmisor);

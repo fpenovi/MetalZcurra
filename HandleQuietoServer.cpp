@@ -42,14 +42,13 @@ void* handleQuietoFunc(void* argKh) {
 
             if (*isKhOn && !(*isKhPaused)) {
 
-                bool avanzar = objectManager->puedoAvanzar();
                 int* posX = objectManager->getPosX();
 
                 ProtocoloVistaUpdate update;
 
                 personaje->setSpriteParado();
                 personaje->setVelx(0);
-                personaje->moverX(avanzar, posX);
+                personaje->moverX();
 
                 update.setEstado(personaje->getSeMovio());
                 update.setX(*posX);

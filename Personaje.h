@@ -6,6 +6,7 @@
 #define METALZCURRA_PERSONAJE_H
 
 #include "GameObject.h"
+#include "ObjectManager.h"
 #include <iostream>
 
 #define LEVEL_WIDTH 4500
@@ -39,7 +40,7 @@ private:
     const static int ANIMACION_PARADO = 3;
 
 public:
-    void moverX(bool avanzar, int* posX);
+    void moverX();
 
     void moverY();
 

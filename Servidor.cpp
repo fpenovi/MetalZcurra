@@ -248,9 +248,6 @@ private:
         string emisor(emisorChar);
         emisor.erase(emisor.length()-1);
 
-        int idEmisor = objectManager->getIdByUsername(emisor);
-        Personaje* personaje = objectManager->getObject(idEmisor);
-        bool avanzar = objectManager->puedoAvanzar();
         int* posX = objectManager->getPosX();
 
         int key;

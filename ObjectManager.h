@@ -21,7 +21,7 @@ using namespace std;
 class ObjectManager {
 
 private:
-	unordered_map<int, Personaje*> objects;
+	unordered_map<int, Personaje*> personajes;
 	unordered_map<string, int> tablaUsuarios;
 	static ObjectManager* instancia;
 	int idActual;
