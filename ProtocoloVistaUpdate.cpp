@@ -29,6 +29,10 @@ int ProtocoloVistaUpdate::getSpriteIndex() {
     return spriteIndex;
 }
 
+void ProtocoloVistaUpdate::setTipoObjeto(int tipo) {
+    this->tipoObjeto = tipo;
+}
+
 void ProtocoloVistaUpdate::setPosCamara(int posCamara) {
     this->posCamara = posCamara;
 }
@@ -58,6 +62,7 @@ void ProtocoloVistaUpdate::setSpriteIndex(int idx) {
 }
 
 string ProtocoloVistaUpdate::toString(){
+    string tipo = to_string(tipoObjeto);
     string id = to_string(object_id);
     string state = to_string(estado);
     string posx = to_string(x);
@@ -66,12 +71,13 @@ string ProtocoloVistaUpdate::toString(){
     string conexion = to_string(conectado);
     string index = to_string(spriteIndex);
 
-    string msj = id + "$" + state + "$" + posx + "$" + posy + "$" + posCam + "$" + conexion + "$" + index + "\n";
+    string msj = tipo + "$" + id + "$" + state + "$" + posx + "$" + posy + "$" + posCam + "$" + conexion + "$" + index + "\n";
     return msj;
 }
 
-void ProtocoloVistaUpdate::parse(string stream, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex) {
+void ProtocoloVistaUpdate::parse(string stream, int* tipo, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex) {
 
+    string tipo_s = "";
     string id_s = "";
     string state_s = "";
     string posx_s = "";
@@ -80,7 +86,7 @@ void ProtocoloVistaUpdate::parse(string stream, int* id, int* state, int* posx, 
     string conectado_s = "";
     string index_s = "";
 
-    string* variables[] = {&id_s, &state_s, &posx_s, &posy_s, &posCamara_s, &conectado_s, &index_s};
+    string* variables[] = {&tipo_s, &id_s, &state_s, &posx_s, &posy_s, &posCamara_s, &conectado_s, &index_s};
 
     int j = 0;
 
@@ -96,6 +102,7 @@ void ProtocoloVistaUpdate::parse(string stream, int* id, int* state, int* posx, 
         *(variables[j]) += actual;
     }
 
+    *tipo = stoi(tipo_s);
     *id = stoi(id_s);
     *state = stoi(state_s);
     *posx = stoi(posx_s);

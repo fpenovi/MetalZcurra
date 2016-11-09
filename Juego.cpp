@@ -13,6 +13,7 @@
 #include "Background.h"
 #include "Texto.h"
 #include "Textura.h"
+#include "VistaBala.h"
 
 using namespace std;
 using namespace chrono;
@@ -24,7 +25,8 @@ private:
 	SDL_Window* ventana;
 	SDL_Rect* camera;
 	Cliente* cliente;
-	unordered_map<int, VistaPersonaje*> vistas;
+	unordered_map<int, VistaPersonaje*> vistasPersonajes;
+	unordered_map<int, VistaBala*> vistasBalas;
 	int lastKeyPressed;
 	Background* fondo;
 	int posx;
@@ -66,8 +68,11 @@ public:
 		//ToDo Liberar personajes
 
 		//Free loaded images
-		for (auto kv : vistas)
+		for (auto kv : vistasPersonajes)
 			kv.second->liberarTextura();
+
+		for (auto kv : vistasBalas)
+			delete kv.second;
 
 		//Destroy window
 		SDL_DestroyRenderer( renderizador );
@@ -423,7 +428,11 @@ public:
 	}
 
 	VistaPersonaje* getPersonajeById(int id){
-		return vistas[id];
+		return vistasPersonajes[id];
+	}
+
+	VistaBala* getBalaById(int id){
+		return vistasBalas[id];
 	}
 
 	string getIp(){
@@ -455,7 +464,11 @@ public:
 	}
 
 	void addPersonaje(int id, VistaPersonaje* pj){
-		vistas[id] = pj;
+		vistasPersonajes[id] = pj;
+	}
+
+	void addBala(int id, VistaBala* bala){
+		vistasBalas[id] = bala;
 	}
 
 	void conectar(){
@@ -500,6 +513,12 @@ public:
 					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
+				case SDLK_z:
+					comando.setScancode(SDLK_z);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					break;
 			}
 		}
 
@@ -532,14 +551,19 @@ public:
 				case SDLK_r:
 					break;
 
-
+				case SDLK_z:
+					comando.setScancode(SDLK_z);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					break;
 			}
 		}
 	}
 
 	void moverCamara(int id){
 
-		for (auto kv : vistas){
+		for (auto kv : vistasPersonajes){
 			if (kv.second->getId() != id){
 
 				if (kv.second->getConectado() && kv.second->getPosCamara() != 0) {
@@ -556,7 +580,7 @@ public:
 	}
 
 	void renderizar() {
-		for (auto kv : vistas) {
+		for (auto kv : vistasPersonajes) {
 			if (!(kv.second->getConectado()) && !(kv.second->getGris())) {
 				kv.second->ponerTexturaGris();
 			}
@@ -565,11 +589,15 @@ public:
 			}
 			kv.second->render(kv.second->getSeMovio());
 		}
+
+		for (auto kv : vistasBalas){
+			kv.second->render();
+		}
 	}
 
 	int getPersonajeMasMovido(){
 		int aux = 0;
-		for (auto kv : vistas){
+		for (auto kv : vistasPersonajes){
 			int x = kv.second->getX();
 			if (x > aux) aux = x;
 		}
@@ -577,7 +605,7 @@ public:
 	}
 
 	void jugadoresInicio(){
-		for ( auto kv : vistas){
+		for ( auto kv : vistasPersonajes){
 			kv.second->setPosCamara(0);
 			kv.second->setPosx(0);
 			kv.second->setPosy(360);
@@ -755,6 +783,15 @@ public:
 
 		}
 	}
+
+	void crearBalas(){
+		int i = 1;
+		for (i ; i < 51 ; i++) {
+			VistaBala* bala = new VistaBala(getRenderer());
+			bala->cargarImagen();
+			addBala(i , bala);
+		}
+	}
 };
 
 typedef struct {
@@ -839,6 +876,9 @@ int main( int argc, char** argv) {
 	// Recibir personajes
 	juego.recibirPersonajes();
 
+	// Creo la pool de balas
+	juego.crearBalas();
+
 	//Main loop flag
 	bool quit = false;
 	bool pauseRecibir = false;
@@ -877,9 +917,9 @@ int main( int argc, char** argv) {
 	while( !quit ) {
 		pauseRecibir = false;
 
-		time_point<high_resolution_clock> start;
-		start = high_resolution_clock::now();
-		time_point<high_resolution_clock> actual;
+		//time_point<high_resolution_clock> start;
+		//start = high_resolution_clock::now();
+		//time_point<high_resolution_clock> actual;
 
 		if (SDL_PollEvent(&e) != 0) {
 
@@ -893,11 +933,12 @@ int main( int argc, char** argv) {
 
 		if (update != "$\n") {
 
-			int id, state, posx, posy, posCam, conectado, spriteIdx;
+			int tipoObjeto, id, state, posx, posy, posCam, conectado, spriteIdx;
 
-			ProtocoloVistaUpdate::parse(update, &id, &state, &posx, &posy, &posCam, &conectado, &spriteIdx);
+			ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posx, &posy, &posCam, &conectado, &spriteIdx);
 
-			if (id == 100 ){
+			// Tipo de objeto 10 = REINICIAR ESCENARIO
+			if (tipoObjeto == 10 ){
 				juego.jugadoresInicio();
 				usleep(100000);
 				pauseRecibir = true;
@@ -906,25 +947,41 @@ int main( int argc, char** argv) {
 				continue;
 			}
 
-			VistaPersonaje* pj = juego.getPersonajeById(id);
+			// Tipo de objeto 1 = PERSONAJES
+			if (tipoObjeto == 1){
 
-			if (pj->getPosCamara() < posCam){
-				pj->setDerecha(true);
-			}
-			else if (pj->getPosCamara() > posCam){
-				pj->setDerecha(false);
+				VistaPersonaje* pj = juego.getPersonajeById(id);
+
+				if (pj->getPosCamara() < posCam){
+					pj->setDerecha(true);
+				}
+				else if (pj->getPosCamara() > posCam){
+					pj->setDerecha(false);
+				}
+
+				if (juego.getPosX() < posx){
+					juego.moverCamara(id);
+					juego.setPosX(posx);
+				}
+
+				pj->setSpriteIndex(spriteIdx);
+				pj->setConectado(conectado);
+				pj->setPosCamara(posCam);
+				pj->setPosy(posy);
+				pj->setSeMovio(state);
+
 			}
 
-			if (juego.getPosX() < posx){
-				juego.moverCamara(id);
-				juego.setPosX(posx);
-			}
+			// Tipo de objeto 2 = BALAS
+			else if (tipoObjeto == 2){
 
-			pj->setSpriteIndex(spriteIdx);
-			pj->setConectado(conectado);
-			pj->setPosCamara(posCam);
-			pj->setPosy(posy);
-			pj->setSeMovio(state);
+				VistaBala* bala = juego.getBalaById(id);
+
+				bala->setExiste(state);
+				bala->setPosX(posx);
+				bala->setPosY(posy);
+
+			}
 
 			SDL_RenderClear( juego.getRenderer() );
 
@@ -937,10 +994,10 @@ int main( int argc, char** argv) {
 
 
 		// MIDO EL TIEMPO QUE TARDO EN RENDERIZAR
-		actual = high_resolution_clock::now();
-		auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
-		auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
-		auto time = elapsed_ms.count()/1000000.0;
+		//actual = high_resolution_clock::now();
+		//auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
+		//auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
+		//auto time = elapsed_ms.count()/1000000.0;
 
 		//cout << "Elapsed ms: " << time << endl;
 	}

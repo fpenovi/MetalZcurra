@@ -12,6 +12,7 @@ using namespace std;
 class ProtocoloVistaUpdate {
 
 private:
+    int tipoObjeto;
     int object_id;
     int estado;
     int x;
@@ -34,6 +35,8 @@ public:
 
     int getSpriteIndex();
 
+    void setTipoObjeto(int tipo);
+
     void setObject_id(int object_id);
 
     void setEstado(int estado);
@@ -50,7 +53,7 @@ public:
 
     string toString();
 
-    static void parse(string stream, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex);
+    static void parse(string stream, int* tipo, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex);
 };
 
 #endif //METALZCURRA_PROTOCOLOVISTAUPDATE_H

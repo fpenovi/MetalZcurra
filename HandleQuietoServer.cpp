@@ -50,6 +50,7 @@ void* handleQuietoFunc(void* argKh) {
                 personaje->setVelx(0);
                 personaje->moverX();
 
+                update.setTipoObjeto(1);
                 update.setEstado(personaje->getSeMovio());
                 update.setX(*posX);
                 update.setY(personaje->getPosy());

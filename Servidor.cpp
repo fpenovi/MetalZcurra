@@ -20,6 +20,7 @@
 #include "HandleKeyHoldServer.h"
 #include "HandleJumpServer.h"
 #include "HandleQuietoServer.h"
+#include "HandleDisparoServer.h"
 
 
 #define MAX_CLIENTS 6
@@ -238,7 +239,7 @@ private:
         if (result != 0) perror("Fallo el pthread_mutex_unlock en kick");
     }
 
-    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo, HandleKeyHoldServer* handleKeyHold, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto, int FD) {
+    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo, HandleKeyHoldServer* handleKeyHold, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto, int FD, HandleDisparoServer* handleDisparo) {
 
         if (textoInicial == NULL){
             printf("ERROR");
@@ -288,6 +289,7 @@ private:
                     handleQuieto->Pause();
                     objectManager->reinicializarEscenario();
 
+                    update.setTipoObjeto(10);
                     update.setObject_id(100);
                     update.setEstado(0);
                     update.setX(0);
@@ -296,6 +298,10 @@ private:
                     update.setConectado(0);
                     update.setSpriteIndex(0);
                     enviar = true;
+                    break;
+
+                case SDLK_z:
+                    handleDisparo->Resume();
                     break;
             }
         }
@@ -329,6 +335,11 @@ private:
 
                 case SDLK_r:
                     break;
+
+                case SDLK_z:
+                    handleDisparo->Pause();
+                    break;
+
             }
         }
 
@@ -356,7 +367,7 @@ private:
         }
     }
 
-    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos, HandleKeyHoldServer* handler, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto, int FD) {
+    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos, HandleKeyHoldServer* handler, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto, int FD, HandleDisparoServer* handleDisparo) {
 
         if (*bytesLeidos < 0) {
             cout << " SE DESCONECTÓ " << arg->user << endl;
@@ -364,7 +375,7 @@ private:
             return false;
         }
 
-        agregarMensaje(arg->user, linea, *bytesLeidos, handler, handleJump, handleQuieto, FD);
+        agregarMensaje(arg->user, linea, *bytesLeidos, handler, handleJump, handleQuieto, FD, handleDisparo);
         return true;
 
     }
@@ -493,6 +504,12 @@ private:
         handleQuietoServer->setMutexesHash(&mutexesHash);
         handleQuietoServer->On();
 
+        // Creo thread de disparo
+        HandleDisparoServer* handleDisparoServer = new HandleDisparoServer();
+        handleDisparoServer->setEmisor(userCon);
+        handleDisparoServer->On();
+        handleDisparoServer->Pause();
+
         while (true) {
 
             bytesLeidos = getline(&linea, &len, mensajeCliente);
@@ -519,7 +536,7 @@ private:
                 bytesLeidos = getline(&linea, &len, mensajeCliente);
 
                 // ENVIO MENSAJE
-                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos, handleKeyHoldServer, handleJumpServer, handleQuietoServer, sockNewFileDescrpt) )
+                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos, handleKeyHoldServer, handleJumpServer, handleQuietoServer, sockNewFileDescrpt, handleDisparoServer) )
                     break;
             }
 
@@ -563,6 +580,8 @@ private:
         }
 
         pthread_join(*recibirThread, NULL);
+        handleDisparoServer->Off();
+        delete handleDisparoServer;
         handleQuietoServer->Off();
         delete handleQuietoServer;
         handleKeyHoldServer->Off();
@@ -693,8 +712,10 @@ public:
     void initJuego() {
 
         //cantidadUsuarios = (int) parser->users().size();
-        cantidadUsuarios = 2;
+        cantidadUsuarios = 1;
         objectManager->crearPersonajes(cantidadUsuarios);
+        objectManager->crearBalas(50);
+        objectManager->crearBalasManager(&conectadosHash, &mutexesHash);
     }
 
     void aceptarClientes() {

@@ -5,8 +5,6 @@
 #ifndef METALZCURRA_PERSONAJE_H
 #define METALZCURRA_PERSONAJE_H
 
-#include "GameObject.h"
-#include "ObjectManager.h"
 #include <iostream>
 
 #define LEVEL_WIDTH 4500
@@ -97,6 +95,8 @@ public:
     void setSpriteParado();
 
     int getSpriteParado();
+
+    void resetFrames();
 };
 
 #endif //METALZCURRA_PERSONAJE_H

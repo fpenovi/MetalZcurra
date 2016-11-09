@@ -51,6 +51,7 @@ void* handleJumpFunc(void* argKh) {
                     personaje->moverY();
                     personaje->setVely(0);
                     personaje->setBajando(false);
+                    personaje->resetFrames();
                 }
                 else if (personaje->getBajando()){
                     personaje->setVely(personaje->getPersonaje_VEL_Y());
@@ -62,6 +63,7 @@ void* handleJumpFunc(void* argKh) {
                     personaje->moverY();
                 }
 
+                update.setTipoObjeto(1);
                 update.setEstado(personaje->getSeMovio());
                 update.setX(*posX);
                 update.setY(personaje->getPosy());

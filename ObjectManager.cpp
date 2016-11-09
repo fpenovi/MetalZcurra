@@ -4,7 +4,6 @@
 
 #include "ObjectManager.h"
 
-
 ObjectManager::ObjectManager() {
 	idActual = 1;
 }
@@ -12,6 +11,11 @@ ObjectManager::ObjectManager() {
 ObjectManager::~ObjectManager() {
 	for (auto kv : personajes)
 		delete kv.second;
+	for (auto kv : balas){
+		delete kv.second;
+	}
+	balasManager->Off();
+	delete balasManager;
 }
 
 ObjectManager* ObjectManager::getInstance() {
@@ -23,6 +27,10 @@ ObjectManager* ObjectManager::getInstance() {
 
 void ObjectManager::addObject(int id, Personaje* object) {
 	personajes[id] = object;
+}
+
+void ObjectManager::addBala(int id, Bala* bala) {
+	balas[id] = bala;
 }
 
 Personaje* ObjectManager::getObject(int id) {
@@ -47,6 +55,25 @@ void ObjectManager::crearPersonajes(int cantidad) {
 		Personaje* p = new Personaje();
 		p->setId(i);
 		addObject(i, p);
+	}
+
+}
+
+void ObjectManager::crearBalas(int cantidad) {
+	for (int i = 1 ; i < cantidad+1; i++){
+		Bala* b = new Bala();
+		b->setID(i);
+		addBala(i, b);
+	}
+}
+
+void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor) {
+
+	for (auto kv : balas){
+		if (!kv.second->existeBala()){
+			kv.second->crear(idEmisor, posxEmisor, posyEmisor);
+			return;
+		}
 	}
 
 }
@@ -216,6 +243,19 @@ void ObjectManager::enviarNuevoBackground(ParserXML* parser, unordered_map<strin
 
 void ObjectManager::setPosX(int i){
 	posx=i;
+}
+
+void ObjectManager::crearBalasManager(unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash) {
+
+	balasManager = new BalasManager();
+	balasManager->setConectadosHash(conectadosHash);
+	balasManager->setMutexesHash(mutexesHash);
+	balasManager->On();
+
+}
+
+unordered_map<int, Bala*>* ObjectManager::getBalasHash() {
+	return &balas;
 }
 
 ObjectManager* ObjectManager::instancia;

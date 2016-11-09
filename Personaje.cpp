@@ -2,6 +2,7 @@
 // Created by juancho on 05/10/16.
 //
 
+#include "ObjectManager.h"
 #include "Personaje.h"
 
 void Personaje::moverX() {
@@ -178,4 +179,10 @@ void Personaje::setSpriteParado() {
 
 int Personaje::getSpriteParado() {
     return frameParado;
+}
+
+void Personaje::resetFrames() {
+    frameParado = 0;
+    frameSaltando = 0;
+    frameCorriendo = 0;
 }

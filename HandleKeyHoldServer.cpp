@@ -54,6 +54,7 @@ void* handleKeyHoldFunc(void* argKh) {
                         personaje->setVelx(-personaje->getPersonaje_VEL());
                         personaje->moverX();
 
+                        update.setTipoObjeto(1);
                         update.setEstado(personaje->getSeMovio());
                         update.setX(*posX);
                         update.setY(personaje->getPosy());
@@ -73,6 +74,7 @@ void* handleKeyHoldFunc(void* argKh) {
                             objectManager->moverDesconectados();
                         }
 
+                        update.setTipoObjeto(1);
                         update.setEstado(personaje->getSeMovio());
                         update.setX(*posX);
                         update.setY(personaje->getPosy());
