@@ -169,6 +169,161 @@ class Textura
 		}
 };
 
+class Arma 
+{
+	protected:
+		const static int ANIMACION_PARADO=4;
+		const static int ANIMACION_CORRIENDO=18;
+		const static int ANIMACION_SALTANDO=12;
+		const static int ANIMACION_DISPARANDO_GUN=10;
+		const static int ANIMACION_DISPARANDO_SHOTGUN=4;
+		int ANIMACION_ACTUAL=10; //empieza siendo 10 por la gun
+
+		int frameDisparando=0;
+		bool disparando=false;
+
+
+		Textura TEXTURA_ARMA_PARADO;
+		SDL_Rect spriteParado[ ANIMACION_PARADO ];
+
+		Textura TEXTURA_ARMA_CORRIENDO;
+		SDL_Rect spriteCorriendo[ ANIMACION_CORRIENDO ];
+
+		Textura TEXTURA_ARMA_SALTANDO;
+		SDL_Rect spriteSaltando[ ANIMACION_SALTANDO ];
+
+		Textura TEXTURA_ARMA_DISPARANDO;
+		SDL_Rect spriteDisparando[ ANIMACION_DISPARANDO_GUN];
+
+
+	public:
+		Arma(){
+			cargarImagen("imag/sprites/gunStill.png",
+				"imag/sprites/gunRun.png",
+				"imag/sprites/gunJump.png",
+				"imag/sprites/gunShoot.png");
+		}
+
+		void renderParado(int x, int y, int frame, SDL_RendererFlip flip){
+			SDL_Rect* currentClip = &spriteParado[frame];
+			TEXTURA_ARMA_PARADO.render(x,y,currentClip,0,NULL,flip );
+		}
+		void renderCorriendo(int x, int y, int frame, SDL_RendererFlip flip){
+			SDL_Rect* currentClip = &spriteCorriendo[frame];
+			TEXTURA_ARMA_CORRIENDO.render(x,y,currentClip,0,NULL,flip );
+		}
+		void renderSaltando(int x, int y, int frame, SDL_RendererFlip flip){
+			SDL_Rect* currentClip = &spriteSaltando[frame];
+			TEXTURA_ARMA_SALTANDO.render(x,y,currentClip,0,NULL,flip );
+		}
+		bool renderDisparando(int x, int y, SDL_RendererFlip flip){
+			SDL_Rect* currentClip = &spriteDisparando[frameDisparando/4];
+			TEXTURA_ARMA_DISPARANDO.render(x,y,currentClip,0,NULL,flip );
+			++frameDisparando;
+			if( frameDisparando /4 >= ANIMACION_ACTUAL ){
+				frameDisparando = 0;
+				disparando=false;
+			}
+			cout << frameDisparando << endl;
+			return disparando;
+		}
+
+		bool cargarImagen(char* pathParado,char* pathCorriendo,char* pathSaltando,char* pathDisparando){
+			bool success = true;
+			int i;
+
+			if( !TEXTURA_ARMA_PARADO.cargarImagen( pathParado) )
+			{
+				printf( "Fallo sprite arma parado\n" );
+				success = false;
+			}
+			else
+			{	
+				for (i = 0;i<ANIMACION_PARADO;i++){
+					spriteParado[ i ].x = i*149;
+					spriteParado[ i ].y = 0;
+					spriteParado[ i ].w = 149;
+					spriteParado[ i ].h = 62;
+				}
+			}
+
+			if( !TEXTURA_ARMA_CORRIENDO.cargarImagen( pathCorriendo) )
+			{
+				printf( "Fallo sprite arma corriendo\n" );
+				success = false;
+			}
+			else{
+				for (i = 0;i<ANIMACION_CORRIENDO;i++){
+					spriteCorriendo[ i ].x = i*149;
+					spriteCorriendo[ i ].y = 0;
+					spriteCorriendo[ i ].w = 149;
+					spriteCorriendo[ i ].h = 64;
+				}
+			}
+
+			if( !TEXTURA_ARMA_SALTANDO.cargarImagen( pathSaltando) )
+			{
+				printf( "Fallo sprite arma saltando\n" );
+				success = false;
+			}
+			else{
+
+				for (i = 0;i<ANIMACION_SALTANDO;i++){
+					spriteSaltando[ i ].x = i*149;
+					spriteSaltando[ i ].y = 0;
+					spriteSaltando[ i ].w = 149;
+					spriteSaltando[ i ].h = 79;
+				}
+			}
+
+			if( !TEXTURA_ARMA_DISPARANDO.cargarImagen( pathDisparando) )
+			{
+				printf( "Fallo sprite disparando\n" );
+				success = false;
+			}
+			else{
+
+				for (i = 0;i<ANIMACION_ACTUAL;i++){
+					spriteDisparando[ i ].x = i*149;
+					spriteDisparando[ i ].y = 0;
+					spriteDisparando[ i ].w = 149;
+					spriteDisparando[ i ].h = 62;
+				}
+			}
+
+			return success;
+		}
+
+		void liberar(){
+			TEXTURA_ARMA_DISPARANDO.free();
+			TEXTURA_ARMA_CORRIENDO.free();
+			TEXTURA_ARMA_SALTANDO.free();
+			TEXTURA_ARMA_PARADO.free();
+		}
+		void ponerShotgun(){
+			cout << "aca" << endl;
+			liberar();
+			ANIMACION_ACTUAL=ANIMACION_DISPARANDO_SHOTGUN;
+			cargarImagen("imag/sprites/shotgunStill.png",
+				"imag/sprites/shotgunRun.png",
+				"imag/sprites/shotgunJump.png",
+				"imag/sprites/shotgunShoot.png");
+		}
+
+		void ponerGun(){
+			cout << "acagun" << endl;
+			liberar();
+			ANIMACION_ACTUAL=ANIMACION_DISPARANDO_GUN;
+			cargarImagen("imag/sprites/gunStill.png",
+				"imag/sprites/gunRun.png",
+				"imag/sprites/gunJump.png",
+				"imag/sprites/gunShoot.png");
+		}
+		void disparar(){
+			disparando=true;
+		}
+};
+
 class Personaje
 {
 
@@ -176,31 +331,34 @@ class Personaje
 
 		int posx, posy;
 		int ancho, alto;
-		bool dispara;
 		const static int ANIMACION_PARADO=4;
 		const static int ANIMACION_CORRIENDO=18;
 		const static int ANIMACION_SALTANDO=12;
+		const static int ANIMACION_DISPARANDO_GUN=4;
 
 
 		Textura TEXTURA_PERSONAJE_PARADO_PIES;
-		Textura TEXTURA_PERSONAJE_PARADO_TORSO;
-		SDL_Rect spriteParadoTorso[ ANIMACION_PARADO ];
+		//Textura TEXTURA_PERSONAJE_PARADO_TORSO;
+		//SDL_Rect spriteParadoTorso[ ANIMACION_PARADO ];
 		SDL_Rect spriteParadoPies[ ANIMACION_PARADO ];
 
 		Textura TEXTURA_PERSONAJE_CORRIENDO_PIES;
-		Textura TEXTURA_PERSONAJE_CORRIENDO_TORSO;
-		SDL_Rect spriteCorriendoTorso[ ANIMACION_CORRIENDO ];
+		//Textura TEXTURA_PERSONAJE_CORRIENDO_TORSO;
+		//SDL_Rect spriteCorriendoTorso[ ANIMACION_CORRIENDO ];
 		SDL_Rect spriteCorriendoPies[ ANIMACION_CORRIENDO ];
 
 		Textura TEXTURA_PERSONAJE_SALTANDO_PIES;
-		Textura TEXTURA_PERSONAJE_SALTANDO_TORSO;
-		SDL_Rect spriteSaltandoTorso[ ANIMACION_SALTANDO ];
+		//Textura TEXTURA_PERSONAJE_SALTANDO_TORSO;
+		//SDL_Rect spriteSaltandoTorso[ ANIMACION_SALTANDO ];
 		SDL_Rect spriteSaltandoPies[ ANIMACION_SALTANDO ];
+
 
 
 		int frameCorriendo;
 		int frameParado;
 		int frameSaltando;
+		int frameDisparando;
+
 		int subiendo;
 
 		bool derecha;
@@ -218,6 +376,9 @@ class Personaje
 		const static int Personaje_VEL = 7;
 		const static int Personaje_VEL_Y = 4;
 		bool muerto;
+		bool disparar;
+
+		Arma arma=Arma();
 
     public:
 		
@@ -230,6 +391,7 @@ class Personaje
 			frameCorriendo=0;
 			frameParado=0;
 			frameSaltando=0;
+			frameDisparando=0;
 			velx = 0;
 			vely = 0;
 			derecha = true;
@@ -238,6 +400,7 @@ class Personaje
 			frameSaltando=0;
 			posCamara=0;
 			muerto = false;
+			disparar=false;
 		}
 
 		//maneja los eventos
@@ -256,6 +419,16 @@ class Personaje
 		            	if (subiendo==1) vely-=Personaje_VEL_Y;
 		            	else if(subiendo == 2) vely+=Personaje_VEL_Y;
 		            	else if(subiendo == 0) saltando = false;
+		            case SDLK_f:
+		            	disparar=true;
+		            	arma.disparar();
+		            	break;
+		            case SDLK_g:
+		            	arma.ponerGun();
+		            	break;
+		            case SDLK_s:
+		            	arma.ponerShotgun();
+		            	break;
 		        }
 		    }
 
@@ -265,16 +438,19 @@ class Personaje
 		        //Adjust the velocity
 		        switch( e.key.keysym.sym )
 		        {
-		            case SDLK_LEFT: velx=0; break;
-		            case SDLK_RIGHT: velx=0; break;
+		            case SDLK_LEFT: velx+=Personaje_VEL; break;
+		            case SDLK_RIGHT: velx-=Personaje_VEL; break;
 		            case SDLK_UP: break;
+		            case SDLK_f: break;
+		            case SDLK_s: break;
+		            case SDLK_g: break;
 		        }
+
 		    }
 		}
 
 		bool mover(int anchoMax)
-		{
-			if (posx >= anchoMax) posx=0;
+		{	
 			int pos1 = posx;
 			int pos2 = posy;
 		    //moverlo a derecha o izquierda
@@ -285,8 +461,7 @@ class Personaje
 		    {
 		        posCamara -= velx;
 
-		    }
-
+		    };
 		    if( ( posx < 0 ) ) //|| ( posx + ancho > SCREEN_WIDTH ) )
 		    {
 		        posx -= velx;
@@ -317,56 +492,94 @@ class Personaje
 		}
 
 		void render(bool seMovio){
-			if (seMovio==true) animacionCorrer();
-			else animacionParado();
-			if (estaSaltando()) animacionSaltando();
+			if (estaSaltando()) {
+				animacionSaltandoPiernas();
+				if (disparar) animacionDisparar();
+				else animacionSaltandoTorso();
+				return;
+			}
+
+			if (seMovio==true) {
+				animacionCorrerPiernas();
+				if (disparar) animacionDisparar();
+				else animacionCorrerTorso();
+			}
+			else {
+				animacionParadoPiernas();
+				if (disparar) animacionDisparar();
+				else animacionParadoTorso();
+			}
 		}
 
-		void animacionParado(){
+		void animacionParadoPiernas(){
 			
 			if (saltando) return;
 			SDL_RendererFlip flip = SDL_FLIP_NONE;
-			if (!derecha) flip = SDL_FLIP_HORIZONTAL;
+			int x=posCamara;
+			if (!derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x-=80;
+			}
 
 			SDL_Rect* currentClipPies = &spriteParadoPies[ frameParado / 8];
-			SDL_Rect* currentClipTorso = &spriteParadoTorso[ frameParado / 8];
-			TEXTURA_PERSONAJE_PARADO_PIES.render(posCamara,posy+48, currentClipPies,0,NULL,flip );
-			TEXTURA_PERSONAJE_PARADO_TORSO.render(posCamara,posy, currentClipTorso,0,NULL,flip );
+			TEXTURA_PERSONAJE_PARADO_PIES.render(x,posy+48, currentClipPies,0,NULL,flip );
 
 			++frameParado;
-
 			if( frameParado / 8 >= ANIMACION_PARADO )
 			{
 				frameParado = 0;
 			}	
 		}
 
-		void animacionCorrer(){
+		void animacionParadoTorso(){
 			if (saltando) return;
+			int x = posCamara;
 			SDL_RendererFlip flip = SDL_FLIP_NONE;
 			if (!derecha) {
 				flip = SDL_FLIP_HORIZONTAL;
+				x-=80;
+			}
+			arma.renderParado(x,posy,frameParado/8,flip);
+		}
+
+		void animacionCorrerPiernas(){
+			if (saltando) return;
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x = posCamara;
+			if (!derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x-=80;
 			}
 
 			SDL_Rect* currentClipPies = &spriteCorriendoPies[ frameCorriendo/3 ];
-			SDL_Rect* currentClipTorso = &spriteCorriendoTorso[ frameCorriendo/3 ];
-			TEXTURA_PERSONAJE_CORRIENDO_PIES.render( posCamara, posy+45, currentClipPies,0,NULL,flip);
-			TEXTURA_PERSONAJE_CORRIENDO_TORSO.render( posCamara, posy, currentClipTorso,0,NULL,flip);
+			TEXTURA_PERSONAJE_CORRIENDO_PIES.render( x, posy+45, currentClipPies,0,NULL,flip);
+
 			++frameCorriendo;
 			if( frameCorriendo /3 >= ANIMACION_CORRIENDO ){
 				frameCorriendo = 0;
 			}
 		}
 
-		int animacionSaltando(){
+		void animacionCorrerTorso(){
+			if (saltando) return;
 			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x = posCamara;
 			if (!derecha) {
 				flip = SDL_FLIP_HORIZONTAL;
+				x-=80;
+			}
+			arma.renderCorriendo(x,posy,frameCorriendo/3,flip);
+		}
+
+		int animacionSaltandoPiernas(){
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x = posCamara;
+			if (!derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x-=80;
 			}
 			SDL_Rect* currentClipPies = &spriteSaltandoPies[ frameSaltando/4 ];
-			SDL_Rect* currentClipTorso = &spriteSaltandoTorso[ frameSaltando/4 ];
-			TEXTURA_PERSONAJE_SALTANDO_PIES.render( posCamara, posy+45, currentClipPies,0,NULL,flip);
-			TEXTURA_PERSONAJE_SALTANDO_TORSO.render( posCamara, posy, currentClipTorso,0,NULL,flip);
+			TEXTURA_PERSONAJE_SALTANDO_PIES.render( x, posy+45, currentClipPies,0,NULL,flip);
 
 			if (frameSaltando/4  >= ANIMACION_SALTANDO/2){
 				subiendo=2;
@@ -384,11 +597,31 @@ class Personaje
 			}
 		}
 
+		int animacionSaltandoTorso(){
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x = posCamara;
+			if (!derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x-=80;
+			}
+			arma.renderSaltando(x,posy,frameSaltando/4,flip);
+		}
+
+		void animacionDisparar(){
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x = posCamara;
+			if (!derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x-=80;
+			}
+
+			if (!arma.renderDisparando(x,posy,flip)) disparar=false;
+		}
+
 		bool cargarImagen(){
 			//Loading success flag
 			bool success = true;
 			int i;
-
 			//Load sprite sheet texture
 			if( !TEXTURA_PERSONAJE_PARADO_PIES.cargarImagen( "imag/sprites/stillLegs.png") )
 			{
@@ -404,7 +637,7 @@ class Personaje
 					spriteParadoPies[ i ].h = 34;
 				}
 			}
-			if( !TEXTURA_PERSONAJE_PARADO_TORSO.cargarImagen( "imag/sprites/stillTorso.png") )
+			/*if( !TEXTURA_PERSONAJE_PARADO_TORSO.cargarImagen( "imag/sprites/stillGun.png") )
 			{
 				printf( "Fallo sprite parado torso\n" );
 				success = false;
@@ -417,7 +650,7 @@ class Personaje
 					spriteParadoTorso[ i ].w = 149;
 					spriteParadoTorso[ i ].h = 62;
 				}
-			}
+			}*/
 
 			if( !TEXTURA_PERSONAJE_CORRIENDO_PIES.cargarImagen( "imag/sprites/runLegs.png") )
 			{
@@ -432,7 +665,7 @@ class Personaje
 					spriteCorriendoPies[ i ].h = 43;
 				}
 			}
-			if( !TEXTURA_PERSONAJE_CORRIENDO_TORSO.cargarImagen( "imag/sprites/runTorso.png") )
+			/*if( !TEXTURA_PERSONAJE_CORRIENDO_TORSO.cargarImagen( "imag/sprites/runGun.png") )
 			{
 				printf( "Fallo sprite corriendo torso\n" );
 				success = false;
@@ -444,7 +677,7 @@ class Personaje
 					spriteCorriendoTorso[ i ].w = 149;
 					spriteCorriendoTorso[ i ].h = 64;
 				}
-			}
+			}*/
 
 			if( !TEXTURA_PERSONAJE_SALTANDO_PIES.cargarImagen( "imag/sprites/jumpLegs.png") )
 			{
@@ -460,7 +693,7 @@ class Personaje
 					spriteSaltandoPies[ i ].h = 56;
 				}
 			}
-			if( !TEXTURA_PERSONAJE_SALTANDO_TORSO.cargarImagen( "imag/sprites/jumpTorso.png") )
+			/*if( !TEXTURA_PERSONAJE_SALTANDO_TORSO.cargarImagen( "imag/sprites/jumpGun.png") )
 			{
 				printf( "Fallo sprite saltando torso\n" );
 				success = false;
@@ -475,18 +708,36 @@ class Personaje
 				}
 			}
 
+			if( !TEXTURA_PERSONAJE_DISPRANDO_GUN.cargarImagen( "imag/sprites/gunShoot.png") )
+			{
+				printf( "Fallo sprite disparando gun\n" );
+				success = false;
+			}
+			else{
+
+				for (i = 0;i<ANIMACION_DISPARANDO_GUN;i++){
+					spriteDisparandoGun[ i ].x = i*149;
+					spriteDisparandoGun[ i ].y = 0;
+					spriteDisparandoGun[ i ].w = 149;
+					spriteDisparandoGun[ i ].h = 62;
+				}
+			}*/
 
 			return success;
 		}
 		
 		void liberarTextura(){
 			TEXTURA_PERSONAJE_SALTANDO_PIES.free();
-			TEXTURA_PERSONAJE_SALTANDO_TORSO.free();
-
 			TEXTURA_PERSONAJE_CORRIENDO_PIES.free();
 			TEXTURA_PERSONAJE_PARADO_PIES.free();
-			TEXTURA_PERSONAJE_CORRIENDO_TORSO.free();
-			TEXTURA_PERSONAJE_PARADO_TORSO.free();
+		}
+
+		void ponerShotgun(){
+			arma.ponerShotgun();
+		}
+
+		void ponerGun(){
+			arma.ponerGun();
 		}
 
 		bool estaSaltando(){
@@ -512,11 +763,11 @@ class Personaje
 		}
 		void morir(){
 			muerto =true;
-			TEXTURA_PERSONAJE_PARADO_TORSO.setColor(128,128,128);
+			//TEXTURA_PERSONAJE_PARADO_TORSO.setColor(128,128,128);
 		}
 		void revivir(){
 			muerto = false;
-			TEXTURA_PERSONAJE_PARADO_TORSO.setColor(255,255,255);
+			//TEXTURA_PERSONAJE_PARADO_TORSO.setColor(255,255,255);
 		}
 		int getPosCamara(){
 			return posCamara;
@@ -610,7 +861,6 @@ int main( int argc, char* args[] )
 {
 	//Start up SDL and create window
 	Programa programa;
-	Personaje personaje;
 	bool quit = false;
 
 	if( !programa.iniciar() ){
@@ -620,6 +870,7 @@ int main( int argc, char* args[] )
 	{
 
 		//Load mediaojo
+		Personaje personaje;
 		if( !personaje.cargarImagen() )
 		{
 			printf( "Failed to load media!\n" );
@@ -653,6 +904,7 @@ int main( int argc, char* args[] )
 				SDL_RenderClear( renderizador );
 				personaje.render(seMovio);
 				SDL_RenderPresent( renderizador );
+
 
 
 			}
