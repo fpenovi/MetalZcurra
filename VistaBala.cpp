@@ -24,7 +24,7 @@ bool VistaBala::cargarImagen(){
 void VistaBala::render(){
     if (existe){
         TEXTURA_BALA->render(posx,posy);
-        if (posx > 800) existe = false;
+        if (posx > 800 || posx < 0 || posy < 0 || posy > 440) existe = false;
     }
 }
 

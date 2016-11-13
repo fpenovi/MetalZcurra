@@ -76,8 +76,6 @@ void* handleJumpFunc(void* argKh) {
                 update.setConectado(personaje->getConectado());
                 update.setSpriteIndex(personaje->getSprites());
 
-                cout << "SPRITE SALTO: " << personaje->getSprites() << endl;
-
                 int result;
                 string mensaje = update.toString();
 

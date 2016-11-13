@@ -16,6 +16,7 @@
 #include "Bala.h"
 #include <list>
 #include "BalasManager.h"
+#include "Direccion.h"
 
 using namespace std;
 
@@ -25,6 +26,7 @@ private:
 	unordered_map<int, Bala*> balas;
 	unordered_map<int, Personaje*> personajes;
 	unordered_map<string, int> tablaUsuarios;
+	unordered_map<int, Direccion*> direccionBalas;
 	static ObjectManager* instancia;
 	int idActual;
 	ObjectManager();
@@ -37,6 +39,7 @@ public:
 	void addObject(int id, Personaje* object);
 	void registerUser(string username);
 	int getIdByUsername(string username);
+	Direccion* getDireccionById(int id);
 	static ObjectManager* getInstance();
 	void crearPersonajes(int cantidad);
 	void enviarPersonajes(int FD);

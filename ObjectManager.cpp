@@ -11,9 +11,10 @@ ObjectManager::ObjectManager() {
 ObjectManager::~ObjectManager() {
 	for (auto kv : personajes)
 		delete kv.second;
-	for (auto kv : balas){
+	for (auto kv : balas)
 		delete kv.second;
-	}
+	for (auto kv : direccionBalas)
+		delete kv.second;
 	balasManager->Off();
 	delete balasManager;
 }
@@ -42,11 +43,16 @@ void ObjectManager::registerUser(string username) {
 	if (!(tablaUsuarios.find(username) == tablaUsuarios.end()))
 		return;
 
+	direccionBalas[idActual] = new Direccion();
 	tablaUsuarios[username] = idActual++;
 }
 
 int ObjectManager::getIdByUsername(string username) {
 	return tablaUsuarios[username];
+}
+
+Direccion* ObjectManager::getDireccionById(int id) {
+	return direccionBalas[id];
 }
 
 void ObjectManager::crearPersonajes(int cantidad) {
@@ -71,7 +77,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 
 	for (auto kv : balas){
 		if (!kv.second->existeBala()){
-			kv.second->crear(idEmisor, posxEmisor, posyEmisor);
+			kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor));
 			return;
 		}
 	}

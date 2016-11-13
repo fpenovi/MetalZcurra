@@ -250,6 +250,8 @@ private:
         emisor.erase(emisor.length()-1);
 
         int* posX = objectManager->getPosX();
+        int idEmisor = objectManager->getIdByUsername(emisor);
+        Direccion* direccion = objectManager->getDireccionById(idEmisor);
 
         int key;
         int pressed;
@@ -259,7 +261,7 @@ private:
 
         ProtocoloVistaUpdate update;
         int aux;
-        bool enviar;
+        bool enviar = false;
 
         if ( pressed == 1 ) {
 
@@ -269,20 +271,29 @@ private:
                     handleQuieto->Pause();
                     handleKeyHold->setKeyPressed(SDLK_LEFT);
                     handleKeyHold->Resume();
-                    enviar = false;
+
+                    direccion->disparoAlaIzq();
                     break;
 
                 case SDLK_RIGHT:
                     handleQuieto->Pause();
                     handleKeyHold->setKeyPressed(SDLK_RIGHT);
                     handleKeyHold->Resume();
-                    enviar = false;
+
+                    direccion->disparoAlaDer();
                     break;
 
                 case SDLK_UP:
+                    direccion->disparoArriba();
+                    break;
+
+                case SDLK_DOWN:
+                    direccion->disparoAbajo();
+                    break;
+
+                case SDLK_x:
                     handleQuieto->Pause();
                     handleJump->Resume();
-                    enviar = false;
                     break;
 
                 case SDLK_r:
@@ -316,7 +327,9 @@ private:
                         handleKeyHold->Pause();
                         handleKeyHold->setKeyPressed(0);
                         handleQuieto->Resume();
+                        direccion->setSolte(true);
                     }
+                    if (direccion->isArriba() || direccion->isAbajo()) direccion->setIzquierda(false);
                     break;
 
                 case SDLK_RIGHT:
@@ -324,10 +337,22 @@ private:
                         handleKeyHold->Pause();
                         handleKeyHold->setKeyPressed(0);
                         handleQuieto->Resume();
+                        direccion->setSolte(true);
                     }
+                    if (direccion->isArriba() || direccion->isAbajo()) direccion->setDerecha(false);
                     break;
 
                 case SDLK_UP:
+                    direccion->setArriba(false);
+                    direccion->ultimaDireccion();
+                    break;
+
+                case SDLK_DOWN:
+                    direccion->setAbajo(false);
+                    direccion->ultimaDireccion();
+                    break;
+
+                case SDLK_x:
                     handleJump->Pause();
                     break;
 
@@ -710,7 +735,7 @@ public:
     void initJuego() {
 
         //cantidadUsuarios = (int) parser->users().size();
-        cantidadUsuarios = 2;
+        cantidadUsuarios = 1;
         objectManager->crearPersonajes(cantidadUsuarios);
         objectManager->crearBalas(50);
         objectManager->crearBalasManager(&conectadosHash, &mutexesHash);

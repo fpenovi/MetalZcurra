@@ -7,13 +7,23 @@
 Bala::Bala(){
     velocidad = 30;
     existe = false;
+
+    derecha = false;
+    izquierda = false;
+    arriba = false;
+    abajo = false;
 }
 
 void Bala::mover(){
-    if (posx > 800) {
+    if (posx > 800 || posx < 0 || posy < 0 || posy > 440) {
         desaparecer();
+        return;
     }
-    posx += velocidad;
+
+    if (derecha) posx += velocidad;
+    if (izquierda) posx -= velocidad;
+    if (arriba) posy -= velocidad;
+    if (abajo) posy += velocidad;
 }
 
 bool Bala::existeBala(){
@@ -24,14 +34,13 @@ void Bala::setID(int nuevoID){
     id = nuevoID;
 }
 
-void Bala::crear(int idEmisor, int x, int y){
+void Bala::crear(int idEmisor, int x, int y, Direccion* direccion){
     existe = true;
-
     posx = x;
-
     posy = y;
-
     idDuenio = idEmisor;
+
+    setDireccion(direccion->isDerecha(), direccion->isIzquierda(), direccion->isArriba(), direccion->isAbajo());
 }
 
 int Bala::getPosx(){
@@ -67,4 +76,11 @@ void Bala::setIdDuenio(int id) {
 
 int Bala::getIdDuenio() {
     return idDuenio;
+}
+
+void Bala::setDireccion(bool der, bool izq, bool arr, bool abj) {
+    this->derecha = der;
+    this->izquierda = izq;
+    this->arriba = arr;
+    this->abajo = abj;
 }

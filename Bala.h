@@ -5,6 +5,8 @@
 #ifndef METALZCURRA_BALA_H
 #define METALZCURRA_BALA_H
 
+#include "Direccion.h"
+
 class Bala
 {
 private:
@@ -17,6 +19,11 @@ private:
     int alto;
     int idDuenio;
 
+    bool derecha;
+    bool izquierda;
+    bool abajo;
+    bool arriba;
+
 public:
     Bala();
 
@@ -26,7 +33,7 @@ public:
 
     void setID(int nuevoID);
 
-    void crear(int idEmisor, int x, int y);
+    void crear(int idEmisor, int x, int y, Direccion* direccion);
 
     int getPosx();
 
@@ -43,6 +50,8 @@ public:
     int getIdDuenio();
 
     void setIdDuenio(int id);
+
+    void setDireccion(bool der, bool izq, bool arr, bool abj);
 };
 
 #endif //METALZCURRA_BALA_H

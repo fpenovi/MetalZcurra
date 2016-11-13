@@ -506,6 +506,20 @@ public:
 					cliente->enviarAusuario("TODOS", msj, false);
 					break;
 
+				case SDLK_DOWN:
+					comando.setScancode(SDLK_DOWN);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					break;
+
+				case SDLK_x:
+					comando.setScancode(SDLK_x);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					break;
+
 				case SDLK_r:
 					comando.setScancode(SDLK_r);
 					comando.setType(1);
@@ -543,6 +557,20 @@ public:
 
 				case SDLK_UP:
 					comando.setScancode(SDLK_UP);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					break;
+
+				case SDLK_DOWN:
+					comando.setScancode(SDLK_DOWN);
+					comando.setType(0);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+					break;
+
+				case SDLK_x:
+					comando.setScancode(SDLK_x);
 					comando.setType(0);
 					msj = comando.toString();
 					cliente->enviarAusuario("TODOS", msj, false);
