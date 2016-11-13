@@ -329,8 +329,6 @@ private:
 
                 case SDLK_UP:
                     handleJump->Pause();
-                    handleQuieto->Resume();
-                    enviar = false;
                     break;
 
                 case SDLK_r:
@@ -712,7 +710,7 @@ public:
     void initJuego() {
 
         //cantidadUsuarios = (int) parser->users().size();
-        cantidadUsuarios = 1;
+        cantidadUsuarios = 2;
         objectManager->crearPersonajes(cantidadUsuarios);
         objectManager->crearBalas(50);
         objectManager->crearBalasManager(&conectadosHash, &mutexesHash);

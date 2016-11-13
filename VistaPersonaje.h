@@ -15,30 +15,28 @@ private:
     int ancho, alto;
     bool conectado;
     int posCamara;
-    const static int ANIMACION_PARADO = 3;
-    const static int ANIMACION_CORRIENDO = 9;
-    const static int ANIMACION_SALTANDO = 10;
-    SDL_Rect spriteParado[ANIMACION_PARADO];
-    SDL_Rect spriteCorriendo[ANIMACION_CORRIENDO];
-    SDL_Rect spriteSaltando[ANIMACION_SALTANDO];
-	int frameDivider;
 
-    int frameCorriendo;
-    int frameParado;
-    bool derecha;
-    bool quieto;
-    bool saltando;
-    bool subiendo;
-    bool bajando;
-    int frameSaltando;
+	const static int ANIMACION_PARADO=4;
+	const static int ANIMACION_CORRIENDO=18;
+	const static int ANIMACION_SALTANDO=12;
 
-    int velx;
-    int vely;
-    Textura *TEXTURA_PERSONAJE_PARADO;
-    Textura *TEXTURA_PERSONAJE_SALTANDO;
-    Textura *TEXTURA_PERSONAJE_CORRIENDO;
-    const static int Personaje_VEL = 5;
-    const static int Personaje_VEL_Y = 4;
+	Textura* TEXTURA_PERSONAJE_PARADO_PIES;
+	Textura* TEXTURA_PERSONAJE_PARADO_TORSO;
+	SDL_Rect spriteParadoTorso[ ANIMACION_PARADO ];
+	SDL_Rect spriteParadoPies[ ANIMACION_PARADO ];
+
+	Textura* TEXTURA_PERSONAJE_CORRIENDO_PIES;
+	Textura* TEXTURA_PERSONAJE_CORRIENDO_TORSO;
+	SDL_Rect spriteCorriendoTorso[ ANIMACION_CORRIENDO ];
+	SDL_Rect spriteCorriendoPies[ ANIMACION_CORRIENDO ];
+
+	Textura* TEXTURA_PERSONAJE_SALTANDO_PIES;
+	Textura* TEXTURA_PERSONAJE_SALTANDO_TORSO;
+	SDL_Rect spriteSaltandoTorso[ ANIMACION_SALTANDO ];
+	SDL_Rect spriteSaltandoPies[ ANIMACION_SALTANDO ];
+
+	bool derecha;
+
     SDL_Renderer *renderizador;
     int id;
     bool seMovio;
@@ -51,17 +49,13 @@ private:
     string pathSaltando;
 
 	SDL_RendererFlip flip;
-	SDL_Rect* currentClip;
-	int index = 0;
+	SDL_Rect* currentClipPies;
+	SDL_Rect* currentClipTorso;
+	int indexTorso = 0;
+	int indexPies = 0;
 
 public:
     VistaPersonaje(SDL_Renderer *renderizador2);
-
-    void handleEvent(SDL_Event &e);
-
-    bool estaQuieto();
-
-    bool mover();
 
     void render(bool seMovio);
 
@@ -69,7 +63,7 @@ public:
 
     void animacionCorrer();
 
-    int animacionSaltando();
+    void animacionSaltando();
 
     bool cargarImagen();
 
@@ -92,8 +86,6 @@ public:
     void setPosx(int posx);
 
     void setPosy(int posy);
-
-    void setQuieto(bool quieto);
 
     void setDerecha(bool derecha);
 
@@ -119,7 +111,9 @@ public:
 
 	void sacarTexturaGris();
 
-	void setSpriteIndex(int idx);
+	void setSpriteIndexTorso(int idx);
+
+	void setSpriteIndexPies(int idx);
 };
 
 

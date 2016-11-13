@@ -35,7 +35,7 @@ void Personaje::moverX() {
         return;
     }
 
-    setSpriteCorriendo();
+    if (posy == 360) setSprites();
     seMovio = true;
 }
 
@@ -59,7 +59,6 @@ void Personaje::moverY() {
         return;
     }
 
-    setSpriteSaltando();
     seMovio = true;
 
 }
@@ -151,9 +150,8 @@ void Personaje::setConectado(int conexion) {
 }
 
 void Personaje::setSpriteCorriendo() {
-    if( frameCorriendo >= ANIMACION_CORRIENDO ) frameCorriendo = 0;
-
     frameCorriendo++;
+    if( frameCorriendo >= ANIMACION_CORRIENDO ) frameCorriendo = 0;
 }
 
 int Personaje::getFrameCorriendo() {
@@ -161,20 +159,17 @@ int Personaje::getFrameCorriendo() {
 }
 
 void Personaje::setSpriteSaltando() {
-    double index = frameSaltando * 1.2;
-    if( index >= ANIMACION_SALTANDO ) frameSaltando = 0;
     frameSaltando++;
+    if( frameSaltando / 2 >= ANIMACION_SALTANDO ) frameSaltando = 0;
 }
 
 int Personaje::getSpriteSaltando() {
-    return frameSaltando;
+    return frameSaltando / 2;
 }
 
 void Personaje::setSpriteParado() {
-    double index = frameParado;
-    if ( index >= ANIMACION_PARADO ) frameParado = 0;
-
     frameParado++;
+    if ( frameParado >= ANIMACION_PARADO ) frameParado = 0;
 }
 
 int Personaje::getSpriteParado() {
@@ -185,4 +180,30 @@ void Personaje::resetFrames() {
     frameParado = 0;
     frameSaltando = 0;
     frameCorriendo = 0;
+}
+
+void Personaje::setSprites() {
+    if (posy != 360) {
+        setSpriteSaltando();
+        return;
+    }
+    if (seMovio){
+        setSpriteCorriendo();
+    }
+    else {
+        setSpriteParado();
+    }
+
+}
+
+int Personaje::getSprites() {
+    if (posy != 360) {
+        return getSpriteSaltando();
+    }
+    if (seMovio){
+        return getFrameCorriendo();
+    }
+    else {
+        return getSpriteParado();
+    }
 }

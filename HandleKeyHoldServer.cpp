@@ -61,7 +61,7 @@ void* handleKeyHoldFunc(void* argKh) {
                         update.setObject_id(idEmisor);
                         update.setPosCamara(personaje->getPosCamara());
                         update.setConectado(personaje->getConectado());
-                        update.setSpriteIndex(personaje->getFrameCorriendo());
+                        update.setSpriteIndex(personaje->getSprites());
                         break;
 
                     case SDLK_RIGHT:
@@ -81,9 +81,8 @@ void* handleKeyHoldFunc(void* argKh) {
                         update.setObject_id(idEmisor);
                         update.setPosCamara(personaje->getPosCamara());
                         update.setConectado(personaje->getConectado());
+                        update.setSpriteIndex(personaje->getSprites());
 
-                        if (personaje->getSeMovio()) update.setSpriteIndex(personaje->getFrameCorriendo());
-                        else update.setSpriteIndex(personaje->getSpriteParado());
                         break;
 
                 }

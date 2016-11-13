@@ -16,27 +16,18 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	posy = 360;
 	ancho=60;
 	alto=80;
-	frameParado=0;
-	frameDivider=30;
-	velx = 0;
-	vely = 0;
 	derecha = true;
-	quieto = true;
-	saltando = false;
-	subiendo = false;
-	bajando = false;
 	renderizador = renderizador2;
-	TEXTURA_PERSONAJE_PARADO = new Textura(renderizador);
-	TEXTURA_PERSONAJE_SALTANDO = new Textura(renderizador);
-	TEXTURA_PERSONAJE_CORRIENDO = new Textura(renderizador);
+	TEXTURA_PERSONAJE_PARADO_PIES = new Textura(renderizador);
+	TEXTURA_PERSONAJE_PARADO_TORSO = new Textura(renderizador);
+	TEXTURA_PERSONAJE_CORRIENDO_PIES = new Textura(renderizador);
+	TEXTURA_PERSONAJE_CORRIENDO_TORSO = new Textura(renderizador);
+	TEXTURA_PERSONAJE_SALTANDO_PIES = new Textura(renderizador);
+	TEXTURA_PERSONAJE_SALTANDO_TORSO = new Textura(renderizador);
 	gris = false;
-	SDL_RendererFlip flip = SDL_FLIP_NONE;
+	flip = SDL_FLIP_NONE;
 
 	crearHashSprites();
-}
-
-bool VistaPersonaje::estaQuieto(){
-	return quieto;
 }
 
 void VistaPersonaje::render(bool seMovio){
@@ -57,8 +48,10 @@ void VistaPersonaje::animacionParado(){
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
 	else flip = SDL_FLIP_NONE;
 
-	currentClip = &spriteParado[ index ];
-	TEXTURA_PERSONAJE_PARADO->render(posCamara,posy, currentClip,0,NULL,flip );
+	currentClipPies = &spriteParadoPies[ indexPies ];
+	currentClipTorso = &spriteParadoTorso[ indexTorso ];
+	TEXTURA_PERSONAJE_PARADO_PIES->render(posCamara,posy+48, currentClipPies,0,NULL,flip );
+	TEXTURA_PERSONAJE_PARADO_TORSO->render(posCamara,posy, currentClipTorso,0,NULL,flip );
 
 }
 
@@ -66,17 +59,22 @@ void VistaPersonaje::animacionCorrer(){
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
 	else flip = SDL_FLIP_NONE;
 
-	currentClip = &spriteCorriendo[ index ];
-	TEXTURA_PERSONAJE_CORRIENDO->render( posCamara, posy, currentClip,0,NULL,flip);
+	currentClipPies = &spriteCorriendoPies[ indexPies ];
+	currentClipTorso = &spriteCorriendoTorso[ indexTorso ];
+	TEXTURA_PERSONAJE_CORRIENDO_PIES->render( posCamara, posy+45, currentClipPies,0,NULL,flip);
+	TEXTURA_PERSONAJE_CORRIENDO_TORSO->render( posCamara, posy, currentClipTorso,0,NULL,flip);
 
 }
 
-int VistaPersonaje::animacionSaltando(){
+void VistaPersonaje::animacionSaltando(){
 	if (!derecha) flip = SDL_FLIP_HORIZONTAL;
 	else flip = SDL_FLIP_NONE;
 
-	currentClip = &spriteSaltando[ index ];
-	TEXTURA_PERSONAJE_SALTANDO->render( posCamara, posy, currentClip,0,NULL,flip);
+	currentClipPies = &spriteSaltandoPies[ indexPies ];
+	currentClipTorso = &spriteSaltandoTorso[ indexTorso ];
+	TEXTURA_PERSONAJE_SALTANDO_PIES->render( posCamara, posy+45, currentClipPies,0,NULL,flip);
+	TEXTURA_PERSONAJE_SALTANDO_TORSO->render( posCamara, posy, currentClipTorso,0,NULL,flip);
+
 }
 
 bool VistaPersonaje::cargarImagen(){
@@ -85,88 +83,103 @@ bool VistaPersonaje::cargarImagen(){
 	int i;
 
 	//Load sprite sheet texture
-	if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( pathQuieto) )
+	if( !TEXTURA_PERSONAJE_PARADO_PIES->cargarImagen( "imag/sprites/stillLegs.png") )
 	{
-		printf( "Fallo sprite parado\n" );
-		if( !TEXTURA_PERSONAJE_PARADO->cargarImagen( "imag/cruz/quieto.png"))
-			success = false;
-		else
-		{
-			//SPRITE PARADO
-			for (i = 0;i<ANIMACION_PARADO;i++){
-				spriteParado[ i ].x = i*60;
-				spriteParado[ i ].y = 0;
-				spriteParado[ i ].w = 60;
-				spriteParado[ i ].h = 80;
-			}
-		}
+		printf( "Fallo sprite parado pies\n" );
+		success = false;
 	}
 	else
 	{
-		//SPRITE PARADO
 		for (i = 0;i<ANIMACION_PARADO;i++){
-			spriteParado[ i ].x = i*60;
-			spriteParado[ i ].y = 0;
-			spriteParado[ i ].w = 60;
-			spriteParado[ i ].h = 80;
+			spriteParadoPies[ i ].x = i*149;
+			spriteParadoPies[ i ].y = 0;
+			spriteParadoPies[ i ].w = 149;
+			spriteParadoPies[ i ].h = 34;
+		}
+	}
+	if( !TEXTURA_PERSONAJE_PARADO_TORSO->cargarImagen( "imag/sprites/stillTorso.png") )
+	{
+		printf( "Fallo sprite parado torso\n" );
+		success = false;
+	}
+	else
+	{
+		for (i = 0;i<ANIMACION_PARADO;i++){
+			spriteParadoTorso[ i ].x = i*149;
+			spriteParadoTorso[ i ].y = 0;
+			spriteParadoTorso[ i ].w = 149;
+			spriteParadoTorso[ i ].h = 62;
 		}
 	}
 
-	if( !TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( pathCorriendo) )
+	if( !TEXTURA_PERSONAJE_CORRIENDO_PIES->cargarImagen( "imag/sprites/runLegs.png") )
 	{
-		printf( "Fallo sprite corriendo\n" );
-		if (!TEXTURA_PERSONAJE_CORRIENDO->cargarImagen( "imag/cruz/corriendo.png"))
-			success = false;
-		else{
-			for (i = 0;i<ANIMACION_CORRIENDO;i++){
-				spriteCorriendo[ i ].x = i*60;
-				spriteCorriendo[ i ].y = 0;
-				spriteCorriendo[ i ].w = 60;
-				spriteCorriendo[ i ].h = 80;
-			}
-		}
+		printf( "Fallo sprite corriendo pies\n" );
+		success = false;
 	}
 	else{
 		for (i = 0;i<ANIMACION_CORRIENDO;i++){
-			spriteCorriendo[ i ].x = i*60;
-			spriteCorriendo[ i ].y = 0;
-			spriteCorriendo[ i ].w = 60;
-			spriteCorriendo[ i ].h = 80;
+			spriteCorriendoPies[ i ].x = i*149;
+			spriteCorriendoPies[ i ].y = 0;
+			spriteCorriendoPies[ i ].w = 149;
+			spriteCorriendoPies[ i ].h = 43;
+		}
+	}
+	if( !TEXTURA_PERSONAJE_CORRIENDO_TORSO->cargarImagen( "imag/sprites/runTorso.png") )
+	{
+		printf( "Fallo sprite corriendo torso\n" );
+		success = false;
+	}
+	else{
+		for (i = 0;i<ANIMACION_CORRIENDO;i++){
+			spriteCorriendoTorso[ i ].x = i*149;
+			spriteCorriendoTorso[ i ].y = 0;
+			spriteCorriendoTorso[ i ].w = 149;
+			spriteCorriendoTorso[ i ].h = 64;
 		}
 	}
 
-	if( !TEXTURA_PERSONAJE_SALTANDO->cargarImagen( pathSaltando) )
+	if( !TEXTURA_PERSONAJE_SALTANDO_PIES->cargarImagen( "imag/sprites/jumpLegs.png") )
 	{
-		printf( "Fallo sprite saltando\n" );
-		if (!TEXTURA_PERSONAJE_SALTANDO->cargarImagen( "imag/cruz/saltando.png"))
-			success = false;
-		else{
-
-			for (i = 0;i<ANIMACION_SALTANDO;i++){
-				spriteSaltando[ i ].x = i*60;
-				spriteSaltando[ i ].y = 0;
-				spriteSaltando[ i ].w = 60;
-				spriteSaltando[ i ].h = 80;
-			}
-		}
+		printf( "Fallo sprite saltando pies\n" );
+		success = false;
 	}
 	else{
 
 		for (i = 0;i<ANIMACION_SALTANDO;i++){
-			spriteSaltando[ i ].x = i*60;
-			spriteSaltando[ i ].y = 0;
-			spriteSaltando[ i ].w = 60;
-			spriteSaltando[ i ].h = 80;
+			spriteSaltandoPies[ i ].x = i*149;
+			spriteSaltandoPies[ i ].y = 0;
+			spriteSaltandoPies[ i ].w = 149;
+			spriteSaltandoPies[ i ].h = 56;
 		}
 	}
+	if( !TEXTURA_PERSONAJE_SALTANDO_TORSO->cargarImagen( "imag/sprites/jumpTorso.png") )
+	{
+		printf( "Fallo sprite saltando torso\n" );
+		success = false;
+	}
+	else{
+
+		for (i = 0;i<ANIMACION_SALTANDO;i++){
+			spriteSaltandoTorso[ i ].x = i*149;
+			spriteSaltandoTorso[ i ].y = 0;
+			spriteSaltandoTorso[ i ].w = 149;
+			spriteSaltandoTorso[ i ].h = 79;
+		}
+	}
+
+
 	return success;
 }
 
 
 void VistaPersonaje::liberarTextura(){
-	TEXTURA_PERSONAJE_SALTANDO->free();
-	TEXTURA_PERSONAJE_CORRIENDO->free();
-	TEXTURA_PERSONAJE_PARADO->free();
+	TEXTURA_PERSONAJE_SALTANDO_PIES->free();
+	TEXTURA_PERSONAJE_SALTANDO_TORSO->free();
+	TEXTURA_PERSONAJE_CORRIENDO_PIES->free();
+	TEXTURA_PERSONAJE_PARADO_PIES->free();
+	TEXTURA_PERSONAJE_CORRIENDO_TORSO->free();
+	TEXTURA_PERSONAJE_PARADO_TORSO->free();
 
 }
 bool VistaPersonaje::estaSaltando(){
@@ -199,10 +212,6 @@ void VistaPersonaje::setPosx(int posx) {
 
 void VistaPersonaje::setPosy(int posy) {
 	this->posy = posy;
-}
-
-void VistaPersonaje::setQuieto(bool quieto) {
-	this->quieto = quieto;
 }
 
 void VistaPersonaje::setDerecha(bool derecha){
@@ -266,12 +275,14 @@ void VistaPersonaje::setearSprites(int id) {
 }
 
 void VistaPersonaje::ponerTexturaGris() {
-	TEXTURA_PERSONAJE_PARADO->setColor(128,128,128);
+	TEXTURA_PERSONAJE_PARADO_TORSO->setColor(128,128,128);
+	TEXTURA_PERSONAJE_PARADO_PIES->setColor(128,128,128);
 	gris = true;
 }
 
 void VistaPersonaje::sacarTexturaGris() {
-	TEXTURA_PERSONAJE_PARADO->setColor(255,255,255);
+	TEXTURA_PERSONAJE_PARADO_TORSO->setColor(255,255,255);
+	TEXTURA_PERSONAJE_PARADO_PIES->setColor(255,255,255);
 	gris = false;
 }
 
@@ -279,6 +290,10 @@ bool VistaPersonaje::getGris() {
 	return gris;
 }
 
-void VistaPersonaje::setSpriteIndex(int idx) {
-	this->index = idx;
+void VistaPersonaje::setSpriteIndexTorso(int idx) {
+	this->indexTorso = idx;
+}
+
+void VistaPersonaje::setSpriteIndexPies(int idx) {
+	this->indexPies = idx;
 }

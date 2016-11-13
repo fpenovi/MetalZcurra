@@ -57,7 +57,7 @@ void* handleQuietoFunc(void* argKh) {
                 update.setObject_id(idEmisor);
                 update.setPosCamara(personaje->getPosCamara());
                 update.setConectado(personaje->getConectado());
-                update.setSpriteIndex(personaje->getSpriteParado());
+                update.setSpriteIndex(personaje->getSprites());
 
                 int result;
                 string mensaje = update.toString();

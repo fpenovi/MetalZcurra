@@ -38,29 +38,33 @@ void* handleJumpFunc(void* argKh) {
             ProtocoloVistaUpdate update;
             int aux;
 
-            for (int i = 0 ; i < 22 ; i++){
+            personaje->resetFrames();
 
-                if (personaje->getPosy() <= 305){
+            for (int i = 0 ; i < 24 ; i++){
+
+                if (personaje->getPosy() <= 300){
                     personaje->setVely(personaje->getPersonaje_VEL_Y());
                     personaje->moverY();
                     personaje->setVely(0);
                     personaje->setBajando(true);
+                    personaje->setSprites();
                 }
                 else if (personaje->getPosy() >= 360){
                     personaje->setVely(-personaje->getPersonaje_VEL_Y());
                     personaje->moverY();
                     personaje->setVely(0);
                     personaje->setBajando(false);
-                    personaje->resetFrames();
                 }
                 else if (personaje->getBajando()){
                     personaje->setVely(personaje->getPersonaje_VEL_Y());
                     personaje->moverY();
+                    personaje->setSprites();
                 }
 
                 else if(!(personaje->getBajando())) {
                     personaje->setVely(-personaje->getPersonaje_VEL_Y());
                     personaje->moverY();
+                    personaje->setSprites();
                 }
 
                 update.setTipoObjeto(1);
@@ -70,7 +74,9 @@ void* handleJumpFunc(void* argKh) {
                 update.setObject_id(idEmisor);
                 update.setPosCamara(personaje->getPosCamara());
                 update.setConectado(personaje->getConectado());
-                update.setSpriteIndex(personaje->getSpriteSaltando());
+                update.setSpriteIndex(personaje->getSprites());
+
+                cout << "SPRITE SALTO: " << personaje->getSprites() << endl;
 
                 int result;
                 string mensaje = update.toString();

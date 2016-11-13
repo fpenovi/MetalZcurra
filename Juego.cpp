@@ -964,7 +964,8 @@ int main( int argc, char** argv) {
 					juego.setPosX(posx);
 				}
 
-				pj->setSpriteIndex(spriteIdx);
+				pj->setSpriteIndexTorso(spriteIdx);
+				pj->setSpriteIndexPies(spriteIdx);
 				pj->setConectado(conectado);
 				pj->setPosCamara(posCam);
 				pj->setPosy(posy);
