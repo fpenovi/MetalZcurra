@@ -32,7 +32,7 @@ public:
 
     int getAlto();
 
-    void render(int x, int y );
+    void render(int x, int y, SDL_Rect* clip);
 
     void scrollear(int posJugadorx);
 

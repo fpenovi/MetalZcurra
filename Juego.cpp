@@ -961,6 +961,10 @@ int main( int argc, char** argv) {
 
 		if (update != "$\n") {
 
+			time_point<high_resolution_clock> start;
+			start = high_resolution_clock::now();
+			time_point<high_resolution_clock> actual;
+
 			int tipoObjeto, id, state, posx, posy, posCam, conectado, spriteIdx;
 
 			ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posx, &posy, &posCam, &conectado, &spriteIdx);
@@ -1018,6 +1022,13 @@ int main( int argc, char** argv) {
 			juego.renderizar();
 
 			SDL_RenderPresent( juego.getRenderer() );
+
+			actual = high_resolution_clock::now();
+			auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
+			auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
+			auto time = elapsed_ms.count()/1000000.0;
+
+			cout << "Elapsed ms: " << time << endl;
 
 		}
 

@@ -22,9 +22,9 @@ int Layer::getAlto(){
     return alto;
 }
 
-void Layer::render(int x, int y ){
+void Layer::render(int x, int y, SDL_Rect* clip ){
     //cout << camara.x << endl;
-    fondo->render(x,y);
+    fondo->render(x, y, clip);
 }
 
 void Layer::scrollear(int posJugadorx){
@@ -48,13 +48,17 @@ void Layer::scrollear(int posJugadorx){
     if (-scroll > ancho) scroll = 0 ;
 
     //renderizo la pos del layer
-    render(scroll,0);
+    //render(scroll,0);
 
     //renderizo tambien lo de adelante para que sea infinito
     if (-scroll + 800 > ancho) {  //PONGO 800 PORQUE ES EL SCREEN-WIDTH
         //cout << "entre al render"<<endl;
-        render(scroll+ancho,0);
+        //render(scroll+ancho,0);
+        scroll += movimiento;
     }
+
+    SDL_Rect clip = {-scroll, 0, 800, 600};
+    render(0, 0, &clip);
 }
 
 bool Layer::cargarImagen(char* path){

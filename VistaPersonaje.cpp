@@ -97,7 +97,7 @@ bool VistaPersonaje::cargarImagen(){
 			spriteParadoPies[ i ].h = 34;
 		}
 	}
-	if( !TEXTURA_PERSONAJE_PARADO_TORSO->cargarImagen( "imag/sprites/stillTorso.png") )
+	if( !TEXTURA_PERSONAJE_PARADO_TORSO->cargarImagen( "imag/spritesVIEJOS/stillTorso.png") )
 	{
 		printf( "Fallo sprite parado torso\n" );
 		success = false;
@@ -125,7 +125,7 @@ bool VistaPersonaje::cargarImagen(){
 			spriteCorriendoPies[ i ].h = 43;
 		}
 	}
-	if( !TEXTURA_PERSONAJE_CORRIENDO_TORSO->cargarImagen( "imag/sprites/runTorso.png") )
+	if( !TEXTURA_PERSONAJE_CORRIENDO_TORSO->cargarImagen( "imag/spritesVIEJOS/runTorso.png") )
 	{
 		printf( "Fallo sprite corriendo torso\n" );
 		success = false;
@@ -153,7 +153,7 @@ bool VistaPersonaje::cargarImagen(){
 			spriteSaltandoPies[ i ].h = 56;
 		}
 	}
-	if( !TEXTURA_PERSONAJE_SALTANDO_TORSO->cargarImagen( "imag/sprites/jumpTorso.png") )
+	if( !TEXTURA_PERSONAJE_SALTANDO_TORSO->cargarImagen( "imag/spritesVIEJOS/jumpTorso.png") )
 	{
 		printf( "Fallo sprite saltando torso\n" );
 		success = false;
