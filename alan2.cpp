@@ -843,15 +843,17 @@ class Programa
 							printf( "NO SE PUDO INICIARLIZAR LA IMAGEN! SDL_image Error: %s\n", IMG_GetError() );
 							success = false;
 						}
-						if( TTF_Init() == -1 )
+						/*if( TTF_Init() == -1 )
 						{
 							printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
 							success = false;
-						}
+						}*/
 					}
 				}
 			}
-
+			SDL_RendererInfo info;
+			SDL_GetRendererInfo(renderizador, &info);
+			cout << "Max Height: " << info.max_texture_height << " Max Width: " << info.max_texture_width << endl;
 			return success;
 		}
 };
