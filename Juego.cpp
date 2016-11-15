@@ -636,7 +636,7 @@ public:
 		for ( auto kv : vistasPersonajes){
 			kv.second->setPosCamara(0);
 			kv.second->setPosx(0);
-			kv.second->setPosy(360);
+			kv.second->setPosy(440);
 			kv.second->setSeMovio(false);
 			kv.second->setDerecha(true);
 		}
@@ -735,7 +735,7 @@ public:
 			VistaPersonaje *personaje = new VistaPersonaje(getRenderer());
 
 			setPosX(posx);
-			personaje->setearSprites(sprite);
+			//personaje->setearSprites(sprite);
 			personaje->setId(id);
 			personaje->setPosCamara(cam);
 			personaje->setPosx(posx);
@@ -945,10 +945,6 @@ int main( int argc, char** argv) {
 	while( !quit ) {
 		pauseRecibir = false;
 
-		//time_point<high_resolution_clock> start;
-		//start = high_resolution_clock::now();
-		//time_point<high_resolution_clock> actual;
-
 		if (SDL_PollEvent(&e) != 0) {
 
 			if (e.type == SDL_QUIT) {
@@ -996,7 +992,7 @@ int main( int argc, char** argv) {
 					juego.setPosX(posx);
 				}
 
-				pj->setSpriteIndexTorso(spriteIdx);
+				if (!(pj->getDisparar())) pj->setSpriteIndexTorso(spriteIdx);
 				pj->setSpriteIndexPies(spriteIdx);
 				pj->setConectado(conectado);
 				pj->setPosCamara(posCam);
@@ -1008,12 +1004,30 @@ int main( int argc, char** argv) {
 			// Tipo de objeto 2 = BALAS
 			else if (tipoObjeto == 2){
 
+				int derecha, arriba, abajo;
+				derecha = spriteIdx;
+				arriba = posCam;
+				abajo = conectado;
+
 				VistaBala* bala = juego.getBalaById(id);
 
 				bala->setExiste(state);
 				bala->setPosX(posx);
 				bala->setPosY(posy);
+				bala->setDerecha(derecha);
+				bala->setArriba(arriba);
+				bala->setAbajo(abajo);
 
+			}
+
+			// Tipo de objeto 3 = SPRITE DISPARO
+			else if (tipoObjeto == 3){
+
+				VistaPersonaje* pj = juego.getPersonajeById(id);
+
+				pj->setDisparar(state);
+				pj->setSpriteIndexTorso(spriteIdx);
+				pj->setSpriteIndexPies(spriteIdx);
 			}
 
 			SDL_RenderClear( juego.getRenderer() );
@@ -1028,18 +1042,9 @@ int main( int argc, char** argv) {
 			auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
 			auto time = elapsed_ms.count()/1000000.0;
 
-			cout << "Elapsed ms: " << time << endl;
+			//cout << "Elapsed ms: " << time << endl;
 
 		}
-
-
-		// MIDO EL TIEMPO QUE TARDO EN RENDERIZAR
-		//actual = high_resolution_clock::now();
-		//auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
-		//auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
-		//auto time = elapsed_ms.count()/1000000.0;
-
-		//cout << "Elapsed ms: " << time << endl;
 	}
 
 	//Free resources and close SDL

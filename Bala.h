@@ -52,6 +52,12 @@ public:
     void setIdDuenio(int id);
 
     void setDireccion(bool der, bool izq, bool arr, bool abj);
+
+    int getDerecha();
+
+    int getArriba();
+
+    int getAbajo();
 };
 
 #endif //METALZCURRA_BALA_H

@@ -35,7 +35,7 @@ void Personaje::moverX() {
         return;
     }
 
-    if (posy == 360) setSprites();
+    if (posy == 440) setSprites();
     seMovio = true;
 }
 
@@ -54,7 +54,7 @@ void Personaje::moverY() {
         return;
     }
 
-    if (posy == 360){
+    if (posy == 440){
         seMovio = false;
         return;
     }
@@ -137,7 +137,7 @@ void Personaje::setPosCamara(int camara) {
 
 void Personaje::inicial(){
     this->posx = 0;
-    this->posy = 360;
+    this->posy = 440;
     this->posCamara=0;
 }
 
@@ -176,34 +176,61 @@ int Personaje::getSpriteParado() {
     return frameParado;
 }
 
+void Personaje::setSpriteDisparando() {
+    frameDisparando++;
+    if( frameDisparando >= ANIMACION_ACTUAL ) {
+        frameDisparando = 0;
+        disparando = false;
+    }
+}
+
+int Personaje::getSpriteDisparando() {
+    return frameDisparando;
+}
+
 void Personaje::resetFrames() {
     frameParado = 0;
     frameSaltando = 0;
     frameCorriendo = 0;
+    frameDisparando = 0;
 }
 
 void Personaje::setSprites() {
-    if (posy != 360) {
-        setSpriteSaltando();
+    if (posy != 440) {
+        if (disparando) setSpriteDisparando();
+        else setSpriteSaltando();
         return;
     }
     if (seMovio){
-        setSpriteCorriendo();
+        if (disparando) setSpriteDisparando();
+        else setSpriteCorriendo();
     }
     else {
-        setSpriteParado();
+        if (disparando) setSpriteDisparando();
+        else setSpriteParado();
     }
 
 }
 
 int Personaje::getSprites() {
-    if (posy != 360) {
-        return getSpriteSaltando();
+    if (posy != 440) {
+        if (disparando) return getSpriteDisparando();
+        else return getSpriteSaltando();
     }
     if (seMovio){
-        return getFrameCorriendo();
+        if (disparando) return getSpriteDisparando();
+        else return getFrameCorriendo();
     }
     else {
-        return getSpriteParado();
+        if (disparando) return getSpriteDisparando();
+        else return getSpriteParado();
     }
+}
+
+void Personaje::setDisparando(bool aux) {
+    disparando = aux;
+}
+
+int Personaje::getDisparando() {
+    return disparando;
 }

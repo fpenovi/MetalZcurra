@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include "Textura.h"
+#include "Arma.h"
 
 #ifndef METALZCURRA_VISTAMARCO_H
 #define METALZCURRA_VISTAMARCO_H
@@ -16,31 +17,27 @@ private:
     bool conectado;
     int posCamara;
 
-	const static int ANIMACION_PARADO=4;
-	const static int ANIMACION_CORRIENDO=18;
-	const static int ANIMACION_SALTANDO=12;
+	const static int ANIMACION_PARADO = 4;
+	const static int ANIMACION_CORRIENDO = 18;
+	const static int ANIMACION_SALTANDO = 12;
 
 	Textura* TEXTURA_PERSONAJE_PARADO_PIES;
-	Textura* TEXTURA_PERSONAJE_PARADO_TORSO;
-	SDL_Rect spriteParadoTorso[ ANIMACION_PARADO ];
 	SDL_Rect spriteParadoPies[ ANIMACION_PARADO ];
 
 	Textura* TEXTURA_PERSONAJE_CORRIENDO_PIES;
-	Textura* TEXTURA_PERSONAJE_CORRIENDO_TORSO;
-	SDL_Rect spriteCorriendoTorso[ ANIMACION_CORRIENDO ];
 	SDL_Rect spriteCorriendoPies[ ANIMACION_CORRIENDO ];
 
 	Textura* TEXTURA_PERSONAJE_SALTANDO_PIES;
-	Textura* TEXTURA_PERSONAJE_SALTANDO_TORSO;
-	SDL_Rect spriteSaltandoTorso[ ANIMACION_SALTANDO ];
 	SDL_Rect spriteSaltandoPies[ ANIMACION_SALTANDO ];
 
+	Arma* arma;
 	bool derecha;
 
     SDL_Renderer *renderizador;
     int id;
     bool seMovio;
 	bool gris;
+	bool disparar;
 
     unordered_map<int, vector<string>*> hashSprites;
 
@@ -59,11 +56,19 @@ public:
 
     void render(bool seMovio);
 
-    void animacionParado();
+    void animacionParadoPiernas();
 
-    void animacionCorrer();
+	void animacionParadoTorso();
 
-    void animacionSaltando();
+    void animacionCorrerPiernas();
+
+    void animacionCorrerTorso();
+
+    void animacionSaltandoPiernas();
+
+	void animacionSaltandoTorso();
+
+	void animacionDisparar();
 
     bool cargarImagen();
 
@@ -114,6 +119,14 @@ public:
 	void setSpriteIndexTorso(int idx);
 
 	void setSpriteIndexPies(int idx);
+
+	void ponerGun();
+
+	void ponerShotgun();
+
+	void setDisparar(bool aux);
+
+	bool getDisparar();
 };
 
 
