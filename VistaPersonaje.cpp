@@ -153,7 +153,7 @@ bool VistaPersonaje::cargarImagen(){
 		success = false;
 	}
 	else{
-		for (i = 0;i<ANIMACION_CORRIENDO;i++){
+		for (i = 0; i < ANIMACION_CORRIENDO_PIES; i++){
 			spriteCorriendoPies[ i ].x = i*149;
 			spriteCorriendoPies[ i ].y = 0;
 			spriteCorriendoPies[ i ].w = 149;
