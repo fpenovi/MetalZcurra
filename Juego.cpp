@@ -14,6 +14,7 @@
 #include "Texto.h"
 #include "Textura.h"
 #include "VistaBala.h"
+#include "VistaEnemigo.h"
 
 using namespace std;
 using namespace chrono;
@@ -27,6 +28,7 @@ private:
 	Cliente* cliente;
 	unordered_map<int, VistaPersonaje*> vistasPersonajes;
 	unordered_map<int, VistaBala*> vistasBalas;
+	unordered_map<int, VistaEnemigo*> vistasEnemigos;
 	int lastKeyPressed;
 	Background* fondo;
 	int posx;
@@ -72,6 +74,9 @@ public:
 			kv.second->liberarTextura();
 
 		for (auto kv : vistasBalas)
+			delete kv.second;
+
+		for (auto kv : vistasEnemigos)
 			delete kv.second;
 
 		//Destroy window
@@ -435,6 +440,10 @@ public:
 		return vistasBalas[id];
 	}
 
+	VistaEnemigo* getEnemigoById(int id){
+		return vistasEnemigos[id];
+	}
+
 	string getIp(){
 		return ip;
 	}
@@ -469,6 +478,10 @@ public:
 
 	void addBala(int id, VistaBala* bala){
 		vistasBalas[id] = bala;
+	}
+
+	void addEnemigo(int id, VistaEnemigo* enemigo){
+		vistasEnemigos[id] = enemigo;
 	}
 
 	void conectar(){
@@ -619,6 +632,10 @@ public:
 		}
 
 		for (auto kv : vistasBalas){
+			kv.second->render();
+		}
+
+		for (auto kv : vistasEnemigos){
 			kv.second->render();
 		}
 	}
@@ -817,7 +834,16 @@ public:
 		for (i ; i < 51 ; i++) {
 			VistaBala* bala = new VistaBala(getRenderer());
 			bala->cargarImagen();
-			addBala(i , bala);
+			addBala(i, bala);
+		}
+	}
+
+	void crearEnemigos(){
+		int i = 1;
+		for (i ; i < 6 ; i++){
+			VistaEnemigo* enemigo = new VistaEnemigo(getRenderer());
+			enemigo->cargarImagen();
+			addEnemigo(i, enemigo);
 		}
 	}
 };
@@ -906,6 +932,9 @@ int main( int argc, char** argv) {
 
 	// Creo la pool de balas
 	juego.crearBalas();
+
+	// Creo enemigos
+	juego.crearEnemigos();
 
 	//Main loop flag
 	bool quit = false;
@@ -1028,6 +1057,17 @@ int main( int argc, char** argv) {
 				pj->setDisparar(state);
 				pj->setSpriteIndexTorso(spriteIdx);
 				pj->setSpriteIndexPies(spriteIdx);
+			}
+
+			// Tipo de objeto 4 = ENEMIGOS
+			else if (tipoObjeto == 4) {
+
+				VistaEnemigo* enemigo = juego.getEnemigoById(id);
+
+				enemigo->setExiste(state);
+				enemigo->setPosX(posx);
+				enemigo->setPosY(posy);
+				if (conectado) enemigo->morir();
 			}
 
 			SDL_RenderClear( juego.getRenderer() );

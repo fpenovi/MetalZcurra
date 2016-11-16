@@ -742,6 +742,8 @@ public:
         objectManager->crearPersonajes(cantidadUsuarios);
         objectManager->crearBalas(50);
         objectManager->crearBalasManager(&conectadosHash, &mutexesHash);
+        objectManager->crearEnemigos(5);
+        objectManager->crearEnemigosManager(&conectadosHash, &mutexesHash);
     }
 
     void aceptarClientes() {

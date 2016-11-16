@@ -1,6 +1,6 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp  ProtocoloComando.cpp ProtocoloVistaUpdate.cpp Personaje.cpp ObjectManager.cpp ProtocoloNuevaVista.cpp ParserXML.cpp HandleKeyHoldServer.cpp HandleJumpServer.cpp HandleQuietoServer.cpp Bala.cpp HandleDisparoServer.cpp BalasManager.cpp Direccion.cpp
-OBJS2 = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp Cliente.cpp Textura.cpp VistaPersonaje.cpp ProtocoloComando.cpp ProtocoloVistaUpdate.cpp ProtocoloNuevaVista.cpp Background.cpp Layer.cpp Texto.cpp VistaBala.cpp Arma.cpp
+OBJS = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp  ProtocoloComando.cpp ProtocoloVistaUpdate.cpp Personaje.cpp ObjectManager.cpp ProtocoloNuevaVista.cpp ParserXML.cpp HandleKeyHoldServer.cpp HandleJumpServer.cpp HandleQuietoServer.cpp Bala.cpp HandleDisparoServer.cpp BalasManager.cpp Direccion.cpp EnemigosManager.cpp Enemigo.cpp
+OBJS2 = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp Cliente.cpp Textura.cpp VistaPersonaje.cpp ProtocoloComando.cpp ProtocoloVistaUpdate.cpp ProtocoloNuevaVista.cpp Background.cpp Layer.cpp Texto.cpp VistaBala.cpp Arma.cpp VistaEnemigo.cpp
 
 
 #CC specifies which compiler we're using

@@ -15,8 +15,12 @@ ObjectManager::~ObjectManager() {
 		delete kv.second;
 	for (auto kv : direccionBalas)
 		delete kv.second;
+	for (auto kv : enemigos)
+		delete kv.second;
 	balasManager->Off();
 	delete balasManager;
+	enemigosManager->Off();
+	delete enemigosManager;
 }
 
 ObjectManager* ObjectManager::getInstance() {
@@ -32,6 +36,10 @@ void ObjectManager::addObject(int id, Personaje* object) {
 
 void ObjectManager::addBala(int id, Bala* bala) {
 	balas[id] = bala;
+}
+
+void ObjectManager::addEnemigo(int id, Enemigo* enemigo) {
+	enemigos[id] = enemigo;
 }
 
 Personaje* ObjectManager::getObject(int id) {
@@ -73,6 +81,17 @@ void ObjectManager::crearBalas(int cantidad) {
 	}
 }
 
+void ObjectManager::crearEnemigos(int cantidad) {
+	int posicion = 900;
+	for (int i = 1; i < cantidad+1; i++){
+		Enemigo* enemigo = new Enemigo();
+		enemigo->setId(i);
+		enemigo->setPosx(posicion);
+		addEnemigo(i, enemigo);
+		posicion += 200;
+	}
+}
+
 void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor) {
 
 	for (auto kv : balas){
@@ -82,6 +101,15 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 		}
 	}
 
+}
+
+void ObjectManager::inicializarEnemigo() {
+
+	for (auto kv : enemigos){
+		if (!(kv.second->getExiste()) && !(kv.second->estaMuerto())){
+			kv.second->crear();
+		}
+	}
 }
 
 void ObjectManager::enviarPersonajes(int FD) {
@@ -144,6 +172,10 @@ void ObjectManager::moverCamara(int id){
 		if (!(kv.second->getConectado()) && kv.second->getPosCamara() != 7 && kv.second->getPosCamara() != 0){
 			kv.second->setPosCamara(kv.second->getPosCamara()-7);
 		}
+	}
+
+	for (auto kv : enemigos){
+		kv.second->setPosx(kv.second->getPosx()-7);
 	}
 }
 
@@ -260,8 +292,21 @@ void ObjectManager::crearBalasManager(unordered_map<string, list<Mensaje*>*>* co
 
 }
 
+void ObjectManager::crearEnemigosManager(unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash) {
+
+	enemigosManager = new EnemigosManager();
+	enemigosManager->setConectadosHash(conectadosHash);
+	enemigosManager->setMutexesHash(mutexesHash);
+	enemigosManager->On();
+
+}
+
 unordered_map<int, Bala*>* ObjectManager::getBalasHash() {
 	return &balas;
+}
+
+unordered_map<int, Enemigo*>* ObjectManager::getEnemigosHash() {
+	return &enemigos;
 }
 
 ObjectManager* ObjectManager::instancia;
