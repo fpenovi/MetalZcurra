@@ -12,7 +12,7 @@ class Arma
 {
 protected:
     const static int ANIMACION_PARADO = 4;
-    const static int ANIMACION_CORRIENDO = 18;
+    const static int ANIMACION_CORRIENDO_TORSO = 12;
     const static int ANIMACION_SALTANDO = 12;
     const static int ANIMACION_DISPARANDO_GUN = 10;
     const static int ANIMACION_DISPARANDO_SHOTGUN = 4;
@@ -22,7 +22,7 @@ protected:
     SDL_Rect spriteParado[ ANIMACION_PARADO ];
 
     Textura* TEXTURA_ARMA_CORRIENDO;
-    SDL_Rect spriteCorriendo[ ANIMACION_CORRIENDO ];
+    SDL_Rect spriteCorriendo[ANIMACION_CORRIENDO_TORSO];
 
     Textura* TEXTURA_ARMA_SALTANDO;
     SDL_Rect spriteSaltando[ ANIMACION_SALTANDO ];

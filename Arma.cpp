@@ -22,6 +22,11 @@ void Arma::renderParado(int x, int y, int frame, SDL_RendererFlip flip){
 }
 
 void Arma::renderCorriendo(int x, int y, int frame, SDL_RendererFlip flip){
+
+    // CORRECCION DE FRAME CON RESPECTO A LAS PIERNAS
+    if (frame > (ANIMACION_CORRIENDO_TORSO - 1))
+        frame = frame % (ANIMACION_CORRIENDO_TORSO - 1);
+
     currentClip = &spriteCorriendo[frame];
     TEXTURA_ARMA_CORRIENDO->render(x,y,currentClip,0,NULL,flip );
 }
@@ -61,7 +66,7 @@ bool Arma::cargarImagen(const char *const pathParado, const char *const pathCorr
         success = false;
     }
     else{
-        for (i = 0;i<ANIMACION_CORRIENDO;i++){
+        for (i = 0; i < ANIMACION_CORRIENDO_TORSO; i++){
             spriteCorriendo[ i ].x = i*149;
             spriteCorriendo[ i ].y = 0;
             spriteCorriendo[ i ].w = 149;

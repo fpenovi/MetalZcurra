@@ -18,14 +18,14 @@ private:
     int posCamara;
 
 	const static int ANIMACION_PARADO = 4;
-	const static int ANIMACION_CORRIENDO = 18;
+	const static int ANIMACION_CORRIENDO_PIES = 18;
 	const static int ANIMACION_SALTANDO = 12;
 
 	Textura* TEXTURA_PERSONAJE_PARADO_PIES;
 	SDL_Rect spriteParadoPies[ ANIMACION_PARADO ];
 
 	Textura* TEXTURA_PERSONAJE_CORRIENDO_PIES;
-	SDL_Rect spriteCorriendoPies[ ANIMACION_CORRIENDO ];
+	SDL_Rect spriteCorriendoPies[ANIMACION_CORRIENDO_PIES];
 
 	Textura* TEXTURA_PERSONAJE_SALTANDO_PIES;
 	SDL_Rect spriteSaltandoPies[ ANIMACION_SALTANDO ];
