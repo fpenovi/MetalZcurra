@@ -530,6 +530,8 @@ private:
         // Creo thread de disparo
         HandleDisparoServer* handleDisparoServer = new HandleDisparoServer();
         handleDisparoServer->setEmisor(userCon);
+        handleDisparoServer->setConectadosHash(&conectadosHash);
+        handleDisparoServer->setMutexesHash(&mutexesHash);
         handleDisparoServer->On();
         handleDisparoServer->Pause();
 
@@ -732,10 +734,11 @@ public:
             capas = parser->capas();
         }
     }
+
     void initJuego() {
 
         //cantidadUsuarios = (int) parser->users().size();
-        cantidadUsuarios = 2;
+        cantidadUsuarios = 1;
         objectManager->crearPersonajes(cantidadUsuarios);
         objectManager->crearBalas(50);
         objectManager->crearBalasManager(&conectadosHash, &mutexesHash);

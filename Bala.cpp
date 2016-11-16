@@ -15,7 +15,7 @@ Bala::Bala(){
 }
 
 void Bala::mover(){
-    if (posx > 800 || posx < 0 || posy < 0 || posy > 440) {
+    if (posx > 800 || posx < 0 || posy < 0 || posy > 520) {
         desaparecer();
         return;
     }
@@ -83,4 +83,16 @@ void Bala::setDireccion(bool der, bool izq, bool arr, bool abj) {
     this->izquierda = izq;
     this->arriba = arr;
     this->abajo = abj;
+}
+
+int Bala::getDerecha() {
+    return derecha;
+}
+
+int Bala::getArriba() {
+    return arriba;
+}
+
+int Bala::getAbajo() {
+    return abajo;
 }

@@ -50,9 +50,9 @@ void* balasManagerFunc(void* argKh) {
                         update.setX(kv.second->getPosx());
                         update.setY(kv.second->getPosy());
                         update.setObject_id(kv.second->getId());
-                        update.setPosCamara(kv.second->getPosx());
-                        update.setConectado(true);
-                        update.setSpriteIndex(1);
+                        update.setPosCamara(kv.second->getArriba());
+                        update.setConectado(kv.second->getAbajo());
+                        update.setSpriteIndex(kv.second->getDerecha());
 
                         kv.second->mover();
 

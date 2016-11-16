@@ -35,6 +35,8 @@ private:
     bool isOn;
     bool isPaused;
     string emisor;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash;
+    unordered_map<string, pthread_mutex_t>* mutexesHash;
 
 public:
     HandleDisparoServer();
@@ -51,6 +53,9 @@ public:
 
     void setEmisor(string name);
 
+    void setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash);
+
+    void setMutexesHash(unordered_map<string, pthread_mutex_t>* hash);
 };
 
 #ifndef METALZCURRA_HANDLEDISPAROSERVER_H

@@ -8,7 +8,7 @@
 #include <iostream>
 
 #define LEVEL_WIDTH 4500
-#define LEVEL_HEIGHT 480
+#define LEVEL_HEIGHT 600
 #define SCREEN_WIDTH 800
 
 using namespace std;
@@ -17,7 +17,7 @@ class Personaje {
 
 private:
     int posx = 0;
-    int posy = 360;
+    int posy = 440;
     int ancho = 60;
     int alto = 80;
     int velx = 0;
@@ -29,13 +29,18 @@ private:
     bool bajando = false;
     int posCamara = 0;
     int conectado = false;
+    bool disparando = false;
 
     int frameCorriendo = 0;
     int frameSaltando = 0;
     int frameParado = 0;
+    int frameDisparando = 0;
     const static int ANIMACION_PARADO = 4;
     const static int ANIMACION_CORRIENDO = 18;
     const static int ANIMACION_SALTANDO = 12;
+    const static int ANIMACION_DISPARANDO_GUN = 10;
+    const static int ANIMACION_DISPARANDO_SHOTGUN = 4;
+    int ANIMACION_ACTUAL = 10;
 
 public:
     void moverX();
@@ -96,11 +101,19 @@ public:
 
     int getSpriteParado();
 
+    void setSpriteDisparando();
+
+    int getSpriteDisparando();
+
     void resetFrames();
 
     void setSprites();
 
     int getSprites();
+
+    void setDisparando(bool aux);
+
+    int getDisparando();
 };
 
 #endif //METALZCURRA_PERSONAJE_H

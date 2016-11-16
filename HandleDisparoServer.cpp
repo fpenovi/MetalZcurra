@@ -10,6 +10,8 @@ struct argdisparo {
     bool* isKhOn;
     bool* isKhPaused;
     string* emisor;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash;
+    unordered_map<string, pthread_mutex_t>* mutexesHash;
 };
 
 
@@ -19,6 +21,8 @@ void* handleDisparoFunc(void* argKh) {
     bool* isKhPaused = ( (argdisparo_t*) argKh)->isKhPaused;
     ObjectManager* objectManager = ObjectManager::getInstance();
     string* emisor = ( (argdisparo_t*) argKh)->emisor;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argdisparo_t*) argKh)->conectadosHash;
+    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argdisparo_t*) argKh)->mutexesHash;
 
     int idEmisor = objectManager->getIdByUsername(*emisor);
     Personaje* personaje = objectManager->getObject(idEmisor);
@@ -38,7 +42,43 @@ void* handleDisparoFunc(void* argKh) {
 
             if (*isKhOn && !(*isKhPaused)) {
 
-                objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 60, personaje->getPosy() + 20);
+                Direccion* direccion = objectManager->getDireccionById(idEmisor);
+
+                if (direccion->isDerecha()) objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 60, personaje->getPosy() + 20);
+                else objectManager->inicializarBala(idEmisor, personaje->getPosCamara(), personaje->getPosy() + 20);
+
+                personaje->setDisparando(true);
+                for (int i = 0; i < 10; i++){
+                    ProtocoloVistaUpdate update;
+                    personaje->setSprites();
+
+                    update.setTipoObjeto(3);
+                    update.setEstado(personaje->getDisparando());
+                    update.setX(0);
+                    update.setY(0);
+                    update.setObject_id(idEmisor);
+                    update.setPosCamara(0);
+                    update.setConectado(1);
+                    update.setSpriteIndex(personaje->getSprites());
+
+                    int result;
+                    string mensaje = update.toString();
+
+                    for (auto kv : *conectadosHash) {
+
+                        Mensaje* mensajeNuevo = new Mensaje(*emisor, kv.first, mensaje);
+
+                        result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+                        if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+                        kv.second->push_back(mensajeNuevo);
+
+                        result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+                        if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                    }
+
+                    usleep(40000);
+                }
 
                 *isKhPaused = true;
             }
@@ -81,6 +121,8 @@ void HandleDisparoServer::On() {
     argDisparo->isKhOn = &isOn;
     argDisparo->isKhPaused = &isPaused;
     argDisparo->emisor = &emisor;
+    argDisparo->conectadosHash = conectadosHash;
+    argDisparo->mutexesHash = mutexesHash;
 
     if (pthread_create(handleDisparoTH, NULL, handleDisparoFunc, argDisparo))
         throw NoSePudoCrearThreadHandleDisparoServerException();
@@ -109,4 +151,12 @@ void HandleDisparoServer::Resume() {
 
 void HandleDisparoServer::setEmisor(string name) {
     this->emisor = name;
+}
+
+void HandleDisparoServer::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
+    this->conectadosHash = hash;
+}
+
+void HandleDisparoServer::setMutexesHash(unordered_map<string, pthread_mutex_t>* hash) {
+    this->mutexesHash = hash;
 }

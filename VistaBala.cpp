@@ -6,6 +6,9 @@
 
 VistaBala::VistaBala(SDL_Renderer* renderer) {
     existe = false;
+    derecha = true;
+    arriba = false;
+    abajo = false;
     TEXTURA_BALA = new Textura(renderer);
 }
 
@@ -23,8 +26,32 @@ bool VistaBala::cargarImagen(){
 
 void VistaBala::render(){
     if (existe){
-        TEXTURA_BALA->render(posx,posy);
-        if (posx > 800 || posx < 0 || posy < 0 || posy > 440) existe = false;
+
+        double angulo = 0;
+        SDL_RendererFlip flip = SDL_FLIP_NONE;
+        if (derecha && arriba){
+            flip = SDL_FLIP_NONE;
+            angulo = 325;
+        }
+        else if (derecha && abajo){
+            flip = SDL_FLIP_NONE;
+            angulo = 45;
+        }
+        else if (!derecha && arriba ){
+            flip = SDL_FLIP_HORIZONTAL;
+            angulo = 45;
+        }
+        else if (!derecha && abajo){
+            flip = SDL_FLIP_HORIZONTAL;
+            angulo = 325;
+        }
+        else if (!derecha){
+            flip = SDL_FLIP_HORIZONTAL;
+        }
+
+        TEXTURA_BALA->render(posx,posy,NULL,angulo,NULL, flip);
+
+        if (posx > 800 || posx < 0 || posy < 0 || posy > 520) existe = false;
     }
 }
 
@@ -81,4 +108,16 @@ void VistaBala::setPosY(int y) {
 
 VistaBala::~VistaBala() {
     delete TEXTURA_BALA;
+}
+
+void VistaBala::setDerecha(int aux) {
+    derecha = (bool) aux;
+}
+
+void VistaBala::setArriba(int aux) {
+    arriba = (bool) aux;
+}
+
+void VistaBala::setAbajo(int aux) {
+    abajo = (bool) aux;
 }

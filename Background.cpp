@@ -10,7 +10,7 @@ Background::Background(SDL_Renderer *renderizador){
     //capas[cantCapas];
     this->renderizador = renderizador;
 
-    for (int i = 0 ; i < 3; i++){
+    for (int i = 0 ; i < 2; i++){
         Layer* layer = new Layer(renderizador);
         capas.push_back(layer);
     }
