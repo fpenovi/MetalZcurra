@@ -75,7 +75,7 @@ bool Layer::cargarImagen(char* path){
 
 void Layer::asignarVelocidad(double anchomax){
 
-    velocidad = anchomax/ancho;
+    velocidad = (anchomax-800)/(ancho-800);
     //vuelta = int(anchomax) / ancho;
     //velocidad = velocidad / vuelta;
     cout << velocidad << endl;
