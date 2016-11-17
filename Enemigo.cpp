@@ -13,12 +13,18 @@ Enemigo::Enemigo(){
     existe = false;
     muerto = false;
     velocidad = 7;
+    cantidadPasos = 20;
 }
 
-void Enemigo::mover() {
-    if (posx < 0) velocidad = -7;
-    if (velocidad == -7 && posx > 800) velocidad = 7;
-    posx -= velocidad;
+bool Enemigo::mover() {
+    //if (posx < 0) velocidad = -7;
+    //if (velocidad == -7 && posx > 800) velocidad = 7;
+    if (cantidadPasos > 0){
+        posx -= velocidad;
+        cantidadPasos--;
+        return true;
+    }
+    else return false;
 }
 
 void Enemigo::morir(){

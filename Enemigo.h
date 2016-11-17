@@ -16,11 +16,12 @@ private:
     int	muerto;
     int existe;
     int velocidad;
+    int cantidadPasos;
 
 public:
     Enemigo();
 
-    void mover();
+    bool mover();
 
     void morir();
 

@@ -11,8 +11,6 @@ struct argjump {
     bool* isKhOn;
     bool* isKhPaused;
     string* emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash;
 };
 
 
@@ -23,8 +21,8 @@ void* handleJumpFunc(void* argKh) {
     int* keyPressed = ( (argjump_t*) argKh)->keyPressed;
     ObjectManager* objectManager = ObjectManager::getInstance();
     string* emisor = ( (argjump_t*) argKh)->emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argjump_t*) argKh)->conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argjump_t*) argKh)->mutexesHash;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
+    unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
 
     while (*isKhOn) {
 
@@ -134,8 +132,6 @@ void HandleJumpServer::On() {
     argJump->isKhPaused = &isPaused;
     argJump->keyPressed = &keyPressed;
     argJump->emisor = &emisor;
-    argJump->conectadosHash = conectadosHash;
-    argJump->mutexesHash = mutexesHash;
 
     if (pthread_create(handleJumpTH, NULL, handleJumpFunc, argJump))
         throw NoSePudoCrearThreadHandleJumpServerException();
@@ -173,12 +169,4 @@ int HandleJumpServer::getKeyPressed() {
 
 void HandleJumpServer::setEmisor(string name) {
     this->emisor = name;
-}
-
-void HandleJumpServer::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
-    this->conectadosHash = hash;
-}
-
-void HandleJumpServer::setMutexesHash(unordered_map<string, pthread_mutex_t>* hash) {
-    this->mutexesHash = hash;
 }

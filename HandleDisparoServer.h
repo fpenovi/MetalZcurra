@@ -2,6 +2,9 @@
 // Created by nestor on 09/11/16.
 //
 
+#ifndef METALZCURRA_HANDLEDISPAROSERVER_H
+#define METALZCURRA_HANDLEDISPAROSERVER_H
+
 #include <stdexcept>
 #include <pthread.h>
 #include "ObjectManager.h"
@@ -35,8 +38,6 @@ private:
     bool isOn;
     bool isPaused;
     string emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash;
 
 public:
     HandleDisparoServer();
@@ -52,15 +53,6 @@ public:
     void Resume();
 
     void setEmisor(string name);
-
-    void setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash);
-
-    void setMutexesHash(unordered_map<string, pthread_mutex_t>* hash);
 };
-
-#ifndef METALZCURRA_HANDLEDISPAROSERVER_H
-#define METALZCURRA_HANDLEDISPAROSERVER_H
-
-
 
 #endif //METALZCURRA_HANDLEDISPAROSERVER_H

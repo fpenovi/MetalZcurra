@@ -230,7 +230,7 @@ void ObjectManager::enviarEscenario(ParserXML *parser, int FD) {
 
 }
 
-void ObjectManager::enviarNuevoBackground(ParserXML* parser, unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash, string emisor) {
+void ObjectManager::enviarNuevoBackground(ParserXML* parser, string emisor) {
 	string tamVentana = parser->TamVentana();
 	string tamNivel = parser->tamNivel();
 	vector <string> sprites = parser->spritesPlayers();
@@ -283,20 +283,16 @@ void ObjectManager::setPosX(int i){
 	posx=i;
 }
 
-void ObjectManager::crearBalasManager(unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash) {
+void ObjectManager::crearBalasManager() {
 
 	balasManager = new BalasManager();
-	balasManager->setConectadosHash(conectadosHash);
-	balasManager->setMutexesHash(mutexesHash);
 	balasManager->On();
 
 }
 
-void ObjectManager::crearEnemigosManager(unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash) {
+void ObjectManager::crearEnemigosManager() {
 
 	enemigosManager = new EnemigosManager();
-	enemigosManager->setConectadosHash(conectadosHash);
-	enemigosManager->setMutexesHash(mutexesHash);
 	enemigosManager->On();
 
 }
@@ -307,6 +303,22 @@ unordered_map<int, Bala*>* ObjectManager::getBalasHash() {
 
 unordered_map<int, Enemigo*>* ObjectManager::getEnemigosHash() {
 	return &enemigos;
+}
+
+void ObjectManager::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
+	conectadosHash = hash;
+}
+
+void ObjectManager::setMutexesHash(unordered_map<string, pthread_mutex_t>* mutexesHash) {
+	this->mutexesHash = mutexesHash;
+}
+
+unordered_map<string, list<Mensaje*>*>* ObjectManager::getConectadosHash() {
+	return conectadosHash;
+}
+
+unordered_map<string, pthread_mutex_t>* ObjectManager::getMutexesHash() {
+	return mutexesHash;
 }
 
 ObjectManager* ObjectManager::instancia;

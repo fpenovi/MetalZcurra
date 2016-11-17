@@ -386,7 +386,7 @@ private:
 
             delete parser;
             parser = new ParserXML((char *) "juego.xml");
-            objectManager->enviarNuevoBackground(parser, &conectadosHash, &mutexesHash, emisor);
+            objectManager->enviarNuevoBackground(parser, emisor);
         }
     }
 
@@ -506,8 +506,6 @@ private:
         // Creo thread de movimiento
         HandleKeyHoldServer* handleKeyHoldServer = new HandleKeyHoldServer();
         handleKeyHoldServer->setEmisor(userCon);
-        handleKeyHoldServer->setConectadosHash(&conectadosHash);
-        handleKeyHoldServer->setMutexesHash(&mutexesHash);
         handleKeyHoldServer->On();
         handleKeyHoldServer->Pause();
 
@@ -515,23 +513,17 @@ private:
         HandleJumpServer* handleJumpServer = new HandleJumpServer();
         handleJumpServer->setKeyPressed(SDLK_UP);
         handleJumpServer->setEmisor(userCon);
-        handleJumpServer->setConectadosHash(&conectadosHash);
-        handleJumpServer->setMutexesHash(&mutexesHash);
         handleJumpServer->On();
         handleJumpServer->Pause();
 
         // Creo thread de personaje quieto
         HandleQuietoServer* handleQuietoServer = new HandleQuietoServer();
         handleQuietoServer->setEmisor(userCon);
-        handleQuietoServer->setConectadosHash(&conectadosHash);
-        handleQuietoServer->setMutexesHash(&mutexesHash);
         handleQuietoServer->On();
 
         // Creo thread de disparo
         HandleDisparoServer* handleDisparoServer = new HandleDisparoServer();
         handleDisparoServer->setEmisor(userCon);
-        handleDisparoServer->setConectadosHash(&conectadosHash);
-        handleDisparoServer->setMutexesHash(&mutexesHash);
         handleDisparoServer->On();
         handleDisparoServer->Pause();
 
@@ -739,11 +731,13 @@ public:
 
         //cantidadUsuarios = (int) parser->users().size();
         cantidadUsuarios = 1;
+        objectManager->setConectadosHash(&conectadosHash);
+        objectManager->setMutexesHash(&mutexesHash);
         objectManager->crearPersonajes(cantidadUsuarios);
         objectManager->crearBalas(50);
-        objectManager->crearBalasManager(&conectadosHash, &mutexesHash);
+        objectManager->crearBalasManager();
         objectManager->crearEnemigos(5);
-        objectManager->crearEnemigosManager(&conectadosHash, &mutexesHash);
+        objectManager->crearEnemigosManager();
     }
 
     void aceptarClientes() {

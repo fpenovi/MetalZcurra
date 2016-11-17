@@ -10,8 +10,6 @@ using namespace chrono;
 struct argenemigos {
     bool* isKhOn;
     bool* isKhPaused;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash;
 };
 
 
@@ -20,8 +18,8 @@ void* enemigosManagerFunc(void* argKh) {
     bool* isKhOn = ( (argenemigos_t*) argKh )->isKhOn;
     bool* isKhPaused = ( (argenemigos_t*) argKh)->isKhPaused;
     ObjectManager* objectManager = ObjectManager::getInstance();
-    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argenemigos_t*) argKh)->conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argenemigos_t*) argKh)->mutexesHash;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
+    unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
     unordered_map<int, Enemigo*>* enemigos = objectManager->getEnemigosHash();
 
     time_point<high_resolution_clock> start;
@@ -47,33 +45,34 @@ void* enemigosManagerFunc(void* argKh) {
 
                     if (kv.second->getExiste()){
 
-                        kv.second->mover();
+                        if (kv.second->mover()) {
 
-                        ProtocoloVistaUpdate update;
+                            ProtocoloVistaUpdate update;
 
-                        update.setTipoObjeto(4);
-                        update.setEstado(true);
-                        update.setX(kv.second->getPosx());
-                        update.setY(kv.second->getPosy());
-                        update.setObject_id(kv.second->getId());
-                        update.setPosCamara(0);
-                        update.setConectado(kv.second->estaMuerto());
-                        update.setSpriteIndex(0);
+                            update.setTipoObjeto(4);
+                            update.setEstado(true);
+                            update.setX(kv.second->getPosx());
+                            update.setY(kv.second->getPosy());
+                            update.setObject_id(kv.second->getId());
+                            update.setPosCamara(0);
+                            update.setConectado(kv.second->estaMuerto());
+                            update.setSpriteIndex(0);
 
-                        int result;
-                        string mensaje = update.toString();
+                            int result;
+                            string mensaje = update.toString();
 
-                        for (auto kv : *conectadosHash) {
+                            for (auto kv : *conectadosHash) {
 
-                            Mensaje* mensajeNuevo = new Mensaje("Server", kv.first, mensaje);
+                                Mensaje *mensajeNuevo = new Mensaje("Server", kv.first, mensaje);
 
-                            result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
-                            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                                result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+                                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 
-                            kv.second->push_back(mensajeNuevo);
+                                kv.second->push_back(mensajeNuevo);
 
-                            result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
-                            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                                result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+                                if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                            }
                         }
                     }
                 }
@@ -115,8 +114,6 @@ void EnemigosManager::On() {
 
     argEnemigos->isKhOn = &isOn;
     argEnemigos->isKhPaused = &isPaused;
-    argEnemigos->conectadosHash = conectadosHash;
-    argEnemigos->mutexesHash = mutexesHash;
 
     if (pthread_create(enemigosManagerTH, NULL, enemigosManagerFunc, argEnemigos))
         throw NoSePudoCrearThreadEnemigosManagerException();
@@ -142,12 +139,4 @@ void EnemigosManager::Resume() {
         return;
 
     isPaused = false;
-}
-
-void EnemigosManager::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
-    this->conectadosHash = hash;
-}
-
-void EnemigosManager::setMutexesHash(unordered_map<string, pthread_mutex_t>* hash) {
-    this->mutexesHash = hash;
 }
