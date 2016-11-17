@@ -126,6 +126,7 @@ void HandleQuietoServer::Off() {
         return;
 
     isOn = false;
+    pthread_join(*handleQuietoTH, NULL);
 }
 
 void HandleQuietoServer::Pause() {

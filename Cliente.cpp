@@ -548,11 +548,9 @@ void Cliente::lorem() {
 
 void Cliente::liberar(){
     if (name!=NULL) {
-        free(name);
         name = NULL;
     }
     if (clave!=NULL ) {
-        free(clave);
         clave = NULL;
     }
     if(estado) {

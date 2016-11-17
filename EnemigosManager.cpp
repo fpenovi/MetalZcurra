@@ -127,6 +127,7 @@ void EnemigosManager::Off() {
         return;
 
     isOn = false;
+    pthread_join(*enemigosManagerTH, NULL);
 }
 
 void EnemigosManager::Pause() {

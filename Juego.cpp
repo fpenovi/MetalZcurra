@@ -36,6 +36,7 @@ private:
 	int screenHeight = 600;
 	int levelWidth;
 	int levelHeight;
+	Textura* TEXTURA_BALA;
 
 	// Atributos para sala de espera
 	Texto* textoip;
@@ -67,11 +68,9 @@ public:
 	}
 
 	void close() {
-		//ToDo Liberar personajes
-
 		//Free loaded images
 		for (auto kv : vistasPersonajes)
-			kv.second->liberarTextura();
+			delete kv.second;
 
 		for (auto kv : vistasBalas)
 			delete kv.second;
@@ -84,6 +83,7 @@ public:
 		SDL_DestroyWindow( ventana );
 		ventana = NULL;
 		renderizador = NULL;
+		delete TEXTURA_BALA;
 		delete fondo;
 
 		//Quit SDL subsystems
@@ -832,7 +832,7 @@ public:
 	void crearBalas(){
 		int i = 1;
 		for (i ; i < 51 ; i++) {
-			VistaBala* bala = new VistaBala(getRenderer());
+			VistaBala* bala = new VistaBala(TEXTURA_BALA);
 			bala->cargarImagen();
 			addBala(i, bala);
 		}
@@ -845,6 +845,11 @@ public:
 			enemigo->cargarImagen();
 			addEnemigo(i, enemigo);
 		}
+	}
+
+	void cargarTexturaBala(){
+		TEXTURA_BALA = new Textura(renderizador);
+		if( !TEXTURA_BALA->cargarImagen( "imag/bala/bala.png") ) printf( "Fallo imagen bala\n" );
 	}
 };
 
@@ -931,6 +936,7 @@ int main( int argc, char** argv) {
 	juego.recibirPersonajes();
 
 	// Creo la pool de balas
+	juego.cargarTexturaBala();
 	juego.crearBalas();
 
 	// Creo enemigos

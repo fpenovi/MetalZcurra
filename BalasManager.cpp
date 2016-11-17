@@ -123,6 +123,7 @@ void BalasManager::Off() {
         return;
 
     isOn = false;
+    pthread_join(*balasManagerTH, NULL);
 }
 
 void BalasManager::Pause() {

@@ -133,6 +133,7 @@ void HandleDisparoServer::Off() {
         return;
 
     isOn = false;
+    pthread_join(*handleDisparoTH, NULL);
 }
 
 void HandleDisparoServer::Pause() {

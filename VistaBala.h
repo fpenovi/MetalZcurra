@@ -23,13 +23,11 @@ private:
     Textura* TEXTURA_BALA;
 
 public:
-    VistaBala(SDL_Renderer* renderer);
-
-    ~VistaBala();
+    VistaBala(Textura* textura);
 
     void render();
 
-    bool cargarImagen();
+    void cargarImagen();
 
     bool existeBala();
 

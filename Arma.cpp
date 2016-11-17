@@ -114,6 +114,13 @@ void Arma::liberar(){
     TEXTURA_ARMA_PARADO->free();
 }
 
+Arma::~Arma() {
+    delete TEXTURA_ARMA_DISPARANDO;
+    delete TEXTURA_ARMA_CORRIENDO;
+    delete TEXTURA_ARMA_SALTANDO;
+    delete TEXTURA_ARMA_PARADO;
+}
+
 void Arma::ponerShotgun(){
     liberar();
     ANIMACION_ACTUAL = ANIMACION_DISPARANDO_SHOTGUN;
