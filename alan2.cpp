@@ -6,6 +6,9 @@
 #include <string>
 #include <iostream>
 #include <SDL2/SDL_ttf.h>
+#include <deque>
+
+ 
 using namespace std;
 
 //Screen dimension constants
@@ -154,7 +157,7 @@ class Textura
 			}
 			else
 			{
-				printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+				//printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
 			}
 
 			
@@ -169,6 +172,74 @@ class Textura
 		}
 };
 
+class Bala
+{
+	private:
+		int id;
+		int id_personaje;
+		int posx;
+		int posy;
+		bool existe=false;
+		int velocidad;
+		Textura TEXTURA_BALA;
+		int ancho;
+		int alto;
+	public:
+		Bala(int x, int y, int personaje){
+			existe=true;
+			posx=x;
+			posy=y;
+			id_personaje=personaje;
+			velocidad=10;
+
+		}
+
+		bool mover(){
+			if (!existe) return false;
+			posx+=velocidad;
+			if (posx>800 || posx<0) {
+				existe=false;
+				return false;
+			}
+			return true;
+		}
+		int quienDisparo(){
+			return id_personaje;
+		}
+		int getId(){
+			return id;
+		}
+		bool cargarImagen(){
+			if( !TEXTURA_BALA.cargarImagen( "imag/bala/bala.xcf") )
+			{
+				printf( "Fallo imagen bala\n" );
+				return false;
+			}
+
+			ancho=TEXTURA_BALA.getAncho();
+			alto=TEXTURA_BALA.getAlto();
+			return true;
+		}
+		bool render(){
+			if (existe) TEXTURA_BALA.render(posx+40,posy+15);
+		}
+		void desaparecer(){
+			existe=false;
+		}
+		int getPosx(){
+			return posx;
+		}
+		int getPosy(){
+			return posy;
+		}
+		int getAncho(){
+			return ancho;
+		}
+		int getAlto(){
+			return alto;
+		}
+};
+
 class Arma 
 {
 	protected:
@@ -177,11 +248,11 @@ class Arma
 		const static int ANIMACION_SALTANDO=12;
 		const static int ANIMACION_DISPARANDO_GUN=10;
 		const static int ANIMACION_DISPARANDO_SHOTGUN=4;
+
 		int ANIMACION_ACTUAL=10; //empieza siendo 10 por la gun
 
 		int frameDisparando=0;
 		bool disparando=false;
-
 
 		Textura TEXTURA_ARMA_PARADO;
 		SDL_Rect spriteParado[ ANIMACION_PARADO ];
@@ -195,6 +266,11 @@ class Arma
 		Textura TEXTURA_ARMA_DISPARANDO;
 		SDL_Rect spriteDisparando[ ANIMACION_DISPARANDO_GUN];
 
+		int id;
+
+		deque<Bala*> balas;
+		int cantBalas=0;
+
 
 	public:
 		Arma(){
@@ -203,7 +279,10 @@ class Arma
 				"imag/sprites/gunJump.png",
 				"imag/sprites/gunShoot.png");
 		}
+		void asignarID(int id2){
 
+			id=id2;
+		}
 		void renderParado(int x, int y, int frame, SDL_RendererFlip flip){
 			SDL_Rect* currentClip = &spriteParado[frame];
 			TEXTURA_ARMA_PARADO.render(x,y,currentClip,0,NULL,flip );
@@ -224,10 +303,8 @@ class Arma
 				frameDisparando = 0;
 				disparando=false;
 			}
-			cout << frameDisparando << endl;
 			return disparando;
 		}
-
 		bool cargarImagen(char* pathParado,char* pathCorriendo,char* pathSaltando,char* pathDisparando){
 			bool success = true;
 			int i;
@@ -293,7 +370,6 @@ class Arma
 
 			return success;
 		}
-
 		void liberar(){
 			TEXTURA_ARMA_DISPARANDO.free();
 			TEXTURA_ARMA_CORRIENDO.free();
@@ -301,7 +377,6 @@ class Arma
 			TEXTURA_ARMA_PARADO.free();
 		}
 		void ponerShotgun(){
-			cout << "aca" << endl;
 			liberar();
 			ANIMACION_ACTUAL=ANIMACION_DISPARANDO_SHOTGUN;
 			cargarImagen("imag/sprites/shotgunStill.png",
@@ -309,9 +384,7 @@ class Arma
 				"imag/sprites/shotgunJump.png",
 				"imag/sprites/shotgunShoot.png");
 		}
-
 		void ponerGun(){
-			cout << "acagun" << endl;
 			liberar();
 			ANIMACION_ACTUAL=ANIMACION_DISPARANDO_GUN;
 			cargarImagen("imag/sprites/gunStill.png",
@@ -319,8 +392,32 @@ class Arma
 				"imag/sprites/gunJump.png",
 				"imag/sprites/gunShoot.png");
 		}
-		void disparar(){
+		void disparar(int x, int y){
+			if (disparando) return;
 			disparando=true;
+			Bala *bala = new Bala(x,y,id);
+			bala->cargarImagen();
+			balas.push_front(bala);
+			cantBalas++;
+		}
+		void renderBalas(){
+
+			bool vive;
+			if (cantBalas==0) return;
+			for(int i = 0; i < cantBalas; i++){
+        		Bala *bala=balas[i];
+        		vive=bala->mover();
+        		if (vive) {
+        			bala->render();
+        		}
+			}
+			if (!vive) {
+				balas.pop_back();
+				cantBalas--;
+			}
+		}
+		deque<Bala*> getBalas(){
+			return balas;
 		}
 };
 
@@ -329,35 +426,28 @@ class Personaje
 
     private:
 
+    	int id;
 		int posx, posy;
 		int ancho, alto;
+
 		const static int ANIMACION_PARADO=4;
 		const static int ANIMACION_CORRIENDO=18;
 		const static int ANIMACION_SALTANDO=12;
-		const static int ANIMACION_DISPARANDO_GUN=4;
 
 
 		Textura TEXTURA_PERSONAJE_PARADO_PIES;
-		//Textura TEXTURA_PERSONAJE_PARADO_TORSO;
-		//SDL_Rect spriteParadoTorso[ ANIMACION_PARADO ];
 		SDL_Rect spriteParadoPies[ ANIMACION_PARADO ];
 
 		Textura TEXTURA_PERSONAJE_CORRIENDO_PIES;
-		//Textura TEXTURA_PERSONAJE_CORRIENDO_TORSO;
-		//SDL_Rect spriteCorriendoTorso[ ANIMACION_CORRIENDO ];
 		SDL_Rect spriteCorriendoPies[ ANIMACION_CORRIENDO ];
 
 		Textura TEXTURA_PERSONAJE_SALTANDO_PIES;
-		//Textura TEXTURA_PERSONAJE_SALTANDO_TORSO;
-		//SDL_Rect spriteSaltandoTorso[ ANIMACION_SALTANDO ];
 		SDL_Rect spriteSaltandoPies[ ANIMACION_SALTANDO ];
-
 
 
 		int frameCorriendo;
 		int frameParado;
 		int frameSaltando;
-		int frameDisparando;
 
 		int subiendo;
 
@@ -372,13 +462,14 @@ class Personaje
 		int velx;
 		int vely;
 
-
 		const static int Personaje_VEL = 7;
 		const static int Personaje_VEL_Y = 4;
+
 		bool muerto;
 		bool disparar;
 
 		Arma arma=Arma();
+		int puntaje;
 
     public:
 		
@@ -391,7 +482,6 @@ class Personaje
 			frameCorriendo=0;
 			frameParado=0;
 			frameSaltando=0;
-			frameDisparando=0;
 			velx = 0;
 			vely = 0;
 			derecha = true;
@@ -401,10 +491,19 @@ class Personaje
 			posCamara=0;
 			muerto = false;
 			disparar=false;
+			puntaje=0;
 		}
 
+		void asignarID(int id2){
+			id=id2;
+			arma.asignarID(id);
+		}
+
+		int getID(){
+			return id;
+		}
 		//maneja los eventos
-		void handleEvent( SDL_Event& e )
+		void handleEvent( SDL_Event& e)
 		{
 		    //If a key was pressed
 			if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
@@ -421,7 +520,7 @@ class Personaje
 		            	else if(subiendo == 0) saltando = false;
 		            case SDLK_f:
 		            	disparar=true;
-		            	arma.disparar();
+		            	arma.disparar(posCamara,posy);
 		            	break;
 		            case SDLK_g:
 		            	arma.ponerGun();
@@ -509,6 +608,7 @@ class Personaje
 				if (disparar) animacionDisparar();
 				else animacionParadoTorso();
 			}
+			arma.renderBalas();
 		}
 
 		void animacionParadoPiernas(){
@@ -637,20 +737,7 @@ class Personaje
 					spriteParadoPies[ i ].h = 34;
 				}
 			}
-			/*if( !TEXTURA_PERSONAJE_PARADO_TORSO.cargarImagen( "imag/sprites/stillGun.png") )
-			{
-				printf( "Fallo sprite parado torso\n" );
-				success = false;
-			}
-			else
-			{	
-				for (i = 0;i<ANIMACION_PARADO;i++){
-					spriteParadoTorso[ i ].x = i*149;
-					spriteParadoTorso[ i ].y = 0;
-					spriteParadoTorso[ i ].w = 149;
-					spriteParadoTorso[ i ].h = 62;
-				}
-			}*/
+
 
 			if( !TEXTURA_PERSONAJE_CORRIENDO_PIES.cargarImagen( "imag/sprites/runLegs.png") )
 			{
@@ -665,19 +752,6 @@ class Personaje
 					spriteCorriendoPies[ i ].h = 43;
 				}
 			}
-			/*if( !TEXTURA_PERSONAJE_CORRIENDO_TORSO.cargarImagen( "imag/sprites/runGun.png") )
-			{
-				printf( "Fallo sprite corriendo torso\n" );
-				success = false;
-			}
-			else{
-				for (i = 0;i<ANIMACION_CORRIENDO;i++){
-					spriteCorriendoTorso[ i ].x = i*149;
-					spriteCorriendoTorso[ i ].y = 0;
-					spriteCorriendoTorso[ i ].w = 149;
-					spriteCorriendoTorso[ i ].h = 64;
-				}
-			}*/
 
 			if( !TEXTURA_PERSONAJE_SALTANDO_PIES.cargarImagen( "imag/sprites/jumpLegs.png") )
 			{
@@ -693,36 +767,6 @@ class Personaje
 					spriteSaltandoPies[ i ].h = 56;
 				}
 			}
-			/*if( !TEXTURA_PERSONAJE_SALTANDO_TORSO.cargarImagen( "imag/sprites/jumpGun.png") )
-			{
-				printf( "Fallo sprite saltando torso\n" );
-				success = false;
-			}
-			else{
-
-				for (i = 0;i<ANIMACION_SALTANDO;i++){
-					spriteSaltandoTorso[ i ].x = i*149;
-					spriteSaltandoTorso[ i ].y = 0;
-					spriteSaltandoTorso[ i ].w = 149;
-					spriteSaltandoTorso[ i ].h = 79;
-				}
-			}
-
-			if( !TEXTURA_PERSONAJE_DISPRANDO_GUN.cargarImagen( "imag/sprites/gunShoot.png") )
-			{
-				printf( "Fallo sprite disparando gun\n" );
-				success = false;
-			}
-			else{
-
-				for (i = 0;i<ANIMACION_DISPARANDO_GUN;i++){
-					spriteDisparandoGun[ i ].x = i*149;
-					spriteDisparandoGun[ i ].y = 0;
-					spriteDisparandoGun[ i ].w = 149;
-					spriteDisparandoGun[ i ].h = 62;
-				}
-			}*/
-
 			return success;
 		}
 		
@@ -752,9 +796,6 @@ class Personaje
 		int getvelx(){
 			return velx;
 		}
-		int getvely(){
-			return vely;
-		}
 		int getAncho(){
 			return ancho;
 		}
@@ -765,24 +806,593 @@ class Personaje
 			muerto =true;
 			//TEXTURA_PERSONAJE_PARADO_TORSO.setColor(128,128,128);
 		}
-		void revivir(){
-			muerto = false;
-			//TEXTURA_PERSONAJE_PARADO_TORSO.setColor(255,255,255);
-		}
-		int getPosCamara(){
+		int getPosx(){
 			return posCamara;
+		}
+		int getPosy(){
+			return posy;
+		}
+		deque<Bala*> getBalas(){
+			return arma.getBalas();
+		}
+		void sumarPuntos(int p){
+			puntaje+=p;
+			cout << puntaje << endl;
+		}
+};
+
+class Enemigo
+{
+	private:
+		Textura TEXTURA_ENEMIGO;
+		int posInicialx;
+		int posy;
+		int ancho;
+		int	alto;
+		int	derecha;
+		int	posCamara;
+		int	muerto;
+		int velx=4;
+		int id;
+
+	public:
+		Enemigo(int pos,int id2){
+			posy = 360;
+			posCamara=pos;
+			ancho=60;
+			alto=80;
+			derecha = true;
+			muerto = false;
+			id=id2;
+		}
+		bool cargarImagen(){
+			if( !TEXTURA_ENEMIGO.cargarImagen( "imag/soldado/soldado.xcf") )
+			{
+				printf( "Fallo imagen soldado\n" );
+				return false;
+			}
+			return true;
+		}
+		void morir(){
+			muerto =true;
+			TEXTURA_ENEMIGO.setColor(128,128,128);
+
+		}
+		int getAncho(){
+			return ancho;
+		}
+		int getAlto(){
+			return alto;
+		}
+		void render(){
+			if (!muerto) TEXTURA_ENEMIGO.render(posCamara,posy);
+		}
+		int getPosx(){
+			return posCamara;
+		}
+		int getPosy(){
+			return posy;
+		}
+		void mover(){
+			if (!muerto) posCamara-=velx;
+		}
+};
+
+class Layer
+{
+	private:
+		Textura fondo;
+		double scroll;
+		int ancho;
+		int alto;
+		int vuelta;
+		int ultimaPos;
+		double velocidad;
+		int contadorTotal;
+		int contadorRender;
+		bool stop;
+	public:
+		Layer(){
+			vuelta=0;
+			ancho = 0;
+			alto = 0;
+			scroll= 0;
+			ultimaPos=0;
+			velocidad=0;
+			contadorRender=0;
+			contadorTotal=0;
+			stop=false;
+		}
+
+		int getAncho(){
+			return ancho;
+		}
+		int getAlto(){
+			return alto;
+		}
+
+		void render(int x, int y, SDL_Rect* clip){
+			//cout << camara.x << endl;
+			fondo.render(x,y,clip);
+		}
+
+		int scrollear(int posJugadorx){
+			if (stop) {
+				SDL_Rect clip = {-scroll,0,800,600};
+				render(0,0,&clip);
+				return scroll;
+			}
+			contadorTotal++;
+			//calculo lo que tiene que scrollear el fondo segun su velocidad
+			posJugadorx = posJugadorx/velocidad;
+
+			//para qeu no se vaya al chori
+			if (scroll > posJugadorx) scroll = -posJugadorx;
+
+			//cuanto tiene que moverse
+			int movimiento = posJugadorx - ultimaPos;
+
+			//guardo ultima pos nueva
+			ultimaPos = posJugadorx;
+
+			//scrolleo
+			scroll -= movimiento;
+
+			//si me termine el layer empiezo denuevo
+			if (-scroll > ancho) scroll = 0 ;
+			//renderizo la pos del layer
+			//render(scroll,0);
+			/*SDL_Rect clip = {-scroll,0,800,600};
+			render(0,0,&clip);*/
+
+			//renderizo tambien lo de adelante para que sea infinito
+			if (-scroll + SCREEN_WIDTH > ancho) {
+				scroll+=movimiento;
+				stop=true;
+			}
+			SDL_Rect clip = {-scroll,0,800,600};
+			render(0,0,&clip);
+			return scroll;
+		}
+
+		bool cargarImagen(char* path){
+			if (!fondo.cargarImagen(path)){
+				cout << "error cargando imagen, en agregar Background"<<endl;
+				return false;
+			}
+
+			ancho = fondo.getAncho();
+			alto = fondo.getAlto();
+			return true;
+		}
+
+		void asignarVelocidad(double anchomax){
+			velocidad = (anchomax-800)/(ancho-800);
+			vuelta = int(anchomax) / ancho;
+		}
+
+};
+
+class Background
+{
+	private:
+		int cantCapas;
+		int contadorCapas=0;
+		Layer capas[5];//HARDODEADO
+		int anchoMax = 0;
+
+	public:
+		Background(int cantidadCapas=1){
+			//LA IDEA ES QUE ME MANDE UNA CANTIDAD Y AHI INICIALICE EL ARRAY DE TEXTURAS CON ESE TAMANIO
+			//cantCapas=cantidadCapas;
+			//capas[cantCapas];
+		}
+
+		int render( int personajex){
+			//RECORRO LA LISTA DE LAYERS EN ORDEN DE MAS LEJANO A MAS CERCANO Y RENDERIZO
+			int scroll=0;
+			for (int i=0; i<contadorCapas;i++){
+				Layer *layer = &capas[i];
+				scroll=layer->scrollear(personajex);
+			}
+			return scroll;
+		}
+
+		bool agregar(char* path){
+			//AGREGO UNA CAPA SOLA Y GUARDO SI EL ANCHO ES EL MAYOR DE TODOS
+			if (!capas[contadorCapas].cargarImagen(path)) {
+				cout << "error cargando imagen, en agregar Background"<<endl;
+				return false;
+			}
+			int ancho = capas[contadorCapas].getAncho();
+			if (ancho>anchoMax) anchoMax=ancho;
+			contadorCapas++;
+			return true;
+		}
+
+		void prepararEscenario(){
+			//ASIGNO LAS VELOCIDADES DE CADA LAYER
+			for (int i=0; i<contadorCapas ;i++){
+				Layer *layer = &capas[i];
+				layer->asignarVelocidad(double(anchoMax));
+			}
+		}
+
+		int anchoMaximo(){
+			return anchoMax;
+		}
+};
+
+class Texto
+{
+	private:
+		Textura texturaTitulo;
+		Textura texturaInput;
+		int ancho;
+		int alto;
+		string titulo;
+		string inputText;
+	public:
+
+		Texto(string tit){
+			titulo = tit;
+			texturaTitulo;// = NULL;
+			texturaInput;// = NULL;
+			inputText="";
+		}
+
+		bool cargarTitulo(){
+			bool success = true;
+			gFont = TTF_OpenFont( "imag/neogray.ttf", 28 );
+			if( gFont == NULL )
+			{
+				printf( "FALLO CARGANDO EL TIPO DE LETRA! SDL_ttf Error: %s\n", TTF_GetError() );
+				success = false;
+			}
+			else
+			{	
+				//lo pongo en negro
+				SDL_Color textColor = {255, 0, 0, 0xFF };
+				if( !texturaTitulo.loadFromText( titulo, textColor ) )
+				{
+					printf( "Fallo cargando texto!\n" );
+					success = false;
+				}
+			}
+		}
+
+		bool pedir(){
+
+			//Main loop flag
+			bool quit = false;
+
+			SDL_Event e;
+
+			//color del texto = rojo
+			SDL_Color textColor = { 255, 0, 0, 0xFF };
+
+			texturaInput.loadFromText( inputText.c_str(), textColor );
+
+			//ESTO HACE QUE SE PUEDA ESCRIBIR
+			SDL_StartTextInput();
+
+				//The rerender text flag
+			bool renderText = false;
+
+			while( SDL_PollEvent( &e ) != 0 )
+			{
+				if( e.type == SDL_QUIT )
+				{
+					quit = true;
+				}
+				else if( e.type == SDL_KEYDOWN )
+				{
+					if (e.key.keysym.sym == SDLK_RETURN){
+						quit = true;
+						continue;
+					}
+					if( e.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0 )
+					{
+						//lop off character
+						inputText.pop_back();
+						renderText = true;
+					}
+					//manejo copy
+					else if( e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL )
+					{
+						SDL_SetClipboardText( inputText.c_str() );
+					}
+					//manejo paste
+					else if( e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL )
+					{
+						inputText = SDL_GetClipboardText();
+						renderText = true;
+					}
+				}
+				//Special text input event
+				else if( e.type == SDL_TEXTINPUT )
+				{
+					//Not copy or pasting
+					if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' ) && SDL_GetModState() & KMOD_CTRL ) )
+					{
+						//Append character
+						inputText += e.text.text;
+						renderText = true;
+					}
+				}
+			}
+				//SI HUBO ALGUNA LETRA ESCRITA, RENDEREO
+			if( renderText )
+			{
+				if( inputText != "" )
+				{
+					//Render new text
+					texturaInput.loadFromText( inputText.c_str(), textColor );
+				}
+				//Text is empty
+				else
+				{
+					//Render space texture
+					texturaInput.loadFromText( " ", textColor );
+				}
+			}
+			texturaTitulo.render(140,350 );
+			texturaInput.render(285,350);
+
+			SDL_StopTextInput();
+			return quit;
+		}
+
+		string getTexto(){
+			return inputText;
+		}
+
+		void renderTitulo(int x,int y){
+
+			texturaTitulo.render(x,y);
+		}
+};
+
+class Entrada{
+	private:
+
+		Textura neoGeo;
+		Textura esperando;
+		Textura fondo;
+		Textura TEXTURA_EXPLOSION1;
+		Textura TEXTURA_EXPLOSION2;
+		Textura TEXTURA_EXPLOSION3;
+		Textura TEXTURA_METAL;
+		SDL_Rect spriteEntrada1[ 10 ];
+		SDL_Rect spriteEntrada2[ 10 ];
+		SDL_Rect spriteEntrada3[ 10 ];
+		SDL_Rect spriteMetal[ 7 ];
+
+	public:
+		Entrada(){
+			int i;
+			if( !TEXTURA_EXPLOSION1.cargarImagen( "imag/entrada/orden/entrada1.xcf") )
+			{
+				printf( "Fallo sprite EXPLOSION1\n" );
+			}
+			else
+			{	
+				for (i = 0;i<10;i++){
+					spriteEntrada1[ i ].x = i*800;
+					spriteEntrada1[ i ].y = 0;
+					spriteEntrada1[ i ].w = 800;
+					spriteEntrada1[ i ].h = 600;
+				}
+			}
+
+			//Load sprite sheet texture
+			if( !TEXTURA_EXPLOSION2.cargarImagen( "imag/entrada/orden/entrada2.xcf") )
+			{
+				printf( "Fallo sprite EXPLOSION2\n" );
+			}
+			else
+			{	
+				for (i = 0;i<10;i++){
+					spriteEntrada2[ i ].x = i*800;
+					spriteEntrada2[ i ].y = 0;
+					spriteEntrada2[ i ].w = 800;
+					spriteEntrada2[ i ].h = 600;
+				}
+			}
+			if( !TEXTURA_EXPLOSION3.cargarImagen( "imag/entrada/orden/entrada3.xcf") )
+			{
+				printf( "Fallo sprite EXPLOSION3\n" );
+			}
+			else
+			{	
+				for (i = 0;i<10;i++){
+					spriteEntrada3[ i ].x = i*800;
+					spriteEntrada3[ i ].y = 0;
+					spriteEntrada3[ i ].w = 800;
+					spriteEntrada3[ i ].h = 600;
+				}
+			}
+
+			if (!fondo.cargarImagen("imag/entrada/orden/fondito.png")){
+				cout << "error cargando fondito"<<endl;
+			}
+			if (!esperando.cargarImagen("imag/entrada/esperando.xcf")){
+				cout << "error cargando esperando"<<endl;
+			}
+			if (!TEXTURA_METAL.cargarImagen("imag/entrada/orden/MetalSlug.png")){
+				cout << "error cargando metal slug"<<endl;
+			}
+			if( !neoGeo.cargarImagen("imag/entrada/neogeo.png"))
+			{
+				printf( "Failed to load presentacion!\n" );
+			}
+			
+			else
+			{	
+				for (i = 0;i<7;i++){
+					spriteMetal[ i ].x = i*640;
+					spriteMetal[ i ].y = 0;
+					spriteMetal[ i ].w = 640;
+					spriteMetal[ i ].h = 377;
+				}
+			}
+		}
+
+		~Entrada(){
+			neoGeo.free();
+			esperando.free();
+			fondo.free();
+			TEXTURA_EXPLOSION1.free();
+			TEXTURA_EXPLOSION2.free();
+			TEXTURA_EXPLOSION3.free();
+			TEXTURA_METAL.free();
+		}
+
+		void pedirTodo(){
+			Texto textoip("IP: ");
+			textoip.cargarTitulo();
+			Texto textopuerto("Puerto: ");
+			textopuerto.cargarTitulo();
+			Texto textonombre("Nombre: ");
+			textonombre.cargarTitulo();
+
+			pedirTexto(&textoip);
+			pedirTexto(&textopuerto);
+			pedirTexto(&textonombre);
+		}
+
+		void pedirTexto(Texto* texto){
+			bool quit=false;
+			while(!quit)
+			{
+				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
+				SDL_RenderClear( renderizador );
+				neoGeo.render( 100, 50);
+				quit=texto->pedir();
+				SDL_RenderPresent( renderizador );
+			}
+		}
+
+		void animaciones(){
+			SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_RenderClear( renderizador );
+			int frame=0;
+			int contador=0;
+			while (frame < 10){
+				//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear( renderizador );
+				fondo.render(0,0);
+				SDL_Rect* currentClip = &spriteEntrada1[ frame];
+				TEXTURA_EXPLOSION1.render( 0, 0, currentClip);
+				SDL_RenderPresent( renderizador );
+				if (contador % 5 == 0) frame++;
+				contador++;
+			}
+			frame=0;
+			while (frame < 10){
+				//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear( renderizador );
+				fondo.render(0,0);
+				SDL_Rect* currentClip = &spriteEntrada2[ frame ];
+				TEXTURA_EXPLOSION2.render( 0, 0, currentClip);
+				SDL_RenderPresent( renderizador );
+				if (contador % 5 == 0) frame++;
+				contador++;
+			}
+			frame=0;
+			while (frame < 10){
+				//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear( renderizador );
+				fondo.render(0,0);
+				SDL_Rect* currentClip = &spriteEntrada3[ frame ];
+				TEXTURA_EXPLOSION3.render( 0, 0, currentClip);
+				SDL_RenderPresent( renderizador );
+				if (contador%5 == 0) frame++;
+				contador++;
+			}
+
+			frame=0;
+			while (frame < 7){
+				//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear( renderizador );
+				fondo.render(0,0);
+				SDL_Rect* currentClip = &spriteMetal[ frame ];
+				TEXTURA_METAL.render( 150, 0, currentClip);
+				SDL_RenderPresent( renderizador );
+				if (contador % 4 == 0) frame++;
+				contador++;
+			}
+		}
+
+		void animacionEsperando(){
+			bool quit = false;
+			SDL_Event e;
+			Texto esperandoTexto("Esperando jugadores ");
+			esperandoTexto.cargarTitulo();
+			Texto puntitos(".");
+			puntitos.cargarTitulo();
+
+			int vueltas=0;
+
+			while (!quit){
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					if( e.type == SDL_QUIT )
+					{
+						quit = true;
+						continue;
+					}
+					else if( e.type == SDL_KEYDOWN )
+					{
+						if (e.key.keysym.sym == SDLK_RETURN){
+							quit = true;
+							continue;
+						}
+					}
+				}
+
+				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear( renderizador );
+				fondo.render(0,0);
+				SDL_Rect* currentClip = &spriteMetal[ 6 ];
+				TEXTURA_METAL.render( 115, 0, currentClip);
+				esperandoTexto.renderTitulo(180,400);
+				if (vueltas % 100 <= 33) puntitos.renderTitulo(550,400);
+				else if (vueltas % 100<= 66){
+					puntitos.renderTitulo(550,400);
+					puntitos.renderTitulo(560,400);
+				}
+				else {
+					puntitos.renderTitulo(550,400);
+					puntitos.renderTitulo(560,400);
+					puntitos.renderTitulo(570,400);
+					}
+				SDL_RenderPresent( renderizador );
+				vueltas++;
+			}	
 		}
 };
 
 
 class Programa
 {
+	private:
+		int cantPersonajes=0;
+		Personaje* personajes[4];
+		deque<Enemigo*> enemigos;
+		int cantEnemigos;
+		int posMapa=0;
+		Background* fondo;
+		int posBackground;
+
 	public:
 
 		Programa(){
 			renderizador = NULL;
 			ventana = NULL;
 			gFont = NULL;
+			posBackground=0;
+			cantEnemigos=0;
 		}
 
 		void close(Personaje personaje){
@@ -799,6 +1409,7 @@ class Programa
 			IMG_Quit();
 			SDL_Quit();
 		}
+
 
 		bool iniciar(){
 			//flag
@@ -843,19 +1454,101 @@ class Programa
 							printf( "NO SE PUDO INICIARLIZAR LA IMAGEN! SDL_image Error: %s\n", IMG_GetError() );
 							success = false;
 						}
-						/*if( TTF_Init() == -1 )
+						if( TTF_Init() == -1 )
 						{
 							printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
 							success = false;
-						}*/
+						}
 					}
 				}
 			}
-			SDL_RendererInfo info;
-			SDL_GetRendererInfo(renderizador, &info);
-			cout << "Max Height: " << info.max_texture_height << " Max Width: " << info.max_texture_width << endl;
+
 			return success;
 		}
+
+		void entradas(){
+			Entrada *entrada= new Entrada();
+			entrada->pedirTodo();
+			entrada->animaciones();
+			entrada->animacionEsperando();
+			delete(entrada);
+		}
+
+		void asignarID(Personaje* p){
+			p->asignarID(cantPersonajes);
+			personajes[cantPersonajes]=p;
+			cantPersonajes++;
+		}
+
+		void render(){
+			bool seMovio;
+			posBackground= fondo->render(personajes[0]->getX());
+			for (int i=0;i<cantPersonajes;i++){
+				Personaje* p=personajes[i];
+				seMovio=p->mover(4500);
+				p->render(seMovio);
+			}
+			for (int i=0;i<cantEnemigos;i++){
+				Enemigo* e=enemigos[i];
+				e->mover();
+				e->render();
+			}
+		}
+
+		void prepararEscenario(Background* back){
+			fondo=back;
+			fondo->prepararEscenario();
+		}
+		void manejarColisiones(){
+			bool muerto=false;
+			Enemigo* e;
+			for (int p=0;p<cantPersonajes;p++){
+				deque<Bala*> balas = personajes[p]->getBalas();
+				if (balas.size()==0) return;
+				for(int i = 0; i < balas.size(); i++){
+					//cout << " for 1" << endl;
+	        		Bala *bala=balas[i];
+	        		if (cantEnemigos==0) continue;
+	        		for (int j=0;j<cantEnemigos;j++){
+	        			//cout << " for 2" << endl;
+	        			e = enemigos[i];
+	        			if (manejarColision(bala,e)){
+	        				e->morir();
+	        				bala->desaparecer();
+	        				muerto=true;
+	        				personajes[p]->sumarPuntos(10);
+	        			}
+	        			else muerto=false;
+	        		}
+	        		if (muerto) {
+	        			enemigos.pop_back();
+	        			cantEnemigos--;
+	        		}
+				}
+			}
+		}
+		bool manejarColision(Bala *bala,Enemigo* enemigo){
+			
+			int balax=bala->getPosx();
+			int balay=bala->getPosy();
+			int balaAlto=bala->getAlto();
+			int balaAncho=bala->getAncho();
+
+			int soldadox=enemigo->getPosx();
+			int soldadoy=enemigo->getPosy();
+			int soldadoAlto=enemigo->getAlto();
+			int soldadoAncho=enemigo->getAncho();
+
+			if ((balax+balaAncho < soldadox) || (balax>soldadox+soldadoAncho)) return false;
+			if ((balay+balaAlto < soldadoy) || (balay>soldadoy+soldadoAlto)) return false;
+			return true;
+		}
+		void agregarEnemigo(){
+			Enemigo *e = new Enemigo(-posBackground+800,360);
+			e->cargarImagen();
+			enemigos.push_front(e);
+			cantEnemigos++;
+		}	
 };
 
 
@@ -863,23 +1556,28 @@ int main( int argc, char* args[] )
 {
 	//Start up SDL and create window
 	Programa programa;
+	Background fondo;
 	bool quit = false;
+	int contador=0;
 
 	if( !programa.iniciar() ){
 		printf( "Failed to initialize!\n" );
 	}
 	else
 	{
-
 		//Load mediaojo
 		Personaje personaje;
-		if( !personaje.cargarImagen() )
+		programa.asignarID(&personaje);
+
+
+		if( !personaje.cargarImagen() || !fondo.agregar("imag/background/1200.png") || !fondo.agregar("imag/background/2400.png") || !fondo.agregar("imag/background/4800.png"))
 		{
 			printf( "Failed to load media!\n" );
 		}
 		else
 		{
-			//Main loop flag
+			programa.prepararEscenario(&fondo);
+			programa.entradas();
 			bool quit = false;
 			bool seMovio;
 
@@ -898,16 +1596,17 @@ int main( int argc, char* args[] )
 					personaje.handleEvent( e );
 
 				}
-				seMovio = personaje.mover(4500); //POR AHORA NO ES NECESARIO MANDARLE EL ANCHO MAXIMO
+				if (contador % 300 == 0) {
+					programa.agregarEnemigo();
+				}
 
-				//Borro la pantalla
-				//DRAWCOLOR ASI PONE TODO ErrorN BLANCO
 				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( renderizador );
-				personaje.render(seMovio);
+				int scroll=fondo.render(personaje.getX());
+				programa.render();
+				programa.manejarColisiones();
 				SDL_RenderPresent( renderizador );
-
-
+				contador++;
 
 			}
 		}
