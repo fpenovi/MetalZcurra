@@ -597,9 +597,9 @@ class Layer
 			return alto;
 		}
 
-		void render(int x, int y ){
+		void render(int x, int y, SDL_Rect* clip){
 			//cout << camara.x << endl;
-			fondo.render(x,y);
+			fondo.render(x,y,clip);
 		}
 
 		void scrollear(int posJugadorx){
@@ -622,14 +622,23 @@ class Layer
 			//si me termine el layer empiezo denuevo
 			if (-scroll > ancho) scroll = 0 ;
 			//renderizo la pos del layer
-			render(scroll,0);
+			//render(scroll,0);
+			/*SDL_Rect clip = {-scroll,0,800,600};
+			render(0,0,&clip);*/
 
 			//renderizo tambien lo de adelante para que sea infinito
 			if (-scroll + SCREEN_WIDTH > ancho) {
 				//cout << "entre al render"<<endl;
 				contadorRender++;
-				render(scroll+ancho,0);
+				/*//render(scroll+ancho,0);
+				SDL_Rect clip = {-scroll+ancho,0,800,600};
+				render(0,0,&clip);*/
+				scroll+=movimiento;
 			}
+			SDL_Rect clip = {-scroll,0,800,600};
+			render(0,0,&clip);
+
+			
 
 
 			//render(scroll+ancho,0);
@@ -834,7 +843,6 @@ class Texto
 			return quit;
 		}
 
-
 		string getTexto(){
 			return inputText;
 		}
@@ -966,9 +974,9 @@ class Enemigo
 		}
 };
 
-class Programa
-{
+class Entrada{
 	private:
+
 		Textura neoGeo;
 		Textura esperando;
 		Textura fondo;
@@ -980,114 +988,11 @@ class Programa
 		SDL_Rect spriteEntrada2[ 10 ];
 		SDL_Rect spriteEntrada3[ 10 ];
 		SDL_Rect spriteMetal[ 7 ];
-		Bala* arrayBalas[100];
-		int cantBalas;
-		int* balasEnCurso[100];
-		Bala bala;
-		Enemigo soldado;
 
 	public:
-
-		Programa(){
-			renderizador = NULL;
-			ventana = NULL;
-			gFont = NULL;
-			cantBalas=0;
-		}
-
-		void close(Personaje personaje){
-			//Free loaded images
-			personaje.liberarTextura();
-
-			//Destroy window	
-			SDL_DestroyRenderer( renderizador );
-			SDL_DestroyWindow( ventana );
-			ventana = NULL;
-			renderizador = NULL;
-
-			//Quit SDL subsystems
-			IMG_Quit();
-			SDL_Quit();
-		}
-
-		void presentacion(){
-			//ESTE METODO ES EL QUE PIDE IP PUERTO Y NOMBRE
-			Uint32 start = 0;
-			Texto textoip("IP: ");
-			textoip.cargarTitulo();
-			Texto textopuerto("Puerto: ");
-			textopuerto.cargarTitulo();
-			Texto textonombre("Nombre: ");
-			textonombre.cargarTitulo();
-
-			SDL_Event e;
-			bool quit = false;
-
-			if( !neoGeo.cargarImagen("imag/entrada/neogeo.png"))
-			{
-				printf( "Failed to load presentacion!\n" );
-			}
-			else{
-					
-					while(!quit)
-					{
-						SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
-						SDL_RenderClear( renderizador );
-						neoGeo.render( 100, 50);
-						quit=textoip.pedir();
-						SDL_RenderPresent( renderizador );
-					}
-					quit=false;
-					while(!quit)
-					{
-						SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
-						SDL_RenderClear( renderizador );
-						neoGeo.render( 100, 50);
-						quit=textopuerto.pedir();
-						SDL_RenderPresent( renderizador );
-					}
-					quit=false;
-					while(!quit)
-					{
-						SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
-						SDL_RenderClear( renderizador );
-						neoGeo.render( 100, 50);
-						quit=textonombre.pedir();
-						SDL_RenderPresent( renderizador );
-					}
-					quit=false;
-					
-				while( !quit )
-				{
-					//MANEJA LA COLA DE EVENTOS
-					while( SDL_PollEvent( &e ) != 0 )
-					{
-						if( e.type == SDL_QUIT ){
-							quit = true;
-						}
-						if( e.type == SDL_KEYDOWN )
-					    {
-					    	if (e.key.keysym.sym == SDLK_RETURN) quit = true;
-						}
-					}
-					SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
-					SDL_RenderClear( renderizador );
-
-					//Render background
-					neoGeo.render( 100, 50);
-					esperando.render(180,400);
-
-					SDL_RenderPresent( renderizador );
-				}
-			}
-		}
-
-		void cargarEntrada(){
-			//Loading success flag
+		Entrada(){
 			int i;
-
-			//Load sprite sheet texture
-			if( !TEXTURA_EXPLOSION1.cargarImagen( "imag/entrada/entrada1.png") )
+			if( !TEXTURA_EXPLOSION1.cargarImagen( "imag/entrada/orden/entrada1.xcf") )
 			{
 				printf( "Fallo sprite EXPLOSION1\n" );
 			}
@@ -1102,7 +1007,7 @@ class Programa
 			}
 
 			//Load sprite sheet texture
-			if( !TEXTURA_EXPLOSION2.cargarImagen( "imag/entrada/entrada2.png") )
+			if( !TEXTURA_EXPLOSION2.cargarImagen( "imag/entrada/orden/entrada2.xcf") )
 			{
 				printf( "Fallo sprite EXPLOSION2\n" );
 			}
@@ -1115,7 +1020,7 @@ class Programa
 					spriteEntrada2[ i ].h = 600;
 				}
 			}
-			if( !TEXTURA_EXPLOSION3.cargarImagen( "imag/entrada/entrada3.png") )
+			if( !TEXTURA_EXPLOSION3.cargarImagen( "imag/entrada/orden/entrada3.xcf") )
 			{
 				printf( "Fallo sprite EXPLOSION3\n" );
 			}
@@ -1129,15 +1034,20 @@ class Programa
 				}
 			}
 
-			if (!fondo.cargarImagen("imag/entrada/fondito.png")){
+			if (!fondo.cargarImagen("imag/entrada/orden/fondito.png")){
 				cout << "error cargando fondito"<<endl;
 			}
-			if (!esperando.cargarImagen("imag/entrada/esperando.png")){
+			if (!esperando.cargarImagen("imag/entrada/esperando.xcf")){
 				cout << "error cargando esperando"<<endl;
 			}
-			if (!TEXTURA_METAL.cargarImagen("imag/entrada/MetalSlug.png")){
+			if (!TEXTURA_METAL.cargarImagen("imag/entrada/orden/MetalSlug.png")){
 				cout << "error cargando metal slug"<<endl;
 			}
+			if( !neoGeo.cargarImagen("imag/entrada/neogeo.png"))
+			{
+				printf( "Failed to load presentacion!\n" );
+			}
+			
 			else
 			{	
 				for (i = 0;i<7;i++){
@@ -1149,10 +1059,32 @@ class Programa
 			}
 		}
 
-		void entrada(){
-			//ESTE METODO HACE LA PRESENTACION Y LA SALA DE ESPERA
-			//PRIMERO HAY QUE LLAMAR A CARGARENTRADA()
+		void pedirTodo(){
+			Texto textoip("IP: ");
+			textoip.cargarTitulo();
+			Texto textopuerto("Puerto: ");
+			textopuerto.cargarTitulo();
+			Texto textonombre("Nombre: ");
+			textonombre.cargarTitulo();
 
+			pedirTexto(&textoip);
+			pedirTexto(&textopuerto);
+			pedirTexto(&textonombre);
+		}
+
+		void pedirTexto(Texto* texto){
+			bool quit=false;
+			while(!quit)
+			{
+				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
+				SDL_RenderClear( renderizador );
+				neoGeo.render( 100, 50);
+				quit=texto->pedir();
+				SDL_RenderPresent( renderizador );
+			}
+		}
+
+		void animaciones(){
 			SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
 			SDL_RenderClear( renderizador );
 			int frame=0;
@@ -1201,7 +1133,9 @@ class Programa
 				if (contador % 4 == 0) frame++;
 				contador++;
 			}
+		}
 
+		void animacionEsperando(){
 			bool quit = false;
 			SDL_Event e;
 			Texto esperandoTexto("Esperando jugadores ");
@@ -1231,11 +1165,9 @@ class Programa
 				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( renderizador );
 				fondo.render(0,0);
-				SDL_Rect* currentClip = &spriteMetal[ frame-1 ];
+				SDL_Rect* currentClip = &spriteMetal[ 6 ];
 				TEXTURA_METAL.render( 115, 0, currentClip);
-				//esperando.render(180,400);
 				esperandoTexto.renderTitulo(180,400);
-				//puntitos.renderTitulo(550,400);
 				if (vueltas % 100 <= 33) puntitos.renderTitulo(550,400);
 				else if (vueltas % 100<= 66){
 					puntitos.renderTitulo(550,400);
@@ -1249,8 +1181,48 @@ class Programa
 				SDL_RenderPresent( renderizador );
 				vueltas++;
 			}	
-
 		}
+
+
+
+
+
+};
+class Programa
+{
+	private:
+		
+		
+		Bala* arrayBalas[100];
+		int cantBalas;
+		int* balasEnCurso[100];
+		Bala bala;
+		Enemigo soldado;
+
+	public:
+
+		Programa(){
+			renderizador = NULL;
+			ventana = NULL;
+			gFont = NULL;
+			cantBalas=0;
+		}
+
+		void close(Personaje personaje){
+			//Free loaded images
+			personaje.liberarTextura();
+
+			//Destroy window	
+			SDL_DestroyRenderer( renderizador );
+			SDL_DestroyWindow( ventana );
+			ventana = NULL;
+			renderizador = NULL;
+
+			//Quit SDL subsystems
+			IMG_Quit();
+			SDL_Quit();
+		}
+
 
 		bool iniciar(){
 			//flag
@@ -1307,62 +1279,14 @@ class Programa
 			return success;
 		}
 
-		//ESTOS 3 METODOS ESTAN COMENTADOS PORQUE ESTABA INTENTANDO HACER QUE EL
-		//PERSONAJE PUEDA DISPARAR X CANTIDAD DE BALAS Y NO ME SALIO
-
-		/*void cargarBalas(){
-			for (int i=0;i<100;i++){
-				Bala bala;
-				if (!bala.cargarImagen()){
-					cout<<"no cargo imagen"<<endl;
-				}
-				arrayBalas[i]=&bala;
-			}
-			for (int i=0;i<100;i++){
-				int a=101;
-				balasEnCurso[i]=&a;
-			}
+		void entradas(){
+			Entrada *entrada= new Entrada();
+			entrada->pedirTodo();
+			entrada->animaciones();
+			entrada->animacionEsperando();
 		}
 
-		void agregarBala(int posx,int posy){
-			//NOSOTROS EN REALIDAD VAMOS A CREAR 200 BALAS AL PRINCIPIO
-			cout << "Agregar Bala"<< endl;
-			int i;
-			for ( i=0;i<100;i++){
-				if (*balasEnCurso[i]==101)break;
-			}
-			cout <<i<<": voy a agregar esta bala"<<endl;
-			Bala* bala = arrayBalas[i];
-			cout << "cree la bala en arrayBalas" << endl;
-			bala->crear(posx,posy);
-			cout << "inicializo la bala creada" << endl;
-			bala->setID(i);
-			balasEnCurso[i]=&i;
-			cantBalas++;
-			cout << " agrege balas al final !!! "<< endl;
-		}
-
-		void renderizarBalas(){
-			if (cantBalas==0) return;
-			cout << "hay tantas balas: "<< cantBalas<<endl;
-			int balasRenderizadas=0;
-			for (int i=0 ; i<cantBalas;i++){
-				if (cantBalas==balasRenderizadas) break;
-				if (*balasEnCurso[i] == 101) continue;
-				Bala* bala=arrayBalas[i];
-				bool sigueViva=bala->mover();
-				if (!sigueViva) {
-					cantBalas--;
-					int a=101;
-					balasEnCurso[i]=&a;
-					continue;
-				}
-				bala->render();
-				balasRenderizadas++;
-			}
-		}*/
-
-		void crearBalaySoldado(int x, int y){
+		/*void crearBalaySoldado(int x, int y){
 			bala.crear(x,y);
 			bala.cargarImagen();
 			soldado.cargarImagen();
@@ -1396,7 +1320,7 @@ class Programa
 			if ((balax+balaAncho < soldadox) || (balax>soldadox+soldadoAncho)) return false;
 			if ((balay+balaAlto < soldadoy) || (balay>soldadoy+soldadoAlto)) return false;
 			return true;
-		}
+		}*/
 };
 
 
@@ -1434,7 +1358,8 @@ int main( int argc, char* args[] )
 
 			//Event handler
 			SDL_Event e;
-			programa.crearBalaySoldado(personaje.getPosCamara(),personaje.getY());
+			//programa.crearBalaySoldado(personaje.getPosCamara(),personaje.getY());
+			programa.entradas();
 
 			//WHILE APLICACION CORRIENDO
 			while( !quit )
@@ -1449,7 +1374,7 @@ int main( int argc, char* args[] )
 
 				}
 				seMovio = personaje.mover(fondo.anchoMaximo()); //POR AHORA NO ES NECESARIO MANDARLE EL ANCHO MAXIMO
-				bool sigueViva=programa.moverBala();
+				//bool sigueViva=programa.moverBala();
 
 				/*if (personaje.disparar()){
 					cout << "personaje dispara!"<<endl;
@@ -1463,7 +1388,7 @@ int main( int argc, char* args[] )
 				fondo.render(personaje.getX());
 				//programa.renderizarBalas();
 				personaje.render(seMovio);
-				programa.renderBalaySoldado();
+				//programa.renderBalaySoldado();
 
 				SDL_RenderPresent( renderizador );
 
