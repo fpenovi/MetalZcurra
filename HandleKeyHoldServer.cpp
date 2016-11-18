@@ -11,8 +11,6 @@ struct argkh {
     bool* isKhOn;
     bool* isKhPaused;
     string* emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash;
 };
 
 
@@ -23,8 +21,8 @@ void* handleKeyHoldFunc(void* argKh) {
     int* keyPressed = ( (argkh_t*) argKh)->keyPressed;
     ObjectManager* objectManager = ObjectManager::getInstance();
     string* emisor = ( (argkh_t*) argKh)->emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argkh_t*) argKh)->conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argkh_t*) argKh)->mutexesHash;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
+    unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
 
     time_point<high_resolution_clock> start;
     start = high_resolution_clock::now();
@@ -144,8 +142,6 @@ void HandleKeyHoldServer::On() {
     argKeyHold->isKhPaused = &isPaused;
     argKeyHold->keyPressed = &keyPressed;
     argKeyHold->emisor = &emisor;
-    argKeyHold->conectadosHash = conectadosHash;
-    argKeyHold->mutexesHash = mutexesHash;
 
     if (pthread_create(handleKeyHoldTH, NULL, handleKeyHoldFunc, argKeyHold))
         throw NoSePudoCrearThreadHandleKeyHoldServerException();
@@ -156,6 +152,7 @@ void HandleKeyHoldServer::Off() {
         return;
 
     isOn = false;
+    pthread_join(*handleKeyHoldTH, NULL);
 }
 
 void HandleKeyHoldServer::Pause() {
@@ -182,12 +179,4 @@ int HandleKeyHoldServer::getKeyPressed() {
 
 void HandleKeyHoldServer::setEmisor(string name) {
     this->emisor = name;
-}
-
-void HandleKeyHoldServer::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
-    this->conectadosHash = hash;
-}
-
-void HandleKeyHoldServer::setMutexesHash(unordered_map<string, pthread_mutex_t>* hash) {
-    this->mutexesHash = hash;
 }

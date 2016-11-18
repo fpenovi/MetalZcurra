@@ -187,6 +187,13 @@ void VistaPersonaje::liberarTextura(){
 	delete arma;
 }
 
+VistaPersonaje::~VistaPersonaje() {
+	delete TEXTURA_PERSONAJE_PARADO_PIES;
+	delete TEXTURA_PERSONAJE_CORRIENDO_PIES;
+	delete TEXTURA_PERSONAJE_SALTANDO_PIES;
+	delete arma;
+}
+
 bool VistaPersonaje::estaSaltando(){
 	return (posy != 440);
 }

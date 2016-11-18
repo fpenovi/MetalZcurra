@@ -54,6 +54,8 @@ private:
 public:
     VistaPersonaje(SDL_Renderer *renderizador2);
 
+	~VistaPersonaje();
+
     void render(bool seMovio);
 
     void animacionParadoPiernas();

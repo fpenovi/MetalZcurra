@@ -15,8 +15,12 @@ ObjectManager::~ObjectManager() {
 		delete kv.second;
 	for (auto kv : direccionBalas)
 		delete kv.second;
+	for (auto kv : enemigos)
+		delete kv.second;
 	balasManager->Off();
 	delete balasManager;
+	enemigosManager->Off();
+	delete enemigosManager;
 }
 
 ObjectManager* ObjectManager::getInstance() {
@@ -32,6 +36,10 @@ void ObjectManager::addObject(int id, Personaje* object) {
 
 void ObjectManager::addBala(int id, Bala* bala) {
 	balas[id] = bala;
+}
+
+void ObjectManager::addEnemigo(int id, Enemigo* enemigo) {
+	enemigos[id] = enemigo;
 }
 
 Personaje* ObjectManager::getObject(int id) {
@@ -73,15 +81,46 @@ void ObjectManager::crearBalas(int cantidad) {
 	}
 }
 
+void ObjectManager::crearEnemigos(int cantidad) {
+	int posicion = 900;
+	for (int i = 1; i < cantidad+1; i++){
+		Enemigo* enemigo = new Enemigo();
+		enemigo->setId(i);
+		enemigo->setPosx(posicion);
+		addEnemigo(i, enemigo);
+		posicion += 200;
+	}
+}
+
 void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor) {
 
 	for (auto kv : balas){
-		if (!kv.second->existeBala()){
+		if (!kv.second->existeBala() && (kv.second->getId() <= 50)){
 			kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor));
 			return;
 		}
 	}
 
+}
+
+void ObjectManager::inicializarBalaEnemiga(int posx, int posy) {
+
+	for (auto kv : balas){
+		if (!kv.second->existeBala() && (kv.second->getId() > 50)){
+			kv.second->crearBalaEnemiga(posx, posy, false);
+			return;
+		}
+	}
+
+}
+
+void ObjectManager::inicializarEnemigo() {
+
+	for (auto kv : enemigos){
+		if (!(kv.second->getExiste()) && !(kv.second->estaMuerto())){
+			kv.second->crear();
+		}
+	}
 }
 
 void ObjectManager::enviarPersonajes(int FD) {
@@ -145,6 +184,10 @@ void ObjectManager::moverCamara(int id){
 			kv.second->setPosCamara(kv.second->getPosCamara()-7);
 		}
 	}
+
+	for (auto kv : enemigos){
+		kv.second->setPosx(kv.second->getPosx()-7);
+	}
 }
 
 void ObjectManager::moverDesconectados() {
@@ -198,7 +241,7 @@ void ObjectManager::enviarEscenario(ParserXML *parser, int FD) {
 
 }
 
-void ObjectManager::enviarNuevoBackground(ParserXML* parser, unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash, string emisor) {
+void ObjectManager::enviarNuevoBackground(ParserXML* parser, string emisor) {
 	string tamVentana = parser->TamVentana();
 	string tamNivel = parser->tamNivel();
 	vector <string> sprites = parser->spritesPlayers();
@@ -251,17 +294,42 @@ void ObjectManager::setPosX(int i){
 	posx=i;
 }
 
-void ObjectManager::crearBalasManager(unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash) {
+void ObjectManager::crearBalasManager() {
 
 	balasManager = new BalasManager();
-	balasManager->setConectadosHash(conectadosHash);
-	balasManager->setMutexesHash(mutexesHash);
 	balasManager->On();
+
+}
+
+void ObjectManager::crearEnemigosManager() {
+
+	enemigosManager = new EnemigosManager();
+	enemigosManager->On();
 
 }
 
 unordered_map<int, Bala*>* ObjectManager::getBalasHash() {
 	return &balas;
+}
+
+unordered_map<int, Enemigo*>* ObjectManager::getEnemigosHash() {
+	return &enemigos;
+}
+
+void ObjectManager::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
+	conectadosHash = hash;
+}
+
+void ObjectManager::setMutexesHash(unordered_map<string, pthread_mutex_t>* mutexesHash) {
+	this->mutexesHash = mutexesHash;
+}
+
+unordered_map<string, list<Mensaje*>*>* ObjectManager::getConectadosHash() {
+	return conectadosHash;
+}
+
+unordered_map<string, pthread_mutex_t>* ObjectManager::getMutexesHash() {
+	return mutexesHash;
 }
 
 ObjectManager* ObjectManager::instancia;

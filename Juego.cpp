@@ -14,6 +14,7 @@
 #include "Texto.h"
 #include "Textura.h"
 #include "VistaBala.h"
+#include "VistaEnemigo.h"
 
 using namespace std;
 using namespace chrono;
@@ -27,6 +28,7 @@ private:
 	Cliente* cliente;
 	unordered_map<int, VistaPersonaje*> vistasPersonajes;
 	unordered_map<int, VistaBala*> vistasBalas;
+	unordered_map<int, VistaEnemigo*> vistasEnemigos;
 	int lastKeyPressed;
 	Background* fondo;
 	int posx;
@@ -34,6 +36,8 @@ private:
 	int screenHeight = 600;
 	int levelWidth;
 	int levelHeight;
+	Textura* TEXTURA_BALA;
+	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx;
 
 	// Atributos para sala de espera
 	Texto* textoip;
@@ -65,13 +69,14 @@ public:
 	}
 
 	void close() {
-		//ToDo Liberar personajes
-
 		//Free loaded images
 		for (auto kv : vistasPersonajes)
-			kv.second->liberarTextura();
+			delete kv.second;
 
 		for (auto kv : vistasBalas)
+			delete kv.second;
+
+		for (auto kv : vistasEnemigos)
 			delete kv.second;
 
 		//Destroy window
@@ -79,6 +84,7 @@ public:
 		SDL_DestroyWindow( ventana );
 		ventana = NULL;
 		renderizador = NULL;
+		delete TEXTURA_BALA;
 		delete fondo;
 
 		//Quit SDL subsystems
@@ -435,6 +441,10 @@ public:
 		return vistasBalas[id];
 	}
 
+	VistaEnemigo* getEnemigoById(int id){
+		return vistasEnemigos[id];
+	}
+
 	string getIp(){
 		return ip;
 	}
@@ -469,6 +479,10 @@ public:
 
 	void addBala(int id, VistaBala* bala){
 		vistasBalas[id] = bala;
+	}
+
+	void addEnemigo(int id, VistaEnemigo* enemigo){
+		vistasEnemigos[id] = enemigo;
 	}
 
 	void conectar(){
@@ -605,6 +619,9 @@ public:
 				}
 			}
 		}
+		for (auto kv : vistasEnemigos){
+			if (kv.second->existeEnemigo()) kv.second->setPosX(kv.second->getPosx()-7);
+		}
 	}
 
 	void renderizar() {
@@ -619,6 +636,10 @@ public:
 		}
 
 		for (auto kv : vistasBalas){
+			kv.second->render();
+		}
+
+		for (auto kv : vistasEnemigos){
 			kv.second->render();
 		}
 	}
@@ -815,10 +836,95 @@ public:
 	void crearBalas(){
 		int i = 1;
 		for (i ; i < 51 ; i++) {
-			VistaBala* bala = new VistaBala(getRenderer());
+			VistaBala* bala = new VistaBala(TEXTURA_BALA);
 			bala->cargarImagen();
-			addBala(i , bala);
+			addBala(i, bala);
 		}
+		for (i ; i < 101 ; i++) {
+			VistaBala* bala = new VistaBala(TEXTURA_BALA);
+			bala->cargarImagen();
+			addBala(i, bala);
+		}
+	}
+
+	void crearEnemigos(){
+		int i = 1;
+		for (i ; i < 6 ; i++){
+			VistaEnemigo* enemigo = new VistaEnemigo(getRenderer());
+			enemigo->cargarImagen();
+			addEnemigo(i, enemigo);
+		}
+	}
+
+	void cargarTexturaBala(){
+		TEXTURA_BALA = new Textura(renderizador);
+		if( !TEXTURA_BALA->cargarImagen( "imag/bala/bala.png") ) printf( "Fallo imagen bala\n" );
+	}
+
+	void parsearUpdateVista(string update){
+		ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posX, &posy, &posCam, &conectado, &spriteIdx);
+	}
+
+	int getTipoObjeto(){
+		return tipoObjeto;
+	}
+
+	void actualizarPersonaje(){
+
+		VistaPersonaje* pj = getPersonajeById(id);
+
+		if (pj->getPosCamara() < posCam){
+			pj->setDerecha(true);
+		}
+		else if (pj->getPosCamara() > posCam){
+			pj->setDerecha(false);
+		}
+
+		if (getPosX() < posX){
+			moverCamara(id);
+			setPosX(posX);
+		}
+
+		if (!(pj->getDisparar())) pj->setSpriteIndexTorso(spriteIdx);
+		pj->setSpriteIndexPies(spriteIdx);
+		pj->setConectado(conectado);
+		pj->setPosCamara(posCam);
+		pj->setPosy(posy);
+		pj->setSeMovio(state);
+	}
+
+	void actualizarBala(){
+		int derecha, arriba, abajo;
+		derecha = spriteIdx;
+		arriba = posCam;
+		abajo = conectado;
+
+		VistaBala* bala = getBalaById(id);
+
+		bala->setExiste(state);
+		bala->setPosX(posX);
+		bala->setPosY(posy);
+		bala->setDerecha(derecha);
+		bala->setArriba(arriba);
+		bala->setAbajo(abajo);
+
+	}
+
+	void actualizarSpriteDisparo(){
+		VistaPersonaje* pj = getPersonajeById(id);
+
+		pj->setDisparar(state);
+		pj->setSpriteIndexTorso(spriteIdx);
+		pj->setSpriteIndexPies(spriteIdx);
+	}
+
+	void actualizarEnemigo(){
+		VistaEnemigo* enemigo = getEnemigoById(id);
+
+		enemigo->setExiste(state);
+		enemigo->setPosX(posX);
+		enemigo->setPosY(posy);
+		if (conectado) enemigo->morir();
 	}
 };
 
@@ -905,7 +1011,11 @@ int main( int argc, char** argv) {
 	juego.recibirPersonajes();
 
 	// Creo la pool de balas
+	juego.cargarTexturaBala();
 	juego.crearBalas();
+
+	// Creo enemigos
+	juego.crearEnemigos();
 
 	//Main loop flag
 	bool quit = false;
@@ -961,9 +1071,8 @@ int main( int argc, char** argv) {
 			start = high_resolution_clock::now();
 			time_point<high_resolution_clock> actual;
 
-			int tipoObjeto, id, state, posx, posy, posCam, conectado, spriteIdx;
-
-			ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posx, &posy, &posCam, &conectado, &spriteIdx);
+			juego.parsearUpdateVista(update);
+			int tipoObjeto = juego.getTipoObjeto();
 
 			// Tipo de objeto 10 = REINICIAR ESCENARIO
 			if (tipoObjeto == 10 ){
@@ -976,59 +1085,20 @@ int main( int argc, char** argv) {
 			}
 
 			// Tipo de objeto 1 = PERSONAJES
-			if (tipoObjeto == 1){
-
-				VistaPersonaje* pj = juego.getPersonajeById(id);
-
-				if (pj->getPosCamara() < posCam){
-					pj->setDerecha(true);
-				}
-				else if (pj->getPosCamara() > posCam){
-					pj->setDerecha(false);
-				}
-
-				if (juego.getPosX() < posx){
-					juego.moverCamara(id);
-					juego.setPosX(posx);
-				}
-
-				if (!(pj->getDisparar())) pj->setSpriteIndexTorso(spriteIdx);
-				pj->setSpriteIndexPies(spriteIdx);
-				pj->setConectado(conectado);
-				pj->setPosCamara(posCam);
-				pj->setPosy(posy);
-				pj->setSeMovio(state);
-
-			}
+			if (tipoObjeto == 1)
+				juego.actualizarPersonaje();
 
 			// Tipo de objeto 2 = BALAS
-			else if (tipoObjeto == 2){
-
-				int derecha, arriba, abajo;
-				derecha = spriteIdx;
-				arriba = posCam;
-				abajo = conectado;
-
-				VistaBala* bala = juego.getBalaById(id);
-
-				bala->setExiste(state);
-				bala->setPosX(posx);
-				bala->setPosY(posy);
-				bala->setDerecha(derecha);
-				bala->setArriba(arriba);
-				bala->setAbajo(abajo);
-
-			}
+			else if (tipoObjeto == 2)
+				juego.actualizarBala();
 
 			// Tipo de objeto 3 = SPRITE DISPARO
-			else if (tipoObjeto == 3){
+			else if (tipoObjeto == 3)
+				juego.actualizarSpriteDisparo();
 
-				VistaPersonaje* pj = juego.getPersonajeById(id);
-
-				pj->setDisparar(state);
-				pj->setSpriteIndexTorso(spriteIdx);
-				pj->setSpriteIndexPies(spriteIdx);
-			}
+			// Tipo de objeto 4 = ENEMIGOS
+			else if (tipoObjeto == 4)
+				juego.actualizarEnemigo();
 
 			SDL_RenderClear( juego.getRenderer() );
 

@@ -10,8 +10,6 @@ using namespace chrono;
 struct argbalas {
     bool* isKhOn;
     bool* isKhPaused;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash;
 };
 
 
@@ -20,8 +18,8 @@ void* balasManagerFunc(void* argKh) {
     bool* isKhOn = ( (argbalas_t*) argKh )->isKhOn;
     bool* isKhPaused = ( (argbalas_t*) argKh)->isKhPaused;
     ObjectManager* objectManager = ObjectManager::getInstance();
-    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argbalas_t*) argKh)->conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argbalas_t*) argKh)->mutexesHash;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
+    unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
     unordered_map<int, Bala*>* balas = objectManager->getBalasHash();
 
     time_point<high_resolution_clock> start;
@@ -111,8 +109,6 @@ void BalasManager::On() {
 
     argBalas->isKhOn = &isOn;
     argBalas->isKhPaused = &isPaused;
-    argBalas->conectadosHash = conectadosHash;
-    argBalas->mutexesHash = mutexesHash;
 
     if (pthread_create(balasManagerTH, NULL, balasManagerFunc, argBalas))
         throw NoSePudoCrearThreadBalasManagerException();
@@ -123,6 +119,7 @@ void BalasManager::Off() {
         return;
 
     isOn = false;
+    pthread_join(*balasManagerTH, NULL);
 }
 
 void BalasManager::Pause() {
@@ -137,12 +134,4 @@ void BalasManager::Resume() {
         return;
 
     isPaused = false;
-}
-
-void BalasManager::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
-    this->conectadosHash = hash;
-}
-
-void BalasManager::setMutexesHash(unordered_map<string, pthread_mutex_t>* hash) {
-    this->mutexesHash = hash;
 }

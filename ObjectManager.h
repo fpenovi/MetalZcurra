@@ -17,6 +17,8 @@
 #include <list>
 #include "BalasManager.h"
 #include "Direccion.h"
+#include "Enemigo.h"
+#include "EnemigosManager.h"
 
 using namespace std;
 
@@ -24,6 +26,7 @@ class ObjectManager {
 
 private:
 	unordered_map<int, Bala*> balas;
+	unordered_map<int, Enemigo*> enemigos;
 	unordered_map<int, Personaje*> personajes;
 	unordered_map<string, int> tablaUsuarios;
 	unordered_map<int, Direccion*> direccionBalas;
@@ -32,6 +35,9 @@ private:
 	ObjectManager();
 	int posx;
 	BalasManager* balasManager;
+	EnemigosManager* enemigosManager;
+	unordered_map<string, list<Mensaje*>*>* conectadosHash;
+	unordered_map<string, pthread_mutex_t>* mutexesHash;
 
 public:
 	~ObjectManager();
@@ -52,13 +58,27 @@ public:
 	void moverDesconectados();
 	void setPosX(int i);
 	void reinicializarEscenario();
-	void enviarNuevoBackground(ParserXML* parser, unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash, string emisor);
+	void enviarNuevoBackground(ParserXML* parser, string emisor);
 
+	void setConectadosHash(unordered_map<string, list<Mensaje*>*>* conectadosHash);
+	void setMutexesHash(unordered_map<string, pthread_mutex_t>* mutexesHash);
+	unordered_map<string, list<Mensaje*>*>* getConectadosHash();
+	unordered_map<string, pthread_mutex_t>* getMutexesHash();
+
+	// Balas
 	void addBala(int id, Bala* bala);
 	void crearBalas(int cantidad);
 	void inicializarBala(int idEmisor, int posxEmisor, int posyEmisor);
-	void crearBalasManager(unordered_map<string, list<Mensaje*>*>* conectadosHash, unordered_map<string, pthread_mutex_t>* mutexesHash);
+	void inicializarBalaEnemiga(int posx, int posy);
+	void crearBalasManager();
 	unordered_map<int, Bala*>* getBalasHash();
+
+	// Enemigos
+	void addEnemigo(int id, Enemigo* enemigo);
+	void crearEnemigos(int cantidad);
+	void inicializarEnemigo();
+	void crearEnemigosManager();
+	unordered_map<int, Enemigo*>* getEnemigosHash();
 };
 
 

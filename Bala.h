@@ -35,6 +35,8 @@ public:
 
     void crear(int idEmisor, int x, int y, Direccion* direccion);
 
+    void crearBalaEnemiga(int x, int y, bool derecha);
+
     int getPosx();
 
     int getPosy();

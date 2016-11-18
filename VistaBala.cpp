@@ -4,24 +4,17 @@
 
 #include "VistaBala.h"
 
-VistaBala::VistaBala(SDL_Renderer* renderer) {
+VistaBala::VistaBala(Textura* textura) {
     existe = false;
     derecha = true;
     arriba = false;
     abajo = false;
-    TEXTURA_BALA = new Textura(renderer);
+    TEXTURA_BALA = textura;
 }
 
-bool VistaBala::cargarImagen(){
-    if( !TEXTURA_BALA->cargarImagen( "imag/bala/bala.png") )
-    {
-
-        printf( "Fallo imagen bala\n" );
-        return false;
-    }
+void VistaBala::cargarImagen(){
     ancho = TEXTURA_BALA->getAncho();
     alto = TEXTURA_BALA->getAlto();
-    return true;
 }
 
 void VistaBala::render(){
@@ -104,10 +97,6 @@ void VistaBala::setPosX(int x) {
 
 void VistaBala::setPosY(int y) {
     posy = y;
-}
-
-VistaBala::~VistaBala() {
-    delete TEXTURA_BALA;
 }
 
 void VistaBala::setDerecha(int aux) {

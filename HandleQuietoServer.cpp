@@ -10,8 +10,6 @@ struct argquieto {
     bool* isKhOn;
     bool* isKhPaused;
     string* emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash;
 };
 
 
@@ -21,8 +19,8 @@ void* handleQuietoFunc(void* argKh) {
     bool* isKhPaused = ( (argquieto_t*) argKh)->isKhPaused;
     ObjectManager* objectManager = ObjectManager::getInstance();
     string* emisor = ( (argquieto_t*) argKh)->emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argquieto_t*) argKh)->conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argquieto_t*) argKh)->mutexesHash;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
+    unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
 
     int idEmisor = objectManager->getIdByUsername(*emisor);
     Personaje* personaje = objectManager->getObject(idEmisor);
@@ -114,8 +112,6 @@ void HandleQuietoServer::On() {
     argQuieto->isKhOn = &isOn;
     argQuieto->isKhPaused = &isPaused;
     argQuieto->emisor = &emisor;
-    argQuieto->conectadosHash = conectadosHash;
-    argQuieto->mutexesHash = mutexesHash;
 
     if (pthread_create(handleQuietoTH, NULL, handleQuietoFunc, argQuieto))
         throw NoSePudoCrearThreadHandleQuietoServerException();
@@ -126,6 +122,7 @@ void HandleQuietoServer::Off() {
         return;
 
     isOn = false;
+    pthread_join(*handleQuietoTH, NULL);
 }
 
 void HandleQuietoServer::Pause() {
@@ -144,12 +141,4 @@ void HandleQuietoServer::Resume() {
 
 void HandleQuietoServer::setEmisor(string name) {
     this->emisor = name;
-}
-
-void HandleQuietoServer::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
-    this->conectadosHash = hash;
-}
-
-void HandleQuietoServer::setMutexesHash(unordered_map<string, pthread_mutex_t>* hash) {
-    this->mutexesHash = hash;
 }

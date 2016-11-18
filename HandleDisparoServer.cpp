@@ -10,8 +10,6 @@ struct argdisparo {
     bool* isKhOn;
     bool* isKhPaused;
     string* emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash;
 };
 
 
@@ -21,8 +19,8 @@ void* handleDisparoFunc(void* argKh) {
     bool* isKhPaused = ( (argdisparo_t*) argKh)->isKhPaused;
     ObjectManager* objectManager = ObjectManager::getInstance();
     string* emisor = ( (argdisparo_t*) argKh)->emisor;
-    unordered_map<string, list<Mensaje*>*>* conectadosHash = ( (argdisparo_t*) argKh)->conectadosHash;
-    unordered_map<string, pthread_mutex_t>* mutexesHash = ( (argdisparo_t*) argKh)->mutexesHash;
+    unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
+    unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
 
     int idEmisor = objectManager->getIdByUsername(*emisor);
     Personaje* personaje = objectManager->getObject(idEmisor);
@@ -121,8 +119,6 @@ void HandleDisparoServer::On() {
     argDisparo->isKhOn = &isOn;
     argDisparo->isKhPaused = &isPaused;
     argDisparo->emisor = &emisor;
-    argDisparo->conectadosHash = conectadosHash;
-    argDisparo->mutexesHash = mutexesHash;
 
     if (pthread_create(handleDisparoTH, NULL, handleDisparoFunc, argDisparo))
         throw NoSePudoCrearThreadHandleDisparoServerException();
@@ -133,6 +129,7 @@ void HandleDisparoServer::Off() {
         return;
 
     isOn = false;
+    pthread_join(*handleDisparoTH, NULL);
 }
 
 void HandleDisparoServer::Pause() {
@@ -151,12 +148,4 @@ void HandleDisparoServer::Resume() {
 
 void HandleDisparoServer::setEmisor(string name) {
     this->emisor = name;
-}
-
-void HandleDisparoServer::setConectadosHash(unordered_map<string, list<Mensaje*>*>* hash) {
-    this->conectadosHash = hash;
-}
-
-void HandleDisparoServer::setMutexesHash(unordered_map<string, pthread_mutex_t>* hash) {
-    this->mutexesHash = hash;
 }

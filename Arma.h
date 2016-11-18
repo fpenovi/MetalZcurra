@@ -35,6 +35,8 @@ protected:
 public:
     Arma(SDL_Renderer* render);
 
+    ~Arma();
+
     void renderParado(int x, int y, int frame, SDL_RendererFlip flip);
 
     void renderCorriendo(int x, int y, int frame, SDL_RendererFlip flip);
