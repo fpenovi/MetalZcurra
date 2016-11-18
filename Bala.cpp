@@ -43,6 +43,14 @@ void Bala::crear(int idEmisor, int x, int y, Direccion* direccion){
     setDireccion(direccion->isDerecha(), direccion->isIzquierda(), direccion->isArriba(), direccion->isAbajo());
 }
 
+void Bala::crearBalaEnemiga(int x, int y, bool derecha) {
+    existe = true;
+    posx = x;
+    posy = y;
+
+    setDireccion(derecha, !derecha, false, false);
+}
+
 int Bala::getPosx(){
     return posx;
 }

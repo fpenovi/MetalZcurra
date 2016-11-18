@@ -5,6 +5,8 @@
 #ifndef METALZCURRA_ENEMIGO_H
 #define METALZCURRA_ENEMIGO_H
 
+using namespace chrono;
+
 class Enemigo
 {
 private:
@@ -17,6 +19,9 @@ private:
     int existe;
     int velocidad;
     int cantidadPasos;
+
+    time_point<high_resolution_clock> start;
+    time_point<high_resolution_clock> actual;
 
 public:
     Enemigo();
@@ -44,6 +49,8 @@ public:
     int getExiste();
 
     void crear();
+
+    void disparar();
 };
 
 #endif //METALZCURRA_ENEMIGO_H

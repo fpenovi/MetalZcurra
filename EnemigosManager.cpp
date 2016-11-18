@@ -39,9 +39,8 @@ void* enemigosManagerFunc(void* argKh) {
 
                 for (auto kv : *enemigos){
 
-                    if (!(kv.second->getExiste()) && !(kv.second->estaMuerto())){
+                    if (!(kv.second->getExiste()) && !(kv.second->estaMuerto()))
                         kv.second->crear();
-                    }
 
                     if (kv.second->getExiste()){
 
@@ -73,6 +72,9 @@ void* enemigosManagerFunc(void* argKh) {
                                 result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
                                 if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
                             }
+                        }
+                        else {
+                            kv.second->disparar();
                         }
                     }
                 }

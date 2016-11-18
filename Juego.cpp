@@ -840,6 +840,11 @@ public:
 			bala->cargarImagen();
 			addBala(i, bala);
 		}
+		for (i ; i < 101 ; i++) {
+			VistaBala* bala = new VistaBala(TEXTURA_BALA);
+			bala->cargarImagen();
+			addBala(i, bala);
+		}
 	}
 
 	void crearEnemigos(){
@@ -1080,24 +1085,20 @@ int main( int argc, char** argv) {
 			}
 
 			// Tipo de objeto 1 = PERSONAJES
-			if (tipoObjeto == 1){
+			if (tipoObjeto == 1)
 				juego.actualizarPersonaje();
-			}
 
 			// Tipo de objeto 2 = BALAS
-			else if (tipoObjeto == 2){
+			else if (tipoObjeto == 2)
 				juego.actualizarBala();
-			}
 
 			// Tipo de objeto 3 = SPRITE DISPARO
-			else if (tipoObjeto == 3){
+			else if (tipoObjeto == 3)
 				juego.actualizarSpriteDisparo();
-			}
 
 			// Tipo de objeto 4 = ENEMIGOS
-			else if (tipoObjeto == 4) {
+			else if (tipoObjeto == 4)
 				juego.actualizarEnemigo();
-			}
 
 			SDL_RenderClear( juego.getRenderer() );
 

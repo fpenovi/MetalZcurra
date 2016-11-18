@@ -14,10 +14,12 @@ Enemigo::Enemigo(){
     muerto = false;
     velocidad = 7;
     cantidadPasos = 20;
+
+    start = high_resolution_clock::now();
 }
 
 bool Enemigo::mover() {
-    //if (posx < 0) velocidad = -7;
+    if (posx < 0) existe = false;
     //if (velocidad == -7 && posx > 800) velocidad = 7;
     if (cantidadPasos > 0){
         posx -= velocidad;
@@ -72,4 +74,19 @@ void Enemigo::crear() {
     ObjectManager* objectManager = ObjectManager::getInstance();
     if ((*(objectManager->getPosX()) + 800) > posx ) existe = true;
     if ( posx < 0 ) existe = false;
+}
+
+void Enemigo::disparar() {
+    microseconds intervalo(2000000);	// 2s
+    actual = high_resolution_clock::now();
+
+    auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
+    auto elapsed_ms = duration_cast<microseconds>(deltaTiempo);
+
+    if (elapsed_ms.count() >= intervalo.count()) {
+        ObjectManager* objectManager = ObjectManager::getInstance();
+        objectManager->inicializarBalaEnemiga(posx, posy + 20);
+        start = chrono::system_clock::now();
+    }
+
 }

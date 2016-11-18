@@ -95,8 +95,19 @@ void ObjectManager::crearEnemigos(int cantidad) {
 void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor) {
 
 	for (auto kv : balas){
-		if (!kv.second->existeBala()){
+		if (!kv.second->existeBala() && (kv.second->getId() <= 50)){
 			kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor));
+			return;
+		}
+	}
+
+}
+
+void ObjectManager::inicializarBalaEnemiga(int posx, int posy) {
+
+	for (auto kv : balas){
+		if (!kv.second->existeBala() && (kv.second->getId() > 50)){
+			kv.second->crearBalaEnemiga(posx, posy, false);
 			return;
 		}
 	}

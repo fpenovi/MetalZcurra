@@ -734,7 +734,7 @@ public:
         objectManager->setConectadosHash(&conectadosHash);
         objectManager->setMutexesHash(&mutexesHash);
         objectManager->crearPersonajes(cantidadUsuarios);
-        objectManager->crearBalas(50);
+        objectManager->crearBalas(100);
         objectManager->crearBalasManager();
         objectManager->crearEnemigos(5);
         objectManager->crearEnemigosManager();

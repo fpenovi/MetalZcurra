@@ -69,6 +69,7 @@ public:
 	void addBala(int id, Bala* bala);
 	void crearBalas(int cantidad);
 	void inicializarBala(int idEmisor, int posxEmisor, int posyEmisor);
+	void inicializarBalaEnemiga(int posx, int posy);
 	void crearBalasManager();
 	unordered_map<int, Bala*>* getBalasHash();
 
