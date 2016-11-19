@@ -104,3 +104,7 @@ int Bala::getArriba() {
 int Bala::getAbajo() {
     return abajo;
 }
+
+int Bala::getIzquierda() {
+    return izquierda;
+}

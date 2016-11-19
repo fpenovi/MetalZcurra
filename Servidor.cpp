@@ -252,6 +252,7 @@ private:
         int* posX = objectManager->getPosX();
         int idEmisor = objectManager->getIdByUsername(emisor);
         Direccion* direccion = objectManager->getDireccionById(idEmisor);
+        Personaje* personaje = objectManager->getObject(idEmisor);
 
         int key;
         int pressed;
@@ -285,10 +286,14 @@ private:
 
                 case SDLK_UP:
                     direccion->disparoArriba();
+                    personaje->setAbajo(false);
+                    personaje->setArriba(true);
                     break;
 
                 case SDLK_DOWN:
                     direccion->disparoAbajo();
+                    personaje->setArriba(false);
+                    personaje->setAbajo(true);
                     break;
 
                 case SDLK_x:
@@ -308,6 +313,7 @@ private:
                     update.setPosCamara(0);
                     update.setConectado(0);
                     update.setSpriteIndex(0);
+                    update.setApuntando(0);
                     enviar = true;
                     break;
 
@@ -345,11 +351,13 @@ private:
                 case SDLK_UP:
                     direccion->setArriba(false);
                     direccion->ultimaDireccion();
+                    personaje->setArriba(false);
                     break;
 
                 case SDLK_DOWN:
                     direccion->setAbajo(false);
                     direccion->ultimaDireccion();
+                    personaje->setAbajo(false);
                     break;
 
                 case SDLK_x:
@@ -628,6 +636,7 @@ private:
         update.setObject_id(idEmisor);
         update.setPosCamara(personaje->getPosCamara());
         update.setConectado(personaje->getConectado());
+        update.setApuntando(personaje->getDireccion());
 
         int result;
         string mensaje = update.toString();

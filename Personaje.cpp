@@ -177,15 +177,50 @@ int Personaje::getSpriteParado() {
 }
 
 void Personaje::setSpriteDisparando() {
-    frameDisparando++;
-    if( frameDisparando >= ANIMACION_ACTUAL ) {
-        frameDisparando = 0;
-        disparando = false;
+
+    if (arriba) setSpriteDisparandoArriba();
+
+    else if (abajo) setSpriteDisparandoAbajo();
+
+    else {
+        frameDisparando++;
+        if (frameDisparando >= ANIMACION_ACTUAL) {
+            frameDisparando = 0;
+            disparando = false;
+        }
+    }
+}
+
+void Personaje::setSpriteDisparandoArriba() {
+    frameDisparandoArriba++;
+    if( frameDisparandoArriba >= ANIMACION_ACTUAL_DISPARANDO_ARRIBA ){
+        frameDisparandoArriba = 0;
+        disparando=false;
+    }
+}
+
+void Personaje::setSpriteDisparandoAbajo(){
+    frameDisparandoAbajo++;
+    if( frameDisparandoAbajo >= ANIMACION_ACTUAL_DISPARANDO_ABAJO ){
+        frameDisparandoAbajo = 0;
+        disparando=false;
     }
 }
 
 int Personaje::getSpriteDisparando() {
-    return frameDisparando;
+    if (arriba) return frameDisparandoArriba;
+
+    else if (abajo) return frameDisparandoAbajo;
+
+    else return frameDisparando;
+}
+
+int Personaje::getSpriteDisparandoArriba() {
+    return frameDisparandoArriba;
+}
+
+int Personaje::getSpriteDisparandoAbajo() {
+    return frameDisparandoAbajo;
 }
 
 void Personaje::resetFrames() {
@@ -193,6 +228,8 @@ void Personaje::resetFrames() {
     frameSaltando = 0;
     frameCorriendo = 0;
     frameDisparando = 0;
+    frameDisparandoArriba = 0;
+    frameDisparandoAbajo = 0;
 }
 
 void Personaje::setSprites() {
@@ -233,4 +270,18 @@ void Personaje::setDisparando(bool aux) {
 
 int Personaje::getDisparando() {
     return disparando;
+}
+
+void Personaje::setArriba(bool aux){
+    arriba = aux;
+}
+
+void Personaje::setAbajo(bool aux){
+    abajo = aux;
+}
+
+int Personaje::getDireccion(){
+    if (arriba) return 1;
+    else if (abajo) return 2;
+    else return 0;
 }

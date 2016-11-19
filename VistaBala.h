@@ -18,6 +18,7 @@ private:
     int ancho;
     int alto;
     bool derecha;
+    bool izquierda;
     bool arriba;
     bool abajo;
     Textura* TEXTURA_BALA;
@@ -54,6 +55,8 @@ public:
     void setExiste(bool exist);
 
     void setDerecha(int aux);
+
+    void setIzquierda(int aux);
 
     void setArriba(int aux);
 

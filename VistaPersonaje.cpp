@@ -325,3 +325,24 @@ void VistaPersonaje::setDisparar(bool aux) {
 bool VistaPersonaje::getDisparar() {
 	return disparar;
 }
+
+void VistaPersonaje::apuntarAbajo(){
+	arma->apuntarArriba(false);
+	arma->apuntarAbajo(true);
+}
+
+void VistaPersonaje::apuntarArriba(){
+	arma->apuntarAbajo(false);
+	arma->apuntarArriba(true);
+}
+
+void VistaPersonaje::noApuntar(){
+	arma->apuntarAbajo(false);
+	arma->apuntarArriba(false);
+}
+
+void VistaPersonaje::apuntar(int aim){
+	if (aim == 1) apuntarArriba();
+	else if (aim == 2) apuntarAbajo();
+	else noApuntar();
+}

@@ -30,15 +30,23 @@ void VistaBala::render(){
             flip = SDL_FLIP_NONE;
             angulo = 45;
         }
-        else if (!derecha && arriba ){
+        else if (izquierda && arriba ){
             flip = SDL_FLIP_HORIZONTAL;
             angulo = 45;
         }
-        else if (!derecha && abajo){
+        else if (izquierda && abajo){
             flip = SDL_FLIP_HORIZONTAL;
             angulo = 325;
         }
-        else if (!derecha){
+        else if (!izquierda && !derecha && arriba){
+            flip = SDL_FLIP_NONE;
+            angulo = 270;
+        }
+        else if (!izquierda && !derecha && abajo){
+            flip = SDL_FLIP_NONE;
+            angulo = 90;
+        }
+        else if (izquierda){
             flip = SDL_FLIP_HORIZONTAL;
         }
 
@@ -101,6 +109,10 @@ void VistaBala::setPosY(int y) {
 
 void VistaBala::setDerecha(int aux) {
     derecha = (bool) aux;
+}
+
+void VistaBala::setIzquierda(int aux) {
+    izquierda = (bool) aux;
 }
 
 void VistaBala::setArriba(int aux) {

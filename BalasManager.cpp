@@ -51,6 +51,7 @@ void* balasManagerFunc(void* argKh) {
                         update.setPosCamara(kv.second->getArriba());
                         update.setConectado(kv.second->getAbajo());
                         update.setSpriteIndex(kv.second->getDerecha());
+                        update.setApuntando(kv.second->getIzquierda());
 
                         kv.second->mover();
 

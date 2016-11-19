@@ -37,7 +37,8 @@ private:
 	int levelWidth;
 	int levelHeight;
 	Textura* TEXTURA_BALA;
-	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx;
+	Textura* TEXTURA_BALA_ENEMIGA;
+	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim;
 
 	// Atributos para sala de espera
 	Texto* textoip;
@@ -85,6 +86,7 @@ public:
 		ventana = NULL;
 		renderizador = NULL;
 		delete TEXTURA_BALA;
+		delete TEXTURA_BALA_ENEMIGA;
 		delete fondo;
 
 		//Quit SDL subsystems
@@ -841,7 +843,7 @@ public:
 			addBala(i, bala);
 		}
 		for (i ; i < 101 ; i++) {
-			VistaBala* bala = new VistaBala(TEXTURA_BALA);
+			VistaBala* bala = new VistaBala(TEXTURA_BALA_ENEMIGA);
 			bala->cargarImagen();
 			addBala(i, bala);
 		}
@@ -858,11 +860,15 @@ public:
 
 	void cargarTexturaBala(){
 		TEXTURA_BALA = new Textura(renderizador);
-		if( !TEXTURA_BALA->cargarImagen( "imag/bala/bala.png") ) printf( "Fallo imagen bala\n" );
+		if( !TEXTURA_BALA->cargarImagen( "imag/sprites/sfx/gunBullet.png") ) printf( "Fallo imagen bala\n" );
+
+		TEXTURA_BALA_ENEMIGA = new Textura(renderizador);
+		if( !TEXTURA_BALA_ENEMIGA->cargarImagen( "imag/sprites/sfx/soldierBullet.png") ) printf( "Fallo imagen bala enemiga\n" );
+
 	}
 
 	void parsearUpdateVista(string update){
-		ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posX, &posy, &posCam, &conectado, &spriteIdx);
+		ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posX, &posy, &posCam, &conectado, &spriteIdx, &aim);
 	}
 
 	int getTipoObjeto(){
@@ -885,6 +891,7 @@ public:
 			setPosX(posX);
 		}
 
+		pj->apuntar(aim);
 		if (!(pj->getDisparar())) pj->setSpriteIndexTorso(spriteIdx);
 		pj->setSpriteIndexPies(spriteIdx);
 		pj->setConectado(conectado);
@@ -894,8 +901,9 @@ public:
 	}
 
 	void actualizarBala(){
-		int derecha, arriba, abajo;
+		int derecha, arriba, abajo, izquierda;
 		derecha = spriteIdx;
+		izquierda = aim;
 		arriba = posCam;
 		abajo = conectado;
 
@@ -907,6 +915,7 @@ public:
 		bala->setDerecha(derecha);
 		bala->setArriba(arriba);
 		bala->setAbajo(abajo);
+		bala->setIzquierda(izquierda);
 
 	}
 

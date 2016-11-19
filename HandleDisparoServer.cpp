@@ -43,7 +43,9 @@ void* handleDisparoFunc(void* argKh) {
                 Direccion* direccion = objectManager->getDireccionById(idEmisor);
 
                 if (direccion->isDerecha()) objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 60, personaje->getPosy() + 20);
-                else objectManager->inicializarBala(idEmisor, personaje->getPosCamara(), personaje->getPosy() + 20);
+                else if (direccion->isIzquierda()) objectManager->inicializarBala(idEmisor, personaje->getPosCamara(), personaje->getPosy() + 20);
+                else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isArriba()) objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 30, personaje->getPosy());
+                else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isAbajo()) objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 30, personaje->getPosy() + 80);
 
                 personaje->setDisparando(true);
                 for (int i = 0; i < 10; i++){
@@ -58,6 +60,7 @@ void* handleDisparoFunc(void* argKh) {
                     update.setPosCamara(0);
                     update.setConectado(1);
                     update.setSpriteIndex(personaje->getSprites());
+                    update.setApuntando(personaje->getDireccion());
 
                     int result;
                     string mensaje = update.toString();

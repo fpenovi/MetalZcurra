@@ -129,6 +129,14 @@ public:
 	void setDisparar(bool aux);
 
 	bool getDisparar();
+
+	void apuntarAbajo();
+
+	void apuntarArriba();
+
+	void apuntar(int aim);
+
+	void noApuntar();
 };
 
 

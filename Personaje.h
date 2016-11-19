@@ -30,17 +30,30 @@ private:
     int posCamara = 0;
     int conectado = false;
     bool disparando = false;
+    bool arriba = false;
+    bool abajo = false;
 
     int frameCorriendo = 0;
     int frameSaltando = 0;
     int frameParado = 0;
     int frameDisparando = 0;
+    int frameDisparandoArriba = 0;
+    int frameDisparandoAbajo = 0;
+
     const static int ANIMACION_PARADO = 4;
     const static int ANIMACION_CORRIENDO = 18;
     const static int ANIMACION_SALTANDO = 12;
     const static int ANIMACION_DISPARANDO_GUN = 10;
     const static int ANIMACION_DISPARANDO_SHOTGUN = 4;
+    const static int ANIMACION_APUNTANDO = 4;
+    const static int ANIMACION_DISPARANDO_GUN_ABAJO = 7;
+    const static int ANIMACION_DISPARANDO_GUN_ARRIBA = 10;
+    const static int ANIMACION_DISPARANDO_SHOTGUN_ABAJO = 4;
+    const static int ANIMACION_DISPARANDO_SHOTGUN_ARRIBA = 4;
+
     int ANIMACION_ACTUAL = 10;
+    int ANIMACION_ACTUAL_DISPARANDO_ARRIBA = 10; // empieza siendo 10 por la gun
+    int ANIMACION_ACTUAL_DISPARANDO_ABAJO = 7;
 
 public:
     void moverX();
@@ -114,6 +127,20 @@ public:
     void setDisparando(bool aux);
 
     int getDisparando();
+
+    void setArriba(bool aux);
+
+    void setAbajo(bool aux);
+
+    void setSpriteDisparandoArriba();
+
+    void setSpriteDisparandoAbajo();
+
+    int getSpriteDisparandoArriba();
+
+    int getSpriteDisparandoAbajo();
+
+    int getDireccion();
 };
 
 #endif //METALZCURRA_PERSONAJE_H

@@ -16,7 +16,15 @@ protected:
     const static int ANIMACION_SALTANDO = 12;
     const static int ANIMACION_DISPARANDO_GUN = 10;
     const static int ANIMACION_DISPARANDO_SHOTGUN = 4;
+    const static int ANIMACION_APUNTANDO = 4;
+    const static int ANIMACION_DISPARANDO_GUN_ABAJO = 7;
+    const static int ANIMACION_DISPARANDO_GUN_ARRIBA = 10;
+    const static int ANIMACION_DISPARANDO_SHOTGUN_ABAJO = 4;
+    const static int ANIMACION_DISPARANDO_SHOTGUN_ARRIBA = 4;
+
     int ANIMACION_ACTUAL = 10; //empieza siendo 10 por la gun
+    int ANIMACION_ACTUAL_DISPARANDO_ARRIBA = 10; // empieza siendo 10 por la gun
+    int ANIMACION_ACTUAL_DISPARANDO_ABAJO = 7;
 
     Textura* TEXTURA_ARMA_PARADO;
     SDL_Rect spriteParado[ ANIMACION_PARADO ];
@@ -29,6 +37,21 @@ protected:
 
     Textura* TEXTURA_ARMA_DISPARANDO;
     SDL_Rect spriteDisparando[ ANIMACION_DISPARANDO_GUN];
+
+    Textura* TEXTURA_ARMA_APUNTA_ABAJO;
+    SDL_Rect spriteApuntaAbajo[ ANIMACION_APUNTANDO];
+
+    Textura* TEXTURA_ARMA_APUNTA_ARRIBA;
+    SDL_Rect spriteApuntaArriba[ ANIMACION_APUNTANDO];
+
+    Textura* TEXTURA_ARMA_DISPARANDO_ABAJO;
+    SDL_Rect spriteDisparandoAbajo[ ANIMACION_DISPARANDO_GUN_ABAJO];
+
+    Textura* TEXTURA_ARMA_DISPARANDO_ARRIBA;
+    SDL_Rect spriteDisparandoArriba[ ANIMACION_DISPARANDO_GUN_ARRIBA];
+
+    bool arriba = false;
+    bool abajo = false;
 
     SDL_Rect* currentClip;
 
@@ -45,7 +68,11 @@ public:
 
     void renderDisparando(int x, int y, int frame, SDL_RendererFlip flip);
 
-    bool cargarImagen(const char *const pathParado, const char *const pathCorriendo, const char *const pathSaltando, const char *const pathDisparando);
+    void renderDispararArriba(int x, int y, int frame, SDL_RendererFlip flip);
+
+    void renderDispararAbajo(int x, int y, int frame, SDL_RendererFlip flip);
+
+    bool cargarImagen(const char *const pathParado, const char *const pathCorriendo, const char *const pathSaltando, const char *const pathDisparando, const char *const pathApuntarAbajo, const char *const pathApuntarArriba, const char *const pathDisparoAbajo, const char *const pathDisparoArriba);
 
     void liberar();
 
@@ -56,6 +83,10 @@ public:
     void ponerTexturaGris();
 
     void sacarTexturaGris();
+
+    void apuntarArriba(bool a);
+
+    void apuntarAbajo(bool a);
 };
 
 

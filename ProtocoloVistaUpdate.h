@@ -20,6 +20,7 @@ private:
     int posCamara;
     int conectado;
     int spriteIndex;
+    int apuntando;
 
 public:
 
@@ -34,6 +35,8 @@ public:
     int getPosCamara();
 
     int getSpriteIndex();
+
+    int getApuntando();
 
     void setTipoObjeto(int tipo);
 
@@ -51,9 +54,11 @@ public:
 
     void setSpriteIndex(int idx);
 
+    void setApuntando(int i);
+
     string toString();
 
-    static void parse(string stream, int* tipo, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex);
+    static void parse(string stream, int* tipo, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex, int* aim);
 };
 
 #endif //METALZCURRA_PROTOCOLOVISTAUPDATE_H

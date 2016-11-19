@@ -60,6 +60,8 @@ public:
     int getArriba();
 
     int getAbajo();
+
+    int getIzquierda();
 };
 
 #endif //METALZCURRA_BALA_H
