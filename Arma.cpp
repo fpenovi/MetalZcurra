@@ -10,10 +10,10 @@ Arma::Arma(SDL_Renderer* render){
     TEXTURA_ARMA_SALTANDO = new Textura(render);
     TEXTURA_ARMA_DISPARANDO = new Textura(render);
 
-    cargarImagen("imag/sprites/gunStill.png",
-                 "imag/sprites/gunRun.png",
-                 "imag/sprites/gunJump.png",
-                 "imag/sprites/gunShoot.png");
+    cargarImagen("imag/sprites/player2/gunStill.png",
+                 "imag/sprites/player2/gunRun.png",
+                 "imag/sprites/player2/gunJump.png",
+                 "imag/sprites/player2/gunShoot.png");
 }
 
 void Arma::renderParado(int x, int y, int frame, SDL_RendererFlip flip){
@@ -124,19 +124,19 @@ Arma::~Arma() {
 void Arma::ponerShotgun(){
     liberar();
     ANIMACION_ACTUAL = ANIMACION_DISPARANDO_SHOTGUN;
-    cargarImagen("imag/sprites/shotgunStill.png",
-                 "imag/sprites/shotgunRun.png",
-                 "imag/sprites/shotgunJump.png",
-                 "imag/sprites/shotgunShoot.png");
+    cargarImagen("imag/sprites/player2/shotgunStill.png",
+                 "imag/sprites/player2/shotgunRun.png",
+                 "imag/sprites/player2/shotgunJump.png",
+                 "imag/sprites/player2/shotgunShoot.png");
 }
 
 void Arma::ponerGun(){
     liberar();
     ANIMACION_ACTUAL = ANIMACION_DISPARANDO_GUN;
-    cargarImagen("imag/sprites/gunStill.png",
-                 "imag/sprites/gunRun.png",
-                 "imag/sprites/gunJump.png",
-                 "imag/sprites/gunShoot.png");
+    cargarImagen("imag/sprites/player2/gunStill.png",
+                 "imag/sprites/player2/gunRun.png",
+                 "imag/sprites/player2/gunJump.png",
+                 "imag/sprites/player2/gunShoot.png");
 }
 
 void Arma::ponerTexturaGris() {

@@ -978,11 +978,6 @@ int escucharEventos( void* arg ) {
 
 int main( int argc, char** argv) {
 
-	if (argc < 3) {
-		fprintf(stderr, "Modo de Uso: %s IP-hostname puerto\n", argv[0]);
-		exit(0);
-	}
-
 	//Start up SDL and create window
 	Juego juego;
 

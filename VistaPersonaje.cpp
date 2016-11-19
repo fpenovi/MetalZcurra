@@ -132,7 +132,7 @@ bool VistaPersonaje::cargarImagen(){
 	int i;
 
 	//Load sprite sheet texture
-	if( !TEXTURA_PERSONAJE_PARADO_PIES->cargarImagen( "imag/sprites/stillLegs.png") )
+	if( !TEXTURA_PERSONAJE_PARADO_PIES->cargarImagen( "imag/sprites/commons/stillLegs.png") )
 	{
 		printf( "Fallo sprite parado pies\n" );
 		success = false;
@@ -147,7 +147,7 @@ bool VistaPersonaje::cargarImagen(){
 		}
 	}
 
-	if( !TEXTURA_PERSONAJE_CORRIENDO_PIES->cargarImagen( "imag/sprites/runLegs.png") )
+	if( !TEXTURA_PERSONAJE_CORRIENDO_PIES->cargarImagen( "imag/sprites/commons/runLegs.png") )
 	{
 		printf( "Fallo sprite corriendo pies\n" );
 		success = false;
@@ -161,7 +161,7 @@ bool VistaPersonaje::cargarImagen(){
 		}
 	}
 
-	if( !TEXTURA_PERSONAJE_SALTANDO_PIES->cargarImagen( "imag/sprites/jumpLegs.png") )
+	if( !TEXTURA_PERSONAJE_SALTANDO_PIES->cargarImagen( "imag/sprites/commons/jumpLegs.png") )
 	{
 		printf( "Fallo sprite saltando pies\n" );
 		success = false;
