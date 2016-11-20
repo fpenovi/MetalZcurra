@@ -19,13 +19,13 @@ using namespace std;
 class NoSePudoCrearThreadEnemigosManagerException : public runtime_error {
 
 public:
-    NoSePudoCrearThreadEnemigosManagerException() : runtime_error("No se pudo crear el thread HandleKeyHold") {	}
+    NoSePudoCrearThreadEnemigosManagerException() : runtime_error("No se pudo crear el thread EnemigosManager") {	}
 };
 
 class NoSePudoCerrarThreadEnemigosManagerException : public runtime_error {
 
 public:
-    NoSePudoCerrarThreadEnemigosManagerException() : runtime_error("No se pudo cerrar el thread HandleKeyHold") {	}
+    NoSePudoCerrarThreadEnemigosManagerException() : runtime_error("No se pudo cerrar el thread EnemigosManager") {	}
 };
 
 
