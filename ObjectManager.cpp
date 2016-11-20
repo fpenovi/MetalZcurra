@@ -186,7 +186,8 @@ void ObjectManager::moverCamara(int id){
 	}
 
 	for (auto kv : enemigos){
-		kv.second->setPosx(kv.second->getPosx()-7);
+		if (kv.second->getExiste())
+			kv.second->setPosx(kv.second->getPosx()-7);
 	}
 }
 

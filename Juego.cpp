@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <chrono>
+#include <vector>
 #include <SDL2/SDL_thread.h>
 #include "Cliente.h"
 #include "VistaPersonaje.h"
@@ -38,6 +39,7 @@ private:
 	int levelHeight;
 	Textura* TEXTURA_BALA;
 	Textura* TEXTURA_BALA_ENEMIGA;
+	vector<Textura*> TEXTURAS_ENEMIGOS;
 	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim;
 
 	// Atributos para sala de espera
@@ -79,6 +81,9 @@ public:
 
 		for (auto kv : vistasEnemigos)
 			delete kv.second;
+
+		for (auto text : TEXTURAS_ENEMIGOS)
+			delete text;
 
 		//Destroy window
 		SDL_DestroyRenderer( renderizador );
@@ -851,8 +856,8 @@ public:
 
 	void crearEnemigos(){
 		int i = 1;
-		for (i ; i < 6 ; i++){
-			VistaEnemigo* enemigo = new VistaEnemigo(getRenderer());
+		for (i ; i < 21 ; i++){
+			VistaEnemigo* enemigo = new VistaEnemigo(TEXTURAS_ENEMIGOS);
 			enemigo->cargarImagen();
 			addEnemigo(i, enemigo);
 		}
@@ -865,6 +870,32 @@ public:
 		TEXTURA_BALA_ENEMIGA = new Textura(renderizador);
 		if( !TEXTURA_BALA_ENEMIGA->cargarImagen( "imag/sprites/sfx/soldierBullet.png") ) printf( "Fallo imagen bala enemiga\n" );
 
+	}
+
+	void cargarTexturaEnemigo(){
+		Textura* TEXTURA_ENEMIGO_MUERTE1 = new Textura(renderizador);
+		if( !TEXTURA_ENEMIGO_MUERTE1->cargarImagen( "imag/sprites/soldier/death1.png") ) printf( "Fallo imagen enemigo\n" );
+		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_MUERTE1);
+
+		Textura* TEXTURA_ENEMIGO_MUERTE2 = new Textura(renderizador);
+		if( !TEXTURA_ENEMIGO_MUERTE2->cargarImagen( "imag/sprites/soldier/death2.png") ) printf( "Fallo imagen enemigo\n" );
+		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_MUERTE2);
+
+		Textura* TEXTURA_ENEMIGO_MIRANDO = new Textura(renderizador);
+		if( !TEXTURA_ENEMIGO_MIRANDO->cargarImagen( "imag/sprites/soldier/looking.png") ) printf( "Fallo imagen enemigo\n" );
+		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_MIRANDO);
+
+		Textura* TEXTURA_ENEMIGO_CORRIENDO = new Textura(renderizador);
+		if( !TEXTURA_ENEMIGO_CORRIENDO->cargarImagen( "imag/sprites/soldier/run.png") ) printf( "Fallo imagen enemigo\n" );
+		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_CORRIENDO);
+
+		Textura* TEXTURA_ENEMIGO_DISPARANDO = new Textura(renderizador);
+		if( !TEXTURA_ENEMIGO_DISPARANDO->cargarImagen( "imag/sprites/soldier/shoot.png") ) printf( "Fallo imagen enemigo\n" );
+		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_DISPARANDO);
+
+		Textura* TEXTURA_ENEMIGO_QUIETO = new Textura(renderizador);
+		if( !TEXTURA_ENEMIGO_QUIETO->cargarImagen( "imag/sprites/soldier/toying.png") ) printf( "Fallo imagen enemigo\n" );
+		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_QUIETO);
 	}
 
 	void parsearUpdateVista(string update){
@@ -1022,6 +1053,7 @@ int main( int argc, char** argv) {
 	juego.crearBalas();
 
 	// Creo enemigos
+	juego.cargarTexturaEnemigo();
 	juego.crearEnemigos();
 
 	//Main loop flag

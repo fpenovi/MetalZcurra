@@ -745,7 +745,7 @@ public:
         objectManager->crearPersonajes(cantidadUsuarios);
         objectManager->crearBalas(100);
         objectManager->crearBalasManager();
-        objectManager->crearEnemigos(5);
+        objectManager->crearEnemigos(20);
         objectManager->crearEnemigosManager();
     }
 

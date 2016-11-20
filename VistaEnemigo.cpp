@@ -4,18 +4,18 @@
 
 #include "VistaEnemigo.h"
 
-VistaEnemigo::VistaEnemigo(SDL_Renderer* renderer) {
+VistaEnemigo::VistaEnemigo(vector<Textura*> TEXTURAS_ENEMIGOS) {
     existe = false;
     muerto = false;
     disparando = false;
     cantPasos = 0;
 
-    TEXTURA_ENEMIGO_MUERTE1 = new Textura(renderer);
-    TEXTURA_ENEMIGO_MUERTE2 = new Textura(renderer);
-    TEXTURA_ENEMIGO_MIRANDO = new Textura(renderer);
-    TEXTURA_ENEMIGO_CORRIENDO = new Textura(renderer);
-    TEXTURA_ENEMIGO_DISPARANDO = new Textura(renderer);
-    TEXTURA_ENEMIGO_QUIETO = new Textura(renderer);
+    TEXTURA_ENEMIGO_MUERTE1 = TEXTURAS_ENEMIGOS[0];
+    TEXTURA_ENEMIGO_MUERTE2 = TEXTURAS_ENEMIGOS[1];
+    TEXTURA_ENEMIGO_MIRANDO = TEXTURAS_ENEMIGOS[2];
+    TEXTURA_ENEMIGO_CORRIENDO = TEXTURAS_ENEMIGOS[3];
+    TEXTURA_ENEMIGO_DISPARANDO = TEXTURAS_ENEMIGOS[4];
+    TEXTURA_ENEMIGO_QUIETO = TEXTURAS_ENEMIGOS[5];
 }
 
 bool VistaEnemigo::cargarImagen(){
@@ -212,11 +212,4 @@ void VistaEnemigo::setCantPasos(int aux) {
     cantPasos = aux;
 }
 
-VistaEnemigo::~VistaEnemigo() {
-    delete TEXTURA_ENEMIGO_MUERTE1;
-    delete TEXTURA_ENEMIGO_MUERTE2;
-    delete TEXTURA_ENEMIGO_MIRANDO;
-    delete TEXTURA_ENEMIGO_CORRIENDO;
-    delete TEXTURA_ENEMIGO_DISPARANDO;
-    delete TEXTURA_ENEMIGO_QUIETO;
-}
+VistaEnemigo::~VistaEnemigo() {}

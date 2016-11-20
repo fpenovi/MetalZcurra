@@ -14,7 +14,7 @@ Enemigo::Enemigo(){
     muerto = false;
     disparando = false;
     velocidad = 7;
-    cantidadPasos = 30;
+    cantidadPasos = 40;
     alan = 0;
 
     start = high_resolution_clock::now();

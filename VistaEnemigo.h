@@ -5,6 +5,7 @@
 #ifndef METALZCURRA_VISTAENEMIGO_H
 #define METALZCURRA_VISTAENEMIGO_H
 
+#include <vector>
 #include "Textura.h"
 
 class VistaEnemigo
@@ -47,7 +48,7 @@ private:
     SDL_Rect spriteQuieto[ ANIMACION_QUIETO ];
 
 public:
-    VistaEnemigo(SDL_Renderer* renderer);
+    VistaEnemigo(vector<Textura*> TEXTURAS_ENEMIGOS);
 
     ~VistaEnemigo();
 
