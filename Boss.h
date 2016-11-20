@@ -22,6 +22,7 @@ protected:
 
 public:
 	Boss(int x, int y, int delta);
+	bool estaVivo();
 	virtual ~Boss();
 };
 

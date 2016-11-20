@@ -5,7 +5,7 @@
 #include "ObjectManager.h"
 #include "Enemigo.h"
 
-Enemigo::Enemigo(int x, int y, int delta){
+Enemigo::Enemigo(int x, int y, int delta) {
     posx = x;
     posy = y;
     this->delta = delta;
@@ -17,6 +17,10 @@ Enemigo::Enemigo(int x, int y, int delta){
     velocidad = 7;
     cantidadPasos = 40;
     alan = 0;
+    envolvente = new Envolvente();
+    Rectangulo* componente = new Rectangulo(&posx, &posy, ancho, alto);
+    componente->setOffset(55, 11);
+    envolvente->agregarComponente(componente);
 
     start = high_resolution_clock::now();
 }
@@ -172,4 +176,8 @@ int Enemigo::getCantidadPasos(){
 
 bool Enemigo::verificarAlan(){
     return (alan > 2);
+}
+
+Enemigo::~Enemigo() {
+    delete this->envolvente;
 }

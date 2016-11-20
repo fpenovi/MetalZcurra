@@ -5,6 +5,20 @@
 #include "ObjectManager.h"
 #include "Personaje.h"
 
+#define ENVOLVENTE_PARADO 0
+#define ENVOLVENTE_CORRIENDO 1
+#define ENVOLVENTE_SALTANDO 2
+
+Personaje::Personaje() {
+
+    /*Envolvente* env = new Envolvente();
+    env->agregarComponente(new Rectangulo(&sarasa, &sarasa))
+    envolventesPosibles.push_back(env);
+    env = new Envolvente()
+    env->agregarComponente(new Rectangulo(sarasa))
+    */
+}
+
 void Personaje::moverX() {
     ObjectManager* objectManager = ObjectManager::getInstance();
     int* posX = objectManager->getPosX();
@@ -288,4 +302,9 @@ int Personaje::getDireccion(){
     if (arriba) return 1;
     else if (abajo) return 2;
     else return 0;
+}
+
+Personaje::~Personaje() {
+    for (auto envolvente : this->envolventesPosibles)
+        delete envolvente;
 }

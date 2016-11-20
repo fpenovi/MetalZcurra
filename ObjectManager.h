@@ -19,6 +19,7 @@
 #include "Direccion.h"
 #include "Enemigo.h"
 #include "EnemigosManager.h"
+#include "Boss.h"
 
 using namespace std;
 
@@ -39,6 +40,7 @@ private:
 	unordered_map<string, list<Mensaje*>*>* conectadosHash;
 	unordered_map<string, pthread_mutex_t>* mutexesHash;
 	vector<string> tamVentana;
+	Boss* boss;
 
 public:
 	~ObjectManager();
@@ -82,6 +84,7 @@ public:
 	void crearEnemigosManager();
 	unordered_map<int, Enemigo*>* getEnemigosHash();
 	void liberarEnemigos();
+	Boss* getBoss();
 };
 
 

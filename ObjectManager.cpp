@@ -293,6 +293,10 @@ void ObjectManager::crearEnemigosManager() {
 
 }
 
+Boss* ObjectManager::getBoss() {
+	return this->boss;
+}
+
 unordered_map<int, Bala*>* ObjectManager::getBalasHash() {
 	return &balas;
 }

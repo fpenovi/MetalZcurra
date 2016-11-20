@@ -14,7 +14,13 @@ Boss::Boss(int x, int y, int delta) {
 	this->envolvente = new Envolvente();
 }
 
+
+bool Boss::estaVivo() {
+	return this->vida > 0;
+}
+
+
 Boss::~Boss() {
-	// TODO Auto-generated destructor stub
+	delete this->envolvente;
 }
 

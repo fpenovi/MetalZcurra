@@ -104,8 +104,7 @@ bool Nivel::hayColision(Personaje *personaje) {
 
 
 bool Nivel::haFinalizado() {
-	// TODO nivel no tiene que tener al objeto al boss
-	// return !AlgunManager.getInstance().getBoss().estaVivo();
+	return !ObjectManager::getInstance()->getBoss()->estaVivo();
 }
 
 

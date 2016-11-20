@@ -22,6 +22,7 @@ private:
     int velocidad;
     int cantidadPasos;
     int delta;
+	Envolvente* envolvente;
 
     bool disparando;
 
@@ -94,6 +95,8 @@ public:
     int getCantidadPasos();
 
     bool verificarAlan();
+
+	~Enemigo();
 };
 
 #endif //METALZCURRA_ENEMIGO_H

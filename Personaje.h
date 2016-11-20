@@ -6,6 +6,7 @@
 #define METALZCURRA_PERSONAJE_H
 
 #include <iostream>
+#include "Envolvente.h"
 
 #define LEVEL_WIDTH 4500
 #define LEVEL_HEIGHT 600
@@ -42,6 +43,8 @@ private:
     int frameDisparando = 0;
     int frameDisparandoArriba = 0;
     int frameDisparandoAbajo = 0;
+	Envolvente* envolvente;
+	vector<Envolvente*> envolventesPosibles;
 
     const static int ANIMACION_PARADO = 4;
     const static int ANIMACION_CORRIENDO = 18;
@@ -59,6 +62,8 @@ private:
     int ANIMACION_ACTUAL_DISPARANDO_ABAJO = 7;
 
 public:
+	Personaje();
+
     void moverX();
 
     void moverY();
@@ -144,6 +149,8 @@ public:
     int getSpriteDisparandoAbajo();
 
     int getDireccion();
+
+	~Personaje();
 };
 
 #endif //METALZCURRA_PERSONAJE_H

@@ -15,9 +15,12 @@ private:
 	int* y;
 	int ancho;
 	int alto;
+	int offsetX;
+	int offsetY;
 
 public:
 	Rectangulo(int* x, int* y, int ancho, int alto);
+	void setOffset(int x, int y);
 	bool hayColision(Rectangulo* otro);
 	virtual ~Rectangulo();
 };

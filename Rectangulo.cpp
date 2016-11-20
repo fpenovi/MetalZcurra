@@ -12,14 +12,22 @@ Rectangulo::Rectangulo(int* x, int* y, int ancho, int alto) {
 	this->y = y;
 	this->ancho = ancho;
 	this->alto = alto;
+	this->offsetX = 0;
+	this->offsetY = 0;
 }
 
 
-bool Rectangulo::hayColision(Rectangulo *otro) {
-	int thisX = *(this->x);
-	int thisY = *(this->y);
-	int otroX = *(otro->x);
-	int otroY = *(otro->y);
+void Rectangulo::setOffset(int x, int y) {
+	this->offsetX = x;
+	this->offsetY = y;
+}
+
+
+bool Rectangulo::hayColision(Rectangulo* otro) {
+	int thisX = *(this->x) + this->offsetX;
+	int thisY = *(this->y) + this->offsetY;
+	int otroX = *(otro->x) + otro->offsetX;
+	int otroY = *(otro->y) + otro->offsetY;
 
 	bool result = ((thisX + this->ancho) < otroX || (otroX + otro->ancho) < thisX || (thisY + this->alto) < otroY || (otroY + otro->alto) < thisY);
 	return !result;
@@ -31,7 +39,4 @@ bool Rectangulo::hayColision(Rectangulo *otro) {
 }
 
 
-Rectangulo::~Rectangulo() {
-
-}
-
+Rectangulo::~Rectangulo() { }
