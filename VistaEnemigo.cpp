@@ -113,7 +113,7 @@ bool VistaEnemigo::cargarImagen(){
 
 void VistaEnemigo::render(){
     if (existe){
-        if (muerto) animacionMuerte1();
+        if (muerto) animacionMuerte2();
         else if (disparando) animacionDisparando();
         else if (cantPasos > 0) animacionCorriendo();
         else animacionQuieto();
@@ -175,6 +175,7 @@ void VistaEnemigo::animacionMuerte2(){
     flip = SDL_FLIP_HORIZONTAL;
     currentClip = &spriteMuerte2[ frame ];
     TEXTURA_ENEMIGO_MUERTE2->render( posx, posy, currentClip,0,NULL,flip);
+    if (frame == 10) existe = false;
 }
 
 void VistaEnemigo::animacionMirando(){

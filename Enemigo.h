@@ -29,6 +29,7 @@ private:
     time_point<high_resolution_clock> start;
     time_point<high_resolution_clock> actual;
     int alan;
+	int restriccionAlan = 2;
 
     const static int ANIMACION_MUERTE1 = 15;
     const static int ANIMACION_MUERTE2 = 11;

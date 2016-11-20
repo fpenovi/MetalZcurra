@@ -39,7 +39,10 @@ vector<string> NivelManager::getCapas() {
 
 
 bool NivelManager::hayColision(Personaje *personaje) {
-	return false;
+	if (!personaje->getBajando()) return false;
+
+	Envolvente* envolvente;
+	// ToDo Hacer colision
 }
 
 

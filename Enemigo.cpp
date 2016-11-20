@@ -27,6 +27,7 @@ Enemigo::Enemigo(int x, int y, int delta) {
 
 bool Enemigo::mover() {
     if (envolvente->getX() + ancho < 0) existe = false;
+    if (muerto) restriccionAlan = 0;
     //if (velocidad == -7 && posx > 800) velocidad = 7;
     if (cantidadPasos > 0){
         posx -= velocidad;
@@ -130,7 +131,10 @@ void Enemigo::animacionMuerte1(){
 
 void Enemigo::animacionMuerte2(){
     ++frameMuerte2;
-    if( frameMuerte2 >= ANIMACION_MUERTE2 ) frameMuerte2 = 0;
+    if( frameMuerte2 >= ANIMACION_MUERTE2 ) {
+        frameMuerte2 = 0;
+        existe = false;
+    }
 }
 
 void Enemigo::animacionMirando(){
@@ -157,14 +161,14 @@ void Enemigo::animacionQuieto(){
 }
 
 void Enemigo::setSprite(){
-    if (muerto) animacionMuerte1();
+    if (muerto) animacionMuerte2();
     else if (disparando) animacionDisparando();
     else if (cantidadPasos > 0) animacionCorriendo();
     else animacionQuieto();
 }
 
 int Enemigo::getSprite(){
-    if (muerto) return frameMuerte1;
+    if (muerto) return frameMuerte2;
     else if (disparando) return frameDisparando;
     else if (cantidadPasos > 0) return frameCorriendo;
     else return frameQuieto;
@@ -179,7 +183,7 @@ int Enemigo::getCantidadPasos(){
 }
 
 bool Enemigo::verificarAlan(){
-    return (alan > 2);
+    return (alan > restriccionAlan);
 }
 
 Envolvente* Enemigo::getEnvolvente(){
