@@ -53,10 +53,10 @@ void* enemigosManagerFunc(void* argKh) {
                             update.setX(kv.second->getPosx());
                             update.setY(kv.second->getPosy());
                             update.setObject_id(kv.second->getId());
-                            update.setPosCamara(0);
+                            update.setPosCamara(kv.second->getCantidadPasos());
                             update.setConectado(kv.second->estaMuerto());
-                            update.setSpriteIndex(0);
-                            update.setApuntando(0);
+                            update.setSpriteIndex(kv.second->getSprite());
+                            update.setApuntando(kv.second->isDisparando());
 
                             int result;
                             string mensaje = update.toString();
@@ -73,9 +73,6 @@ void* enemigosManagerFunc(void* argKh) {
                                 result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
                                 if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
                             }
-                        }
-                        else {
-                            kv.second->disparar();
                         }
                     }
                 }

@@ -933,6 +933,9 @@ public:
 		enemigo->setExiste(state);
 		enemigo->setPosX(posX);
 		enemigo->setPosY(posy);
+		enemigo->setFrame(spriteIdx);
+		enemigo->setDisparando(aim);
+		enemigo->setCantPasos(posCam);
 		if (conectado) enemigo->morir();
 	}
 };

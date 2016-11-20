@@ -7,24 +7,115 @@
 VistaEnemigo::VistaEnemigo(SDL_Renderer* renderer) {
     existe = false;
     muerto = false;
-    TEXTURA_ENEMIGO = new Textura(renderer);
+    disparando = false;
+    cantPasos = 0;
+
+    TEXTURA_ENEMIGO_MUERTE1 = new Textura(renderer);
+    TEXTURA_ENEMIGO_MUERTE2 = new Textura(renderer);
+    TEXTURA_ENEMIGO_MIRANDO = new Textura(renderer);
+    TEXTURA_ENEMIGO_CORRIENDO = new Textura(renderer);
+    TEXTURA_ENEMIGO_DISPARANDO = new Textura(renderer);
+    TEXTURA_ENEMIGO_QUIETO = new Textura(renderer);
 }
 
 bool VistaEnemigo::cargarImagen(){
-    if( !TEXTURA_ENEMIGO->cargarImagen( "imag/cruz/quieto.png") )
+    bool success=true;
+    int i;
+    //Load sprite sheet texture
+    if( !TEXTURA_ENEMIGO_MUERTE1->cargarImagen( "imag/sprites/soldier/death1.png") )
     {
-
-        printf( "Fallo imagen enemigo\n" );
-        return false;
+        printf( "Fallo sprite MUERTE1\n" );
+        success = false;
     }
-    ancho = TEXTURA_ENEMIGO->getAncho();
-    alto = TEXTURA_ENEMIGO->getAlto();
-    return true;
+    else
+    {
+        for (i = 0;i<ANIMACION_MUERTE1;i++){
+            spriteMuerte1[ i ].x = i*149;
+            spriteMuerte1[ i ].y = 0;
+            spriteMuerte1[ i ].w = 149;
+            spriteMuerte1[ i ].h = 96;
+        }
+    }
+
+
+    if( !TEXTURA_ENEMIGO_MUERTE2->cargarImagen( "imag/sprites/soldier/death2.png") )
+    {
+        printf( "Fallo sprite MUERTE2\n" );
+        success = false;
+    }
+    else{
+        for (i = 0;i<ANIMACION_MUERTE2;i++){
+            spriteMuerte2[ i ].x = i*149;
+            spriteMuerte2[ i ].y = 0;
+            spriteMuerte2[ i ].w = 149;
+            spriteMuerte2[ i ].h = 79;
+        }
+    }
+
+    if( !TEXTURA_ENEMIGO_MIRANDO->cargarImagen( "imag/sprites/soldier/looking.png") )
+    {
+        printf( "Fallo sprite LOOKING\n" );
+        success = false;
+    }
+    else{
+
+        for (i = 0;i<ANIMACION_MIRANDO;i++){
+            spriteMirando[ i ].x = i*149;
+            spriteMirando[ i ].y = 0;
+            spriteMirando[ i ].w = 149;
+            spriteMirando[ i ].h = 79;
+        }
+    }
+    if( !TEXTURA_ENEMIGO_CORRIENDO->cargarImagen( "imag/sprites/soldier/run.png") )
+    {
+        printf( "Fallo sprite SOLDIER RUN\n" );
+        success = false;
+    }
+    else{
+
+        for (i = 0;i<ANIMACION_CORRIENDO;i++){
+            spriteCorriendo[ i ].x = i*149;
+            spriteCorriendo[ i ].y = 0;
+            spriteCorriendo[ i ].w = 149;
+            spriteCorriendo[ i ].h = 86;
+        }
+    }
+    if( !TEXTURA_ENEMIGO_DISPARANDO->cargarImagen( "imag/sprites/soldier/shoot.png") )
+    {
+        printf( "Fallo sprite SHOOT ENEMIGO\n" );
+        success = false;
+    }
+    else{
+
+        for (i = 0;i<ANIMACION_DISPARANDO;i++){
+            spriteDisparando[ i ].x = i*149;
+            spriteDisparando[ i ].y = 0;
+            spriteDisparando[ i ].w = 149;
+            spriteDisparando[ i ].h = 81;
+        }
+    }
+    if( !TEXTURA_ENEMIGO_QUIETO->cargarImagen( "imag/sprites/soldier/toying.png") )
+    {
+        printf( "Fallo sprite QUIETO ENEMIGO\n" );
+        success = false;
+    }
+    else{
+
+        for (i = 0;i<ANIMACION_QUIETO;i++){
+            spriteQuieto[ i ].x = i*149;
+            spriteQuieto[ i ].y = 0;
+            spriteQuieto[ i ].w = 149;
+            spriteQuieto[ i ].h = 98;
+        }
+    }
+    return success;
 }
 
 void VistaEnemigo::render(){
     if (existe && !muerto){
-        TEXTURA_ENEMIGO->render(posx,posy);
+        if (disparando) animacionDisparando();
+        else if (cantPasos > 0) animacionCorriendo();
+        else animacionQuieto();
     }
 }
 
@@ -73,6 +164,59 @@ void VistaEnemigo::setPosY(int y) {
     posy = y;
 }
 
+void VistaEnemigo::animacionMuerte1(){
+    flip = SDL_FLIP_HORIZONTAL;
+    currentClip = &spriteMuerte1[ frame ];
+    TEXTURA_ENEMIGO_MUERTE1->render( posx, posy+45, currentClip,0,NULL,flip);
+}
+
+void VistaEnemigo::animacionMuerte2(){
+    flip = SDL_FLIP_HORIZONTAL;
+    currentClip = &spriteMuerte2[ frame ];
+    TEXTURA_ENEMIGO_MUERTE2->render( posx, posy+45, currentClip,0,NULL,flip);
+}
+
+void VistaEnemigo::animacionMirando(){
+    flip = SDL_FLIP_HORIZONTAL;
+    currentClip = &spriteMirando[ frame ];
+    TEXTURA_ENEMIGO_MIRANDO->render( posx, posy+45, currentClip,0,NULL,flip);
+}
+
+void VistaEnemigo::animacionCorriendo(){
+    flip = SDL_FLIP_HORIZONTAL;
+    currentClip = &spriteCorriendo[ frame ];
+    TEXTURA_ENEMIGO_CORRIENDO->render( posx, posy, currentClip,0,NULL,flip);
+}
+
+void VistaEnemigo::animacionDisparando(){
+    flip = SDL_FLIP_HORIZONTAL;
+    currentClip = &spriteDisparando[ frame ];
+    TEXTURA_ENEMIGO_DISPARANDO->render( posx, posy, currentClip,0,NULL,flip);
+}
+
+void VistaEnemigo::animacionQuieto(){
+    flip = SDL_FLIP_HORIZONTAL;
+    currentClip = &spriteQuieto[ frame ];
+    TEXTURA_ENEMIGO_QUIETO->render( posx, posy - 10, currentClip,0,NULL,flip);
+}
+
+void VistaEnemigo::setFrame(int aux){
+    frame = aux;
+}
+
+void VistaEnemigo::setDisparando(int aux){
+    disparando = (bool) aux;
+}
+
+void VistaEnemigo::setCantPasos(int aux) {
+    cantPasos = aux;
+}
+
 VistaEnemigo::~VistaEnemigo() {
-    delete TEXTURA_ENEMIGO;
+    delete TEXTURA_ENEMIGO_MUERTE1;
+    delete TEXTURA_ENEMIGO_MUERTE2;
+    delete TEXTURA_ENEMIGO_MIRANDO;
+    delete TEXTURA_ENEMIGO_CORRIENDO;
+    delete TEXTURA_ENEMIGO_DISPARANDO;
+    delete TEXTURA_ENEMIGO_QUIETO;
 }

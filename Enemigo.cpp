@@ -12,8 +12,10 @@ Enemigo::Enemigo(){
     alto = 80;
     existe = false;
     muerto = false;
+    disparando = false;
     velocidad = 7;
-    cantidadPasos = 20;
+    cantidadPasos = 30;
+    alan = 0;
 
     start = high_resolution_clock::now();
 }
@@ -24,9 +26,32 @@ bool Enemigo::mover() {
     if (cantidadPasos > 0){
         posx -= velocidad;
         cantidadPasos--;
+        setSprite();
         return true;
     }
-    else return false;
+    else if (!disparando){
+        disparar();
+        if (verificarAlan()){
+            setSprite();
+            alan = 0;
+            return true;
+        }
+        else {
+            alan++;
+            return false;
+        }
+    }
+    else {
+        if (disparando){
+            setSprite();
+            alan++;
+            return true;
+        }
+        else {
+            alan++;
+            return false;
+        }
+    }
 }
 
 void Enemigo::morir(){
@@ -76,7 +101,7 @@ void Enemigo::crear() {
     if ( posx < 0 ) existe = false;
 }
 
-void Enemigo::disparar() {
+bool Enemigo::disparar() {
     microseconds intervalo(2000000);	// 2s
     actual = high_resolution_clock::now();
 
@@ -86,7 +111,64 @@ void Enemigo::disparar() {
     if (elapsed_ms.count() >= intervalo.count()) {
         ObjectManager* objectManager = ObjectManager::getInstance();
         objectManager->inicializarBalaEnemiga(posx, posy + 20);
+        disparando = true;
         start = chrono::system_clock::now();
-    }
+     }
+}
 
+void Enemigo::animacionMuerte1(){
+    ++frameMuerte1;
+    if( frameMuerte1 >= ANIMACION_MUERTE1 ) frameMuerte1 = 0;
+}
+
+void Enemigo::animacionMuerte2(){
+    ++frameMuerte2;
+    if( frameMuerte2 >= ANIMACION_MUERTE2 ) frameMuerte2 = 0;
+}
+
+void Enemigo::animacionMirando(){
+    ++frameMirando;
+    if( frameMirando >= ANIMACION_MIRANDO ) frameMirando = 0;
+}
+
+void Enemigo::animacionCorriendo(){
+    ++frameCorriendo;
+    if( frameCorriendo >= ANIMACION_CORRIENDO ) frameCorriendo = 0;
+}
+
+void Enemigo::animacionDisparando(){
+    ++frameDisparando;
+    if( frameDisparando >= ANIMACION_DISPARANDO ) {
+        frameDisparando = 0;
+        disparando = false;
+    }
+}
+
+void Enemigo::animacionQuieto(){
+    ++frameQuieto;
+    if( frameQuieto >= ANIMACION_QUIETO ) frameQuieto = 0;
+}
+
+void Enemigo::setSprite(){
+    if (disparando) animacionDisparando();
+    else if (cantidadPasos > 0) animacionCorriendo();
+    else animacionQuieto();
+}
+
+int Enemigo::getSprite(){
+    if (disparando) return frameDisparando;
+    else if (cantidadPasos > 0) return frameCorriendo;
+    else return frameQuieto;
+}
+
+bool Enemigo::isDisparando(){
+    return disparando;
+}
+
+int Enemigo::getCantidadPasos(){
+    return cantidadPasos;
+}
+
+bool Enemigo::verificarAlan(){
+    return (alan > 2);
 }

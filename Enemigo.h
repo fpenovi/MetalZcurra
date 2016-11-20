@@ -20,8 +20,26 @@ private:
     int velocidad;
     int cantidadPasos;
 
+    bool disparando;
+
     time_point<high_resolution_clock> start;
     time_point<high_resolution_clock> actual;
+    int alan;
+
+    const static int ANIMACION_MUERTE1 = 15;
+    const static int ANIMACION_MUERTE2 = 11;
+    const static int ANIMACION_MIRANDO = 5;
+    const static int ANIMACION_CORRIENDO = 12;
+    const static int ANIMACION_DISPARANDO = 3;
+    const static int ANIMACION_QUIETO = 20;
+
+    int frameMuerte1 = 0;
+    int frameMuerte2 = 0;
+    int frameMirando = 0;
+    int frameCorriendo = 0;
+    int frameDisparando = 0;
+    int frameQuieto = 0;
+
 
 public:
     Enemigo();
@@ -50,7 +68,29 @@ public:
 
     void crear();
 
-    void disparar();
+    bool disparar();
+
+    void animacionMuerte1();
+
+    void animacionMuerte2();
+
+    void animacionMirando();
+
+    void animacionCorriendo();
+
+    void animacionDisparando();
+
+    void animacionQuieto();
+
+    void setSprite();
+
+    int getSprite();
+
+    bool isDisparando();
+
+    int getCantidadPasos();
+
+    bool verificarAlan();
 };
 
 #endif //METALZCURRA_ENEMIGO_H
