@@ -15,6 +15,6 @@ Plataforma::Plataforma(int x, int y, int ancho, int alto) {
 }
 
 Plataforma::~Plataforma() {
-	// TODO Auto-generated destructor stub
+	delete this->envolvente;
 }
 

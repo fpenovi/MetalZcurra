@@ -6,7 +6,6 @@
  */
 
 #include "NivelManager.h"
-#include "ParserXML.h"
 
 NivelManager::NivelManager() {
 	this->nivel = NULL;
@@ -27,22 +26,35 @@ NivelManager* NivelManager::getInstance() {
 	return instancia;
 }
 
+
 void NivelManager::siguienteNivel() {
 	delete this->nivel;
 	this->nivel = new Nivel(xmlNiveles[++nivelActual]);
 }
 
 
-NivelManager::~NivelManager() {
-	delete this->nivel;
-}
-
 vector<string> NivelManager::getCapas() {
 	return nivel->getCapas();
 }
 
+
+bool NivelManager::hayColision(Personaje *personaje) {
+	return false;
+}
+
+
 bool NivelManager::hayMasNiveles() {
 	return this->nivelActual < xmlNiveles.size();
+}
+
+
+bool NivelManager::haFinalizadoNivel() {
+	return this->nivel->haFinalizado();
+}
+
+
+NivelManager::~NivelManager() {
+	delete this->nivel;
 }
 
 NivelManager* NivelManager::instancia;

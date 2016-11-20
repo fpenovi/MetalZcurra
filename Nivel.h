@@ -14,6 +14,7 @@
 #include "Bonus.h"
 #include "Boss.h"
 #include "Enemigo.h"
+#include "Personaje.h"
 #include <string>
 
 using namespace std;
@@ -37,7 +38,7 @@ public:
 	Nivel(string xmlPath);
 	~Nivel();
 	bool haFinalizado();
-	// bool hayColision(Personaje* personaje);
+	bool hayColision(Personaje* personaje);
 	vector<string> getCapas();
 };
 

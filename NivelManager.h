@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include "Nivel.h"
+#include "Personaje.h"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ public:
 	~NivelManager();
 	static NivelManager* getInstance();
 	void setXmlNiveles(vector<string> niveles);
-	// bool hayColision(Personaje* personaje);
+	bool hayColision(Personaje* personaje);
 	bool haFinalizadoNivel();
 	bool hayMasNiveles();
 	void siguienteNivel();

@@ -30,7 +30,9 @@ Nivel::Nivel(string xmlPath) {
 	this->alto = stoi(tamNivel[1]);
 	this->capas = capas;
 	this->plataformas = crearPlataformas(plataformas);
+	// TODO sacar boss de NivelManager luego de crearlo
 	//OM.setBonuses = crearBonuses(bonuses);
+	// AlgunManager.setBoss(crearBoss(boss));
 	OM->crearEnemigos(crearEnemigos(enemigos));
 	this->boss = crearBoss(boss);
 }
@@ -95,11 +97,21 @@ Boss* Nivel::crearBoss(vector<string> bossStr) {
 	return boss;
 }
 
+
+bool Nivel::hayColision(Personaje *personaje) {
+	return false;
+}
+
+
+bool Nivel::haFinalizado() {
+	// TODO nivel no tiene que tener al objeto al boss
+	// return !AlgunManager.getInstance().getBoss().estaVivo();
+}
+
+
 Nivel::~Nivel() {
-	// liberar plataformas
-	// liberar bonuses
-	// liberar enemigos
-	// liberar boss
+	for (int i = 0; i < this->plataformas.size(); ++i)
+		delete this->plataformas[i];
 }
 
 vector<string> Nivel::getCapas() {
