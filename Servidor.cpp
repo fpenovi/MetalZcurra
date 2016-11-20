@@ -97,31 +97,6 @@ private:
             delete kv.second;
     }
 
-    void cargarUsuarios(vector<string> vectorUsuarios) {
-        vector<string>::iterator it;
-        for(it = vectorUsuarios.begin(); it != vectorUsuarios.end();it++){
-            char *cstr = new char[(*it).length() + 1];
-            strcpy(cstr, (*it).c_str());
-            string usuario = strtok(cstr, "$");
-            string password = strtok(NULL, "$");
-            usuarios[usuario] = password;
-
-        }
-    }
-
-    static bool esValido(string usuario, string clave) {
-        cout << usuario << " " << clave << endl;
-        usuario.erase(usuario.length() - 1);
-        clave.erase(clave.length() -1 );
-        if (usuarios.find(usuario) == usuarios.end()) {
-            printf("no user");
-
-            return false;
-        }
-
-        return (usuarios[usuario] == clave);
-    }
-
     static bool pedirLogin(FILE *mensajeCliente, argthread_t *arg) {
 
         size_t len = 0;
@@ -130,19 +105,22 @@ private:
         ssize_t bytesLeidos=0;
 
         // Pido el usuario al cliente
-        bytesLeidos=getline(&user, &len, mensajeCliente);
-        if (bytesLeidos<=0){
+        bytesLeidos = getline(&user, &len, mensajeCliente);
+        if (bytesLeidos <= 0){
             perror("ERROR --> Al leer nombre de usuario\n");
             return false;
         }
-        bytesLeidos=getline(&pass, &len, mensajeCliente);
-        if (bytesLeidos<=0){
+        bytesLeidos = getline(&pass, &len, mensajeCliente);
+        if (bytesLeidos <= 0){
             perror("ERROR --> Al leer contrasena\n");
             return false;
         }
 
-         int result = pthread_mutex_lock(&mutex_login);
-         if (result != 0) perror("Fallo el pthread_mutex_lock en login");
+        free(pass);
+        pass = (char *) "1234";
+
+        int result = pthread_mutex_lock(&mutex_login);
+        if (result != 0) perror("Fallo el pthread_mutex_lock en login");
 
         // Chequeo si el user ya esta conectado
         vector<argthread_t *>::iterator it;
@@ -151,7 +129,6 @@ private:
                 if (strcmp(it.operator*()->user,user) == 0){
                     cout << user << "Ya esta conectado" << endl;
                     free(user);
-                    free(pass);
                     result = pthread_mutex_unlock(&mutex_login);
                     if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
                     return false;
@@ -160,49 +137,12 @@ private:
             it++;
         }
 
-        string user_s(user);
-        string pass_s(pass);
-
-        if (esValido(user_s, pass_s)){
-            arg->user = user;
-            arg->clave = pass;
-            result = pthread_mutex_unlock(&mutex_login);
-            if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
-            return true;
-        }
-
-        cout << "User o pass fallidos" << endl;
-        free(user);
-        free(pass);
         result = pthread_mutex_unlock(&mutex_login);
         if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
-        return false;
-    }
 
-    static void mandarUsuarios(int sockNewFileDescrpt) {
-        //Consigo las claves del hash de usuarios
-        vector<string> keys;
-        for (auto kv : usuarios) {
-            keys.push_back(kv.first);
-        }
-
-        //Los junto en un vector separados por un espacio
-        string texto;
-        for (int i = 0; i < keys.size(); i++) {
-            texto += keys[i] + ",";
-        }
-        texto += "\n";
-
-        //Transformo string en char*
-        char *textoUsuarios = new char[texto.length() + 1];
-        strcpy(textoUsuarios, texto.c_str());
-
-        //Mando el vector al cliente
-        ssize_t bytesEscritos = write(sockNewFileDescrpt, textoUsuarios, strlen(textoUsuarios));
-        delete textoUsuarios;
-
-        if (bytesEscritos < 0)
-            perror("ERROR --> No se pudo responder al cliente");
+        arg->user = user;
+        arg->clave = pass;
+        return true;
     }
 
     static void kickearUsuario(argthread_t* arg) {
@@ -224,7 +164,6 @@ private:
             else if (it.operator*()->user != NULL && arg->user != NULL){
                 if (strcmp(it.operator*()->user, arg->user) == 0){
                     free(it.operator*()->user);
-                    free(it.operator*()->clave);
                     it = conectados.erase(it);
                     result = pthread_mutex_unlock(&mutex_login);
                     if (result != 0) perror("Fallo el pthread_mutex_unlock en kick");
@@ -484,7 +423,6 @@ private:
         userCon.erase(userCon.length()-1);
         logger.loggearConexion(userCon);
         cout << "\033[1m\033[32mSe conectó \033[1m\033[32m" << ((argthread_t *) arg)->user << "\033[0m";
-        mandarUsuarios(sockNewFileDescrpt);     // Mando lista de usuarios al cliente por unica vez
 
         // REGISTRO EL USUARIO Y LE ASIGNO UN ID VINCULADO A UN PERSONAJE
         cout << userCon << endl;
@@ -708,32 +646,11 @@ public:
             throw NoSePudoCrearServidorException();
         }
 
-        parser = new ParserXML(docname);
-        vector<string> usuarios = parser->users();
-        if (usuarios.empty()){
-            printf("no hay ningun usuario cargado en el juego . IMPOSIBLE INICIALIZAR");
-            exit(1);
-        }
         serverOn = true;
 
-        cargarUsuarios(usuarios);
         parser = new ParserXML(docname);
         logger.inicializoServer();
 
-    }
-
-    void leerXML(){
-        string tamVentana = parser->TamVentana();
-        string tamNivel = parser->tamNivel();
-        vector <string> sprites = parser->spritesPlayers();
-        vector<string> capas = parser->capas();
-        if (tamVentana.length() == 0 || tamNivel.length() == 0 || sprites.empty() || capas.empty() ){
-            parser->setearDefecto();
-            tamVentana = parser->TamVentana();
-            tamNivel = parser->tamNivel();
-            sprites = parser->spritesPlayers();
-            capas = parser->capas();
-        }
     }
 
     void initJuego() {

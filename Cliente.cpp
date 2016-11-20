@@ -82,7 +82,7 @@ bool Cliente::mandar_credencial_a_servidor(){
     free(linea);
     estado = true;
     cout<<"La conexion con el servidor fue exitosa"<<endl;
-    recibir_usuarios_de_servidor();
+    //recibir_usuarios_de_servidor();
     return true;
 }
 
