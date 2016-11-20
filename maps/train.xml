@@ -1,6 +1,7 @@
 <!DOCTYPE TRAIN SYSTEM "train.dtd">
 
-<nivel>	
+<nivel>
+	<nombre>train</nombre>
 	<ancho>8006</ancho>
 	<alto>600</alto>
 
@@ -72,25 +73,43 @@
 		</plataforma>
 	</plataformas>
 
+	<bonuses>
+		<bonus>
+			<x>150</x>
+			<y>500</y>
+			<tipo>HMGun</tipo>
+		</bonus>
+
+		<bonus>
+			<x>300</x>
+			<y>500</y>
+			<tipo>SGun</tipo>
+		</bonus>
+
+		<bonus>
+			<x>450</x>
+			<y>500</y>
+			<tipo>RLauncher</tipo>
+		</bonus>
+	</bonuses>
+
 	<enemigos>
 		<enemigo>
-			<x></x>
-			<y></y>
-			<delta></delta>
+			<x>1</x>
+			<y>11</y>
+			<delta>50</delta>
 		</enemigo>
 
 		<enemigo>
-			<x></x>
-			<y></y>
-			<delta></delta>
+			<x>2</x>
+			<y>22</y>
+			<delta>55</delta>
 		</enemigo>
 
 		<boss>
-			<path></path>
-			<x></x>
-			<y></y>
-			<delta></delta>
-			<velocidad></velocidad>
+			<x>7500</x>
+			<y>200</y>
+			<delta>600</delta>
 		</boss>
 	</enemigos>
 

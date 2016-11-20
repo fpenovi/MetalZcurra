@@ -1,35 +1,43 @@
-//
-// Created by juancho on 12/10/16.
-//
+/*
+ * ParserXML.h
+ *
+ *  Created on: Nov 19, 2016
+ *      Author: franch
+ */
 
-#ifndef METALZCURRA_PARSERXML_H
-#define METALZCURRA_PARSERXML_H
-#include <stdio.h>
-#include <string>
-#include <stdlib.h>
+#ifndef PARSERXML_H_
+#define PARSERXML_H_
+
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
-#include <iostream>
 #include <vector>
+#include <string>
+
 using namespace std;
 
 class ParserXML {
+
 private:
     xmlDocPtr doc;
     xmlNodePtr cur;
     xmlNodePtr act;
-    xmlXPathObjectPtr getnodeset (xmlChar *xpath);
+    xmlXPathObjectPtr getnodeset (xmlChar* xpath);
     xmlDocPtr docDef;
+
 public:
-    ParserXML(char*);
-    string TamVentana();
-    string tamNivel();
-    vector<string> spritesPlayers();
-    vector<string> capas();
+    ParserXML(string path);
     void setearDefecto();
-    vector<string> users();
+    vector<string> tamVentana();
+    vector<string> xmlNiveles();
+    vector<string> opcionesJuego();
+    string nombreNivel();
+    vector<string> tamNivel();
+    vector<string> capas();
+    vector<string> plataformas();
+    vector<string> enemigos();
+    vector<string> bonuses();
+    vector<string> boss();
 };
 
-
-#endif //METALZCURRA_PARSERXML_H
+#endif /* PARSERXML_H_ */
