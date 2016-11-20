@@ -11,6 +11,8 @@
 class Arma
 {
 protected:
+    string idPj;
+
     const static int ANIMACION_PARADO = 4;
     const static int ANIMACION_CORRIENDO_TORSO = 12;
     const static int ANIMACION_SALTANDO = 12;
@@ -56,7 +58,7 @@ protected:
     SDL_Rect* currentClip;
 
 public:
-    Arma(SDL_Renderer* render);
+    Arma(SDL_Renderer* render, int id);
 
     ~Arma();
 

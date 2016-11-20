@@ -11,7 +11,7 @@
 
 
 //Initializes the variables
-VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
+VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2, int id){
 	posx = 0;
 	posy = 440;
 	ancho = 60;
@@ -21,7 +21,7 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	TEXTURA_PERSONAJE_PARADO_PIES = new Textura(renderizador);
 	TEXTURA_PERSONAJE_CORRIENDO_PIES = new Textura(renderizador);
 	TEXTURA_PERSONAJE_SALTANDO_PIES = new Textura(renderizador);
-	arma = new Arma(renderizador);
+	arma = new Arma(renderizador, id);
 	gris = false;
 	flip = SDL_FLIP_NONE;
 	disparar = false;

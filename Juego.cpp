@@ -766,7 +766,7 @@ public:
 
 			ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado, &idUser);
 
-			VistaPersonaje *personaje = new VistaPersonaje(getRenderer());
+			VistaPersonaje *personaje = new VistaPersonaje(getRenderer(), id);
 
 			setPosX(posx);
 			//personaje->setearSprites(sprite);
