@@ -255,7 +255,8 @@ void Arma::ponerShotgun(){
                  pathApuntarAbajo.c_str(),
                  pathApuntarArriba.c_str(),
                  pathDisparoAbajo.c_str(),
-                 pathDisparoArriba.c_str());}
+                 pathDisparoArriba.c_str());
+}
 
 void Arma::ponerGun(){
     liberar();

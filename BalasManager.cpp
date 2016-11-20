@@ -43,8 +43,11 @@ void* balasManagerFunc(void* argKh) {
 
                         ProtocoloVistaUpdate update;
 
+                        kv.second->mover();
+                        kv.second->handleColision();
+
                         update.setTipoObjeto(2);
-                        update.setEstado(true);
+                        update.setEstado(kv.second->existeBala());
                         update.setX(kv.second->getPosx());
                         update.setY(kv.second->getPosy());
                         update.setObject_id(kv.second->getId());
@@ -53,7 +56,6 @@ void* balasManagerFunc(void* argKh) {
                         update.setSpriteIndex(kv.second->getDerecha());
                         update.setApuntando(kv.second->getIzquierda());
 
-                        kv.second->mover();
 
                         int result;
                         string mensaje = update.toString();

@@ -667,7 +667,7 @@ public:
 		for ( auto kv : vistasPersonajes){
 			kv.second->setPosCamara(0);
 			kv.second->setPosx(0);
-			kv.second->setPosy(440);
+			kv.second->setPosy(465);
 			kv.second->setSeMovio(false);
 			kv.second->setDerecha(true);
 		}
@@ -967,7 +967,7 @@ public:
 	void actualizarEnemigo(){
 		VistaEnemigo* enemigo = getEnemigoById(id);
 
-		enemigo->setExiste(state);
+		if (!conectado) enemigo->setExiste(state);
 		enemigo->setPosX(posX);
 		enemigo->setPosY(posy);
 		enemigo->setFrame(spriteIdx);

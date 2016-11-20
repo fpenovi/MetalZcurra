@@ -30,9 +30,8 @@ Nivel::Nivel(string xmlPath) {
 	this->alto = stoi(tamNivel[1]);
 	this->capas = capas;
 	this->plataformas = crearPlataformas(plataformas);
-	// TODO sacar boss de NivelManager luego de crearlo
 	//OM.setBonuses = crearBonuses(bonuses);
-	// AlgunManager.setBoss(crearBoss(boss));
+	OM->setBoss(crearBoss(boss));
 	OM->crearEnemigos(crearEnemigos(enemigos));
 	this->boss = crearBoss(boss);
 }

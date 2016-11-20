@@ -38,5 +38,12 @@ bool Rectangulo::hayColision(Rectangulo* otro) {
 	Intersection = Not Empty*/		// STACK OVERFLOW FTW!
 }
 
+int Rectangulo::getX() {
+	return *x + offsetX;
+}
+
+int Rectangulo::getY() {
+	return *y + offsetY;
+}
 
 Rectangulo::~Rectangulo() { }

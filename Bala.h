@@ -5,7 +5,9 @@
 #ifndef METALZCURRA_BALA_H
 #define METALZCURRA_BALA_H
 
+#include <stddef.h>
 #include "Direccion.h"
+#include "Envolvente.h"
 
 class Bala
 {
@@ -24,6 +26,8 @@ private:
     bool abajo;
     bool arriba;
 
+    Envolvente* envolvente = NULL;
+
 public:
     Bala();
 
@@ -33,9 +37,9 @@ public:
 
     void setID(int nuevoID);
 
-    void crear(int idEmisor, int x, int y, Direccion* direccion);
+    void crear(int idEmisor, int x, int y, Direccion* direccion, int ancho, int alto);
 
-    void crearBalaEnemiga(int x, int y, bool derecha);
+    void crearBalaEnemiga(int x, int y, bool derecha, int ancho, int alto);
 
     int getPosx();
 
@@ -62,6 +66,10 @@ public:
     int getAbajo();
 
     int getIzquierda();
+
+    void handleColision();
+
+    ~Bala();
 };
 
 #endif //METALZCURRA_BALA_H

@@ -9,8 +9,8 @@ Enemigo::Enemigo(int x, int y, int delta) {
     posx = x;
     posy = y;
     this->delta = delta;
-    ancho = 60;
-    alto = 80;
+    ancho = 58;
+    alto = 75;
     existe = false;
     muerto = false;
     disparando = false;
@@ -19,14 +19,14 @@ Enemigo::Enemigo(int x, int y, int delta) {
     alan = 0;
     envolvente = new Envolvente();
     Rectangulo* componente = new Rectangulo(&posx, &posy, ancho, alto);
-    componente->setOffset(55, 11);
+    componente->setOffset(92, 6);
     envolvente->agregarComponente(componente);
 
     start = high_resolution_clock::now();
 }
 
 bool Enemigo::mover() {
-    if (posx < 0) existe = false;
+    if (envolvente->getX() + ancho < 0) existe = false;
     //if (velocidad == -7 && posx > 800) velocidad = 7;
     if (cantidadPasos > 0){
         posx -= velocidad;
@@ -61,7 +61,6 @@ bool Enemigo::mover() {
 
 void Enemigo::morir(){
     muerto = true;
-    existe = false;
 }
 
 int Enemigo::getAncho(){
@@ -102,7 +101,7 @@ int Enemigo::getExiste() {
 
 void Enemigo::crear() {
     ObjectManager* objectManager = ObjectManager::getInstance();
-    if ( posx < 0 ) morir();
+    if ( envolvente->getX() + ancho < 0 ) morir();
     else if ((*(objectManager->getPosX()) + 800) > posx ) existe = true;
 }
 
@@ -113,7 +112,7 @@ bool Enemigo::disparar() {
     auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
     auto elapsed_ms = duration_cast<microseconds>(deltaTiempo);
 
-    if (elapsed_ms.count() >= intervalo.count()) {
+    if (elapsed_ms.count() >= intervalo.count() && !muerto) {
         ObjectManager* objectManager = ObjectManager::getInstance();
         objectManager->inicializarBalaEnemiga(posx, posy + 20);
         disparando = true;
@@ -123,7 +122,10 @@ bool Enemigo::disparar() {
 
 void Enemigo::animacionMuerte1(){
     ++frameMuerte1;
-    if( frameMuerte1 >= ANIMACION_MUERTE1 ) frameMuerte1 = 0;
+    if( frameMuerte1 >= ANIMACION_MUERTE1 ) {
+        frameMuerte1 = 0;
+        existe = false;
+    }
 }
 
 void Enemigo::animacionMuerte2(){
@@ -155,13 +157,15 @@ void Enemigo::animacionQuieto(){
 }
 
 void Enemigo::setSprite(){
-    if (disparando) animacionDisparando();
+    if (muerto) animacionMuerte1();
+    else if (disparando) animacionDisparando();
     else if (cantidadPasos > 0) animacionCorriendo();
     else animacionQuieto();
 }
 
 int Enemigo::getSprite(){
-    if (disparando) return frameDisparando;
+    if (muerto) return frameMuerte1;
+    else if (disparando) return frameDisparando;
     else if (cantidadPasos > 0) return frameCorriendo;
     else return frameQuieto;
 }
@@ -176,6 +180,10 @@ int Enemigo::getCantidadPasos(){
 
 bool Enemigo::verificarAlan(){
     return (alan > 2);
+}
+
+Envolvente* Enemigo::getEnvolvente(){
+    return envolvente;
 }
 
 Enemigo::~Enemigo() {

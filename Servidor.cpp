@@ -77,6 +77,7 @@ private:
                 usleep(100000);
                 shutdown(fileDescrpt, SHUT_RDWR);
                 delete objectManager;
+                delete NivelManager::getInstance();
                 return NULL;
             }
         }

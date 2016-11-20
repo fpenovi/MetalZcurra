@@ -21,6 +21,10 @@ private:
 public:
 	Envolvente();
 	void agregarComponente(Rectangulo* rect);
+	bool hayColision(Envolvente* otra);
+	vector<Rectangulo*> getComponentes();
+	int getX();
+	int getY();
 	virtual ~Envolvente();
 };
 

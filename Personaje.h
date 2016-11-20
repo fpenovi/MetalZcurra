@@ -18,7 +18,7 @@ class Personaje {
 
 private:
     int posx = 0;
-    int posy = 440;
+    int posy = 465;
     int ancho = 60;
     int alto = 80;
     int velx = 0;

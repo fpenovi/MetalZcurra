@@ -112,8 +112,9 @@ bool VistaEnemigo::cargarImagen(){
 }
 
 void VistaEnemigo::render(){
-    if (existe && !muerto){
-        if (disparando) animacionDisparando();
+    if (existe){
+        if (muerto) animacionMuerte1();
+        else if (disparando) animacionDisparando();
         else if (cantPasos > 0) animacionCorriendo();
         else animacionQuieto();
     }
@@ -145,7 +146,6 @@ int VistaEnemigo::getAlto(){
 
 void VistaEnemigo::morir(){
     muerto = true;
-    existe = false;
 }
 
 void VistaEnemigo::setExiste(bool exist){
@@ -167,19 +167,20 @@ void VistaEnemigo::setPosY(int y) {
 void VistaEnemigo::animacionMuerte1(){
     flip = SDL_FLIP_HORIZONTAL;
     currentClip = &spriteMuerte1[ frame ];
-    TEXTURA_ENEMIGO_MUERTE1->render( posx, posy+45, currentClip,0,NULL,flip);
+    TEXTURA_ENEMIGO_MUERTE1->render( posx, posy, currentClip,0,NULL,flip);
+    if (frame == 14) existe = false;
 }
 
 void VistaEnemigo::animacionMuerte2(){
     flip = SDL_FLIP_HORIZONTAL;
     currentClip = &spriteMuerte2[ frame ];
-    TEXTURA_ENEMIGO_MUERTE2->render( posx, posy+45, currentClip,0,NULL,flip);
+    TEXTURA_ENEMIGO_MUERTE2->render( posx, posy, currentClip,0,NULL,flip);
 }
 
 void VistaEnemigo::animacionMirando(){
     flip = SDL_FLIP_HORIZONTAL;
     currentClip = &spriteMirando[ frame ];
-    TEXTURA_ENEMIGO_MIRANDO->render( posx, posy+45, currentClip,0,NULL,flip);
+    TEXTURA_ENEMIGO_MIRANDO->render( posx, posy, currentClip,0,NULL,flip);
 }
 
 void VistaEnemigo::animacionCorriendo(){

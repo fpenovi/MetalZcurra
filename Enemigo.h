@@ -96,6 +96,8 @@ public:
 
     bool verificarAlan();
 
+	Envolvente* getEnvolvente();
+
 	~Enemigo();
 };
 

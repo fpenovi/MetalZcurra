@@ -85,6 +85,7 @@ public:
 	unordered_map<int, Enemigo*>* getEnemigosHash();
 	void liberarEnemigos();
 	Boss* getBoss();
+	void setBoss(Boss* boss);
 };
 
 

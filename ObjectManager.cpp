@@ -94,7 +94,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 
 	for (auto kv : balas){
 		if (!kv.second->existeBala() && (kv.second->getId() <= 50)){
-			kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor));
+			kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 13, 13);
 			return;
 		}
 	}
@@ -105,7 +105,7 @@ void ObjectManager::inicializarBalaEnemiga(int posx, int posy) {
 
 	for (auto kv : balas){
 		if (!kv.second->existeBala() && (kv.second->getId() > 50)){
-			kv.second->crearBalaEnemiga(posx, posy, false);
+			kv.second->crearBalaEnemiga(posx, posy, false, 42, 7);
 			return;
 		}
 	}
@@ -295,6 +295,10 @@ void ObjectManager::crearEnemigosManager() {
 
 Boss* ObjectManager::getBoss() {
 	return this->boss;
+}
+
+void ObjectManager::setBoss(Boss *boss) {
+	this->boss = boss;
 }
 
 unordered_map<int, Bala*>* ObjectManager::getBalasHash() {

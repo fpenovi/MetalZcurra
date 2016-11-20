@@ -13,7 +13,7 @@
 //Initializes the variables
 VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2, int id){
 	posx = 0;
-	posy = 440;
+	posy = 465;
 	ancho = 60;
 	alto = 80;
 	derecha = true;
@@ -194,7 +194,7 @@ VistaPersonaje::~VistaPersonaje() {
 }
 
 bool VistaPersonaje::estaSaltando(){
-	return (posy != 440);
+	return (posy != 465);
 }
 int VistaPersonaje::getX(){
 	return posx;

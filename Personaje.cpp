@@ -49,7 +49,7 @@ void Personaje::moverX() {
         return;
     }
 
-    if (posy == 440) setSprites();
+    if (posy == 465) setSprites();
     seMovio = true;
 }
 
@@ -68,7 +68,7 @@ void Personaje::moverY() {
         return;
     }
 
-    if (posy == 440){
+    if (posy == 465){
         seMovio = false;
         return;
     }
@@ -151,7 +151,7 @@ void Personaje::setPosCamara(int camara) {
 
 void Personaje::inicial(){
     this->posx = 0;
-    this->posy = 440;
+    this->posy = 465;
     this->posCamara=0;
 }
 
@@ -174,11 +174,11 @@ int Personaje::getFrameCorriendo() {
 
 void Personaje::setSpriteSaltando() {
     frameSaltando++;
-    if( frameSaltando / 2 >= ANIMACION_SALTANDO ) frameSaltando = 0;
+    if( frameSaltando / 4 >= ANIMACION_SALTANDO ) frameSaltando = 0;
 }
 
 int Personaje::getSpriteSaltando() {
-    return frameSaltando / 2;
+    return frameSaltando / 4;
 }
 
 void Personaje::setSpriteParado() {
@@ -249,7 +249,7 @@ void Personaje::resetFrames() {
 }
 
 void Personaje::setSprites() {
-    if (posy != 440) {
+    if (posy != 465) {
         if (disparando) setSpriteDisparando();
         else setSpriteSaltando();
         return;
@@ -266,7 +266,7 @@ void Personaje::setSprites() {
 }
 
 int Personaje::getSprites() {
-    if (posy != 440) {
+    if (posy != 465) {
         if (disparando) return getSpriteDisparando();
         else return getSpriteSaltando();
     }

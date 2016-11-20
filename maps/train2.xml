@@ -96,13 +96,13 @@
     <enemigos>
         <enemigo>
             <x>1500</x>
-            <y>440</y>
+            <y>465</y>
             <delta>50</delta>
         </enemigo>
 
         <enemigo>
             <x>1700</x>
-            <y>440</y>
+            <y>465</y>
             <delta>55</delta>
         </enemigo>
 

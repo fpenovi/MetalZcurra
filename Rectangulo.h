@@ -22,6 +22,8 @@ public:
 	Rectangulo(int* x, int* y, int ancho, int alto);
 	void setOffset(int x, int y);
 	bool hayColision(Rectangulo* otro);
+	int getX();
+	int getY();
 	virtual ~Rectangulo();
 };
 

@@ -38,16 +38,16 @@ void* handleJumpFunc(void* argKh) {
 
             personaje->resetFrames();
 
-            for (int i = 0 ; i < 24 ; i++){
+            for (int i = 0 ; i < 48 ; i++){
 
-                if (personaje->getPosy() <= 380){
+                if (personaje->getPosy() <= 345){
                     personaje->setVely(personaje->getPersonaje_VEL_Y());
                     personaje->moverY();
                     personaje->setVely(0);
                     personaje->setBajando(true);
                     personaje->setSprites();
                 }
-                else if (personaje->getPosy() >= 440){
+                else if (personaje->getPosy() >= 465){
                     personaje->setVely(-personaje->getPersonaje_VEL_Y());
                     personaje->moverY();
                     personaje->setVely(0);
