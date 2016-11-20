@@ -25,7 +25,6 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2){
 	gris = false;
 	flip = SDL_FLIP_NONE;
 	disparar = false;
-	//crearHashSprites();
 }
 
 void VistaPersonaje::render(bool seMovio){
@@ -252,38 +251,6 @@ int VistaPersonaje::getConectado() {
 
 void VistaPersonaje::setConectado(bool conexion) {
 	this->conectado = conexion;
-}
-
-void VistaPersonaje::crearHashSprites() {
-
-	hashSprites[1] = new vector<string>;
-	hashSprites[1]->push_back("imag/marco/quieto.png");
-	hashSprites[1]->push_back("imag/marco/corriendo.png");
-	hashSprites[1]->push_back("imag/marco/saltando.png");
-
-	hashSprites[2] = new vector<string>;
-	hashSprites[2]->push_back("imag/goku/quieto.png");
-	hashSprites[2]->push_back("imag/goku/corriendo.png");
-	hashSprites[2]->push_back("imag/goku/saltando.png");
-
-	hashSprites[3] = new vector<string>;
-	hashSprites[3]->push_back("imag/jackson/quieto.png");
-	hashSprites[3]->push_back("imag/jackson/corriendo.png");
-	hashSprites[3]->push_back("imag/jackson/saltando.png");
-
-	hashSprites[4] = new vector<string>;
-	hashSprites[4]->push_back("imag/megaman/quieto.png");
-	hashSprites[4]->push_back("imag/megaman/corriendo.png");
-	hashSprites[4]->push_back("imag/megaman/saltando.png");
-
-}
-
-void VistaPersonaje::setearSprites(int id) {
-
-	pathQuieto = (*hashSprites[id])[0];
-	pathCorriendo = (*hashSprites[id])[1];
-	pathSaltando = (*hashSprites[id])[2];
-
 }
 
 void VistaPersonaje::ponerTexturaGris() {
