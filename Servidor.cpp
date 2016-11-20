@@ -298,6 +298,7 @@ private:
 
                 case SDLK_x:
                     handleJump->Pause();
+                    if (direccion->isSolte()) handleQuieto->Resume();
                     break;
 
                 case SDLK_r:

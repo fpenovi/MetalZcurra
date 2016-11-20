@@ -29,9 +29,12 @@ private:
     bool bajando = false;
     int posCamara = 0;
     int conectado = false;
+
     bool disparando = false;
     bool arriba = false;
     bool abajo = false;
+    bool setearArriba = false;
+    bool setearAbajo = false;
 
     int frameCorriendo = 0;
     int frameSaltando = 0;
