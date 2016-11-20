@@ -121,7 +121,9 @@ void ObjectManager::inicializarEnemigo() {
 	}
 }
 
-void ObjectManager::enviarPersonajes(int FD) {
+void ObjectManager::enviarPersonajes(int FD, string user) {
+
+	int idUser = getIdByUsername(user);
 
 	for (auto kv : personajes){
 		ProtocoloNuevaVista protocolo;
@@ -132,6 +134,7 @@ void ObjectManager::enviarPersonajes(int FD) {
 		protocolo.setY(kv.second->getPosy());
 		protocolo.setCam(kv.second->getPosCamara());
 		protocolo.setConectado(kv.second->getConectado());
+		protocolo.setDuenio(idUser);
 
 		string msj = protocolo.toString();
 		const char* mensajeChar = msj.c_str();

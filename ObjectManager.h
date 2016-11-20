@@ -49,7 +49,7 @@ public:
 	Direccion* getDireccionById(int id);
 	static ObjectManager* getInstance();
 	void crearPersonajes(int cantidad);
-	void enviarPersonajes(int FD);
+	void enviarPersonajes(int FD, string user);
 	int* getPosX();
 	bool puedoAvanzar();
 	void moverCamara(int id);

@@ -41,6 +41,7 @@ private:
 	Textura* TEXTURA_BALA_ENEMIGA;
 	vector<Textura*> TEXTURAS_ENEMIGOS;
 	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim;
+	int miId;
 
 	// Atributos para sala de espera
 	Texto* textoip;
@@ -632,23 +633,25 @@ public:
 	}
 
 	void renderizar() {
+		for (auto kv : vistasEnemigos)
+			kv.second->render();
+
 		for (auto kv : vistasPersonajes) {
-			if (!(kv.second->getConectado()) && !(kv.second->getGris())) {
-				kv.second->ponerTexturaGris();
+			if (kv.second->getId() != miId) {
+
+				if (!(kv.second->getConectado()) && !(kv.second->getGris())) kv.second->ponerTexturaGris();
+
+				else if (kv.second->getConectado() && kv.second->getGris()) kv.second->sacarTexturaGris();
+
+				kv.second->render(kv.second->getSeMovio());
 			}
-			else if (kv.second->getConectado() && kv.second->getGris()) {
-				kv.second->sacarTexturaGris();
-			}
-			kv.second->render(kv.second->getSeMovio());
 		}
 
-		for (auto kv : vistasBalas){
-			kv.second->render();
-		}
+		VistaPersonaje* miPj = vistasPersonajes[miId];
+		miPj->render(miPj->getSeMovio());
 
-		for (auto kv : vistasEnemigos){
+		for (auto kv : vistasBalas)
 			kv.second->render();
-		}
 	}
 
 	int getPersonajeMasMovido(){
@@ -757,9 +760,11 @@ public:
 
 			if (nuevaVista == "$\n") break;
 
-			int id, sprite, posx, posy, cam, conectado;
+			cout << "NUEVO PERSONAJE: " << nuevaVista << endl;
 
-			ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado);
+			int id, sprite, posx, posy, cam, conectado, idUser;
+
+			ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado, &idUser);
 
 			VistaPersonaje *personaje = new VistaPersonaje(getRenderer());
 
@@ -773,7 +778,7 @@ public:
 			personaje->setConectado(conectado);
 			addPersonaje(id, personaje);
 
-			cout << "CONECTADO: " << conectado << endl;
+			miId = idUser;
 
 			if (!personaje->cargarImagen()) {
 				printf("Failed to load media!\n");

@@ -19,6 +19,7 @@ private:
     int cam;
     int spriteId;
     int conectado;
+    int duenio;
 
 public:
 
@@ -32,6 +33,8 @@ public:
 
     int getCam();
 
+    int getDuenio();
+
     void setObject_id(int object_id);
 
     void setX(int x);
@@ -44,9 +47,11 @@ public:
 
     void setConectado(int conectado);
 
+    void setDuenio(int aux);
+
     string toString();
 
-    static void parse(string stream, int* id, int* sprite, int* posx, int* posy, int* camara, int* conectadp);
+    static void parse(string stream, int* id, int* sprite, int* posx, int* posy, int* camara, int* conectadp, int* owner);
 };
 
 

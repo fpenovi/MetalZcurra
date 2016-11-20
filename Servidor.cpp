@@ -434,7 +434,7 @@ private:
 
         // ENVIO DATOS
         objectManager->enviarEscenario(sockNewFileDescrpt);
-        objectManager->enviarPersonajes(sockNewFileDescrpt);
+        objectManager->enviarPersonajes(sockNewFileDescrpt, userCon);
 
         int cant;
         // SALA DE ESPERA
