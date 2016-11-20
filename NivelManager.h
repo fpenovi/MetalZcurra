@@ -31,6 +31,7 @@ public:
 	bool haFinalizadoNivel();
 	bool hayMasNiveles();
 	void siguienteNivel();
+	vector<string> getCapas();
 };
 
 #endif /* NIVELMANAGER_H_ */

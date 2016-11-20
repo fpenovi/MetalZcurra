@@ -212,4 +212,9 @@ void VistaEnemigo::setCantPasos(int aux) {
     cantPasos = aux;
 }
 
+void VistaEnemigo::revivir(){
+    existe = false;
+    muerto = false;
+}
+
 VistaEnemigo::~VistaEnemigo() {}

@@ -3,6 +3,7 @@
 //
 
 #include "ObjectManager.h"
+#include "NivelManager.h"
 
 ObjectManager::ObjectManager() {
 	idActual = 1;
@@ -81,14 +82,11 @@ void ObjectManager::crearBalas(int cantidad) {
 	}
 }
 
-void ObjectManager::crearEnemigos(int cantidad) {
-	int posicion = 900;
-	for (int i = 1; i < cantidad+1; i++){
-		Enemigo* enemigo = new Enemigo();
-		enemigo->setId(i);
-		enemigo->setPosx(posicion);
+void ObjectManager::crearEnemigos(vector<Enemigo*> enemigos) {
+	for (int i = 0; i < enemigos.size(); i++){
+		Enemigo* enemigo = enemigos[i];
+		enemigo->setId(i + 1);
 		addEnemigo(i, enemigo);
-		posicion += 200;
 	}
 }
 
@@ -207,24 +205,16 @@ void ObjectManager::reinicializarEscenario() {
 	setPosX(0);
 }
 
-void ObjectManager::enviarEscenario(ParserXML *parser, int FD) {
-	string tamVentana = parser->TamVentana();
-	string tamNivel = parser->tamNivel();
-	vector <string> sprites = parser->spritesPlayers();
-	vector<string> capas = parser->capas();
-	if (tamVentana.length() == 0 || tamNivel.length() == 0 || sprites.empty() || capas.empty() ) {
-		parser->setearDefecto();
-		tamVentana = parser->TamVentana();
-		tamNivel = parser->tamNivel();
-		sprites = parser->spritesPlayers();
-		capas = parser->capas();
-	}
-	string msj = tamVentana + tamNivel + "\n";
+void ObjectManager::enviarEscenario(int FD) {
+
+	string msj = tamVentana[0] + "$" + tamVentana[1] + "\n";
 	const char* mensajeChar = msj.c_str();
 
 	ssize_t bytesEscritos = write(FD, mensajeChar, msj.size());
 	if (bytesEscritos < 0)
 		perror("ERROR --> No se pudo envair personaje");
+
+	vector<string> capas = NivelManager::getInstance()->getCapas();
 
 	for (int i = 0 ; i < capas.size() ; i++){
 		msj = "";
@@ -242,21 +232,12 @@ void ObjectManager::enviarEscenario(ParserXML *parser, int FD) {
 
 }
 
-void ObjectManager::enviarNuevoBackground(ParserXML* parser, string emisor) {
-	string tamVentana = parser->TamVentana();
-	string tamNivel = parser->tamNivel();
-	vector <string> sprites = parser->spritesPlayers();
-	vector<string> capas = parser->capas();
-	if (tamVentana.length() == 0 || tamNivel.length() == 0 || sprites.empty() || capas.empty() ) {
-		parser->setearDefecto();
-		tamVentana = parser->TamVentana();
-		tamNivel = parser->tamNivel();
-		sprites = parser->spritesPlayers();
-		capas = parser->capas();
-	}
+void ObjectManager::enviarNuevoBackground(string emisor) {
 
 	string msj;
 	int result;
+
+	vector<string> capas = NivelManager::getInstance()->getCapas();
 
 	for (int i = 0 ; i < capas.size() ; i++){
 		msj = "";
@@ -331,6 +312,16 @@ unordered_map<string, list<Mensaje*>*>* ObjectManager::getConectadosHash() {
 
 unordered_map<string, pthread_mutex_t>* ObjectManager::getMutexesHash() {
 	return mutexesHash;
+}
+
+void ObjectManager::setTamVentana(vector<string> tamVentana) {
+	this->tamVentana = tamVentana;
+}
+
+void ObjectManager::liberarEnemigos() {
+	for (auto kv : enemigos) {
+		delete kv.second;
+	}
 }
 
 ObjectManager* ObjectManager::instancia;

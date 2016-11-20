@@ -21,6 +21,7 @@
 #include "HandleJumpServer.h"
 #include "HandleQuietoServer.h"
 #include "HandleDisparoServer.h"
+#include "NivelManager.h"
 
 
 #define MAX_CLIENTS 6
@@ -48,7 +49,6 @@ class Servidor {
 
 private:
     static int fileDescrpt;
-    string nombreArchivoCsv;
     struct sockaddr_in serv_addr, cli_addr;
     socklen_t pesoCli_adrr;
     pthread_t threadControl;
@@ -56,15 +56,12 @@ private:
     bool serverOn = false;
     static int cantidadUsuarios;
     static vector<argthread_t*> conectados;
-    static unordered_map<string, string> usuarios;
-    static vector<Mensaje> mensajes;
-    static pthread_mutex_t mutex_mensajes;
     static pthread_mutex_t mutex_login;
     static Log logger;
     static ObjectManager* objectManager;
     static unordered_map<string, list<Mensaje*>*> conectadosHash;
     static unordered_map<string, pthread_mutex_t> mutexesHash;
-    static ParserXML* parser;
+    static string modoJuego;
 
     static void *controlInput(void *serverStatus) {
 
@@ -331,9 +328,13 @@ private:
                 if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
             }
 
-            delete parser;
-            parser = new ParserXML((char *) "juego.xml");
-            objectManager->enviarNuevoBackground(parser, emisor);
+            if (NivelManager::getInstance()->hayMasNiveles()) {
+                objectManager->liberarEnemigos();
+                NivelManager::getInstance()->siguienteNivel();
+                objectManager->enviarNuevoBackground(emisor);
+            }
+
+            //else ToDo TERMINAR JUEGO
         }
     }
 
@@ -432,7 +433,7 @@ private:
         objectManager->conectarPersonaje(userCon);
 
         // ENVIO DATOS
-        objectManager->enviarEscenario(parser, sockNewFileDescrpt);
+        objectManager->enviarEscenario(sockNewFileDescrpt);
         objectManager->enviarPersonajes(sockNewFileDescrpt);
 
         int cant;
@@ -595,13 +596,12 @@ private:
     }
 
 public:
-    Servidor(unsigned short int numPuerto, char* docname) {
+    Servidor(unsigned short int numPuerto) {
 
         bzero(&attr, sizeof(attr));
 
         pthread_attr_init(&attr);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-        mutex_mensajes = PTHREAD_MUTEX_INITIALIZER;
         mutex_login = PTHREAD_MUTEX_INITIALIZER;
 
 
@@ -647,22 +647,27 @@ public:
         }
 
         serverOn = true;
-
-        parser = new ParserXML(docname);
         logger.inicializoServer();
 
     }
 
-    void initJuego() {
+    void initJuego(char* docname) {
+        string path(docname);
+        ParserXML* parser = new ParserXML(path);
 
-        //cantidadUsuarios = (int) parser->users().size();
-        cantidadUsuarios = 1;
+        objectManager->setTamVentana(parser->tamVentana());
+
+        vector<string> opciones = parser->opcionesJuego();
+        modoJuego = opciones[0];
+        cantidadUsuarios = stoi(opciones[1]);
+
+        NivelManager::getInstance()->setXmlNiveles(parser->xmlNiveles());
+
         objectManager->setConectadosHash(&conectadosHash);
         objectManager->setMutexesHash(&mutexesHash);
         objectManager->crearPersonajes(cantidadUsuarios);
         objectManager->crearBalas(100);
         objectManager->crearBalasManager();
-        objectManager->crearEnemigos(20);
         objectManager->crearEnemigosManager();
     }
 
@@ -715,17 +720,14 @@ public:
 };
 
 vector<argthread_t*> Servidor::conectados;
-unordered_map<string, string> Servidor::usuarios;
 int Servidor::fileDescrpt;
-vector<Mensaje> Servidor::mensajes;
-pthread_mutex_t Servidor::mutex_mensajes;
 pthread_mutex_t Servidor::mutex_login;
 Log Servidor::logger(100);
 ObjectManager* Servidor::objectManager = ObjectManager::getInstance();
 unordered_map<string, list<Mensaje*>*> Servidor::conectadosHash;
 unordered_map<string, pthread_mutex_t> Servidor::mutexesHash;
-ParserXML* Servidor::parser;
 int Servidor::cantidadUsuarios;
+string Servidor::modoJuego;
 
 int main(int argc, char** argv) {
 
@@ -737,8 +739,8 @@ int main(int argc, char** argv) {
 
     unsigned short int numPuerto = (unsigned short) strtoull(argv[1], NULL, 0);
 
-    Servidor server = Servidor(numPuerto, argv[2]);
-    server.initJuego();
+    Servidor server = Servidor(numPuerto);
+    server.initJuego(argv[2]);
     server.aceptarClientes();
     return 0;
 }

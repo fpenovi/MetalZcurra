@@ -7,9 +7,8 @@
 	</ventana>
 	
 	<niveles>
-		<nivel>train.xml</nivel>
-		<nivel>dessert.xml</nivel>
-		<nivel>final.xml</nivel>
+		<nivel>maps/train.xml</nivel>
+		<nivel>maps/train2.xml</nivel>
 	</niveles>
 	
 	
@@ -25,6 +24,6 @@
 		
 	<opciones>
 		<modo>INDIVIDUAL</modo>
-		<jugadores>2</jugadores>
+		<jugadores>1</jugadores>
 	</opciones>
 </juego>

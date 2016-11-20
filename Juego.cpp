@@ -669,6 +669,10 @@ public:
 			kv.second->setDerecha(true);
 		}
 		setPosX(0);
+
+		for (auto kv : vistasEnemigos){
+			kv.second->revivir();
+		}
 	}
 
 	void salaDeEspera(){
@@ -683,10 +687,10 @@ public:
 
 		string ventanaAncho = "";
 		string ventanaAlto = "";
-		string nivelAncho = "";
-		string nivelAlto = "";
+		//string nivelAncho = "";
+		//string nivelAlto = "";
 
-		string* variables[] = {&ventanaAncho, &ventanaAlto, &nivelAncho, &nivelAlto};
+		string* variables[] = {&ventanaAncho, &ventanaAlto};
 
 		int j = 0;
 
@@ -704,8 +708,8 @@ public:
 
 		screenWidth = stoi(ventanaAncho);
 		screenHeight = stoi(ventanaAlto);
-		levelWidth = stoi(nivelAncho);
-		levelHeight = stoi(nivelAlto);
+		//levelWidth = stoi(nivelAncho);
+		//levelHeight = stoi(nivelAlto);
 	}
 
 	void recibirCapas(){
@@ -718,10 +722,8 @@ public:
 			if (stream == "$\n") break;
 
 			string path = "";
-			string ancho = "";
-			string zindex = "";
 
-			string* variables[] = {&path, &ancho, &zindex};
+			string* variables[] = {&path};
 
 			int j = 0;
 
@@ -736,7 +738,6 @@ public:
 
 				*(variables[j]) += actual;
 			}
-
 
 			char *path_c = new char[path.length() + 1];
 			strcpy(path_c, path.c_str());

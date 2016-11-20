@@ -5,9 +5,10 @@
 #include "ObjectManager.h"
 #include "Enemigo.h"
 
-Enemigo::Enemigo(){
-    posy = 440;
-    posx = 600;
+Enemigo::Enemigo(int x, int y, int delta){
+    posx = x;
+    posy = y;
+    this->delta = delta;
     ancho = 60;
     alto = 80;
     existe = false;
@@ -97,8 +98,8 @@ int Enemigo::getExiste() {
 
 void Enemigo::crear() {
     ObjectManager* objectManager = ObjectManager::getInstance();
-    if ((*(objectManager->getPosX()) + 800) > posx ) existe = true;
-    if ( posx < 0 ) existe = false;
+    if ( posx < 0 ) morir();
+    else if ((*(objectManager->getPosX()) + 800) > posx ) existe = true;
 }
 
 bool Enemigo::disparar() {

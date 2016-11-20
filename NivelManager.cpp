@@ -37,5 +37,12 @@ NivelManager::~NivelManager() {
 	delete this->nivel;
 }
 
+vector<string> NivelManager::getCapas() {
+	return nivel->getCapas();
+}
+
+bool NivelManager::hayMasNiveles() {
+	return this->nivelActual < xmlNiveles.size();
+}
 
 NivelManager* NivelManager::instancia;

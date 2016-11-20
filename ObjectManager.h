@@ -38,6 +38,7 @@ private:
 	EnemigosManager* enemigosManager;
 	unordered_map<string, list<Mensaje*>*>* conectadosHash;
 	unordered_map<string, pthread_mutex_t>* mutexesHash;
+	vector<string> tamVentana;
 
 public:
 	~ObjectManager();
@@ -52,13 +53,14 @@ public:
 	int* getPosX();
 	bool puedoAvanzar();
 	void moverCamara(int id);
-	void enviarEscenario(ParserXML* parser, int FD);
+	void enviarEscenario(int FD);
 	void conectarPersonaje(string user);
 	void desconectarPersonaje(string user);
 	void moverDesconectados();
 	void setPosX(int i);
 	void reinicializarEscenario();
-	void enviarNuevoBackground(ParserXML* parser, string emisor);
+	void enviarNuevoBackground(string emisor);
+	void setTamVentana(vector<string> tamVentana);
 
 	void setConectadosHash(unordered_map<string, list<Mensaje*>*>* conectadosHash);
 	void setMutexesHash(unordered_map<string, pthread_mutex_t>* mutexesHash);
@@ -75,10 +77,11 @@ public:
 
 	// Enemigos
 	void addEnemigo(int id, Enemigo* enemigo);
-	void crearEnemigos(int cantidad);
+	void crearEnemigos(vector<Enemigo*> enemigos);
 	void inicializarEnemigo();
 	void crearEnemigosManager();
 	unordered_map<int, Enemigo*>* getEnemigosHash();
+	void liberarEnemigos();
 };
 
 

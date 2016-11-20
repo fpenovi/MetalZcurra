@@ -13,6 +13,7 @@
 #include "Envolvente.h"
 #include "Bonus.h"
 #include "Boss.h"
+#include "Enemigo.h"
 #include <string>
 
 using namespace std;
@@ -29,7 +30,7 @@ private:
 
 	vector<Plataforma*> crearPlataformas(vector<string> platformsStr);
 	vector<Bonus*> crearBonuses(vector<string> bonusesStr);
-	// vector<Enemigo*> crearEnemigo(vector<string> enemigosStr);
+	vector<Enemigo*> crearEnemigos(vector<string> enemigosStr);
 	Boss* crearBoss(vector<string> bossStr);
 
 public:
@@ -37,6 +38,7 @@ public:
 	~Nivel();
 	bool haFinalizado();
 	// bool hayColision(Personaje* personaje);
+	vector<string> getCapas();
 };
 
 #endif /* NIVEL_H_ */

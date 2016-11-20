@@ -95,14 +95,14 @@
 
 	<enemigos>
 		<enemigo>
-			<x>1</x>
-			<y>11</y>
+			<x>900</x>
+			<y>440</y>
 			<delta>50</delta>
 		</enemigo>
 
 		<enemigo>
-			<x>2</x>
-			<y>22</y>
+			<x>1100</x>
+			<y>440</y>
 			<delta>55</delta>
 		</enemigo>
 

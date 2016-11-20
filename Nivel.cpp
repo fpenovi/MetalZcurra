@@ -11,6 +11,7 @@
 #include "SGun.h"
 #include "RLauncher.h"
 #include "Rshobu.h"
+#include "ObjectManager.h"
 
 Nivel::Nivel(string xmlPath) {
 
@@ -22,15 +23,15 @@ Nivel::Nivel(string xmlPath) {
 	vector<string> enemigos = parser->enemigos();
 	vector<string> boss = parser->boss();
 
-	// ObjectManager* OM = ObjectManager::getInstance();
+	ObjectManager* OM = ObjectManager::getInstance();
 
 	this->nombre = parser->nombreNivel();
 	this->ancho = stoi(tamNivel[0]);
 	this->alto = stoi(tamNivel[1]);
 	this->capas = capas;
 	this->plataformas = crearPlataformas(plataformas);
-	// OM.setBonuses = crearBonuses(bonuses);
-	// OM.setEnemigos = creanEnemigos(enemigos);
+	//OM.setBonuses = crearBonuses(bonuses);
+	OM->crearEnemigos(crearEnemigos(enemigos));
 	this->boss = crearBoss(boss);
 }
 
@@ -67,7 +68,7 @@ vector<Bonus*> Nivel::crearBonuses(vector<string> bonusesStr) {
 	return bonuses;
 }
 
-/*vector<Enemigo*> Nivel::crearEnemigo(vector<string> enemigosStr) {
+vector<Enemigo*> Nivel::crearEnemigos(vector<string> enemigosStr) {
 
 	vector<Enemigo*> enemigos;
 	for (int i=0; i<enemigosStr.size(); i+=3) {
@@ -78,7 +79,7 @@ vector<Bonus*> Nivel::crearBonuses(vector<string> bonusesStr) {
 	}
 
 	return enemigos;
-}*/
+}
 
 Boss* Nivel::crearBoss(vector<string> bossStr) {
 
@@ -101,3 +102,6 @@ Nivel::~Nivel() {
 	// liberar boss
 }
 
+vector<string> Nivel::getCapas() {
+	return capas;
+}

@@ -5,6 +5,8 @@
 #ifndef METALZCURRA_ENEMIGO_H
 #define METALZCURRA_ENEMIGO_H
 
+#include <chrono>
+
 using namespace chrono;
 
 class Enemigo
@@ -19,6 +21,7 @@ private:
     int existe;
     int velocidad;
     int cantidadPasos;
+    int delta;
 
     bool disparando;
 
@@ -42,7 +45,7 @@ private:
 
 
 public:
-    Enemigo();
+    Enemigo(int x, int y, int delta);
 
     bool mover();
 

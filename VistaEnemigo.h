@@ -95,6 +95,8 @@ public:
     void setDisparando(int aux);
 
     void setCantPasos(int aux);
+
+    void revivir();
 };
 
 #endif //METALZCURRA_VISTAENEMIGO_H
