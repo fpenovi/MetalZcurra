@@ -25,6 +25,8 @@ public:
 	vector<Rectangulo*> getComponentes();
 	int getX();
 	int getY();
+	int getAncho();
+	int getAlto();
 	virtual ~Envolvente();
 };
 

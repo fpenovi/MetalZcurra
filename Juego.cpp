@@ -928,6 +928,8 @@ public:
 			setPosX(posX);
 		}
 
+		pj->actualizarEstadoSalto(posy);
+
 		pj->apuntar(aim);
 		if (!(pj->getDisparar())) pj->setSpriteIndexTorso(spriteIdx);
 		pj->setSpriteIndexPies(spriteIdx);

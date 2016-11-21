@@ -194,7 +194,7 @@ VistaPersonaje::~VistaPersonaje() {
 }
 
 bool VistaPersonaje::estaSaltando(){
-	return (posy != 465);
+	return (saltando || cayendo);
 }
 int VistaPersonaje::getX(){
 	return posx;
@@ -312,4 +312,38 @@ void VistaPersonaje::apuntar(int aim){
 	if (aim == 1) apuntarArriba();
 	else if (aim == 2) apuntarAbajo();
 	else noApuntar();
+}
+
+void VistaPersonaje::setUltimoPosy(int aux) {
+	ultimoPosy = aux;
+}
+
+int VistaPersonaje::getUltimaPosy(){
+	return ultimoPosy;
+}
+
+void VistaPersonaje::setSaltando(bool aux) {
+	saltando = aux;
+}
+
+void VistaPersonaje::setCayendo(bool aux) {
+	cayendo = aux;
+}
+
+void VistaPersonaje::actualizarEstadoSalto(int posy){
+
+	if (ultimoPosy > posy){
+		setSaltando(true);
+		setCayendo(false);
+	}
+	else if (ultimoPosy < posy){
+		setSaltando(false);
+		setCayendo(true);
+	}
+	else {
+		setSaltando(false);
+		setCayendo(false);
+	}
+
+	ultimoPosy = posy;
 }

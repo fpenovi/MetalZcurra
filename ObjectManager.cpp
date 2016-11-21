@@ -190,6 +190,8 @@ void ObjectManager::moverCamara(int id){
 		if (kv.second->getExiste())
 			kv.second->setPosx(kv.second->getPosx()-7);
 	}
+
+	NivelManager::getInstance()->moverPlataformas();
 }
 
 void ObjectManager::moverDesconectados() {

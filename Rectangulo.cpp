@@ -46,4 +46,12 @@ int Rectangulo::getY() {
 	return *y + offsetY;
 }
 
+int Rectangulo::getAncho() {
+	return ancho;
+}
+
+int Rectangulo::getAlto() {
+	return alto;
+}
+
 Rectangulo::~Rectangulo() { }

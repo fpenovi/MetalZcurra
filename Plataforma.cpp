@@ -14,6 +14,14 @@ Plataforma::Plataforma(int x, int y, int ancho, int alto) {
 	this->envolvente->agregarComponente(new Rectangulo(&this->x, &this->y, ancho, alto));
 }
 
+Envolvente* Plataforma::getEnvolvente(){
+	return envolvente;
+}
+
+void Plataforma::moverPlataforma(){
+	this->x -= 7;
+}
+
 Plataforma::~Plataforma() {
 	delete this->envolvente;
 }

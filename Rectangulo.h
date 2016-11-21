@@ -24,6 +24,8 @@ public:
 	bool hayColision(Rectangulo* otro);
 	int getX();
 	int getY();
+	int getAncho();
+	int getAlto();
 	virtual ~Rectangulo();
 };
 

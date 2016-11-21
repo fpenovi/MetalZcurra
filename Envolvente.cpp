@@ -39,6 +39,16 @@ int Envolvente::getY() {
 	return rect->getY();
 }
 
+int Envolvente::getAncho(){
+	Rectangulo* rect = componentes[0];
+	return rect->getAncho();
+}
+
+int Envolvente::getAlto(){
+	Rectangulo* rect = componentes[0];
+	return rect->getAlto();
+}
+
 Envolvente::~Envolvente() {
 	// TODO Auto-generated destructor stub
 }
