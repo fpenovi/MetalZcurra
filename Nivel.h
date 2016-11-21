@@ -40,6 +40,8 @@ public:
 	bool haFinalizado();
 	bool hayColision(Personaje* personaje);
 	vector<string> getCapas();
+
+	void moverPlataformas();
 };
 
 #endif /* NIVEL_H_ */

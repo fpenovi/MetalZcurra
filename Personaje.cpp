@@ -4,6 +4,7 @@
 
 #include "ObjectManager.h"
 #include "Personaje.h"
+#include "NivelManager.h"
 
 #define ENVOLVENTE_PARADO_DERECHA 0
 #define ENVOLVENTE_PARADO_IZQUIERDA 1
@@ -70,7 +71,7 @@ void Personaje::moverX() {
         if (derecha) envolvente = envolventesPosibles[ENVOLVENTE_PARADO_DERECHA];
         else envolvente = envolventesPosibles[ENVOLVENTE_PARADO_IZQUIERDA];
     }
-    else {
+    else if (velx < 0){
         envolvente = envolventesPosibles[ENVOLVENTE_CORRIENDO_IZQUIERDA];
         derecha = false;
     }
@@ -94,7 +95,7 @@ void Personaje::moverX() {
         return;
     }
 
-    if (posy == 465) setSprites();
+    if (posy == ultimaPosy) setSprites();
     seMovio = true;
 }
 
@@ -106,18 +107,24 @@ void Personaje::moverY() {
     if (derecha) envolvente = envolventesPosibles[ENVOLVENTE_SALTANDO_DERECHA];
     else envolvente = envolventesPosibles[ENVOLVENTE_SALTANDO_IZQUIERDA];
 
-    if( ( posy < 0 ) || ( posy + alto > LEVEL_HEIGHT ) ) {
+    if( ( posy < 0 ) || ( posy + envolvente->getAlto() > LEVEL_HEIGHT ) ) {
         //Move back
         posy -= vely;
     }
 
-    if (pos2 ==  posy) {
+    if (pos2 == posy) {
         seMovio = false;
         return;
     }
 
-    if (posy == 465){
+    if (posy == ultimaPosy){
         seMovio = false;
+        return;
+    }
+
+    if (NivelManager::getInstance()->hayColision(this)) {
+        seMovio = false;
+        posy -= vely;
         return;
     }
 
@@ -297,7 +304,7 @@ void Personaje::resetFrames() {
 }
 
 void Personaje::setSprites() {
-    if (posy != 465) {
+    if (posy != ultimaPosy) {
         if (disparando) setSpriteDisparando();
         else setSpriteSaltando();
         return;
@@ -314,7 +321,7 @@ void Personaje::setSprites() {
 }
 
 int Personaje::getSprites() {
-    if (posy != 465) {
+    if (posy != ultimaPosy) {
         if (disparando) return getSpriteDisparando();
         else return getSpriteSaltando();
     }
@@ -352,7 +359,15 @@ int Personaje::getDireccion(){
     else return 0;
 }
 
+Envolvente* Personaje::getEnvolvente(){
+    return envolvente;
+}
+
 Personaje::~Personaje() {
     for (auto envolvente : this->envolventesPosibles)
         delete envolvente;
+}
+
+void Personaje::setUltimaPosy(int aux) {
+    ultimaPosy = aux;
 }

@@ -16,6 +16,9 @@ private:
     int ancho, alto;
     bool conectado;
     int posCamara;
+	int ultimoPosy = 465;
+	bool saltando = false;
+	bool cayendo = false;
 
 	const static int ANIMACION_PARADO = 4;
 	const static int ANIMACION_CORRIENDO_PIES = 18;
@@ -137,6 +140,16 @@ public:
 	void apuntar(int aim);
 
 	void noApuntar();
+
+	void setUltimoPosy(int aux);
+
+	int getUltimaPosy();
+
+	void setSaltando(bool aux);
+
+	void setCayendo(bool aux);
+
+	void actualizarEstadoSalto(int posy);
 };
 
 

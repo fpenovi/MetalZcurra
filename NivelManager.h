@@ -32,6 +32,7 @@ public:
 	bool haFinalizadoNivel();
 	bool hayMasNiveles();
 	void siguienteNivel();
+	void moverPlataformas();
 	vector<string> getCapas();
 };
 

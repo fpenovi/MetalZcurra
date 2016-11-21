@@ -21,6 +21,8 @@ private:
 
 public:
 	Plataforma(int x, int y, int ancho, int alto);
+	Envolvente *getEnvolvente();
+	void moverPlataforma();
 	// bool hayColision(Personaje* personaje);
 	virtual ~Plataforma();
 };

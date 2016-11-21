@@ -19,8 +19,8 @@ class Personaje {
 private:
     int posx = 0;
     int posy = 465;
-    int ancho;
-    int alto;
+    int ancho = 60;
+    int alto = 80;
     int velx = 0;
     int vely = 0;
     const static int Personaje_VEL = 7;
@@ -30,6 +30,8 @@ private:
     bool bajando = false;
     int posCamara = 0;
     int conectado = false;
+	int amplitudSalto = 120;
+	int ultimaPosy = 465;
 
 	bool derecha = true;
     bool disparando = false;
@@ -151,7 +153,11 @@ public:
 
     int getDireccion();
 
+	void setUltimaPosy(int aux);
+
 	~Personaje();
+
+	Envolvente *getEnvolvente();
 };
 
 #endif //METALZCURRA_PERSONAJE_H

@@ -98,6 +98,12 @@ Boss* Nivel::crearBoss(vector<string> bossStr) {
 
 
 bool Nivel::hayColision(Personaje *personaje) {
+
+	Envolvente* envolvente = personaje->getEnvolvente();
+
+	for (Plataforma* plataforma : plataformas){
+		if (envolvente->hayColision(plataforma->getEnvolvente())) return true;
+	}
 	return false;
 }
 
@@ -106,6 +112,10 @@ bool Nivel::haFinalizado() {
 	return !ObjectManager::getInstance()->getBoss()->estaVivo();
 }
 
+void Nivel::moverPlataformas(){
+	for (Plataforma* plataforma : plataformas)
+		plataforma->moverPlataforma();
+}
 
 Nivel::~Nivel() {
 	for (int i = 0; i < this->plataformas.size(); ++i)
