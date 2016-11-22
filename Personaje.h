@@ -33,6 +33,8 @@ private:
 	int amplitudSalto = 120;
 	int ultimaPosy = 465;
 
+	bool gravity = true;
+	bool saltando = false;
 	bool derecha = true;
     bool disparando = false;
     bool arriba = false;
@@ -155,9 +157,17 @@ public:
 
 	void setUltimaPosy(int aux);
 
-	~Personaje();
-
 	Envolvente *getEnvolvente();
+
+	void setSaltando(bool aux);
+
+	bool getSaltando();
+
+	void gravedad();
+
+	void setGravity(bool aux);
+
+	~Personaje();
 };
 
 #endif //METALZCURRA_PERSONAJE_H

@@ -61,6 +61,7 @@ void* handleKeyHoldFunc(void* argKh) {
                         update.setConectado(personaje->getConectado());
                         update.setSpriteIndex(personaje->getSprites());
                         update.setApuntando(personaje->getDireccion());
+                        update.setSaltando(personaje->getSaltando());
                         break;
 
                     case SDLK_RIGHT:
@@ -82,6 +83,7 @@ void* handleKeyHoldFunc(void* argKh) {
                         update.setConectado(personaje->getConectado());
                         update.setSpriteIndex(personaje->getSprites());
                         update.setApuntando(personaje->getDireccion());
+                        update.setSaltando(personaje->getSaltando());
                         break;
 
                 }

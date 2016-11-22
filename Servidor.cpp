@@ -251,6 +251,7 @@ private:
                     update.setConectado(0);
                     update.setSpriteIndex(0);
                     update.setApuntando(0);
+                    update.setSaltando(0);
                     enviar = true;
                     break;
 
@@ -578,6 +579,7 @@ private:
         update.setPosCamara(personaje->getPosCamara());
         update.setConectado(personaje->getConectado());
         update.setApuntando(personaje->getDireccion());
+        update.setSaltando(personaje->getSaltando());
 
         int result;
         string mensaje = update.toString();

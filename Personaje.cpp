@@ -63,6 +63,8 @@ void Personaje::moverX() {
     *posX += velx;
     posCamara += velx;
 
+    gravedad();
+
     if (velx > 0) {
         envolvente = envolventesPosibles[ENVOLVENTE_CORRIENDO_DERECHA];
         derecha = true;
@@ -95,12 +97,18 @@ void Personaje::moverX() {
         return;
     }
 
-    if (posy == ultimaPosy) setSprites();
+    if (!saltando) setSprites();
     seMovio = true;
 }
 
 void Personaje::moverY() {
     int pos2 = posy;
+
+    if (NivelManager::getInstance()->hayColision(this)) {
+        seMovio = false;
+        saltando = false;
+        return;
+    }
 
     posy += vely;
 
@@ -114,20 +122,17 @@ void Personaje::moverY() {
 
     if (pos2 == posy) {
         seMovio = false;
+        saltando = false;
         return;
     }
 
     if (posy == ultimaPosy){
         seMovio = false;
+        saltando = false;
         return;
     }
 
-    if (NivelManager::getInstance()->hayColision(this)) {
-        seMovio = false;
-        posy -= vely;
-        return;
-    }
-
+    saltando = true;
     seMovio = true;
 
 }
@@ -304,7 +309,7 @@ void Personaje::resetFrames() {
 }
 
 void Personaje::setSprites() {
-    if (posy != ultimaPosy) {
+    if (saltando) {
         if (disparando) setSpriteDisparando();
         else setSpriteSaltando();
         return;
@@ -321,7 +326,7 @@ void Personaje::setSprites() {
 }
 
 int Personaje::getSprites() {
-    if (posy != ultimaPosy) {
+    if (saltando) {
         if (disparando) return getSpriteDisparando();
         else return getSpriteSaltando();
     }
@@ -363,11 +368,31 @@ Envolvente* Personaje::getEnvolvente(){
     return envolvente;
 }
 
+void Personaje::setUltimaPosy(int aux) {
+    ultimaPosy = aux;
+}
+
+void Personaje::setSaltando(bool aux) {
+    saltando = aux;
+}
+
+bool Personaje::getSaltando() {
+    return saltando;
+}
+
+void Personaje::gravedad() {
+    if (!NivelManager::getInstance()->hayColision(this) && posy < 465 && gravity) {
+        setVely(5);
+        moverY();
+        saltando = false;
+    }
+}
+
+void Personaje::setGravity(bool aux) {
+    gravity = aux;
+}
+
 Personaje::~Personaje() {
     for (auto envolvente : this->envolventesPosibles)
         delete envolvente;
-}
-
-void Personaje::setUltimaPosy(int aux) {
-    ultimaPosy = aux;
 }

@@ -55,6 +55,7 @@ void* balasManagerFunc(void* argKh) {
                         update.setConectado(kv.second->getAbajo());
                         update.setSpriteIndex(kv.second->getDerecha());
                         update.setApuntando(kv.second->getIzquierda());
+                        update.setSaltando(0);
 
 
                         int result;

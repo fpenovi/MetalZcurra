@@ -40,7 +40,7 @@ private:
 	Textura* TEXTURA_BALA;
 	Textura* TEXTURA_BALA_ENEMIGA;
 	vector<Textura*> TEXTURAS_ENEMIGOS;
-	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim;
+	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim, saltando;
 	int miId;
 
 	// Atributos para sala de espera
@@ -905,7 +905,7 @@ public:
 	}
 
 	void parsearUpdateVista(string update){
-		ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posX, &posy, &posCam, &conectado, &spriteIdx, &aim);
+		ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posX, &posy, &posCam, &conectado, &spriteIdx, &aim, &saltando);
 	}
 
 	int getTipoObjeto(){
@@ -916,7 +916,7 @@ public:
 
 		VistaPersonaje* pj = getPersonajeById(id);
 
-		if (pj->getPosCamara() < posCam){
+		if (pj->getPosCamara() < posCam || pj->getPosCamara() > 539){
 			pj->setDerecha(true);
 		}
 		else if (pj->getPosCamara() > posCam){
@@ -928,8 +928,7 @@ public:
 			setPosX(posX);
 		}
 
-		pj->actualizarEstadoSalto(posy);
-
+		pj->setSaltando(saltando);
 		pj->apuntar(aim);
 		if (!(pj->getDisparar())) pj->setSpriteIndexTorso(spriteIdx);
 		pj->setSpriteIndexPies(spriteIdx);

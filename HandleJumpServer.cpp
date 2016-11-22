@@ -42,6 +42,7 @@ void* handleJumpFunc(void* argKh) {
             posActual = personaje->getPosy();
             personaje->setUltimaPosy(posActual);
             posFinal = posActual - 120;
+            personaje->setGravity(false);
 
             for (int i = 0 ; i < 48 ; i++){
 
@@ -53,10 +54,12 @@ void* handleJumpFunc(void* argKh) {
                     personaje->setSprites();
                 }
                 else if (personaje->getPosy() >= posActual){
+                    personaje->setUltimaPosy(personaje->getPosy());
                     personaje->setVely(-personaje->getPersonaje_VEL_Y());
                     personaje->moverY();
                     personaje->setVely(0);
                     personaje->setBajando(false);
+                    personaje->setSaltando(false);
                 }
                 else if (personaje->getBajando()){
                     personaje->setVely(personaje->getPersonaje_VEL_Y());
@@ -79,6 +82,7 @@ void* handleJumpFunc(void* argKh) {
                 update.setConectado(personaje->getConectado());
                 update.setSpriteIndex(personaje->getSprites());
                 update.setApuntando(personaje->getDireccion());
+                update.setSaltando(personaje->getSaltando());
 
                 int result;
                 string mensaje = update.toString();
@@ -98,6 +102,7 @@ void* handleJumpFunc(void* argKh) {
 
                 usleep(40000);
             }
+            personaje->setGravity(true);
             *isKhPaused = true;
         }
     }

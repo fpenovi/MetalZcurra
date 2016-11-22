@@ -57,6 +57,7 @@ void* handleQuietoFunc(void* argKh) {
                 update.setConectado(personaje->getConectado());
                 update.setSpriteIndex(personaje->getSprites());
                 update.setApuntando(personaje->getDireccion());
+                update.setSaltando(personaje->getSaltando());
 
                 int result;
                 string mensaje = update.toString();

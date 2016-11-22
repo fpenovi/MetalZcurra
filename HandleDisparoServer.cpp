@@ -61,6 +61,7 @@ void* handleDisparoFunc(void* argKh) {
                     update.setConectado(1);
                     update.setSpriteIndex(personaje->getSprites());
                     update.setApuntando(personaje->getDireccion());
+                    update.setSaltando(0);
 
                     int result;
                     string mensaje = update.toString();

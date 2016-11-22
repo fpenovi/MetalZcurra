@@ -17,8 +17,8 @@ private:
     bool conectado;
     int posCamara;
 	int ultimoPosy = 465;
+	int ultimoPosx = 0;
 	bool saltando = false;
-	bool cayendo = false;
 
 	const static int ANIMACION_PARADO = 4;
 	const static int ANIMACION_CORRIENDO_PIES = 18;
@@ -107,10 +107,6 @@ public:
 
     int getPosCamara();
 
-    void crearHashSprites();
-
-    void setearSprites(int id);
-
     int getConectado();
 
     void setConectado(bool conexion);
@@ -146,10 +142,6 @@ public:
 	int getUltimaPosy();
 
 	void setSaltando(bool aux);
-
-	void setCayendo(bool aux);
-
-	void actualizarEstadoSalto(int posy);
 };
 
 

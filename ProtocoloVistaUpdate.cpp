@@ -33,6 +33,10 @@ int ProtocoloVistaUpdate::getApuntando() {
     return apuntando;
 }
 
+int ProtocoloVistaUpdate::getSaltando() {
+    return saltando;
+}
+
 void ProtocoloVistaUpdate::setTipoObjeto(int tipo) {
     this->tipoObjeto = tipo;
 }
@@ -69,6 +73,10 @@ void ProtocoloVistaUpdate::setApuntando(int i) {
     this->apuntando = i;
 }
 
+void ProtocoloVistaUpdate::setSaltando(int aux) {
+    saltando = aux;
+}
+
 string ProtocoloVistaUpdate::toString(){
     string tipo = to_string(tipoObjeto);
     string id = to_string(object_id);
@@ -79,12 +87,13 @@ string ProtocoloVistaUpdate::toString(){
     string conexion = to_string(conectado);
     string index = to_string(spriteIndex);
     string aim = to_string(apuntando);
+    string salto = to_string(saltando);
 
-    string msj = tipo + "$" + id + "$" + state + "$" + posx + "$" + posy + "$" + posCam + "$" + conexion + "$" + index + "$" + aim + "\n";
+    string msj = tipo + "$" + id + "$" + state + "$" + posx + "$" + posy + "$" + posCam + "$" + conexion + "$" + index + "$" + aim + "$" + salto + "\n";
     return msj;
 }
 
-void ProtocoloVistaUpdate::parse(string stream, int* tipo, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex, int* aim) {
+void ProtocoloVistaUpdate::parse(string stream, int* tipo, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex, int* aim, int* salto) {
 
     string tipo_s = "";
     string id_s = "";
@@ -95,8 +104,9 @@ void ProtocoloVistaUpdate::parse(string stream, int* tipo, int* id, int* state, 
     string conectado_s = "";
     string index_s = "";
     string aim_s = "";
+    string salto_s = "";
 
-    string* variables[] = {&tipo_s, &id_s, &state_s, &posx_s, &posy_s, &posCamara_s, &conectado_s, &index_s, &aim_s};
+    string* variables[] = {&tipo_s, &id_s, &state_s, &posx_s, &posy_s, &posCamara_s, &conectado_s, &index_s, &aim_s, &salto_s};
 
     int j = 0;
 
@@ -121,4 +131,5 @@ void ProtocoloVistaUpdate::parse(string stream, int* tipo, int* id, int* state, 
     *conectado = stoi(conectado_s);
     *spriteIndex = stoi(index_s);
     *aim = stoi(aim_s);
+    *salto = stoi(salto_s);
 }

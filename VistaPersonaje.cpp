@@ -194,7 +194,7 @@ VistaPersonaje::~VistaPersonaje() {
 }
 
 bool VistaPersonaje::estaSaltando(){
-	return (saltando || cayendo);
+	return saltando;
 }
 int VistaPersonaje::getX(){
 	return posx;
@@ -324,26 +324,4 @@ int VistaPersonaje::getUltimaPosy(){
 
 void VistaPersonaje::setSaltando(bool aux) {
 	saltando = aux;
-}
-
-void VistaPersonaje::setCayendo(bool aux) {
-	cayendo = aux;
-}
-
-void VistaPersonaje::actualizarEstadoSalto(int posy){
-
-	if (ultimoPosy > posy){
-		setSaltando(true);
-		setCayendo(false);
-	}
-	else if (ultimoPosy < posy){
-		setSaltando(false);
-		setCayendo(true);
-	}
-	else {
-		setSaltando(false);
-		setCayendo(false);
-	}
-
-	ultimoPosy = posy;
 }

@@ -57,6 +57,7 @@ void* enemigosManagerFunc(void* argKh) {
                             update.setConectado(kv.second->estaMuerto());
                             update.setSpriteIndex(kv.second->getSprite());
                             update.setApuntando(kv.second->isDisparando());
+                            update.setSaltando(0);
 
                             int result;
                             string mensaje = update.toString();
