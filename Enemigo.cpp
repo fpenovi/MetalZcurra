@@ -190,6 +190,10 @@ Envolvente* Enemigo::getEnvolvente(){
     return envolvente;
 }
 
+void Enemigo::setBonus(Bonus* bonus) {
+    this->bonus = bonus;
+}
+
 Enemigo::~Enemigo() {
     delete this->envolvente;
 }

@@ -33,6 +33,7 @@ private:
 	vector<Bonus*> crearBonuses(vector<string> bonusesStr);
 	vector<Enemigo*> crearEnemigos(vector<string> enemigosStr);
 	Boss* crearBoss(vector<string> bossStr);
+	Bonus* makeBonusOrNull();
 
 public:
 	Nivel(string xmlPath);

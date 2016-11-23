@@ -12,6 +12,8 @@
 #include "RLauncher.h"
 #include "Rshobu.h"
 #include "ObjectManager.h"
+#include "Recover.h"
+#include "KillAll.h"
 
 Nivel::Nivel(string xmlPath) {
 
@@ -76,7 +78,9 @@ vector<Enemigo*> Nivel::crearEnemigos(vector<string> enemigosStr) {
 		int x = stoi(enemigosStr[i]);
 		int y = stoi(enemigosStr[i+1]);
 		int delta = stoi(enemigosStr[i+2]);
-		enemigos.push_back(new Enemigo(x, y, delta));
+		Enemigo* enemigo = new Enemigo(x, y, delta);
+		enemigo->setBonus(makeBonusOrNull());
+		enemigos.push_back(enemigo);
 	}
 
 	return enemigos;
@@ -118,10 +122,27 @@ void Nivel::moverPlataformas(){
 }
 
 Nivel::~Nivel() {
-	for (int i = 0; i < this->plataformas.size(); ++i)
+	for (int i = 0; i < this->plataformas.size(); i++)
 		delete this->plataformas[i];
 }
 
 vector<string> Nivel::getCapas() {
 	return capas;
+}
+
+
+Bonus* Nivel::makeBonusOrNull() {
+
+	srand(time(NULL));
+	// Ponderado 50% NULL, 25% Bonus1, 25% bonus2
+
+	int randomInt = rand() % 100;
+
+	if (randomInt < 75)
+		return new Recover(0, 0);
+
+	if (randomInt < 100)
+		return new KillAll(0, 0);
+
+	return NULL;
 }

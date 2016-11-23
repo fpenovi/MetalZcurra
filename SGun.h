@@ -14,6 +14,7 @@ class SGun: public Bonus {
 
 public:
 	SGun(int x, int y);
+	void aplicarEfecto(Personaje* personaje);
 	virtual ~SGun();
 };
 
