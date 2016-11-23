@@ -43,7 +43,8 @@ void* balasManagerFunc(void* argKh) {
 
                         ProtocoloVistaUpdate update;
 
-                        kv.second->mover();
+                        if (kv.second->isShotgun()) kv.second->moverShotgun();
+                        else kv.second->mover();
                         kv.second->handleColision();
 
                         update.setTipoObjeto(2);
@@ -55,7 +56,7 @@ void* balasManagerFunc(void* argKh) {
                         update.setConectado(kv.second->getAbajo());
                         update.setSpriteIndex(kv.second->getDerecha());
                         update.setApuntando(kv.second->getIzquierda());
-                        update.setSaltando(0);
+                        update.setSaltando(kv.second->getFrameShotgun());
 
 
                         int result;

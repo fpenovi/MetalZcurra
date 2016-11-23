@@ -22,6 +22,7 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2, int id){
 	TEXTURA_PERSONAJE_CORRIENDO_PIES = new Textura(renderizador);
 	TEXTURA_PERSONAJE_SALTANDO_PIES = new Textura(renderizador);
 	arma = new Arma(renderizador, id);
+	arma->ponerShotgun();
 	gris = false;
 	flip = SDL_FLIP_NONE;
 	disparar = false;

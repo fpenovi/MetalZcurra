@@ -5,6 +5,11 @@
 #include "ObjectManager.h"
 #include "NivelManager.h"
 
+#define GUN 0
+#define HMGUN 1
+#define SHOTGUN 2
+#define RLAUNCHER 3
+
 ObjectManager::ObjectManager() {
 	idActual = 1;
 }
@@ -90,21 +95,53 @@ void ObjectManager::crearEnemigos(vector<Enemigo*> enemigos) {
 	}
 }
 
-void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor) {
+void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor, int tipoArma) {
 
-	for (auto kv : balas){
-		if (!kv.second->existeBala() && (kv.second->getId() <= 50)){
-			kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 13, 13);
-			return;
+	if (tipoArma == GUN) {
+		for (auto kv : balas) {
+			if (!kv.second->existeBala() && (kv.second->getId() <= 50)) {
+				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 13, 13);
+				return;
+			}
 		}
 	}
-
+	else if (tipoArma == HMGUN){
+		int offsetY = - 15;
+		int offsetX = 15;
+		for (int i = 0; i < 3 ; i++) {
+			for (auto kv : balas) {
+				if (!kv.second->existeBala() && (kv.second->getId() > 100) && (kv.second->getId() < 151)) {
+					kv.second->crear(idEmisor, posxEmisor + offsetX, posyEmisor + offsetY, getDireccionById(idEmisor), 64, 11);
+					break;
+				}
+			}
+			offsetY += 15;
+			offsetX -= 15;
+		}
+	}
+	else if (tipoArma == SHOTGUN){
+		for (auto kv : balas) {
+			if (!kv.second->existeBala() && (kv.second->getId() > 150) && (kv.second->getId() < 201)) {
+				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 299, 137);
+				kv.second->setShotgun(true);
+				return;
+			}
+		}
+	}
+	else if (tipoArma == RLAUNCHER){
+		for (auto kv : balas) {
+			if (!kv.second->existeBala() && (kv.second->getId() > 200) && (kv.second->getId() < 251)) {
+				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 107, 17);
+				return;
+			}
+		}
+	}
 }
 
 void ObjectManager::inicializarBalaEnemiga(int posx, int posy) {
 
 	for (auto kv : balas){
-		if (!kv.second->existeBala() && (kv.second->getId() > 50)){
+		if (!kv.second->existeBala() && (kv.second->getId() > 50) && (kv.second->getId() < 101)){
 			kv.second->crearBalaEnemiga(posx, posy, false, 42, 7);
 			return;
 		}

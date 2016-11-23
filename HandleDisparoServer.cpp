@@ -41,11 +41,39 @@ void* handleDisparoFunc(void* argKh) {
             if (*isKhOn && !(*isKhPaused)) {
 
                 Direccion* direccion = objectManager->getDireccionById(idEmisor);
+                int tipoArma = personaje->getArmaActual();
 
-                if (direccion->isDerecha()) objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 60, personaje->getPosy() + 20);
-                else if (direccion->isIzquierda()) objectManager->inicializarBala(idEmisor, personaje->getPosCamara(), personaje->getPosy() + 20);
-                else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isArriba()) objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 30, personaje->getPosy());
-                else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isAbajo()) objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 30, personaje->getPosy() + 80);
+                if (tipoArma == 0) {
+                    if (direccion->isDerecha())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 60,personaje->getPosy() + 20, tipoArma);
+                    else if (direccion->isIzquierda())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara(), personaje->getPosy() + 20, tipoArma);
+                    else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isArriba())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 30, personaje->getPosy(), tipoArma);
+                    else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isAbajo())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 30, personaje->getPosy() + 80, tipoArma);
+                }
+                else if (tipoArma == 2){
+                    if (direccion->isDerecha())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 80,personaje->getPosy() - 25, tipoArma);
+                    else if (direccion->isIzquierda())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() - 300, personaje->getPosy() - 25, tipoArma);
+                    else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isArriba())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() - 110, personaje->getPosy() - 300, tipoArma);
+                    else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isAbajo())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() - 137, personaje->getPosy() + 160, tipoArma);
+                }
+                else {
+                    if (direccion->isDerecha())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() + 80,personaje->getPosy() + 30, tipoArma);
+                    else if (direccion->isIzquierda())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() - 20, personaje->getPosy() + 30, tipoArma);
+                    else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isArriba())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() - 15, personaje->getPosy() - 20, tipoArma);
+                    else if (!direccion->isDerecha() && !direccion->isIzquierda() && direccion->isAbajo())
+                        objectManager->inicializarBala(idEmisor, personaje->getPosCamara() - 15, personaje->getPosy() + 80, tipoArma);
+                }
+
 
                 personaje->setDisparando(true);
                 for (int i = 0; i < 10; i++){

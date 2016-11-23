@@ -13,7 +13,13 @@
 #define ENVOLVENTE_SALTANDO_DERECHA 4
 #define ENVOLVENTE_SALTANDO_IZQUIERDA 5
 
+#define GUN 0
+#define HMGUN 1
+#define SHOTGUN 2
+#define RLAUNCHER 3
+
 Personaje::Personaje() {
+    armaActual = GUN;
 
     Envolvente* env = new Envolvente();
     Rectangulo* rect = new Rectangulo(&posx, &posy, 45, 81);
@@ -390,6 +396,26 @@ void Personaje::gravedad() {
 
 void Personaje::setGravity(bool aux) {
     gravity = aux;
+}
+
+int Personaje::getArmaActual() {
+    return armaActual;
+}
+
+void Personaje::setArmaActual(int aux) {
+    armaActual = aux;
+}
+
+void Personaje::setShotGunSprites() {
+    ANIMACION_ACTUAL = ANIMACION_DISPARANDO_SHOTGUN;
+    ANIMACION_ACTUAL_DISPARANDO_ABAJO = ANIMACION_DISPARANDO_SHOTGUN_ABAJO;
+    ANIMACION_ACTUAL_DISPARANDO_ARRIBA = ANIMACION_DISPARANDO_SHOTGUN_ARRIBA;
+}
+
+void Personaje::setGunSprites() {
+    ANIMACION_ACTUAL = ANIMACION_DISPARANDO_GUN;
+    ANIMACION_ACTUAL_DISPARANDO_ABAJO = ANIMACION_DISPARANDO_GUN_ABAJO;
+    ANIMACION_ACTUAL_DISPARANDO_ARRIBA = ANIMACION_DISPARANDO_GUN_ARRIBA;
 }
 
 Personaje::~Personaje() {

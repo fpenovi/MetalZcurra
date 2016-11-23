@@ -39,6 +39,9 @@ private:
 	int levelHeight;
 	Textura* TEXTURA_BALA;
 	Textura* TEXTURA_BALA_ENEMIGA;
+	Textura* TEXTURA_BALA_HMGUN;
+	Textura* TEXTURA_BALA_SHOTGUN;
+	Textura* TEXTURA_BALA_RLAUNCHER;
 	vector<Textura*> TEXTURAS_ENEMIGOS;
 	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim, saltando;
 	int miId;
@@ -93,6 +96,9 @@ public:
 		renderizador = NULL;
 		delete TEXTURA_BALA;
 		delete TEXTURA_BALA_ENEMIGA;
+		delete TEXTURA_BALA_HMGUN;
+		delete TEXTURA_BALA_SHOTGUN;
+		delete TEXTURA_BALA_RLAUNCHER;
 		delete fondo;
 
 		//Quit SDL subsystems
@@ -858,6 +864,23 @@ public:
 			bala->cargarImagen();
 			addBala(i, bala);
 		}
+		for (i ; i < 151 ; i++) {
+			VistaBala* bala = new VistaBala(TEXTURA_BALA_HMGUN);
+			bala->cargarImagen();
+			addBala(i, bala);
+		}
+		for (i ; i < 201 ; i++) {
+			VistaBala* bala = new VistaBala(TEXTURA_BALA_SHOTGUN);
+			bala->cargarImagen();
+			bala->cargarImagenShotgun();
+			bala->setShotgun(true);
+			addBala(i, bala);
+		}
+		for (i ; i < 251 ; i++) {
+			VistaBala* bala = new VistaBala(TEXTURA_BALA_RLAUNCHER);
+			bala->cargarImagen();
+			addBala(i, bala);
+		}
 	}
 
 	void crearEnemigos(){
@@ -876,6 +899,14 @@ public:
 		TEXTURA_BALA_ENEMIGA = new Textura(renderizador);
 		if( !TEXTURA_BALA_ENEMIGA->cargarImagen( "imag/sprites/sfx/soldierBullet.png") ) printf( "Fallo imagen bala enemiga\n" );
 
+		TEXTURA_BALA_HMGUN = new Textura(renderizador);
+		if( !TEXTURA_BALA_HMGUN->cargarImagen( "imag/sprites/sfx/disparoHMGun.png") ) printf( "Fallo imagen bala HMGUN\n" );
+
+		TEXTURA_BALA_SHOTGUN = new Textura(renderizador);
+		if( !TEXTURA_BALA_SHOTGUN->cargarImagen( "imag/sprites/sfx/disparoSgun.png") ) printf( "Fallo imagen bala SHOTGUN\n" );
+
+		TEXTURA_BALA_RLAUNCHER = new Textura(renderizador);
+		if( !TEXTURA_BALA_RLAUNCHER->cargarImagen( "imag/sprites/sfx/disparoRLauncher.png") ) printf( "Fallo imagen bala RLAUNCHER\n" );
 	}
 
 	void cargarTexturaEnemigo(){
@@ -939,11 +970,12 @@ public:
 	}
 
 	void actualizarBala(){
-		int derecha, arriba, abajo, izquierda;
+		int derecha, arriba, abajo, izquierda, frame;
 		derecha = spriteIdx;
 		izquierda = aim;
 		arriba = posCam;
 		abajo = conectado;
+		frame = saltando;
 
 		VistaBala* bala = getBalaById(id);
 
@@ -954,6 +986,7 @@ public:
 		bala->setArriba(arriba);
 		bala->setAbajo(abajo);
 		bala->setIzquierda(izquierda);
+		if (bala->isShotgun()) bala->setFrame(frame);
 
 	}
 
