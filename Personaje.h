@@ -49,7 +49,6 @@ private:
     int frameDisparandoArriba = 0;
     int frameDisparandoAbajo = 0;
 	Envolvente* envolvente;
-	vector<Envolvente*> envolventesPosibles;
 
     const static int ANIMACION_PARADO = 4;
     const static int ANIMACION_CORRIENDO = 18;

@@ -102,7 +102,7 @@ bool Nivel::hayColision(Personaje *personaje) {
 	Envolvente* envolvente = personaje->getEnvolvente();
 
 	for (Plataforma* plataforma : plataformas){
-		if (envolvente->hayColision(plataforma->getEnvolvente())) return true;
+		if (envolvente->hayColisionConPlataforma(plataforma->getEnvolvente())) return true;
 	}
 	return false;
 }

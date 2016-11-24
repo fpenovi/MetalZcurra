@@ -75,8 +75,12 @@ void* handleDisparoFunc(void* argKh) {
                 }
 
 
+                int cant;
+                if (tipoArma != 0) cant = 4;
+                else cant = 10;
+
                 personaje->setDisparando(true);
-                for (int i = 0; i < 10; i++){
+                for (int i = 0; i < cant; i++){
                     ProtocoloVistaUpdate update;
                     personaje->setSprites();
 
