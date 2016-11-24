@@ -332,6 +332,10 @@ void ObjectManager::crearEnemigosManager() {
 
 }
 
+void ObjectManager::setBonuses(vector<Bonus*> bonuses) {
+	// ToDo agregar bonuses al map
+}
+
 Boss* ObjectManager::getBoss() {
 	return this->boss;
 }

@@ -63,6 +63,7 @@ bool Enemigo::mover() {
 
 void Enemigo::morir(){
     muerto = true;
+    droppearBonus();
 }
 
 int Enemigo::getAncho(){
@@ -189,6 +190,15 @@ bool Enemigo::verificarAlan(){
 
 Envolvente* Enemigo::getEnvolvente(){
     return envolvente;
+}
+
+void Enemigo::setBonus(Bonus* bonus) {
+    this->bonus = bonus;
+}
+
+void Enemigo::droppearBonus() {
+    if (!this->bonus)
+        this->bonus->setPosicion(posx, posy);
 }
 
 Enemigo::~Enemigo() {

@@ -10,6 +10,7 @@
 
 #include <string>
 #include "Envolvente.h"
+#include "Personaje.h"
 
 using namespace std;
 
@@ -28,6 +29,8 @@ public:
 	static string Recover;
 
 	Bonus(int x, int y);
+	void setPosicion(int x, int y);
+	virtual void aplicarEfecto(Personaje* personaje) = 0;
 	virtual ~Bonus();
 };
 
