@@ -14,6 +14,7 @@
 #include "ObjectManager.h"
 #include "Recover.h"
 #include "KillAll.h"
+#include <random>
 
 Nivel::Nivel(string xmlPath) {
 
@@ -96,7 +97,7 @@ Boss* Nivel::crearBoss(vector<string> bossStr) {
 	if (this->nombre.compare("train") == 0)
 		boss = new Rshobu(x, y, delta);
 
-	// agregar restantes
+	// ToDo agregar restantes
 	return boss;
 }
 
@@ -133,16 +134,16 @@ vector<string> Nivel::getCapas() {
 
 Bonus* Nivel::makeBonusOrNull() {
 
-	srand(time(NULL));
+	random_device randomGenerator;
 	// Ponderado 50% NULL, 25% Bonus1, 25% bonus2
 
-	int randomInt = rand() % 100;
+	int randomInt = randomGenerator() % 100;
 
-	if (randomInt < 75)
-		return new Recover(0, 0);
-
-	if (randomInt < 100)
+	if (randomInt > 75)
 		return new KillAll(0, 0);
+
+	if (randomInt > 50)
+		return new Recover(0, 0);
 
 	return NULL;
 }

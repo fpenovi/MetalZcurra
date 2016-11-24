@@ -47,6 +47,8 @@ private:
     int frameDisparando = 0;
     int frameQuieto = 0;
 
+	void droppearBonus();
+
 
 public:
     Enemigo(int x, int y, int delta);

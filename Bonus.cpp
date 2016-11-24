@@ -17,6 +17,11 @@ Bonus::Bonus(int x, int y) {
 	this->envolvente->agregarComponente(new Rectangulo(&this->x,&this->y , ANCHO_BONUS, ALTO_BONUS));
 }
 
+void Bonus::setPosicion(int x, int y) {
+	this->x = x;
+	this->y = y;
+}
+
 Bonus::~Bonus() {
 	// TODO Auto-generated destructor stub
 }
