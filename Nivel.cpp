@@ -33,7 +33,7 @@ Nivel::Nivel(string xmlPath) {
 	this->alto = stoi(tamNivel[1]);
 	this->capas = capas;
 	this->plataformas = crearPlataformas(plataformas);
-	//OM.setBonuses = crearBonuses(bonuses);
+	OM->setBonuses(crearBonuses(bonuses));
 	OM->setBoss(crearBoss(boss));
 	OM->crearEnemigos(crearEnemigos(enemigos));
 	this->boss = crearBoss(boss);

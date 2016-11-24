@@ -23,7 +23,7 @@ void Bonus::setPosicion(int x, int y) {
 }
 
 Bonus::~Bonus() {
-	// TODO Auto-generated destructor stub
+	delete this->envolvente;
 }
 
 string Bonus::HMGun = "HMGun";

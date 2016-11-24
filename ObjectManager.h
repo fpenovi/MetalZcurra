@@ -91,7 +91,7 @@ public:
 
 	// Bonuses
 	unordered_map<int, Bonus*>* getBonusesHash();
-	void setBonuses();
+	void setBonuses(vector<Bonus*> bonuses);
 };
 
 
