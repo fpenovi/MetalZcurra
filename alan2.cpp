@@ -7,6 +7,7 @@
 #include <iostream>
 #include <SDL2/SDL_ttf.h>
 #include <deque>
+#include <unistd.h>
 
  
 using namespace std;
@@ -17,6 +18,7 @@ const int SCREEN_HEIGHT = 600;
 SDL_Renderer* renderizador;
 SDL_Window* ventana;
 TTF_Font* gFont;
+
 
 
 //Texture wrapper class
@@ -184,6 +186,9 @@ class Bala
 		Textura TEXTURA_BALA;
 		int ancho;
 		int alto;
+		int frame;
+		const static int ANIMACION_BALA=12;
+		SDL_Rect spriteBala[ ANIMACION_BALA ];
 	public:
 		Bala(int x, int y, int personaje){
 			existe=true;
@@ -191,6 +196,7 @@ class Bala
 			posy=y;
 			id_personaje=personaje;
 			velocidad=10;
+			frame=0;
 
 		}
 
@@ -210,18 +216,35 @@ class Bala
 			return id;
 		}
 		bool cargarImagen(){
-			if( !TEXTURA_BALA.cargarImagen( "imag/bala/bala.xcf") )
+			if( !TEXTURA_BALA.cargarImagen( "imag/sprites/disparoSgun.png") )
 			{
 				printf( "Fallo imagen bala\n" );
 				return false;
 			}
+			else
+			{	
+				for (int i = 0;i<ANIMACION_BALA;i++){
+					spriteBala[ i ].x = i*299;
+					spriteBala[ i ].y = 0;
+					spriteBala[ i ].w = 299;
+					spriteBala[ i ].h = 137;
+				}
+			}
 
-			ancho=TEXTURA_BALA.getAncho();
-			alto=TEXTURA_BALA.getAlto();
+			ancho=299;//TEXTURA_BALA.getAncho();
+			alto=137;//TEXTURA_BALA.getAlto();
 			return true;
 		}
 		bool render(){
-			if (existe) TEXTURA_BALA.render(posx+40,posy+15);
+			if (!existe) return false;
+			SDL_Rect* currentClip = &spriteBala[frame/3];
+			TEXTURA_BALA.render(posx+40,posy+15,currentClip);
+			++frame;
+			if( frame /3 >= ANIMACION_BALA ){
+				frame = 0;
+			}
+			return true;
+			//TEXTURA_BALA.render(posx+40,posy+15);
 		}
 		void desaparecer(){
 			existe=false;
@@ -562,6 +585,9 @@ class Arma
 
 		deque<Bala*> getBalas(){
 			return balas;
+		}
+		void transparentar(){
+			TEXTURA_ARMA_PARADO.setAlpha(120);
 		}
 };
 
@@ -966,7 +992,6 @@ class Personaje
 		}
 		void morir(){
 			muerto =true;
-			//TEXTURA_PERSONAJE_PARADO_TORSO.setColor(128,128,128);
 		}
 		int getPosx(){
 			return posCamara;
@@ -980,6 +1005,10 @@ class Personaje
 		void sumarPuntos(int p){
 			puntaje+=p;
 			cout << puntaje << endl;
+		}
+		void transparentar(){
+			TEXTURA_PERSONAJE_PARADO_PIES.setAlpha(120);
+			arma.transparentar();
 		}
 };
 
@@ -1218,6 +1247,9 @@ class Enemigo
 		void mover(){
 			if (!muerto) posCamara-=velx;
 		}
+		void transparentar(){
+			TEXTURA_ENEMIGO_QUIETO.setAlpha(120);
+		}
 };
 
 class Layer
@@ -1312,6 +1344,10 @@ class Layer
 			velocidad = (anchomax-800)/(ancho-800);
 			vuelta = int(anchomax) / ancho;
 		}
+
+		void transparentar(){
+			fondo.setAlpha(120);
+		}
 };
 
 class Background
@@ -1362,6 +1398,13 @@ class Background
 		int anchoMaximo(){
 			return anchoMax;
 		}
+		void transparentar(){
+			for (int i=0; i<contadorCapas;i++){
+				Layer *layer = &capas[i];
+				layer->transparentar();
+				//scroll=layer->scrollear(personajex);
+			}
+		}
 };
 
 class Texto
@@ -1384,7 +1427,7 @@ class Texto
 
 		bool cargarTitulo(){
 			bool success = true;
-			gFont = TTF_OpenFont( "imag/neogray.ttf", 28 );
+			gFont = TTF_OpenFont( "imag/sprites/letras/MetalSlug.ttf", 28 );
 			if( gFont == NULL )
 			{
 				printf( "FALLO CARGANDO EL TIPO DE LETRA! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -1393,7 +1436,8 @@ class Texto
 			else
 			{	
 				//lo pongo en negro
-				SDL_Color textColor = {255, 0, 0, 0xFF };
+				//SDL_Color textColor = {255, 0, 0, 0xFF };
+				SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF };
 				if( !texturaTitulo.loadFromText( titulo, textColor ) )
 				{
 					printf( "Fallo cargando texto!\n" );
@@ -1478,7 +1522,7 @@ class Texto
 				}
 			}
 			texturaTitulo.render(140,350 );
-			texturaInput.render(285,350);
+			texturaInput.render(310,350);
 
 			SDL_StopTextInput();
 			return quit;
@@ -1491,6 +1535,52 @@ class Texto
 		void renderTitulo(int x,int y){
 
 			texturaTitulo.render(x,y);
+		}
+};
+
+class Puntaje
+{
+	private:	
+		Textura textura_puntaje;
+		int puntaje;
+		string puntajeString;
+		int posx;
+		int posy;
+	public:
+		Puntaje(int x,int y){
+			posx=x;
+			posy=y;
+			puntaje=0;
+			puntajeString="0";		
+		}
+
+		void sumarPuntos(int x){
+			puntaje+=x;
+
+			puntajeString=to_string(puntaje);
+
+			cout << puntaje << endl;
+			cout << puntajeString << endl;
+
+		}
+
+		void nuevaPos(int x, int y){
+			posx=x;
+			posy=y;
+		}
+
+		int total(){
+			return puntaje;
+		}
+
+		void render(){
+			SDL_Color textColor = {0, 0, 0, 0xFF };
+
+			if( !textura_puntaje.loadFromText( puntajeString, textColor ) )
+			{
+				printf( "Fallo cargando puntaje!\n" );
+			}
+			textura_puntaje.render(posx,posy);
 		}
 };
 
@@ -1588,6 +1678,16 @@ class Entrada
 			TEXTURA_EXPLOSION2.free();
 			TEXTURA_EXPLOSION3.free();
 			TEXTURA_METAL.free();
+			TTF_CloseFont( gFont );
+			//ESTOY CERRANDO Y ABRIENDO AL PEDO AHORA
+			//PORQUE USO EL MISMO TIPO DE LETRA
+			//TENGO QUE CERRARLO Y ABRIRLO SOLO SI CAMBIO LA LETRA
+			//EN EL TP PROBABLEMENTE TENGAN QUE HACERLO EN OTRO LADO
+			gFont = TTF_OpenFont( "imag/sprites/letras/MetalSlug.ttf", 28 );
+			if ( gFont == NULL )
+			{
+				printf( "FALLO CARGANDO EL TIPO DE LETRA! SDL_ttf Error: %s\n", TTF_GetError() );
+			}
 		}
 
 		void pedirTodo(){
@@ -1676,7 +1776,7 @@ class Entrada
 
 			int vueltas=0;
 
-			while (!quit){
+			//while (!quit){
 				while( SDL_PollEvent( &e ) != 0 )
 				{
 					if( e.type == SDL_QUIT )
@@ -1698,34 +1798,387 @@ class Entrada
 				fondo.render(0,0);
 				SDL_Rect* currentClip = &spriteMetal[ 6 ];
 				TEXTURA_METAL.render( 115, 0, currentClip);
-				esperandoTexto.renderTitulo(180,400);
-				if (vueltas % 100 <= 33) puntitos.renderTitulo(550,400);
+				esperandoTexto.renderTitulo(120,400);
+				if (vueltas % 100 <= 33) puntitos.renderTitulo(360,440);
 				else if (vueltas % 100<= 66){
-					puntitos.renderTitulo(550,400);
-					puntitos.renderTitulo(560,400);
+					puntitos.renderTitulo(360,440);
+					puntitos.renderTitulo(370,440);
 				}
 				else {
-					puntitos.renderTitulo(550,400);
-					puntitos.renderTitulo(560,400);
-					puntitos.renderTitulo(570,400);
+					puntitos.renderTitulo(360,440);
+					puntitos.renderTitulo(370,440);
+					puntitos.renderTitulo(380,440);
 					}
 				SDL_RenderPresent( renderizador );
 				vueltas++;
-			}	
+			//}	
 		}
 };
 
+class PantallaFinal
+{
+	private:
+		Textura textura_perdieron;
+		int cantidadJugadores;
+
+
+	public:
+		PantallaFinal(int cant){
+			cantidadJugadores=cant;
+		}
+		void lose(){
+			cout << "LOSE" << endl;
+			SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF };
+			string text = "YOU LOSE MOTHER FUCKERS";
+			for (int i=text.length()-1; i>=0;i--){
+				if( !textura_perdieron.loadFromText( text.substr(i), textColor ) )
+				{
+					printf( "Fallo cargando puntaje!\n" );
+				}
+				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0xFF );
+				SDL_RenderClear( renderizador );
+				textura_perdieron.render(100,280);
+				SDL_RenderPresent( renderizador );
+				usleep(70000);
+			}
+			SDL_Event e;
+			bool quit=false;
+			while (!quit){
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					if( e.type == SDL_QUIT )
+					{
+						quit=true;
+					}
+					else if( e.type == SDL_KEYDOWN )
+					{
+						if (e.key.keysym.sym == SDLK_RETURN){
+							quit=true;
+						}
+					}
+				}
+			}
+		}
+
+		void pantallaPuntajes(int p1, int p2, int p3, int p4){
+
+			if (p1 > 0){
+				Puntaje puntaje1=Puntaje(210,210);
+				Textura j1=Textura();
+				SDL_Color textColor = {0, 0, 0, 0xFF };
+				if( !j1.loadFromText( "Jugador 1", textColor ) )
+				{
+					printf( "Fallo cargando puntaje1!\n" );
+				}
+				j1.render(120,170);
+				puntaje1.sumarPuntos(p1);
+				puntaje1.render();
+			} 
+			if (p2 > 0){
+				Puntaje puntaje2=Puntaje(510,210);
+				Textura j2=Textura();
+				SDL_Color textColor = {0, 0, 0, 0xFF };
+				if( !j2.loadFromText( "Jugador 2", textColor ) )
+				{
+					printf( "Fallo cargando puntaje2!\n" );
+				}
+				j2.render(450,170);
+				puntaje2.sumarPuntos(p2);
+				puntaje2.render();
+			} 
+			if (p3 > 0){
+				Puntaje puntaje3=Puntaje(210,350);
+				Textura j3=Textura();
+				SDL_Color textColor = {0, 0, 0, 0xFF };
+				if( !j3.loadFromText( "Jugador 3", textColor ) )
+				{
+					printf( "Fallo cargando puntaje3!\n" );
+				}
+				j3.render(120,300);
+				puntaje3.sumarPuntos(p3);
+				puntaje3.render();
+			} 
+			if (p4 > 0){
+				Puntaje puntaje4=Puntaje(510,350);
+				Textura j4=Textura();
+				SDL_Color textColor = {0, 0, 0, 0xFF };
+				if( !j4.loadFromText( "Jugador 4", textColor ) )
+				{
+					printf( "Fallo cargando puntaje4!\n" );
+				}
+				j4.render(450,300);
+				puntaje4.sumarPuntos(p4);
+				puntaje4.render();
+			} 
+
+		}
+};
+
+class Bomba{
+	private:
+		int posx;
+		int posy;
+		Textura TEXTURA_BOMBA;
+		Textura TEXTURA_EXPLOSION;
+		const static int ANIMACION_EXPLOSION=10;
+		SDL_Rect spriteExplosion[ ANIMACION_EXPLOSION ];
+		int frameExplosion;
+		bool explotar;
+		bool existe;
+		int ancho;
+	public:
+		Bomba(int x, int y){
+			posx=x;
+			posy=y;
+			explotar=false;
+			ancho=54; //TAMANIO DE LAF OTO DE LA BOMBA
+			frameExplosion=0;
+			existe=true;
+			if( !TEXTURA_BOMBA.cargarImagen( "imag/sprites/R-Shobu/disparo.png") )
+			{
+				printf( "Fallo imagen bomba\n" );
+			}
+
+			if( !TEXTURA_EXPLOSION.cargarImagen( "imag/sprites/R-Shobu/explosion.png") )
+			{
+				printf( "Fallo sprite explosionq\n" );
+			}
+			else
+			{	
+				for (int i = 0;i<ANIMACION_EXPLOSION;i++){
+					spriteExplosion[ i ].x = i*148;
+					spriteExplosion[ i ].y = 0;
+					spriteExplosion[ i ].w = 148;
+					spriteExplosion[ i ].h = 66;
+				}
+			}
+		}
+		bool caer(){
+			if (!existe) return false;
+			if (explotar) return true;
+			posy+=7;
+			if (posy>=360) explotar=true;
+			return true;
+		}
+		void render(){
+			if (!explotar) TEXTURA_BOMBA.render(posx,posy);
+			else{
+				SDL_Rect* currentClip = &spriteExplosion[ frameExplosion / 4];
+				TEXTURA_EXPLOSION.render(posx,posy,currentClip);
+				++frameExplosion;
+
+				if( frameExplosion / 4 >= ANIMACION_EXPLOSION )
+				{
+					
+					existe=false;
+				}	
+			}
+		}
+};
+
+class Helicoptero{
+	private:
+		Textura TEXTURA_HELICOPTERO_DERECHA;
+		Textura TEXTURA_HELICOPTERO_IZQUIERDA;
+		Textura TEXTURA_HELICE_DERECHA;
+		Textura TEXTURA_HELICE_IZQUIERDA;
+		const static int ANIMACION_HELICOPTERO_DERECHA=12;
+		const static int ANIMACION_HELICOPTERO_IZQUIERDA=7;
+		const static int ANIMACION_HELICE=5;
+		SDL_Rect spriteHelicopteroDerecha[ ANIMACION_HELICOPTERO_DERECHA ];
+		SDL_Rect spriteHelicopteroIzquierda[ ANIMACION_HELICOPTERO_IZQUIERDA ];
+		SDL_Rect spriteHeliceDerecha[ ANIMACION_HELICE ];
+		SDL_Rect spriteHeliceIzquierda[ ANIMACION_HELICE ];
+		//Bomba bomba;
+		int posx;
+		int posy;
+		bool derecha;
+		int frameHeliceDerecha;
+		int frameHeliceIzquierda;
+		int frameHelicopteroDerecha;
+		int frameHelicopteroIzquierda;
+		int ancho;
+		int alto;
+		bool disparando=false;
+		deque<Bomba*> bombas;
+		int cantBombas=0;
+	public:
+
+		Helicoptero(int x, int y){
+			posx=x;
+			posy=y;
+			derecha=false;
+			alto=140;
+			ancho=190;
+			bool success = true;
+			int i;
+
+			if( !TEXTURA_HELICOPTERO_DERECHA.cargarImagen( "imag/sprites/R-Shobu/moveRight.png") )
+			{
+				printf( "Fallo sprite gelicoptero derecha\n" );
+				success = false;
+			}
+			else
+			{	
+				for (i = 0;i<ANIMACION_HELICOPTERO_DERECHA;i++){
+					spriteHelicopteroDerecha[ i ].x = i*299;
+					spriteHelicopteroDerecha[ i ].y = 0;
+					spriteHelicopteroDerecha[ i ].w = 299;
+					spriteHelicopteroDerecha[ i ].h = 128;
+				}
+			}
+
+			if( !TEXTURA_HELICOPTERO_IZQUIERDA.cargarImagen( "imag/sprites/R-Shobu/moveLeft.png") )
+			{
+				printf( "Fallo sprite gelicoptero izq\n" );
+				success = false;
+			}
+			else
+			{	
+				for (i = 0;i<ANIMACION_HELICOPTERO_IZQUIERDA;i++){
+					spriteHelicopteroIzquierda[ i ].x = i*299;
+					spriteHelicopteroIzquierda[ i ].y = 0;
+					spriteHelicopteroIzquierda[ i ].w = 299;
+					spriteHelicopteroIzquierda[ i ].h = 146;
+				}
+			}
+
+			if( !TEXTURA_HELICE_DERECHA.cargarImagen( "imag/sprites/R-Shobu/aspasRight.png") )
+			{
+				printf( "Fallo sprite helice derecha\n" );
+				success = false;
+			}
+			else
+			{	
+				for (i = 0;i<ANIMACION_HELICE;i++){
+					spriteHeliceDerecha[ i ].x = i*299;
+					spriteHeliceDerecha[ i ].y = 0;
+					spriteHeliceDerecha[ i ].w = 299;
+					spriteHeliceDerecha[ i ].h = 19;
+				}
+			}
+
+			if( !TEXTURA_HELICE_IZQUIERDA.cargarImagen( "imag/sprites/R-Shobu/aspasLeft.png") )
+			{
+				printf( "Fallo sprite HELICE izq\n" );
+				success = false;
+			}
+			else
+			{	
+				for (i = 0;i<ANIMACION_HELICE;i++){
+					spriteHeliceIzquierda[ i ].x = i*299;
+					spriteHeliceIzquierda[ i ].y = 0;
+					spriteHeliceIzquierda[ i ].w = 299;
+					spriteHeliceIzquierda[ i ].h = 34;
+				}
+			}
+		}
+		~Helicoptero(){
+			TEXTURA_HELICOPTERO_DERECHA.free();
+			TEXTURA_HELICOPTERO_IZQUIERDA.free();
+			TEXTURA_HELICE_DERECHA.free();
+			TEXTURA_HELICE_IZQUIERDA.free();
+		}
+		void mover(){
+			if (derecha) moverDerecha();
+			else moverIzquierda();
+		}
+		void moverDerecha(){
+			posx+=5;
+			if (posx+ancho>800) {
+				derecha=false;
+				frameHelicopteroIzquierda=0;
+				frameHelicopteroDerecha=0;
+				cout << "reinicio frames" <<endl;
+			}
+		}
+		void moverIzquierda(){
+			posx-=5;
+			if (posx<0) {
+				derecha=true;
+				frameHelicopteroDerecha=0;
+				frameHelicopteroIzquierda=0;
+				cout << "reinicio frames" <<endl;
+			}
+		}
+		void render(){
+			if (derecha) animacionDerecha();
+			else animacionIzquierda();
+			renderBombas();
+		}
+		void animacionDerecha(){
+			SDL_Rect* currentClipHelice = &spriteHeliceDerecha[ frameHeliceDerecha / 4];
+			TEXTURA_HELICE_DERECHA.render(posx,posy,currentClipHelice);
+
+			SDL_Rect* currentClipHelicoptero = &spriteHelicopteroDerecha[ frameHelicopteroDerecha / 4];
+			TEXTURA_HELICOPTERO_DERECHA.render(posx,posy+10,currentClipHelicoptero);
+
+			++frameHeliceDerecha;
+
+			if( frameHeliceDerecha / 4 >= ANIMACION_HELICE )
+			{
+				frameHeliceDerecha = 0;
+			}	
+
+			++frameHelicopteroDerecha;
+
+			if( frameHelicopteroDerecha / 4 >= ANIMACION_HELICOPTERO_DERECHA )
+			{
+				frameHelicopteroDerecha--;
+			}	
+		}
+		void animacionIzquierda(){
+			SDL_Rect* currentClipHelice = &spriteHeliceIzquierda[ frameHeliceIzquierda / 4];
+			TEXTURA_HELICE_IZQUIERDA.render(posx,posy,currentClipHelice);
+			SDL_Rect* currentClipHelicoptero = &spriteHelicopteroIzquierda[ frameHelicopteroIzquierda / 4];
+			TEXTURA_HELICOPTERO_IZQUIERDA.render(posx,posy+10,currentClipHelicoptero);
+
+			++frameHeliceIzquierda;
+			if( frameHeliceIzquierda / 4 >= ANIMACION_HELICE )
+			{
+				frameHeliceIzquierda = 0;
+			}	
+
+			++frameHelicopteroIzquierda;
+			if( frameHelicopteroIzquierda / 4 >= ANIMACION_HELICOPTERO_IZQUIERDA )
+			{
+				frameHelicopteroIzquierda--;
+			}	
+		}
+		void disparar(){
+			Bomba *bomba = new Bomba(posx+(ancho/2),posy+alto-30);
+			bombas.push_front(bomba);
+			cantBombas++;
+		}
+		void renderBombas(){
+			bool vive;
+			if (cantBombas==0) return;
+			for(int i = 0; i < cantBombas; i++){
+        		Bomba *bomba=bombas[i];
+        		vive=bomba->caer();
+        		if (vive) {
+        			bomba->render();
+        		}
+			}
+			if (!vive) {
+				bombas.pop_back();
+				cantBombas--;
+			}
+		}
+};
 
 class Programa
 {
 	private:
 		int cantPersonajes=0;
 		Personaje* personajes[4];
+		Puntaje* puntajes[4];
 		deque<Enemigo*> enemigos;
 		int cantEnemigos;
 		int posMapa=0;
 		Background* fondo;
 		int posBackground;
+		PantallaFinal perdieronInutiles = PantallaFinal(4);
 
 	public:
 
@@ -1751,7 +2204,6 @@ class Programa
 			IMG_Quit();
 			SDL_Quit();
 		}
-
 
 		bool iniciar(){
 			//flag
@@ -1802,6 +2254,11 @@ class Programa
 							success = false;
 						}
 					}
+					/*PUNTAJESFONT = TTF_OpenFont( "imag/sprites/letras/puntos.ttf", 28 );
+					if ( PUNTAJESFONT == NULL )
+					{
+						printf( "FALLO CARGANDO EL TIPO DE LETRA! SDL_ttf Error: %s\n", TTF_GetError() );
+					}*/
 				}
 			}
 
@@ -1819,6 +2276,8 @@ class Programa
 		void asignarID(Personaje* p){
 			p->asignarID(cantPersonajes);
 			personajes[cantPersonajes]=p;
+			Puntaje* puntos = new Puntaje(50*(cantPersonajes+1),0);
+			puntajes[cantPersonajes]=puntos;
 			cantPersonajes++;
 		}
 
@@ -1829,6 +2288,8 @@ class Programa
 				Personaje* p=personajes[i];
 				seMovio=p->mover(4500);
 				p->render(seMovio);
+				Puntaje* p2=puntajes[i];
+				p2->render();
 			}
 			for (int i=0;i<cantEnemigos;i++){
 				Enemigo* e=enemigos[i];
@@ -1858,7 +2319,7 @@ class Programa
 	        				e->morir();
 	        				bala->desaparecer();
 	        				muerto=true;
-	        				personajes[p]->sumarPuntos(10);
+	        				puntajes[p]->sumarPuntos(10);
 	        			}
 	        			else muerto=false;
 	        		}
@@ -1891,8 +2352,48 @@ class Programa
 			enemigos.push_front(e);
 			cantEnemigos++;
 		}	
+		void perdieronTodos(){
+			perdieronInutiles.lose();
+		}
+		void ponerPuntajes(){
+			bool seMovio;
+			fondo->transparentar();
+			for (int i=0;i<cantPersonajes;i++){
+				Personaje* p=personajes[i];
+				p->transparentar();				
+			}
+			for (int i=0;i<cantEnemigos;i++){
+				Enemigo* e=enemigos[i];
+				e->transparentar();
+			};
+			perdieronInutiles.pantallaPuntajes(300,300,300,300);
+		}
+		void finNivel(){
+			SDL_Event e;
+			bool quit=false;
+			while (!quit){
+				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear(renderizador);
+				ponerPuntajes();
+				render();
+				SDL_RenderPresent( renderizador );
+			
+				while( SDL_PollEvent( &e ) != 0 )
+				{
+					if( e.type == SDL_QUIT )
+					{
+						quit=true;
+					}
+					else if( e.type == SDL_KEYDOWN )
+					{
+						if (e.key.keysym.sym == SDLK_RETURN){
+							quit=true;
+						}
+					}
+				}
+			}
+		}
 };
-
 
 int main( int argc, char* args[] )
 {
@@ -1910,6 +2411,7 @@ int main( int argc, char* args[] )
 		//Load mediaojo
 		Personaje personaje;
 		programa.asignarID(&personaje);
+		Helicoptero *helicoptero = new Helicoptero(800,50);
 
 
 		if( !personaje.cargarImagen() || !fondo.agregar("imag/background/1200.png") || !fondo.agregar("imag/background/2400.png") || !fondo.agregar("imag/background/4800.png"))
@@ -1941,14 +2443,24 @@ int main( int argc, char* args[] )
 				if (contador % 300 == 0) {
 					programa.agregarEnemigo();
 				}
+				if (contador %80 == 0) helicoptero->disparar();
 
 				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( renderizador );
-				int scroll=fondo.render(personaje.getX());
+				SDL_RenderClear(renderizador);
+
+				helicoptero->mover();
+				//int scroll=fondo.render(personaje.getX());
+				//programa.ponerPuntajes();
 				programa.render();
+				helicoptero->render();
+				//programa.finNivel();
 				programa.manejarColisiones();
 				SDL_RenderPresent( renderizador );
 				contador++;
+
+				/*if (contador % 500 == 0) {
+					programa.perdieronTodos();
+				}*/
 
 			}
 		}
