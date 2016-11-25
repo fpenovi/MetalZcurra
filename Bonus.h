@@ -19,6 +19,7 @@ class Bonus {
 protected:
 	int x;
 	int y;
+	bool existe;
 	Envolvente* envolvente;
 
 public:
@@ -30,6 +31,8 @@ public:
 
 	Bonus(int x, int y);
 	void setPosicion(int x, int y);
+	void setExiste(bool aux);
+	bool getExiste();
 	virtual void aplicarEfecto(Personaje* personaje) = 0;
 	virtual ~Bonus();
 };

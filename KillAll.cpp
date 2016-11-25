@@ -10,6 +10,4 @@ void KillAll::aplicarEfecto(Personaje *personaje) {
     // ToDO pedirle al object manager los enemigos, discriminar los que estan en pantalla y matarlos.
 }
 
-KillAll::~KillAll() {
-    // Llama al destructor de bonus (padre)
-}
+KillAll::~KillAll() {}

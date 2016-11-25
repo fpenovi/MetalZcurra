@@ -6,11 +6,6 @@
 #include "Personaje.h"
 #include "NivelManager.h"
 
-#define GUN 0
-#define HMGUN 1
-#define SHOTGUN 2
-#define RLAUNCHER 3
-
 Personaje::Personaje() {
     armaActual = SHOTGUN;
 

@@ -197,8 +197,10 @@ void Enemigo::setBonus(Bonus* bonus) {
 }
 
 void Enemigo::droppearBonus() {
-    if (!this->bonus)
+    if (!this->bonus) {
         this->bonus->setPosicion(posx, posy);
+        // ToDo Añadir nuevo objeto en OM
+    }
 }
 
 Enemigo::~Enemigo() {
