@@ -38,11 +38,13 @@ Arma::Arma(SDL_Renderer* render, int id){
 void Arma::renderParado(int x, int y, int frame, SDL_RendererFlip flip){
     if (arriba) {
         currentClip = &spriteApuntaArriba[frame];
-        TEXTURA_ARMA_APUNTA_ARRIBA->render(x,y-5,currentClip,0,NULL,flip );
+        if (shotgun) TEXTURA_ARMA_APUNTA_ARRIBA->render(x,y-50,currentClip,0,NULL,flip );
+        else TEXTURA_ARMA_APUNTA_ARRIBA->render(x,y-5,currentClip,0,NULL,flip );
     }
     else if (abajo) {
         currentClip = &spriteApuntaAbajo[frame];
-        TEXTURA_ARMA_APUNTA_ABAJO->render(x,y+10,currentClip,0,NULL,flip );
+        if (shotgun) TEXTURA_ARMA_APUNTA_ABAJO->render(x,y+5,currentClip,0,NULL,flip );
+        else TEXTURA_ARMA_APUNTA_ABAJO->render(x,y+10,currentClip,0,NULL,flip );
     }
     else{
         currentClip = &spriteParado[frame];
@@ -256,6 +258,8 @@ void Arma::ponerShotgun(){
                  pathApuntarArriba.c_str(),
                  pathDisparoAbajo.c_str(),
                  pathDisparoArriba.c_str());
+
+    shotgun = true;
 }
 
 void Arma::ponerGun(){
@@ -281,6 +285,8 @@ void Arma::ponerGun(){
                  pathApuntarArriba.c_str(),
                  pathDisparoAbajo.c_str(),
                  pathDisparoArriba.c_str());
+
+    shotgun = false;
 }
 
 void Arma::ponerTexturaGris() {

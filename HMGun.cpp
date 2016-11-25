@@ -9,7 +9,10 @@
 
 HMGun::HMGun(int x, int y) : Bonus(x, y) {}
 
-HMGun::~HMGun() {
-	// TODO Auto-generated destructor stub
+void HMGun::aplicarEfecto(Personaje *personaje) {
+    personaje->setArmaActual(Personaje::HMGUN);
+    personaje->setShotGunSprites();
 }
+
+HMGun::~HMGun(){}
 

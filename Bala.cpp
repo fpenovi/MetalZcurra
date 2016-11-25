@@ -125,19 +125,39 @@ int Bala::getIzquierda() {
 void Bala::handleColision(){
     ObjectManager* objectManager = ObjectManager::getInstance();
 
-    if (id <= 50){
+    if (id <= 50 || id > 100){
         unordered_map<int, Enemigo*>* enemigosHash = objectManager->getEnemigosHash();
 
         for (auto kv : *enemigosHash){
             if (kv.second->getExiste()) {
                 if ((kv.second->getEnvolvente())->hayColision(envolvente)) {
                     kv.second->morir();
-                    desaparecer();
+                    if (!shotgun) desaparecer();
                 }
             }
         }
     }
 
+}
+
+void Bala::setShotgun(bool aux) {
+    shotgun = aux;
+}
+
+bool Bala::isShotgun() {
+    return shotgun;
+}
+
+void Bala::moverShotgun() {
+    ++frameShotgun;
+    if( frameShotgun >= ANIMACION_BALA_SHOTGUN ) {
+        frameShotgun = 0;
+        desaparecer();
+    }
+}
+
+int Bala::getFrameShotgun() {
+    return frameShotgun;
 }
 
 Bala::~Bala() {

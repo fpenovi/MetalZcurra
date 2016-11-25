@@ -17,24 +17,36 @@ void VistaBala::cargarImagen(){
     alto = TEXTURA_BALA->getAlto();
 }
 
+void VistaBala::cargarImagenShotgun(){
+    for (int i = 0; i < ANIMACION_BALA_SHOTGUN ;i++){
+        spriteBala[ i ].x = i*299;
+        spriteBala[ i ].y = 0;
+        spriteBala[ i ].w = 299;
+        spriteBala[ i ].h = 137;
+    }
+
+    ancho = 299;
+    alto = 137;
+}
+
 void VistaBala::render(){
     if (existe){
 
         double angulo = 0;
         SDL_RendererFlip flip = SDL_FLIP_NONE;
-        if (derecha && arriba){
+        if (derecha && arriba && !shotgun){
             flip = SDL_FLIP_NONE;
             angulo = 325;
         }
-        else if (derecha && abajo){
+        else if (derecha && abajo && !shotgun){
             flip = SDL_FLIP_NONE;
             angulo = 45;
         }
-        else if (izquierda && arriba ){
+        else if (izquierda && arriba && !shotgun){
             flip = SDL_FLIP_HORIZONTAL;
             angulo = 45;
         }
-        else if (izquierda && abajo){
+        else if (izquierda && abajo && !shotgun){
             flip = SDL_FLIP_HORIZONTAL;
             angulo = 325;
         }
@@ -50,9 +62,16 @@ void VistaBala::render(){
             flip = SDL_FLIP_HORIZONTAL;
         }
 
-        TEXTURA_BALA->render(posx,posy,NULL,angulo,NULL, flip);
+        if (shotgun) {
+            currentClip = &spriteBala[frame];
+            TEXTURA_BALA->render(posx, posy, currentClip, angulo, NULL, flip);
+            if (frame == 11) desaparecer();
+        }
+        else {
+            TEXTURA_BALA->render(posx,posy,NULL,angulo,NULL, flip);
+            if (posx > 800 || posx < 0 || posy < 0 || posy > 520) existe = false;
+        }
 
-        if (posx > 800 || posx < 0 || posy < 0 || posy > 520) existe = false;
     }
 }
 
@@ -121,4 +140,16 @@ void VistaBala::setArriba(int aux) {
 
 void VistaBala::setAbajo(int aux) {
     abajo = (bool) aux;
+}
+
+void VistaBala::setShotgun(bool aux) {
+    shotgun = aux;
+}
+
+bool VistaBala::isShotgun() {
+    return shotgun;
+}
+
+void VistaBala::setFrame(int aux) {
+    frame = aux;
 }

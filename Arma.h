@@ -12,6 +12,7 @@ class Arma
 {
 protected:
     string idPj;
+    bool shotgun = false;
 
     const static int ANIMACION_PARADO = 4;
     const static int ANIMACION_CORRIENDO_TORSO = 12;

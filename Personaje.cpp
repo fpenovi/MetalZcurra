@@ -6,50 +6,16 @@
 #include "Personaje.h"
 #include "NivelManager.h"
 
-#define ENVOLVENTE_PARADO_DERECHA 0
-#define ENVOLVENTE_PARADO_IZQUIERDA 1
-#define ENVOLVENTE_CORRIENDO_DERECHA 2
-#define ENVOLVENTE_CORRIENDO_IZQUIERDA 3
-#define ENVOLVENTE_SALTANDO_DERECHA 4
-#define ENVOLVENTE_SALTANDO_IZQUIERDA 5
-
 Personaje::Personaje() {
+    armaActual = SHOTGUN;
 
-    Envolvente* env = new Envolvente();
-    Rectangulo* rect = new Rectangulo(&posx, &posy, 45, 81);
-    env->agregarComponente(rect);
-    envolventesPosibles.push_back(env);
+    envolvente = new Envolvente();
+    Rectangulo* rect = new Rectangulo(&posCamara, &posy, 45, 81);
+    envolvente->agregarComponente(rect);
+    rect = new Rectangulo(&posCamara, &posy, 31, 5); // Rectangulo de los pies
+    rect->setOffset(7, 76); // Centro el rectangulo
+    envolvente->agregarComponente(rect);
 
-    env = new Envolvente();
-    rect = new Rectangulo(&posx, &posy, 45, 81);
-    rect->setOffset(105, 0);
-    env->agregarComponente(rect);
-    envolventesPosibles.push_back(env);
-
-    env = new Envolvente();
-    rect = new Rectangulo(&posx, &posy, 52, 92);
-    env->agregarComponente(rect);
-    envolventesPosibles.push_back(env);
-
-    env = new Envolvente();
-    rect = new Rectangulo(&posx, &posy, 52, 92);
-    rect->setOffset(98, 0);
-    env->agregarComponente(rect);
-    envolventesPosibles.push_back(env);
-
-    env = new Envolvente();
-    rect = new Rectangulo(&posx, &posy, 63, 93);
-    rect->setOffset(0, 6);
-    env->agregarComponente(rect);
-    envolventesPosibles.push_back(env);
-
-    env = new Envolvente();
-    rect = new Rectangulo(&posx, &posy, 63, 93);
-    rect->setOffset(87, 6);
-    env->agregarComponente(rect);
-    envolventesPosibles.push_back(env);
-
-    envolvente = envolventesPosibles[ENVOLVENTE_PARADO_DERECHA];
 }
 
 void Personaje::moverX() {
@@ -64,19 +30,6 @@ void Personaje::moverX() {
     posCamara += velx;
 
     gravedad();
-
-    if (velx > 0) {
-        envolvente = envolventesPosibles[ENVOLVENTE_CORRIENDO_DERECHA];
-        derecha = true;
-    }
-    else if (velx == 0){
-        if (derecha) envolvente = envolventesPosibles[ENVOLVENTE_PARADO_DERECHA];
-        else envolvente = envolventesPosibles[ENVOLVENTE_PARADO_IZQUIERDA];
-    }
-    else if (velx < 0){
-        envolvente = envolventesPosibles[ENVOLVENTE_CORRIENDO_IZQUIERDA];
-        derecha = false;
-    }
 
     //Que no salga de la pantalla
     if( ( posCamara  < 0 ) || ( posCamara + ancho > SCREEN_WIDTH *3/4) )  {
@@ -111,9 +64,6 @@ void Personaje::moverY() {
     }
 
     posy += vely;
-
-    if (derecha) envolvente = envolventesPosibles[ENVOLVENTE_SALTANDO_DERECHA];
-    else envolvente = envolventesPosibles[ENVOLVENTE_SALTANDO_IZQUIERDA];
 
     if( ( posy < 0 ) || ( posy + envolvente->getAlto() > LEVEL_HEIGHT ) ) {
         //Move back
@@ -382,7 +332,7 @@ bool Personaje::getSaltando() {
 
 void Personaje::gravedad() {
     if (!NivelManager::getInstance()->hayColision(this) && posy < 465 && gravity) {
-        setVely(5);
+        setVely(15);
         moverY();
         saltando = false;
     }
@@ -392,7 +342,26 @@ void Personaje::setGravity(bool aux) {
     gravity = aux;
 }
 
+int Personaje::getArmaActual() {
+    return armaActual;
+}
+
+void Personaje::setArmaActual(int aux) {
+    armaActual = aux;
+}
+
+void Personaje::setShotGunSprites() {
+    ANIMACION_ACTUAL = ANIMACION_DISPARANDO_SHOTGUN;
+    ANIMACION_ACTUAL_DISPARANDO_ABAJO = ANIMACION_DISPARANDO_SHOTGUN_ABAJO;
+    ANIMACION_ACTUAL_DISPARANDO_ARRIBA = ANIMACION_DISPARANDO_SHOTGUN_ARRIBA;
+}
+
+void Personaje::setGunSprites() {
+    ANIMACION_ACTUAL = ANIMACION_DISPARANDO_GUN;
+    ANIMACION_ACTUAL_DISPARANDO_ABAJO = ANIMACION_DISPARANDO_GUN_ABAJO;
+    ANIMACION_ACTUAL_DISPARANDO_ARRIBA = ANIMACION_DISPARANDO_GUN_ARRIBA;
+}
+
 Personaje::~Personaje() {
-    for (auto envolvente : this->envolventesPosibles)
-        delete envolvente;
+    delete envolvente;
 }

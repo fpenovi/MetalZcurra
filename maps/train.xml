@@ -14,81 +14,87 @@
 			<path>imag/background/maps/train/train.png</path>
 		</capa>
 	</capas>
-
 	<plataformas>
+		<plataforma>
+			<x>0</x>
+			<y>545</y>
+			<ancho>8000</ancho>
+			<alto>1</alto>
+		</plataforma>
+
 		<plataforma>
 			<x>606</x>
 			<y>443</y>
 			<ancho>895</ancho>
-			<alto>13</alto>
+			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
 			<x>1501</x>
 			<y>372</y>
 			<ancho>304</ancho>
-			<alto>84</alto>
+			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
 			<x>1907</x>
 			<y>372</y>
 			<ancho>304</ancho>
-			<alto>84</alto>
+			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
 			<x>2313</x>
 			<y>372</y>
 			<ancho>304</ancho>
-			<alto>84</alto>
+			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
 			<x>5119</x>
 			<y>443</y>
 			<ancho>477</ancho>
-			<alto>13</alto>
+			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
 			<x>5596</x>
 			<y>372</y>
 			<ancho>304</ancho>
-			<alto>84</alto>
+			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
 			<x>6007</x>
-			<y>443</y>
-			<ancho>867</ancho>
-			<alto>13</alto>
+			<y>372</y>
+			<ancho>304</ancho>
+			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
 			<x>6311</x>
-			<y>372</y>
-			<ancho>304</ancho>
-			<alto>84</alto>
+			<y>443</y>
+			<ancho>867</ancho>
+			<alto>10</alto>
 		</plataforma>
 	</plataformas>
 
 	<bonuses>
 		<bonus>
 			<x>150</x>
-			<y>500</y>
+			<y>465</y>
 			<tipo>HMGun</tipo>
 		</bonus>
 
 		<bonus>
 			<x>300</x>
-			<y>500</y>
+			<y>465</y>
 			<tipo>SGun</tipo>
 		</bonus>
 
 		<bonus>
 			<x>450</x>
-			<y>500</y>
+			<y>465</y>
 			<tipo>RLauncher</tipo>
 		</bonus>
 	</bonuses>

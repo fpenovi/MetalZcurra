@@ -25,6 +25,15 @@ bool Envolvente::hayColision(Envolvente* otra){
 	return false;
 }
 
+bool Envolvente::hayColisionConPlataforma(Envolvente *otra) {
+
+	Rectangulo* pies = getComponentes()[1];
+	Rectangulo* otroRect = otra->getComponentes()[0];
+
+	return pies->hayColision(otroRect);
+
+}
+
 vector<Rectangulo*> Envolvente::getComponentes(){
 	return componentes;
 }

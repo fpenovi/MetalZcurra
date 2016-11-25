@@ -28,6 +28,11 @@ private:
 
     Envolvente* envolvente = NULL;
 
+    // Shotgun
+    bool shotgun = false;
+    const static int ANIMACION_BALA_SHOTGUN = 12;
+    int frameShotgun = 0;
+
 public:
     Bala();
 
@@ -68,6 +73,14 @@ public:
     int getIzquierda();
 
     void handleColision();
+
+    void setShotgun(bool aux);
+
+    bool isShotgun();
+
+    void moverShotgun();
+
+    int getFrameShotgun();
 
     ~Bala();
 };

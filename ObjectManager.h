@@ -20,6 +20,7 @@
 #include "Enemigo.h"
 #include "EnemigosManager.h"
 #include "Boss.h"
+#include "Bonus.h"
 
 using namespace std;
 
@@ -41,6 +42,7 @@ private:
 	unordered_map<string, pthread_mutex_t>* mutexesHash;
 	vector<string> tamVentana;
 	Boss* boss;
+	unordered_map<int, Bonus*> bonuses;
 
 public:
 	~ObjectManager();
@@ -72,7 +74,7 @@ public:
 	// Balas
 	void addBala(int id, Bala* bala);
 	void crearBalas(int cantidad);
-	void inicializarBala(int idEmisor, int posxEmisor, int posyEmisor);
+	void inicializarBala(int idEmisor, int posxEmisor, int posyEmisor, int tipoArma);
 	void inicializarBalaEnemiga(int posx, int posy);
 	void crearBalasManager();
 	unordered_map<int, Bala*>* getBalasHash();
@@ -86,6 +88,10 @@ public:
 	void liberarEnemigos();
 	Boss* getBoss();
 	void setBoss(Boss* boss);
+
+	// Bonuses
+	unordered_map<int, Bonus*>* getBonusesHash();
+	void setBonuses(vector<Bonus*> bonuses);
 };
 
 

@@ -49,24 +49,29 @@ private:
     int frameDisparandoArriba = 0;
     int frameDisparandoAbajo = 0;
 	Envolvente* envolvente;
-	vector<Envolvente*> envolventesPosibles;
 
     const static int ANIMACION_PARADO = 4;
-    const static int ANIMACION_CORRIENDO = 18;
-    const static int ANIMACION_SALTANDO = 12;
-    const static int ANIMACION_DISPARANDO_GUN = 10;
-    const static int ANIMACION_DISPARANDO_SHOTGUN = 4;
-    const static int ANIMACION_APUNTANDO = 4;
-    const static int ANIMACION_DISPARANDO_GUN_ABAJO = 7;
-    const static int ANIMACION_DISPARANDO_GUN_ARRIBA = 10;
-    const static int ANIMACION_DISPARANDO_SHOTGUN_ABAJO = 4;
-    const static int ANIMACION_DISPARANDO_SHOTGUN_ARRIBA = 4;
+	const static int ANIMACION_CORRIENDO = 18;
+	const static int ANIMACION_SALTANDO = 12;
+	const static int ANIMACION_DISPARANDO_GUN = 10;
+	const static int ANIMACION_DISPARANDO_SHOTGUN = 4;
+	const static int ANIMACION_APUNTANDO = 4;
+	const static int ANIMACION_DISPARANDO_GUN_ABAJO = 7;
+	const static int ANIMACION_DISPARANDO_GUN_ARRIBA = 10;
+	const static int ANIMACION_DISPARANDO_SHOTGUN_ABAJO = 4;
+	const static int ANIMACION_DISPARANDO_SHOTGUN_ARRIBA = 4;
+    int ANIMACION_ACTUAL = 4;
 
-    int ANIMACION_ACTUAL = 10;
-    int ANIMACION_ACTUAL_DISPARANDO_ARRIBA = 10; // empieza siendo 10 por la gun
-    int ANIMACION_ACTUAL_DISPARANDO_ABAJO = 7;
+	int ANIMACION_ACTUAL_DISPARANDO_ARRIBA = 4; // empieza siendo 10 por la gun
+	int ANIMACION_ACTUAL_DISPARANDO_ABAJO = 4;
+	int armaActual;
 
 public:
+	const static int GUN = 0;
+	const static int HMGUN = 1;
+	const static int SHOTGUN = 2;
+	const static int RLAUNCHER = 3;
+
 	Personaje();
 
     void moverX();
@@ -166,6 +171,14 @@ public:
 	void gravedad();
 
 	void setGravity(bool aux);
+
+	int getArmaActual();
+
+	void setArmaActual(int aux);
+
+	void setShotGunSprites();
+
+	void setGunSprites();
 
 	~Personaje();
 };

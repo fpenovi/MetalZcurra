@@ -14,7 +14,8 @@ class HMGun: public Bonus {
 
 public:
 	HMGun(int x, int y);
-	virtual ~HMGun();
+	void aplicarEfecto(Personaje* personaje);
+	~HMGun();
 };
 
 #endif /* HMGUN_H_ */

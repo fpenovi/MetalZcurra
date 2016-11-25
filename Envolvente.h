@@ -22,6 +22,7 @@ public:
 	Envolvente();
 	void agregarComponente(Rectangulo* rect);
 	bool hayColision(Envolvente* otra);
+	bool hayColisionConPlataforma(Envolvente *otra);
 	vector<Rectangulo*> getComponentes();
 	int getX();
 	int getY();

@@ -6,11 +6,12 @@
 #define METALZCURRA_ENEMIGO_H
 
 #include <chrono>
+#include "Bonus.h"
 
 using namespace chrono;
 
-class Enemigo
-{
+class Enemigo {
+
 private:
     int id;
     int	posx;
@@ -22,6 +23,7 @@ private:
     int velocidad;
     int cantidadPasos;
     int delta;
+	Bonus* bonus;
 	Envolvente* envolvente;
 
     bool disparando;
@@ -44,6 +46,8 @@ private:
     int frameCorriendo = 0;
     int frameDisparando = 0;
     int frameQuieto = 0;
+
+	void droppearBonus();
 
 
 public:
@@ -98,6 +102,8 @@ public:
     bool verificarAlan();
 
 	Envolvente* getEnvolvente();
+
+	void setBonus(Bonus* bonus);
 
 	~Enemigo();
 };

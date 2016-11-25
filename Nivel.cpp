@@ -12,6 +12,9 @@
 #include "RLauncher.h"
 #include "Rshobu.h"
 #include "ObjectManager.h"
+#include "Recover.h"
+#include "KillAll.h"
+#include <random>
 
 Nivel::Nivel(string xmlPath) {
 
@@ -30,7 +33,7 @@ Nivel::Nivel(string xmlPath) {
 	this->alto = stoi(tamNivel[1]);
 	this->capas = capas;
 	this->plataformas = crearPlataformas(plataformas);
-	//OM.setBonuses = crearBonuses(bonuses);
+	OM->setBonuses(crearBonuses(bonuses));
 	OM->setBoss(crearBoss(boss));
 	OM->crearEnemigos(crearEnemigos(enemigos));
 	this->boss = crearBoss(boss);
@@ -76,7 +79,9 @@ vector<Enemigo*> Nivel::crearEnemigos(vector<string> enemigosStr) {
 		int x = stoi(enemigosStr[i]);
 		int y = stoi(enemigosStr[i+1]);
 		int delta = stoi(enemigosStr[i+2]);
-		enemigos.push_back(new Enemigo(x, y, delta));
+		Enemigo* enemigo = new Enemigo(x, y, delta);
+		enemigo->setBonus(makeBonusOrNull());
+		enemigos.push_back(enemigo);
 	}
 
 	return enemigos;
@@ -92,7 +97,7 @@ Boss* Nivel::crearBoss(vector<string> bossStr) {
 	if (this->nombre.compare("train") == 0)
 		boss = new Rshobu(x, y, delta);
 
-	// agregar restantes
+	// ToDo agregar restantes
 	return boss;
 }
 
@@ -102,7 +107,7 @@ bool Nivel::hayColision(Personaje *personaje) {
 	Envolvente* envolvente = personaje->getEnvolvente();
 
 	for (Plataforma* plataforma : plataformas){
-		if (envolvente->hayColision(plataforma->getEnvolvente())) return true;
+		if (envolvente->hayColisionConPlataforma(plataforma->getEnvolvente())) return true;
 	}
 	return false;
 }
@@ -118,10 +123,27 @@ void Nivel::moverPlataformas(){
 }
 
 Nivel::~Nivel() {
-	for (int i = 0; i < this->plataformas.size(); ++i)
+	for (int i = 0; i < this->plataformas.size(); i++)
 		delete this->plataformas[i];
 }
 
 vector<string> Nivel::getCapas() {
 	return capas;
+}
+
+
+Bonus* Nivel::makeBonusOrNull() {
+
+	random_device randomGenerator;
+	// Ponderado 50% NULL, 25% Bonus1, 25% bonus2
+
+	int randomInt = randomGenerator() % 100;
+
+	if (randomInt > 75)
+		return new KillAll(0, 0);
+
+	if (randomInt > 50)
+		return new Recover(0, 0);
+
+	return NULL;
 }

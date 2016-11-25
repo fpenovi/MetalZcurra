@@ -23,6 +23,12 @@ private:
     bool abajo;
     Textura* TEXTURA_BALA;
 
+    const static int ANIMACION_BALA_SHOTGUN = 12;
+    SDL_Rect spriteBala[ ANIMACION_BALA_SHOTGUN ];
+    SDL_Rect* currentClip;
+    int frame;
+    bool shotgun = false;
+
 public:
     VistaBala(Textura* textura);
 
@@ -61,6 +67,14 @@ public:
     void setArriba(int aux);
 
     void setAbajo(int aux);
+
+    void cargarImagenShotgun();
+
+    void setShotgun(bool aux);
+
+    bool isShotgun();
+
+    void setFrame(int aux);
 };
 
 

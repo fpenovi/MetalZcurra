@@ -15,14 +15,28 @@ Bonus::Bonus(int x, int y) {
 	this->y = y;
 	this->envolvente = new Envolvente();
 	this->envolvente->agregarComponente(new Rectangulo(&this->x,&this->y , ANCHO_BONUS, ALTO_BONUS));
+	this->existe = false;
 }
 
+void Bonus::setExiste(bool aux) {
+	existe = aux;
+}
+
+bool Bonus::getExiste() {
+	return existe;
+}
+
+void Bonus::setPosicion(int x, int y) {
+	this->x = x;
+	this->y = y;
+}
 Bonus::~Bonus() {
-	// TODO Auto-generated destructor stub
+	delete this->envolvente;
 }
-
 string Bonus::HMGun = "HMGun";
 string Bonus::SGun = "SGun";
 string Bonus::RLauncher = "RLauncher";
+
 string Bonus::KillAll = "KillAll";
+
 string Bonus::Recover = "Recover";
