@@ -1,0 +1,14 @@
+//
+// Created by franch on 25/11/16.
+//
+
+#ifndef METALZCURRA_VISTAPUNTAJESCOLABORATIVO_H
+#define METALZCURRA_VISTAPUNTAJESCOLABORATIVO_H
+
+
+class VistaPuntajesColaborativo {
+
+};
+
+
+#endif //METALZCURRA_VISTAPUNTAJESCOLABORATIVO_H

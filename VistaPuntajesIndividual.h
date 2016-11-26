@@ -1,0 +1,14 @@
+//
+// Created by franch on 25/11/16.
+//
+
+#ifndef METALZCURRA_VISTAPUNTAJESINDIVIDUAL_H
+#define METALZCURRA_VISTAPUNTAJESINDIVIDUAL_H
+
+
+class VistaPuntajesIndividual {
+
+};
+
+
+#endif //METALZCURRA_VISTAPUNTAJESINDIVIDUAL_H
