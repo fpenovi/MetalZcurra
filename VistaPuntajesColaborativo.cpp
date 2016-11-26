@@ -3,3 +3,23 @@
 //
 
 #include "VistaPuntajesColaborativo.h"
+
+
+VistaPuntajesColaborativo::VistaPuntajesColaborativo(int cantPlayers) {
+	this->puntos = 0;
+}
+
+
+void VistaPuntajesColaborativo::actualizarPuntaje(string id, int puntos) {
+	this->puntos += puntos;
+}
+
+
+void VistaPuntajesColaborativo::render() {
+	// ToDo do it!
+}
+
+
+VistaPuntajesColaborativo::~VistaPuntajesColaborativo() {
+
+}

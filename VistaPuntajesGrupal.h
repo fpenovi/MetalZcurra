@@ -6,8 +6,21 @@
 #define METALZCURRA_VISTAPUNTAJESGRUPAL_H
 
 
-class VistaPuntajesGrupal {
+#include <bits/unordered_map.h>
+#include "VistaPuntajes.h"
 
+class VistaPuntajesGrupal : public VistaPuntajes {
+
+private:
+	unordered_map<string, int> puntosEquiposById;
+
+	string getTeamNumberByPlayerId(int id);
+
+public:
+	VistaPuntajesGrupal(int cantPlayers);
+	void actualizarPuntaje(string id, int puntos);
+	void render();
+	~VistaPuntajesGrupal();
 };
 
 

@@ -6,7 +6,18 @@
 #define METALZCURRA_VISTAPUNTAJESCOLABORATIVO_H
 
 
-class VistaPuntajesColaborativo {
+#include "VistaPuntajes.h"
+
+class VistaPuntajesColaborativo : public VistaPuntajes {
+
+private:
+	int puntos;
+
+public:
+	VistaPuntajesColaborativo(int cantPlayers);
+	void actualizarPuntaje(string id, int puntos);
+	void render();
+	~VistaPuntajesColaborativo();
 
 };
 

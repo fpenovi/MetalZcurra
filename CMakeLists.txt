@@ -14,5 +14,5 @@ set(SOURCE_FILES Servidor.cpp Cliente.cpp Cliente.h Mensaje.cpp Mensaje.h Log.cp
         EnemigosManager.cpp EnemigosManager.h VistaEnemigo.cpp VistaEnemigo.h NivelManager.cpp NivelManager.h
         Nivel.cpp Nivel.h Bonus.cpp Bonus.h Boss.cpp Boss.h Envolvente.cpp Envolvente.h HMGun.cpp HMGun.h
         Plataforma.cpp Plataforma.h Rectangulo.cpp Direccion.h RLauncher.cpp RLauncher.h Rshobu.cpp Rshobu.h
-        SGun.cpp SGun.h BalaShotgun.cpp BalaShotgun.h Recover.cpp Recover.h KillAll.cpp KillAll.h)
+        SGun.cpp SGun.h BalaShotgun.cpp BalaShotgun.h Recover.cpp Recover.h KillAll.cpp KillAll.h VistaPuntajes.cpp VistaPuntajes.h VistaPuntajesIndividual.cpp VistaPuntajesIndividual.h VistaPuntajesColaborativo.cpp VistaPuntajesColaborativo.h VistaPuntajesGrupal.cpp VistaPuntajesGrupal.h)
 add_executable(MetalZcurra ${SOURCE_FILES})
