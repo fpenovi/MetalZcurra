@@ -17,5 +17,5 @@ set(SOURCE_FILES Servidor.cpp Cliente.cpp Cliente.h Mensaje.cpp Mensaje.h Log.cp
         SGun.cpp SGun.h BalaShotgun.cpp BalaShotgun.h Recover.cpp Recover.h KillAll.cpp KillAll.h
         VistaPuntajes.cpp VistaPuntajes.h VistaPuntajesIndividual.cpp VistaPuntajesIndividual.h
         VistaPuntajesColaborativo.cpp VistaPuntajesColaborativo.h VistaPuntajesGrupal.cpp VistaPuntajesGrupal.h
-        BonusManager.cpp BonusManager.h VistaBonus.cpp VistaBonus.h)
+        BonusManager.cpp BonusManager.h VistaBonus.cpp VistaBonus.h VistaRshobu.cpp VistaRshobu.h VistaBoss.cpp VistaBoss.h)
 add_executable(MetalZcurra ${SOURCE_FILES})

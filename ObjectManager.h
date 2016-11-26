@@ -84,6 +84,7 @@ public:
 	void inicializarBalaEnemiga(int posx, int posy);
 	void crearBalasManager();
 	unordered_map<int, Bala*>* getBalasHash();
+	void inicializarBalaBoss(int posx, int posy);
 
 	// Enemigos
 	void addEnemigo(int id, Enemigo* enemigo);
@@ -94,8 +95,8 @@ public:
 	void liberarEnemigos();
 	Boss* getBoss();
 	void setBoss(Boss* boss);
-	void killAll();
 
+	void killAll();
 	// Bonuses
 	unordered_map<int, Bonus*>* getBonusesHash();
 	void setBonuses(vector<Bonus*> bonuses);
@@ -104,6 +105,7 @@ public:
 	void agregarDropeable(Bonus* dropeable);
 	int getIdBonus();
 	void setIdBonus(int aux);
+
 	void reiniciarBonuses();
 };
 

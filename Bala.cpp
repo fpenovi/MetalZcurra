@@ -64,6 +64,17 @@ void Bala::crearBalaEnemiga(int x, int y, bool derecha, int ancho, int alto) {
     setDireccion(derecha, !derecha, false, false);
 }
 
+void Bala::crearBalaBoss(int x, int y, int ancho, int alto){
+    existe = true;
+    posx = x;
+    posy = y;
+
+    envolvente = new Envolvente();
+    envolvente->agregarComponente(new Rectangulo(&posx, &posy, ancho, alto));
+
+    setDireccion(false, false, false, true);
+}
+
 int Bala::getPosx(){
     return posx;
 }
