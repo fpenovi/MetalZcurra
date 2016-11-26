@@ -2,7 +2,7 @@
 
 OBJS = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp  ProtocoloComando.cpp ProtocoloVistaUpdate.cpp Personaje.cpp ObjectManager.cpp ProtocoloNuevaVista.cpp ParserXML.cpp HandleKeyHoldServer.cpp HandleJumpServer.cpp HandleQuietoServer.cpp Bala.cpp HandleDisparoServer.cpp BalasManager.cpp Direccion.cpp EnemigosManager.cpp Enemigo.cpp NivelManager.cpp Nivel.cpp Bonus.cpp Boss.cpp Envolvente.cpp HMGun.cpp Plataforma.cpp Rectangulo.cpp RLauncher.cpp Rshobu.cpp SGun.cpp KillAll.cpp Recover.cpp BonusManager.cpp
 
-OBJS2 = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp Cliente.cpp Textura.cpp VistaPersonaje.cpp ProtocoloComando.cpp ProtocoloVistaUpdate.cpp ProtocoloNuevaVista.cpp Background.cpp Layer.cpp Texto.cpp VistaBala.cpp Arma.cpp VistaEnemigo.cpp VistaBonus.cpp
+OBJS2 = auxiliares.cpp Mensaje.cpp Log.cpp Heartbeat.cpp Cliente.cpp Textura.cpp VistaPersonaje.cpp ProtocoloComando.cpp ProtocoloVistaUpdate.cpp ProtocoloNuevaVista.cpp Background.cpp Layer.cpp Texto.cpp VistaBala.cpp Arma.cpp VistaEnemigo.cpp VistaBonus.cpp VistaRshobu.cpp VistaBoss.cpp
 
 
 #CC specifies which compiler we're using

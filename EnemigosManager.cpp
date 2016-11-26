@@ -21,6 +21,7 @@ void* enemigosManagerFunc(void* argKh) {
     unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
     unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
     unordered_map<int, Enemigo*>* enemigos = objectManager->getEnemigosHash();
+    Boss* boss = objectManager->getBoss();
 
     time_point<high_resolution_clock> start;
     start = high_resolution_clock::now();
@@ -77,6 +78,43 @@ void* enemigosManagerFunc(void* argKh) {
                         }
                     }
                 }
+
+                if (!boss->getExiste() && boss->estaVivo())
+                    boss->crear();
+
+                if (boss->getExiste()){
+                    boss->mover();
+
+                    ProtocoloVistaUpdate update;
+
+                    update.setTipoObjeto(6);
+                    update.setEstado(true);
+                    update.setX(boss->getPosx());
+                    update.setY(boss->getPosy());
+                    update.setObject_id(boss->getId());
+                    update.setPosCamara(0);
+                    update.setConectado(boss->estaVivo());
+                    update.setSpriteIndex(boss->getSprites());
+                    update.setApuntando(0);
+                    update.setSaltando(0);
+
+                    int result;
+                    string mensaje = update.toString();
+
+                    for (auto kv : *conectadosHash) {
+
+                        Mensaje *mensajeNuevo = new Mensaje("Server", kv.first, mensaje);
+
+                        result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+                        if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+                        kv.second->push_back(mensajeNuevo);
+
+                        result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+                        if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                    }
+                }
+
             }
 
             start = chrono::system_clock::now();

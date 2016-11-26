@@ -17,6 +17,8 @@
 #include "VistaBala.h"
 #include "VistaEnemigo.h"
 #include "VistaBonus.h"
+#include "VistaBoss.h"
+#include "VistaRshobu.h"
 
 using namespace std;
 using namespace chrono;
@@ -32,6 +34,8 @@ private:
 	unordered_map<int, VistaBala*> vistasBalas;
 	unordered_map<int, VistaEnemigo*> vistasEnemigos;
 	unordered_map<int, VistaBonus*> visitasBonuses;
+	unordered_map<int, VistaBoss*> vistasBoss;
+	VistaBoss* bossActual;
 	int lastKeyPressed;
 	Background* fondo;
 	int posFondo;
@@ -53,6 +57,7 @@ private:
 	Textura* TEXTURA_RLAUNCHER;
 	Textura* TEXTURA_KILLALL;
 	Textura* TEXTURA_RECOVER;
+	Textura* TEXTURA_BALA_RSHOBU;
 
 	// PROTOCOLO
 	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim, saltando;
@@ -101,6 +106,9 @@ public:
 		for (auto kv: visitasBonuses)
 			delete kv.second;
 
+		for (auto kv : vistasBoss)
+			delete kv.second;
+
 		for (auto text : TEXTURAS_ENEMIGOS)
 			delete text;
 
@@ -119,6 +127,7 @@ public:
 		delete TEXTURA_RLAUNCHER;
 		delete TEXTURA_KILLALL;
 		delete TEXTURA_RECOVER;
+		delete TEXTURA_BALA_RSHOBU;
 		delete fondo;
 
 		//Quit SDL subsystems
@@ -483,6 +492,10 @@ public:
 		return visitasBonuses[id];
 	}
 
+	VistaBoss* getBossById(int id){
+		return vistasBoss[id];
+	}
+
 	string getIp(){
 		return ip;
 	}
@@ -525,6 +538,10 @@ public:
 
 	void addBonus(int id, VistaBonus* bonus){
 		visitasBonuses[id] = bonus;
+	}
+
+	void addBoss(int id, VistaBoss* boss){
+		vistasBoss[id] = boss;
 	}
 
 	void conectar(){
@@ -677,6 +694,8 @@ public:
 
 		for (auto kv : vistasEnemigos)
 			kv.second->render();
+
+		bossActual->render();
 
 		for (auto kv : vistasPersonajes) {
 			if (kv.second->getId() != miId) {
@@ -919,6 +938,11 @@ public:
 			bala->cargarImagen();
 			addBala(i, bala);
 		}
+		for (i ; i < 256 ; i++) {
+			VistaBala* bala = new VistaBala(TEXTURA_BALA_RSHOBU);
+			bala->cargarImagen();
+			addBala(i, bala);
+		}
 	}
 
 	void crearEnemigos(){
@@ -945,6 +969,18 @@ public:
 		idBonus++;
 	}
 
+	void crearBoss(){
+		int id = 1;
+		VistaBoss* rshobu = new VistaRshobu(renderizador);
+		rshobu->cargarImagen();
+		addBoss(id, rshobu);
+		id++;
+	}
+
+	void seleccionarBoss(int nivel){
+		bossActual = getBossById(nivel);
+	}
+
 	void cargarTexturaBala(){
 		TEXTURA_BALA = new Textura(renderizador);
 		if( !TEXTURA_BALA->cargarImagen( "imag/sprites/sfx/gunBullet.png") ) printf( "Fallo imagen bala\n" );
@@ -960,6 +996,10 @@ public:
 
 		TEXTURA_BALA_RLAUNCHER = new Textura(renderizador);
 		if( !TEXTURA_BALA_RLAUNCHER->cargarImagen( "imag/sprites/sfx/disparoRLauncher.png") ) printf( "Fallo imagen bala RLAUNCHER\n" );
+
+		TEXTURA_BALA_RSHOBU = new Textura(renderizador);
+		if( !TEXTURA_BALA_RSHOBU->cargarImagen( "imag/sprites/R-Shobu/disparo.png") ) printf( "Fallo imagen rshobu disparo\n" );
+
 	}
 
 	void cargarTexturaEnemigo(){
@@ -1108,6 +1148,14 @@ public:
 
 		addBonus(id, bonus);
 	}
+
+	void actualizarBoss(){
+		bossActual->setDireccion(posX);
+		bossActual->setExiste(state);
+		bossActual->setPosx(posX);
+		bossActual->setPosy(posy);
+		bossActual->setFrame(spriteIdx);
+	}
 };
 
 typedef struct {
@@ -1199,6 +1247,10 @@ int main( int argc, char** argv) {
 	juego.cargarTexturaBonus();
 	juego.crearBonuses();
 
+	// Creo Boss
+	juego.crearBoss();
+	juego.seleccionarBoss(1);
+
 	//Main loop flag
 	bool quit = false;
 	bool pauseRecibir = false;
@@ -1285,6 +1337,10 @@ int main( int argc, char** argv) {
 			// Tipo de objeto 5 = BONUSES
 			else if (tipoObjeto == 5)
 				juego.actualizarBonus();
+
+			// Tipo de objeto 6 = BOSS
+			else if (tipoObjeto == 6)
+				juego.actualizarBoss();
 
 			SDL_RenderClear( juego.getRenderer() );
 

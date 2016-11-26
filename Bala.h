@@ -46,6 +46,8 @@ public:
 
     void crearBalaEnemiga(int x, int y, bool derecha, int ancho, int alto);
 
+    void crearBalaBoss(int x, int y, int ancho, int alto);
+
     int getPosx();
 
     int getPosy();
