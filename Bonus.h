@@ -20,6 +20,9 @@ protected:
 	int x;
 	int y;
 	bool existe;
+	int id;
+	bool renderizado;
+	int idColisionado;
 	Envolvente* envolvente;
 
 public:
@@ -31,8 +34,17 @@ public:
 
 	Bonus(int x, int y);
 	void setPosicion(int x, int y);
+	int getPosx();
+	int getPosy();
 	void setExiste(bool aux);
 	bool getExiste();
+	void setRenderizado(bool aux);
+	bool getRenderizado();
+	int getIdColisionado();
+	int getId();
+	void setId(int aux);
+	void crear();
+	bool hayColision();
 	virtual void aplicarEfecto(Personaje* personaje) = 0;
 	virtual ~Bonus();
 };

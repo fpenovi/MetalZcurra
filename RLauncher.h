@@ -15,7 +15,7 @@ class RLauncher: public Bonus {
 public:
 	RLauncher(int x, int y);
 	void aplicarEfecto(Personaje* personaje);
-	virtual ~RLauncher();
+	~RLauncher();
 };
 
 #endif /* RLAUNCHER_H_ */

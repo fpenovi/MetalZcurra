@@ -81,20 +81,20 @@
 
 	<bonuses>
 		<bonus>
-			<x>150</x>
-			<y>465</y>
+			<x>900</x>
+			<y>500</y>
 			<tipo>HMGun</tipo>
 		</bonus>
 
 		<bonus>
-			<x>300</x>
-			<y>465</y>
+			<x>1400</x>
+			<y>500</y>
 			<tipo>SGun</tipo>
 		</bonus>
 
 		<bonus>
-			<x>450</x>
-			<y>465</y>
+			<x>1800</x>
+			<y>500</y>
 			<tipo>RLauncher</tipo>
 		</bonus>
 	</bonuses>

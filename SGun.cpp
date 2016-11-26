@@ -10,10 +10,9 @@
 SGun::SGun(int x, int y) : Bonus(x, y) {}
 
 void SGun::aplicarEfecto(Personaje *personaje) {
-    // ToDo Cambiar el arma
+    personaje->setArmaActual(Personaje::SHOTGUN);
+    personaje->setShotGunSprites();
 }
 
-SGun::~SGun() {
-	// TODO Auto-generated destructor stub
-}
+SGun::~SGun() {}
 

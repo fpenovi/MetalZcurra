@@ -673,6 +673,7 @@ public:
         objectManager->crearBalas(250);
         objectManager->crearBalasManager();
         objectManager->crearEnemigosManager();
+        objectManager->crearBonusManager();
     }
 
     void aceptarClientes() {

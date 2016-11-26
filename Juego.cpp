@@ -16,6 +16,7 @@
 #include "Textura.h"
 #include "VistaBala.h"
 #include "VistaEnemigo.h"
+#include "VistaBonus.h"
 
 using namespace std;
 using namespace chrono;
@@ -30,19 +31,27 @@ private:
 	unordered_map<int, VistaPersonaje*> vistasPersonajes;
 	unordered_map<int, VistaBala*> vistasBalas;
 	unordered_map<int, VistaEnemigo*> vistasEnemigos;
+	unordered_map<int, VistaBonus*> visitasBonuses;
 	int lastKeyPressed;
 	Background* fondo;
-	int posx;
+	int posFondo;
 	int screenWidth = 800;
 	int screenHeight = 600;
 	int levelWidth;
 	int levelHeight;
+
+	// TEXUTRAS
 	Textura* TEXTURA_BALA;
 	Textura* TEXTURA_BALA_ENEMIGA;
 	Textura* TEXTURA_BALA_HMGUN;
 	Textura* TEXTURA_BALA_SHOTGUN;
 	Textura* TEXTURA_BALA_RLAUNCHER;
 	vector<Textura*> TEXTURAS_ENEMIGOS;
+	Textura* TEXTURA_HMGUN;
+	Textura* TEXTURA_SGUN;
+	Textura* TEXTURA_RLAUNCHER;
+
+	// PROTOCOLO
 	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim, saltando;
 	int miId;
 
@@ -86,6 +95,9 @@ public:
 		for (auto kv : vistasEnemigos)
 			delete kv.second;
 
+		for (auto kv: visitasBonuses)
+			delete kv.second;
+
 		for (auto text : TEXTURAS_ENEMIGOS)
 			delete text;
 
@@ -99,6 +111,9 @@ public:
 		delete TEXTURA_BALA_HMGUN;
 		delete TEXTURA_BALA_SHOTGUN;
 		delete TEXTURA_BALA_RLAUNCHER;
+		delete TEXTURA_HMGUN;
+		delete TEXTURA_SGUN;
+		delete TEXTURA_RLAUNCHER;
 		delete fondo;
 
 		//Quit SDL subsystems
@@ -444,7 +459,7 @@ public:
 	}
 
 	int getPosX(){
-		return posx;
+		return posFondo;
 	}
 
 	VistaPersonaje* getPersonajeById(int id){
@@ -457,6 +472,10 @@ public:
 
 	VistaEnemigo* getEnemigoById(int id){
 		return vistasEnemigos[id];
+	}
+
+	VistaBonus* getBonusById(int id){
+		return visitasBonuses[id];
 	}
 
 	string getIp(){
@@ -472,7 +491,7 @@ public:
 	}
 
 	void setPosX(int x){
-		this->posx = x;
+		this->posFondo = x;
 	}
 
 	void setBackground(Background* fondo){
@@ -497,6 +516,10 @@ public:
 
 	void addEnemigo(int id, VistaEnemigo* enemigo){
 		vistasEnemigos[id] = enemigo;
+	}
+
+	void addBonus(int id, VistaBonus* bonus){
+		visitasBonuses[id] = bonus;
 	}
 
 	void conectar(){
@@ -633,12 +656,20 @@ public:
 				}
 			}
 		}
-		for (auto kv : vistasEnemigos){
-			if (kv.second->existeEnemigo()) kv.second->setPosX(kv.second->getPosx()-7);
-		}
+
+		for (auto kv : vistasEnemigos)
+			if (kv.second->existeEnemigo())
+				kv.second->setPosX(kv.second->getPosx()-7);
+
+		for (auto kv : visitasBonuses)
+			if (kv.second->getExiste())
+				kv.second->setPosx(kv.second->getPosx()-7);
 	}
 
 	void renderizar() {
+		for (auto kv : visitasBonuses)
+			kv.second->render();
+
 		for (auto kv : vistasEnemigos)
 			kv.second->render();
 
@@ -892,6 +923,20 @@ public:
 		}
 	}
 
+	void crearBonuses(){
+		int i = 1;
+		VistaBonus* bonus = new VistaBonus(TEXTURA_HMGUN);
+		addBonus(i, bonus);
+
+		i++;
+		bonus = new VistaBonus(TEXTURA_SGUN);
+		addBonus(i, bonus);
+
+		i++;
+		bonus = new VistaBonus(TEXTURA_RLAUNCHER);
+		addBonus(i, bonus);
+	}
+
 	void cargarTexturaBala(){
 		TEXTURA_BALA = new Textura(renderizador);
 		if( !TEXTURA_BALA->cargarImagen( "imag/sprites/sfx/gunBullet.png") ) printf( "Fallo imagen bala\n" );
@@ -933,6 +978,17 @@ public:
 		Textura* TEXTURA_ENEMIGO_QUIETO = new Textura(renderizador);
 		if( !TEXTURA_ENEMIGO_QUIETO->cargarImagen( "imag/sprites/soldier/toying.png") ) printf( "Fallo imagen enemigo\n" );
 		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_QUIETO);
+	}
+
+	void cargarTexturaBonus(){
+		TEXTURA_HMGUN = new Textura(renderizador);
+		if( !TEXTURA_HMGUN->cargarImagen( "imag/sprites/sfx/HMGun.png") ) printf( "Fallo imagen hmgun\n" );
+
+		TEXTURA_SGUN = new Textura(renderizador);
+		if( !TEXTURA_SGUN->cargarImagen( "imag/sprites/sfx/Sgun.png") ) printf( "Fallo imagen sgun\n" );
+
+		TEXTURA_RLAUNCHER = new Textura(renderizador);
+		if( !TEXTURA_RLAUNCHER->cargarImagen( "imag/sprites/sfx/RLauncher.png") ) printf( "Fallo imagen rlauncher\n" );
 	}
 
 	void parsearUpdateVista(string update){
@@ -1008,6 +1064,19 @@ public:
 		enemigo->setDisparando(aim);
 		enemigo->setCantPasos(posCam);
 		if (conectado) enemigo->morir();
+	}
+
+	void actualizarBonus(){
+		VistaBonus* bonus = getBonusById(id);
+
+		bonus->setPosx(posX);
+		bonus->setPosy(posy);
+		bonus->setExiste(state);
+
+		if (aim){
+			VistaPersonaje* pj = getPersonajeById(conectado);
+			pj->ponerShotgun();
+		}
 	}
 };
 
@@ -1096,6 +1165,10 @@ int main( int argc, char** argv) {
 	juego.cargarTexturaEnemigo();
 	juego.crearEnemigos();
 
+	// Creo bonuses
+	juego.cargarTexturaBonus();
+	juego.crearBonuses();
+
 	//Main loop flag
 	bool quit = false;
 	bool pauseRecibir = false;
@@ -1178,6 +1251,10 @@ int main( int argc, char** argv) {
 			// Tipo de objeto 4 = ENEMIGOS
 			else if (tipoObjeto == 4)
 				juego.actualizarEnemigo();
+
+			// Tipo de objeto 5 = BONUSES
+			else if (tipoObjeto == 5)
+				juego.actualizarBonus();
 
 			SDL_RenderClear( juego.getRenderer() );
 

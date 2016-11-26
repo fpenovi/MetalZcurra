@@ -60,10 +60,10 @@ private:
 	const static int ANIMACION_DISPARANDO_GUN_ARRIBA = 10;
 	const static int ANIMACION_DISPARANDO_SHOTGUN_ABAJO = 4;
 	const static int ANIMACION_DISPARANDO_SHOTGUN_ARRIBA = 4;
-    int ANIMACION_ACTUAL = 4;
 
-	int ANIMACION_ACTUAL_DISPARANDO_ARRIBA = 4; // empieza siendo 10 por la gun
-	int ANIMACION_ACTUAL_DISPARANDO_ABAJO = 4;
+    int ANIMACION_ACTUAL = 10;
+	int ANIMACION_ACTUAL_DISPARANDO_ARRIBA = 10; // empieza siendo 10 por la gun
+	int ANIMACION_ACTUAL_DISPARANDO_ABAJO = 7;
 	int armaActual;
 
 public:

@@ -21,6 +21,7 @@
 #include "EnemigosManager.h"
 #include "Boss.h"
 #include "Bonus.h"
+#include "BonusManager.h"
 
 using namespace std;
 
@@ -43,6 +44,7 @@ private:
 	vector<string> tamVentana;
 	Boss* boss;
 	unordered_map<int, Bonus*> bonuses;
+	BonusManager* bonusManager;
 
 public:
 	~ObjectManager();
@@ -65,6 +67,7 @@ public:
 	void reinicializarEscenario();
 	void enviarNuevoBackground(string emisor);
 	void setTamVentana(vector<string> tamVentana);
+	unordered_map<int, Personaje*>* getPersonajesHash();
 
 	void setConectadosHash(unordered_map<string, list<Mensaje*>*>* conectadosHash);
 	void setMutexesHash(unordered_map<string, pthread_mutex_t>* mutexesHash);
@@ -92,6 +95,8 @@ public:
 	// Bonuses
 	unordered_map<int, Bonus*>* getBonusesHash();
 	void setBonuses(vector<Bonus*> bonuses);
+	void addBonus(int id, Bonus* bonus);
+	void crearBonusManager();
 };
 
 

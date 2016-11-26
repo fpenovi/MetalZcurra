@@ -23,10 +23,14 @@ ObjectManager::~ObjectManager() {
 		delete kv.second;
 	for (auto kv : enemigos)
 		delete kv.second;
+	for (auto kv : bonuses)
+		delete kv.second;
 	balasManager->Off();
 	delete balasManager;
 	enemigosManager->Off();
 	delete enemigosManager;
+	bonusManager->Off();
+	delete bonusManager;
 }
 
 ObjectManager* ObjectManager::getInstance() {
@@ -46,6 +50,10 @@ void ObjectManager::addBala(int id, Bala* bala) {
 
 void ObjectManager::addEnemigo(int id, Enemigo* enemigo) {
 	enemigos[id] = enemigo;
+}
+
+void ObjectManager::addBonus(int id, Bonus* bonus) {
+	bonuses[id] = bonus;
 }
 
 Personaje* ObjectManager::getObject(int id) {
@@ -91,7 +99,15 @@ void ObjectManager::crearEnemigos(vector<Enemigo*> enemigos) {
 	for (int i = 0; i < enemigos.size(); i++){
 		Enemigo* enemigo = enemigos[i];
 		enemigo->setId(i + 1);
-		addEnemigo(i, enemigo);
+		addEnemigo(i+1, enemigo);
+	}
+}
+
+void ObjectManager::setBonuses(vector<Bonus*> bonuses) {
+	for (int i = 0; i < bonuses.size(); i++){
+		Bonus* bonus = bonuses[i];
+		bonus->setId(i + 1);
+		addBonus(i+1, bonus);
 	}
 }
 
@@ -223,10 +239,12 @@ void ObjectManager::moverCamara(int id){
 		}
 	}
 
-	for (auto kv : enemigos){
-		if (kv.second->getExiste())
-			kv.second->setPosx(kv.second->getPosx()-7);
-	}
+	for (auto kv : enemigos)
+		kv.second->setPosx(kv.second->getPosx()-7);
+
+	for (auto kv : bonuses)
+		kv.second->setPosicion(kv.second->getPosx()-7, kv.second->getPosy());
+
 
 	NivelManager::getInstance()->moverPlataformas();
 }
@@ -332,8 +350,10 @@ void ObjectManager::crearEnemigosManager() {
 
 }
 
-void ObjectManager::setBonuses(vector<Bonus*> bonuses) {
-	// ToDo agregar bonuses al map
+void ObjectManager::crearBonusManager() {
+
+	bonusManager = new BonusManager();
+	bonusManager->On();
 }
 
 Boss* ObjectManager::getBoss() {
@@ -376,6 +396,14 @@ void ObjectManager::liberarEnemigos() {
 	for (auto kv : enemigos) {
 		delete kv.second;
 	}
+}
+
+unordered_map<int, Bonus *>* ObjectManager::getBonusesHash() {
+	return &bonuses;
+}
+
+unordered_map<int, Personaje *> *ObjectManager::getPersonajesHash() {
+	return &personajes;
 }
 
 ObjectManager* ObjectManager::instancia;
