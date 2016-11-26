@@ -7,7 +7,7 @@
 #include "NivelManager.h"
 
 Personaje::Personaje() {
-    armaActual = SHOTGUN;
+    armaActual = GUN;
 
     envolvente = new Envolvente();
     Rectangulo* rect = new Rectangulo(&posCamara, &posy, 45, 81);

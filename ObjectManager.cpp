@@ -12,9 +12,17 @@
 
 ObjectManager::ObjectManager() {
 	idActual = 1;
+	idBonus = 1;
 }
 
 ObjectManager::~ObjectManager() {
+	balasManager->Off();
+	delete balasManager;
+	enemigosManager->Off();
+	delete enemigosManager;
+	bonusManager->Off();
+	delete bonusManager;
+
 	for (auto kv : personajes)
 		delete kv.second;
 	for (auto kv : balas)
@@ -23,10 +31,8 @@ ObjectManager::~ObjectManager() {
 		delete kv.second;
 	for (auto kv : enemigos)
 		delete kv.second;
-	balasManager->Off();
-	delete balasManager;
-	enemigosManager->Off();
-	delete enemigosManager;
+	for (auto kv : bonuses)
+		delete kv.second;
 }
 
 ObjectManager* ObjectManager::getInstance() {
@@ -46,6 +52,10 @@ void ObjectManager::addBala(int id, Bala* bala) {
 
 void ObjectManager::addEnemigo(int id, Enemigo* enemigo) {
 	enemigos[id] = enemigo;
+}
+
+void ObjectManager::addBonus(int id, Bonus* bonus) {
+	bonuses[id] = bonus;
 }
 
 Personaje* ObjectManager::getObject(int id) {
@@ -91,7 +101,16 @@ void ObjectManager::crearEnemigos(vector<Enemigo*> enemigos) {
 	for (int i = 0; i < enemigos.size(); i++){
 		Enemigo* enemigo = enemigos[i];
 		enemigo->setId(i + 1);
-		addEnemigo(i, enemigo);
+		addEnemigo(i+1, enemigo);
+	}
+}
+
+void ObjectManager::setBonuses(vector<Bonus*> bonuses) {
+	for (int i = 0; i < bonuses.size(); i++){
+		Bonus* bonus = bonuses[i];
+		bonus->setId(idBonus);
+		addBonus(idBonus, bonus);
+		idBonus++;
 	}
 }
 
@@ -223,10 +242,12 @@ void ObjectManager::moverCamara(int id){
 		}
 	}
 
-	for (auto kv : enemigos){
-		if (kv.second->getExiste())
-			kv.second->setPosx(kv.second->getPosx()-7);
-	}
+	for (auto kv : enemigos)
+		kv.second->setPosx(kv.second->getPosx()-7);
+
+	for (auto kv : bonuses)
+		kv.second->setPosicion(kv.second->getPosx()-7, kv.second->getPosy());
+
 
 	NivelManager::getInstance()->moverPlataformas();
 }
@@ -332,8 +353,10 @@ void ObjectManager::crearEnemigosManager() {
 
 }
 
-void ObjectManager::setBonuses(vector<Bonus*> bonuses) {
-	// ToDo agregar bonuses al map
+void ObjectManager::crearBonusManager() {
+
+	bonusManager = new BonusManager();
+	bonusManager->On();
 }
 
 Boss* ObjectManager::getBoss() {
@@ -373,9 +396,85 @@ void ObjectManager::setTamVentana(vector<string> tamVentana) {
 }
 
 void ObjectManager::liberarEnemigos() {
-	for (auto kv : enemigos) {
+	for (auto kv : enemigos)
 		delete kv.second;
+}
+
+void ObjectManager::reiniciarBonuses() {
+	for (auto kv : bonuses)
+		delete kv.second;
+	idBonus = 1;
+}
+
+unordered_map<int, Bonus *>* ObjectManager::getBonusesHash() {
+	return &bonuses;
+}
+
+unordered_map<int, Personaje *> *ObjectManager::getPersonajesHash() {
+	return &personajes;
+}
+
+int ObjectManager::getIdBonus() {
+	return idBonus;
+}
+
+void ObjectManager::setIdBonus(int aux) {
+	idBonus = aux;
+}
+
+void ObjectManager::agregarDropeable(Bonus* dropeable) {
+	ProtocoloVistaUpdate update;
+
+	update.setTipoObjeto(5);
+	update.setEstado(0);
+	update.setX(0);
+	update.setY(0);
+	update.setObject_id(idBonus);
+	update.setPosCamara(0);
+	update.setConectado(0);
+	update.setSpriteIndex(1);
+	update.setApuntando(0);
+	update.setSaltando(dropeable->getTipoDropeable());
+
+
+	int result;
+	string mensaje = update.toString();
+
+	for (auto kv : *conectadosHash) {
+
+		Mensaje* mensajeNuevo = new Mensaje("Server", kv.first, mensaje);
+
+		result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+		kv.second->push_back(mensajeNuevo);
+
+		result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 	}
+
+	dropeable->setId(idBonus);
+	addBonus(idBonus, dropeable);
+	idBonus++;
+}
+
+void ObjectManager::killAll(){
+	for (auto kv : enemigos){
+		if (kv.second->getExiste())
+			kv.second->morir();
+	}
+}
+
+void ObjectManager::pausarManagers() {
+	balasManager->Pause();
+	enemigosManager->Pause();
+	bonusManager->Pause();
+}
+
+void ObjectManager::reanudarManagers() {
+	balasManager->Resume();
+	enemigosManager->Resume();
+	bonusManager->Resume();
 }
 
 ObjectManager* ObjectManager::instancia;

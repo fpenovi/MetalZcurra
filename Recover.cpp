@@ -5,7 +5,9 @@
 #include "Recover.h"
 
 
-Recover::Recover(int x, int y) : Bonus(x, y) {}
+Recover::Recover(int x, int y) : Bonus(x, y) {
+    this->tipoDropeable = 2;
+}
 
 void Recover::aplicarEfecto(Personaje *personaje) {
     // TODO recuperar la vida del personaje...

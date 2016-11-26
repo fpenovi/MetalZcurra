@@ -7,13 +7,14 @@
 
 #include "RLauncher.h"
 
-RLauncher::RLauncher(int x, int y) : Bonus(x, y) {}
+RLauncher::RLauncher(int x, int y) : Bonus(x, y) {
+    this->tipoDropeable = 0;
+}
 
 void RLauncher::aplicarEfecto(Personaje *personaje) {
-    // ToDo cambiarle el arma al personaje por rocket launcher
+    personaje->setArmaActual(Personaje::RLAUNCHER);
+    personaje->setShotGunSprites();
 }
 
-RLauncher::~RLauncher() {
-	// Llama al destructor de Bonus (padre)
-}
+RLauncher::~RLauncher() {}
 

@@ -7,13 +7,14 @@
 
 #include "SGun.h"
 
-SGun::SGun(int x, int y) : Bonus(x, y) {}
+SGun::SGun(int x, int y) : Bonus(x, y) {
+    this->tipoDropeable = 0;
+}
 
 void SGun::aplicarEfecto(Personaje *personaje) {
-    // ToDo Cambiar el arma
+    personaje->setArmaActual(Personaje::SHOTGUN);
+    personaje->setShotGunSprites();
 }
 
-SGun::~SGun() {
-	// TODO Auto-generated destructor stub
-}
+SGun::~SGun() {}
 

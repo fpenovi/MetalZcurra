@@ -332,9 +332,14 @@ private:
             }
 
             if (NivelManager::getInstance()->hayMasNiveles()) {
+                objectManager->pausarManagers();
+
                 objectManager->liberarEnemigos();
+                objectManager->reiniciarBonuses();
                 NivelManager::getInstance()->siguienteNivel();
                 objectManager->enviarNuevoBackground(emisor);
+
+                objectManager->reanudarManagers();
             }
 
             //else ToDo TERMINAR JUEGO
@@ -673,6 +678,7 @@ public:
         objectManager->crearBalas(250);
         objectManager->crearBalasManager();
         objectManager->crearEnemigosManager();
+        objectManager->crearBonusManager();
     }
 
     void aceptarClientes() {
