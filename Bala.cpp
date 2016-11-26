@@ -129,7 +129,7 @@ void Bala::handleColision(){
         unordered_map<int, Enemigo*>* enemigosHash = objectManager->getEnemigosHash();
 
         for (auto kv : *enemigosHash){
-            if (kv.second->getExiste()) {
+            if (kv.second->getExiste() && !kv.second->estaMuerto()) {
                 if ((kv.second->getEnvolvente())->hayColision(envolvente)) {
                     kv.second->morir();
                     if (!shotgun) desaparecer();

@@ -83,6 +83,10 @@ int Bonus::getIdColisionado() {
 	return idColisionado;
 }
 
+int Bonus::getTipoDropeable() {
+	return tipoDropeable;
+}
+
 Bonus::~Bonus() {
 	delete this->envolvente;
 }

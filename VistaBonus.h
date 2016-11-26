@@ -32,6 +32,8 @@ public:
     bool getExiste();
 
     int getPosx();
+
+    int reiniciar();
 };
 
 #endif //METALZCURRA_VISTABONUS_H

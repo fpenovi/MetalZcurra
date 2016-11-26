@@ -7,7 +7,9 @@
 
 #include "HMGun.h"
 
-HMGun::HMGun(int x, int y) : Bonus(x, y) {}
+HMGun::HMGun(int x, int y) : Bonus(x, y) {
+    this->tipoDropeable = 0;
+}
 
 void HMGun::aplicarEfecto(Personaje *personaje) {
     personaje->setArmaActual(Personaje::HMGUN);

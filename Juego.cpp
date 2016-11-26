@@ -39,6 +39,7 @@ private:
 	int screenHeight = 600;
 	int levelWidth;
 	int levelHeight;
+	int idBonus;
 
 	// TEXUTRAS
 	Textura* TEXTURA_BALA;
@@ -50,6 +51,8 @@ private:
 	Textura* TEXTURA_HMGUN;
 	Textura* TEXTURA_SGUN;
 	Textura* TEXTURA_RLAUNCHER;
+	Textura* TEXTURA_KILLALL;
+	Textura* TEXTURA_RECOVER;
 
 	// PROTOCOLO
 	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim, saltando;
@@ -114,6 +117,8 @@ public:
 		delete TEXTURA_HMGUN;
 		delete TEXTURA_SGUN;
 		delete TEXTURA_RLAUNCHER;
+		delete TEXTURA_KILLALL;
+		delete TEXTURA_RECOVER;
 		delete fondo;
 
 		//Quit SDL subsystems
@@ -710,9 +715,11 @@ public:
 		}
 		setPosX(0);
 
-		for (auto kv : vistasEnemigos){
+		for (auto kv : vistasEnemigos)
 			kv.second->revivir();
-		}
+
+		for (auto kv : visitasBonuses)
+			kv.second->reiniciar();
 	}
 
 	void salaDeEspera(){
@@ -924,17 +931,18 @@ public:
 	}
 
 	void crearBonuses(){
-		int i = 1;
+		idBonus = 1;
 		VistaBonus* bonus = new VistaBonus(TEXTURA_HMGUN);
-		addBonus(i, bonus);
+		addBonus(idBonus, bonus);
+		idBonus++;
 
-		i++;
 		bonus = new VistaBonus(TEXTURA_SGUN);
-		addBonus(i, bonus);
+		addBonus(idBonus, bonus);
+		idBonus++;
 
-		i++;
 		bonus = new VistaBonus(TEXTURA_RLAUNCHER);
-		addBonus(i, bonus);
+		addBonus(idBonus, bonus);
+		idBonus++;
 	}
 
 	void cargarTexturaBala(){
@@ -989,6 +997,12 @@ public:
 
 		TEXTURA_RLAUNCHER = new Textura(renderizador);
 		if( !TEXTURA_RLAUNCHER->cargarImagen( "imag/sprites/sfx/RLauncher.png") ) printf( "Fallo imagen rlauncher\n" );
+
+		TEXTURA_KILLALL = new Textura(renderizador);
+		if( !TEXTURA_KILLALL->cargarImagen( "imag/sprites/sfx/KillAll.png") ) printf( "Fallo imagen kill all\n" );
+
+		TEXTURA_RECOVER = new Textura(renderizador);
+		if( !TEXTURA_RECOVER->cargarImagen( "imag/sprites/sfx/Recover.png") ) printf( "Fallo imagen recover\n" );
 	}
 
 	void parsearUpdateVista(string update){
@@ -1067,16 +1081,32 @@ public:
 	}
 
 	void actualizarBonus(){
+		if (spriteIdx == 1){
+			nuevoBonus();
+			return;
+		}
+
 		VistaBonus* bonus = getBonusById(id);
 
 		bonus->setPosx(posX);
 		bonus->setPosy(posy);
 		bonus->setExiste(state);
 
-		if (aim){
+		if (aim && saltando == 0){
 			VistaPersonaje* pj = getPersonajeById(conectado);
 			pj->ponerShotgun();
 		}
+	}
+
+	void nuevoBonus(){
+		VistaBonus* bonus;
+
+		if (saltando == 1)
+			bonus = new VistaBonus(TEXTURA_KILLALL);
+		else if (saltando == 2)
+			bonus = new VistaBonus(TEXTURA_RECOVER);
+
+		addBonus(id, bonus);
 	}
 };
 

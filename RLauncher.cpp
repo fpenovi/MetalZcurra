@@ -7,7 +7,9 @@
 
 #include "RLauncher.h"
 
-RLauncher::RLauncher(int x, int y) : Bonus(x, y) {}
+RLauncher::RLauncher(int x, int y) : Bonus(x, y) {
+    this->tipoDropeable = 0;
+}
 
 void RLauncher::aplicarEfecto(Personaje *personaje) {
     personaje->setArmaActual(Personaje::RLAUNCHER);

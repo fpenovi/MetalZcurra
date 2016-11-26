@@ -92,7 +92,7 @@ void* bonusManagerFunc(void* argKh) {
                         update.setConectado(kv.second->getIdColisionado());
                         update.setSpriteIndex(0);
                         update.setApuntando(1);
-                        update.setSaltando(0);
+                        update.setSaltando(kv.second->getTipoDropeable());
 
                         int result;
                         string mensaje = update.toString();

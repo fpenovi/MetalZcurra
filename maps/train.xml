@@ -112,6 +112,18 @@
 			<delta>55</delta>
 		</enemigo>
 
+		<enemigo>
+			<x>1300</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
 		<boss>
 			<x>7500</x>
 			<y>200</y>

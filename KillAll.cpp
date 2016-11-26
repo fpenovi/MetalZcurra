@@ -3,11 +3,14 @@
 //
 
 #include "KillAll.h"
+#include "ObjectManager.h"
 
-KillAll::KillAll(int x, int y) : Bonus(x, y) {}
+KillAll::KillAll(int x, int y) : Bonus(x, y) {
+    this->tipoDropeable = 1;
+}
 
 void KillAll::aplicarEfecto(Personaje *personaje) {
-    // ToDO pedirle al object manager los enemigos, discriminar los que estan en pantalla y matarlos.
+    ObjectManager::getInstance()->killAll();
 }
 
 KillAll::~KillAll() {}

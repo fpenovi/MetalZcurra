@@ -23,6 +23,7 @@ protected:
 	int id;
 	bool renderizado;
 	int idColisionado;
+	int tipoDropeable;
 	Envolvente* envolvente;
 
 public:
@@ -43,6 +44,7 @@ public:
 	int getIdColisionado();
 	int getId();
 	void setId(int aux);
+	int getTipoDropeable();
 	void crear();
 	bool hayColision();
 	virtual void aplicarEfecto(Personaje* personaje) = 0;

@@ -37,3 +37,7 @@ bool VistaBonus::getExiste() {
 int VistaBonus::getPosx() {
     return x;
 }
+
+int VistaBonus::reiniciar(){
+    existe = false;
+}
