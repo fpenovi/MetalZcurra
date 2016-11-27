@@ -5,6 +5,7 @@
  *      Author: franch
  */
 
+#include <iostream>
 #include "Boss.h"
 
 Boss::Boss(int x, int y, int delta) {
@@ -44,6 +45,15 @@ int Boss::getPosy() {
 
 bool Boss::isDisprando(){
 	return disparando;
+}
+
+Envolvente *Boss::getEnvolvente() {
+	return envolvente;
+}
+
+void Boss::restarVida(int danio) {
+	this->vida -= danio;
+	cout << "VIDA BOSS: " << this->vida << endl;
 }
 
 Boss::~Boss() {

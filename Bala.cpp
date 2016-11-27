@@ -16,6 +16,7 @@ Bala::Bala(){
     arriba = false;
     abajo = false;
 
+    danio = 100;
 }
 
 void Bala::mover(){
@@ -147,6 +148,16 @@ void Bala::handleColision(){
                 }
             }
         }
+
+        Boss* boss = objectManager->getBoss();
+
+        if (boss->getExiste() && boss->estaVivo()){
+            if (boss->getEnvolvente()->hayColision(envolvente)){
+                boss->restarVida(danio);
+                if (!shotgun) desaparecer();
+            }
+        }
+
     }
 
 }
@@ -169,6 +180,10 @@ void Bala::moverShotgun() {
 
 int Bala::getFrameShotgun() {
     return frameShotgun;
+}
+
+void Bala::setDanio(int aux){
+    danio = aux;
 }
 
 Bala::~Bala() {

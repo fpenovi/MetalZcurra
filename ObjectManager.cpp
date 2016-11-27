@@ -121,6 +121,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 		for (auto kv : balas) {
 			if (!kv.second->existeBala() && (kv.second->getId() <= 50)) {
 				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 13, 13);
+				kv.second->setDanio(10);
 				return;
 			}
 		}
@@ -132,6 +133,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 			for (auto kv : balas) {
 				if (!kv.second->existeBala() && (kv.second->getId() > 100) && (kv.second->getId() < 151)) {
 					kv.second->crear(idEmisor, posxEmisor + offsetX, posyEmisor + offsetY, getDireccionById(idEmisor), 64, 11);
+					kv.second->setDanio(20);
 					break;
 				}
 			}
@@ -143,6 +145,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 		for (auto kv : balas) {
 			if (!kv.second->existeBala() && (kv.second->getId() > 150) && (kv.second->getId() < 201)) {
 				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 299, 137);
+				kv.second->setDanio(50);
 				kv.second->setShotgun(true);
 				return;
 			}
@@ -152,6 +155,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 		for (auto kv : balas) {
 			if (!kv.second->existeBala() && (kv.second->getId() > 200) && (kv.second->getId() < 251)) {
 				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 107, 17);
+				kv.second->setDanio(80);
 				return;
 			}
 		}

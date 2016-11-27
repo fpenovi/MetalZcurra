@@ -941,6 +941,8 @@ public:
 		for (i ; i < 256 ; i++) {
 			VistaBala* bala = new VistaBala(TEXTURA_BALA_RSHOBU);
 			bala->cargarImagen();
+			bala->setBomba(true);
+			bala->cargarExplosion(renderizador);
 			addBala(i, bala);
 		}
 	}
@@ -1156,6 +1158,7 @@ public:
 		bossActual->setPosx(posX);
 		bossActual->setPosy(posy);
 		bossActual->setFrame(spriteIdx);
+		if (!conectado) bossActual->morir();
 	}
 };
 

@@ -31,7 +31,6 @@ bool Enemigo::mover() {
     //if (velocidad == -7 && posx > 800) velocidad = 7;
     if (cantidadPasos > 0){
         posx -= velocidad;
-        cout << "POS ENEMIGO: " << posx << endl;
         cantidadPasos--;
         setSprite();
         return true;

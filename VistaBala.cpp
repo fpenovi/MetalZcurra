@@ -32,8 +32,8 @@ void VistaBala::cargarImagenShotgun(){
 void VistaBala::render(){
     if (existe){
 
-        double angulo = 0;
-        SDL_RendererFlip flip = SDL_FLIP_NONE;
+        angulo = 0;
+        flip = SDL_FLIP_NONE;
         if (derecha && arriba && !shotgun){
             flip = SDL_FLIP_NONE;
             angulo = 325;
@@ -66,6 +66,16 @@ void VistaBala::render(){
             currentClip = &spriteBala[frame];
             TEXTURA_BALA->render(posx, posy, currentClip, angulo, NULL, flip);
             if (frame == 11) desaparecer();
+        }
+        else if (bomba){
+            if (posx > 800 || posx < 0 || posy < 0 || posy > 520) {
+                explotando = true;
+                posxExp = posx;
+                posyExp = posy;
+            }
+
+            if (explotando) explotar();
+            else TEXTURA_BALA->render(posx,posy,NULL,angulo,NULL, flip);
         }
         else {
             TEXTURA_BALA->render(posx,posy,NULL,angulo,NULL, flip);
@@ -111,6 +121,8 @@ void VistaBala::desaparecer(){
 }
 
 void VistaBala::setExiste(bool exist){
+    if (!exist && bomba)
+        return;
     existe = exist;
 }
 
@@ -152,4 +164,48 @@ bool VistaBala::isShotgun() {
 
 void VistaBala::setFrame(int aux) {
     frame = aux;
+}
+
+void VistaBala::setBomba(bool aux) {
+    bomba = aux;
+}
+
+bool VistaBala::isBomba() {
+    return bomba;
+}
+
+void VistaBala::cargarExplosion(SDL_Renderer* renderer) {
+
+    TEXTURA_EXPLOSION = new Textura(renderer);
+
+    int i;
+    if( !TEXTURA_EXPLOSION->cargarImagen( "imag/sprites/R-Shobu/explosion.png") )
+    {
+        printf( "Fallo sprite gelicoptero derecha\n" );
+    }
+    else
+    {
+        for (i = 0; i < ANIMACION_EXPLOSION; i++){
+            spriteExplosion[ i ].x = i*150;
+            spriteExplosion[ i ].y = 0;
+            spriteExplosion[ i ].w = 150;
+            spriteExplosion[ i ].h = 66;
+        }
+    }
+}
+
+void VistaBala::explotar() {
+    frameExplosion++;
+    currentClip = &spriteExplosion[frameExplosion / 4];
+    TEXTURA_EXPLOSION->render(posxExp, posyExp, currentClip);
+    if (frameExplosion / 4 >= ANIMACION_EXPLOSION) {
+        desaparecer();
+        frameExplosion = 0;
+        explotando = false;
+    }
+}
+
+VistaBala::~VistaBala() {
+    if (TEXTURA_EXPLOSION != NULL)
+        delete TEXTURA_EXPLOSION;
 }

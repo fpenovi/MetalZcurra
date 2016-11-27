@@ -54,9 +54,11 @@ public:
 
     void setExiste(bool aux);
 
-    ~VistaRshobu();
-
     void setDireccion(int posNueva);
+
+    void morir();
+
+    ~VistaRshobu();
 };
 
 #endif //METALZCURRA_VISTARSHOBU_H

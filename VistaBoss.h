@@ -35,6 +35,8 @@ public:
 
     virtual void setDireccion(int posNueva) = 0;
 
+    virtual void morir() = 0;
+
 };
 
 #endif //METALZCURRA_VISTABOSS_H
