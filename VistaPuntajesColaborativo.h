@@ -14,7 +14,7 @@ private:
 	int puntos;
 
 public:
-	VistaPuntajesColaborativo(int cantPlayers);
+	VistaPuntajesColaborativo(int cantPlayers, SDL_Renderer* renderer);
 	void actualizarPuntaje(int id, int puntos);
 	void render();
 	~VistaPuntajesColaborativo();

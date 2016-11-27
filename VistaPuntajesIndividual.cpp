@@ -5,7 +5,7 @@
 #include "VistaPuntajesIndividual.h"
 
 
-VistaPuntajesIndividual::VistaPuntajesIndividual(int cantPlayers) {
+VistaPuntajesIndividual::VistaPuntajesIndividual(int cantPlayers, SDL_Renderer* renderer) : VistaPuntajes(renderer) {
 
 	for (int i = 1; i <= cantPlayers; i++)
 		puntosById[i] = 0;

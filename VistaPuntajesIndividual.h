@@ -6,7 +6,6 @@
 #define METALZCURRA_VISTAPUNTAJESINDIVIDUAL_H
 
 
-#include <bits/unordered_map.h>
 #include "VistaPuntajes.h"
 
 class VistaPuntajesIndividual : public VistaPuntajes {
@@ -15,7 +14,7 @@ private:
 	unordered_map<int, int> puntosById;
 
 public:
-	VistaPuntajesIndividual(int cantPlayers);
+	VistaPuntajesIndividual(int cantPlayers, SDL_Renderer* renderer);
 	void actualizarPuntaje(int id, int puntos);
 	void render();
 	~VistaPuntajesIndividual();

@@ -5,7 +5,7 @@
 #include "VistaPuntajesColaborativo.h"
 
 
-VistaPuntajesColaborativo::VistaPuntajesColaborativo(int cantPlayers) {
+VistaPuntajesColaborativo::VistaPuntajesColaborativo(int cantPlayers, SDL_Renderer* renderer) : VistaPuntajes(renderer) {
 	this->puntos = 0;
 }
 
