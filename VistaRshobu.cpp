@@ -137,3 +137,7 @@ void VistaRshobu::setExiste(bool aux) {
 void VistaRshobu::setDireccion(int posNueva){
     derecha = posx < posNueva;
 }
+
+void VistaRshobu::morir() {
+    existe = false;
+}

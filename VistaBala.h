@@ -23,9 +23,20 @@ private:
     bool abajo;
     Textura* TEXTURA_BALA;
 
+    bool bomba = false;
+    Textura* TEXTURA_EXPLOSION = NULL;
+    const static int ANIMACION_EXPLOSION = 10;
+    SDL_Rect spriteExplosion[ANIMACION_EXPLOSION];
+    int frameExplosion = 0;
+    bool explotando = false;
+    int posxExp;
+    int posyExp;
+
     const static int ANIMACION_BALA_SHOTGUN = 12;
     SDL_Rect spriteBala[ ANIMACION_BALA_SHOTGUN ];
     SDL_Rect* currentClip;
+    SDL_RendererFlip flip;
+    double angulo;
     int frame;
     bool shotgun = false;
 
@@ -75,6 +86,16 @@ public:
     bool isShotgun();
 
     void setFrame(int aux);
+
+    void setBomba(bool aux);
+
+    bool isBomba();
+
+    void cargarExplosion(SDL_Renderer* renderer);
+
+    void explotar();
+
+    ~VistaBala();
 };
 
 

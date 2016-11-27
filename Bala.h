@@ -20,6 +20,7 @@ private:
     int ancho;
     int alto;
     int idDuenio;
+    int danio;
 
     bool derecha;
     bool izquierda;
@@ -83,6 +84,8 @@ public:
     void moverShotgun();
 
     int getFrameShotgun();
+
+    void setDanio(int aux);
 
     ~Bala();
 };

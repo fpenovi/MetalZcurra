@@ -33,6 +33,8 @@ public:
 	void setPosx(int aux);
 	int getPosy();
 	bool isDisprando();
+	Envolvente* getEnvolvente();
+	void restarVida(int danio);
 	virtual void mover() = 0;
 	virtual void crear() = 0;
 	virtual int getSprites() = 0;
