@@ -67,6 +67,7 @@ private:
 	int ANIMACION_ACTUAL_DISPARANDO_ABAJO = 7;
 	int armaActual;
 	int cantidadBalas = 0;
+	int vida = 5;
 
 public:
 	const static int GUN = 0;
@@ -193,6 +194,12 @@ public:
 	int getPuntaje();
 
 	void aumentarPuntos(int aux);
+
+	void restarVida(int aux);
+
+	void sumarVida(int aux);
+
+	bool estaVivo();
 
 	~Personaje();
 };

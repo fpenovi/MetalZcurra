@@ -393,6 +393,21 @@ void Personaje::aumentarPuntos(int aux) {
     puntaje += aux;
 }
 
+void Personaje::restarVida(int aux) {
+    vida -= aux;
+    if (vida == 0) conectado = false;
+    cout << "VIDA: " << vida << endl;
+}
+
+void Personaje::sumarVida(int aux) {
+    if (vida < 5) vida += aux;
+    cout << "VIDA: " << vida << endl;
+}
+
+bool Personaje::estaVivo() {
+    return vida > 0;
+}
+
 Personaje::~Personaje() {
     delete envolvente;
 }

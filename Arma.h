@@ -25,6 +25,7 @@ protected:
     const static int ANIMACION_DISPARANDO_GUN_ARRIBA = 10;
     const static int ANIMACION_DISPARANDO_SHOTGUN_ABAJO = 4;
     const static int ANIMACION_DISPARANDO_SHOTGUN_ARRIBA = 4;
+    const static int ANIMACION_MURIENDO = 19;
 
     int ANIMACION_ACTUAL = 10; //empieza siendo 10 por la gun
     int ANIMACION_ACTUAL_DISPARANDO_ARRIBA = 10; // empieza siendo 10 por la gun
@@ -54,6 +55,9 @@ protected:
     Textura* TEXTURA_ARMA_DISPARANDO_ARRIBA;
     SDL_Rect spriteDisparandoArriba[ ANIMACION_DISPARANDO_GUN_ARRIBA];
 
+    Textura* TEXTURA_MURIENDO;
+    SDL_Rect spriteMuriendo[ ANIMACION_MURIENDO ];
+
     bool arriba = false;
     bool abajo = false;
 
@@ -76,7 +80,7 @@ public:
 
     void renderDispararAbajo(int x, int y, int frame, SDL_RendererFlip flip);
 
-    bool cargarImagen(const char *const pathParado, const char *const pathCorriendo, const char *const pathSaltando, const char *const pathDisparando, const char *const pathApuntarAbajo, const char *const pathApuntarArriba, const char *const pathDisparoAbajo, const char *const pathDisparoArriba);
+    bool cargarImagen(const char *const pathParado, const char *const pathCorriendo, const char *const pathSaltando, const char *const pathDisparando, const char *const pathApuntarAbajo, const char *const pathApuntarArriba, const char *const pathDisparoAbajo, const char *const pathDisparoArriba, const char *const pathMuriendo);
 
     void liberar();
 
@@ -91,6 +95,12 @@ public:
     void apuntarArriba(bool a);
 
     void apuntarAbajo(bool a);
+
+    void renderMuriendo(int x, int y, int frame, SDL_RendererFlip flip);
+
+    void titilar();
+
+    void noTitilar();
 };
 
 

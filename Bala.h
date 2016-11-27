@@ -30,6 +30,8 @@ private:
 
     Envolvente* envolvente = NULL;
 
+    bool rlauncher = false;
+
     // Shotgun
     bool shotgun = false;
     const static int ANIMACION_BALA_SHOTGUN = 12;
@@ -79,6 +81,8 @@ public:
     void handleColision();
 
     void setShotgun(bool aux);
+
+    void setRlauncher(bool aux);
 
     bool isShotgun();
 

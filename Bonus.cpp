@@ -72,11 +72,12 @@ bool Bonus::hayColision(){
 	unordered_map<int, Personaje*>* personajes = objectManager->getPersonajesHash();
 
 	for (auto kv : *personajes){
-
-		if ((kv.second->getEnvolvente())->hayColision(envolvente)) {
-			aplicarEfecto(kv.second);
-			idColisionado = kv.second->getId();
-			return true;
+		if (kv.second->estaVivo()) {
+			if ((kv.second->getEnvolvente())->hayColision(envolvente)) {
+				aplicarEfecto(kv.second);
+				idColisionado = kv.second->getId();
+				return true;
+			}
 		}
 	}
 	return false;

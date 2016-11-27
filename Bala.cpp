@@ -50,10 +50,19 @@ void Bala::crear(int idEmisor, int x, int y, Direccion* direccion, int ancho, in
     this->ancho = ancho;
     this->alto = alto;
 
+    if (envolvente != NULL) delete envolvente;
     envolvente = new Envolvente();
     envolvente->agregarComponente(new Rectangulo(&posx, &posy, ancho, alto));
 
-    setDireccion(direccion->isDerecha(), direccion->isIzquierda(), direccion->isArriba(), direccion->isAbajo());
+    if (shotgun || rlauncher){
+        if (direccion->isDerecha() || direccion->isIzquierda())
+            setDireccion(direccion->isDerecha(), direccion->isIzquierda(), false, false);
+        else if (direccion->isArriba() || direccion->isAbajo())
+            setDireccion(false, false, direccion->isArriba(), direccion->isAbajo());
+    }
+    else if (!shotgun && !rlauncher){
+        setDireccion(direccion->isDerecha(), direccion->isIzquierda(), direccion->isArriba(), direccion->isAbajo());
+    }
 }
 
 void Bala::crearBalaEnemiga(int x, int y, bool derecha, int ancho, int alto) {
@@ -61,6 +70,7 @@ void Bala::crearBalaEnemiga(int x, int y, bool derecha, int ancho, int alto) {
     posx = x;
     posy = y;
 
+    if (envolvente != NULL) delete envolvente;
     envolvente = new Envolvente();
     envolvente->agregarComponente(new Rectangulo(&posx, &posy, ancho, alto));
 
@@ -72,6 +82,7 @@ void Bala::crearBalaBoss(int x, int y, int ancho, int alto){
     posx = x;
     posy = y;
 
+    if (envolvente != NULL) delete envolvente;
     envolvente = new Envolvente();
     envolvente->agregarComponente(new Rectangulo(&posx, &posy, ancho, alto));
 
@@ -99,6 +110,7 @@ void Bala::desaparecer(){
     idDuenio = 0;
     posy = 0;
     posx = 0;
+    setDireccion(false, false, false, false);
 }
 
 int Bala::getId() {
@@ -139,7 +151,7 @@ int Bala::getIzquierda() {
 void Bala::handleColision(){
     ObjectManager* objectManager = ObjectManager::getInstance();
 
-    if (id <= 50 || id > 100){
+    if (id <= 50 || (id > 100 && id < 251)){
         unordered_map<int, Enemigo*>* enemigosHash = objectManager->getEnemigosHash();
 
         for (auto kv : *enemigosHash){
@@ -163,11 +175,28 @@ void Bala::handleColision(){
         }
 
     }
+    else {
+        unordered_map<int, Personaje*>* personajesHash = objectManager->getPersonajesHash();
+
+        for (auto kv : *personajesHash){
+            if (kv.second->getConectado() && kv.second->estaVivo()){
+                if ((kv.second->getEnvolvente())->hayColision(envolvente)) {
+                    kv.second->restarVida(1);
+                    objectManager->handleImpacto(kv.second);
+                    desaparecer();
+                }
+            }
+        }
+    }
 
 }
 
 void Bala::setShotgun(bool aux) {
     shotgun = aux;
+}
+
+void Bala::setRlauncher(bool aux) {
+    rlauncher = aux;
 }
 
 bool Bala::isShotgun() {

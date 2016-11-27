@@ -160,6 +160,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 107, 17);
 				kv.second->setDanio(80);
 				kv.second->setPuntos(40);
+				kv.second->setRlauncher(true);
 				return;
 			}
 		}
@@ -477,6 +478,38 @@ void ObjectManager::agregarDropeable(Bonus* dropeable) {
 	dropeable->setId(idBonus);
 	addBonus(idBonus, dropeable);
 	idBonus++;
+}
+
+void ObjectManager::handleImpacto(Personaje* personaje){
+	ProtocoloVistaUpdate update;
+
+	update.setTipoObjeto(7);
+	update.setEstado(personaje->estaVivo());
+	update.setX(0);
+	update.setY(0);
+	update.setObject_id(personaje->getId());
+	update.setPosCamara(0);
+	update.setConectado(0);
+	update.setSpriteIndex(0);
+	update.setApuntando(0);
+	update.setSaltando(0);
+	update.setPuntaje(0);
+
+	int result;
+	string mensaje = update.toString();
+
+	for (auto kv : *conectadosHash) {
+
+		Mensaje* mensajeNuevo = new Mensaje("Server", kv.first, mensaje);
+
+		result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+		kv.second->push_back(mensajeNuevo);
+
+		result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+	}
 }
 
 void ObjectManager::killAll(){

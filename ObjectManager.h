@@ -96,7 +96,6 @@ public:
 	Boss* getBoss();
 	void setBoss(Boss* boss);
 
-	void killAll();
 	// Bonuses
 	unordered_map<int, Bonus*>* getBonusesHash();
 	void setBonuses(vector<Bonus*> bonuses);
@@ -105,8 +104,10 @@ public:
 	void agregarDropeable(Bonus* dropeable);
 	int getIdBonus();
 	void setIdBonus(int aux);
-
+	void killAll();
 	void reiniciarBonuses();
+
+	void handleImpacto(Personaje *personaje);
 };
 
 
