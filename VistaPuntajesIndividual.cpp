@@ -8,7 +8,7 @@
 VistaPuntajesIndividual::VistaPuntajesIndividual(int cantPlayers, SDL_Renderer* renderer) : VistaPuntajes(renderer) {
 
 	int posX = SCORE_X;
-	int spacing = 0;		// Desactivo espaciado para primera iteracion
+	int spacing = SCORE_X_SPACING;		// Desactivo espaciado para primera iteracion
 
 	for (int i = 1; i <= cantPlayers; i++) {
 		puntaje_t* actual = new puntaje_t;
@@ -20,7 +20,7 @@ VistaPuntajesIndividual::VistaPuntajesIndividual(int cantPlayers, SDL_Renderer* 
 		actual->x = posX;
 		actual->y = SCORE_Y;
 		puntosById[i] = actual;
-		if (i == 1) spacing = SCORE_X_SPACING;
+		posX = SCORE_X;
 	}
 }
 

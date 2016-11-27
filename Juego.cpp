@@ -19,6 +19,7 @@
 #include "VistaBonus.h"
 #include "VistaBoss.h"
 #include "VistaRshobu.h"
+#include "VistaPuntajes.h"
 
 using namespace std;
 using namespace chrono;
@@ -44,6 +45,7 @@ private:
 	int cantidadUsuarios;
 	int modoJuego;
 	int idBonus;
+	VistaPuntajes* puntajes;
 
 	// TEXUTRAS
 	Textura* TEXTURA_BALA;
@@ -713,6 +715,8 @@ public:
 
 		for (auto kv : vistasBalas)
 			kv.second->render();
+
+		puntajes->render();
 	}
 
 	int getPersonajeMasMovido(){
@@ -1056,6 +1060,7 @@ public:
 	}
 
 	void actualizarPersonaje(){
+		puntajes->actualizarPuntaje(id, puntaje);
 
 		VistaPersonaje* pj = getPersonajeById(id);
 
@@ -1160,6 +1165,10 @@ public:
 		bossActual->setFrame(spriteIdx);
 		if (!conectado) bossActual->morir();
 	}
+
+	void crearVistaPuntajes(){
+		puntajes = VistaPuntajes::NewVistaPuntaje(cantidadUsuarios, modoJuego, renderizador);
+	}
 };
 
 typedef struct {
@@ -1235,6 +1244,9 @@ int main( int argc, char** argv) {
 	juego.setBackground(fondo);
 	juego.recibirCapas();
 	fondo->prepararEscenario();
+
+	// Creo los puntajes
+	juego.crearVistaPuntajes();
 
 	// Recibir personajes
 	juego.recibirPersonajes();

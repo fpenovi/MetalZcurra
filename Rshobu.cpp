@@ -46,6 +46,7 @@ void Rshobu::moverDerecha(){
 }
 
 void Rshobu::mover(){
+	if (!estaVivo()) existe = false;
 	if (!disparando) disparar();
 	if (derecha) moverDerecha();
 	else moverIzquierda();

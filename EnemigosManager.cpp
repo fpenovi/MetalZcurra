@@ -89,7 +89,7 @@ void* enemigosManagerFunc(void* argKh) {
                     ProtocoloVistaUpdate update;
 
                     update.setTipoObjeto(6);
-                    update.setEstado(true);
+                    update.setEstado(boss->getExiste());
                     update.setX(boss->getPosx());
                     update.setY(boss->getPosy());
                     update.setObject_id(boss->getId());
