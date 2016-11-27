@@ -23,7 +23,7 @@
 		Max: 4			 -->
 		
 	<opciones>
-		<modo>0</modo>
-		<jugadores>1</jugadores>
+		<modo>2</modo>
+		<jugadores>3</jugadores>
 	</opciones>
 </juego>

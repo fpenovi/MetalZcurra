@@ -49,7 +49,7 @@ private:
 	int indexPies = 0;
 
 public:
-    VistaPersonaje(SDL_Renderer *renderizador2, int id);
+    VistaPersonaje(SDL_Renderer *renderizador2, int id, int modoJuego);
 
 	~VistaPersonaje();
 

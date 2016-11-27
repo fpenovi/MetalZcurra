@@ -12,6 +12,7 @@ class Arma
 {
 protected:
     string idPj;
+    int gameMode;
     bool shotgun = false;
 
     const static int ANIMACION_PARADO = 4;
@@ -59,7 +60,7 @@ protected:
     SDL_Rect* currentClip;
 
 public:
-    Arma(SDL_Renderer* render, int id);
+    Arma(SDL_Renderer* render, int id, int modoJuego);
 
     ~Arma();
 

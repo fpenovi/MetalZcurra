@@ -3,8 +3,9 @@
 //
 
 #include "Arma.h"
+#include "VistaPuntajes.h"
 
-Arma::Arma(SDL_Renderer* render, int id){
+Arma::Arma(SDL_Renderer* render, int id, int modoJuego){
     TEXTURA_ARMA_PARADO = new Textura(render);
     TEXTURA_ARMA_CORRIENDO = new Textura(render);
     TEXTURA_ARMA_SALTANDO = new Textura(render);
@@ -14,16 +15,40 @@ Arma::Arma(SDL_Renderer* render, int id){
     TEXTURA_ARMA_DISPARANDO_ABAJO = new Textura(render);
     TEXTURA_ARMA_DISPARANDO_ARRIBA = new Textura(render);
 
+    gameMode = modoJuego;
     idPj = to_string(id);
+    string pathComun = "imag/sprites/";
+    string pathParado;
+    string pathCorriendo;
+    string pathSaltando;
+    string pathDisparando;
+    string pathApuntarAbajo;
+    string pathApuntarArriba;
+    string pathDisparoAbajo;
+    string pathDisparoArriba;
 
-    string pathParado = "imag/sprites/player" + idPj + "/gunStill.png";
-    string pathCorriendo = "imag/sprites/player" + idPj + "/gunRun.png";
-    string pathSaltando = "imag/sprites/player" + idPj + "/gunJump.png";
-    string pathDisparando = "imag/sprites/player" + idPj + "/gunShoot.png";
-    string pathApuntarAbajo = "imag/sprites/player" + idPj + "/gunPointDown.png";
-    string pathApuntarArriba = "imag/sprites/player" + idPj + "/gunPointUp.png";
-    string pathDisparoAbajo = "imag/sprites/player" + idPj + "/gunShootDown.png";
-    string pathDisparoArriba = "imag/sprites/player" + idPj + "/gunShootUp.png";
+    if (modoJuego == VistaPuntajes::MODO_GRUPAL){
+        string equipo = to_string((id % VistaPuntajes::CANT_EQUIPOS) + 1);
+
+        pathParado = pathComun + "equipo" + equipo + "/player" + idPj + "/gunStill.png";
+        pathCorriendo = pathComun + "equipo" + equipo + "/player" + idPj + "/gunRun.png";
+        pathSaltando = pathComun + "equipo" + equipo + "/player" + idPj + "/gunJump.png";
+        pathDisparando = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShoot.png";
+        pathApuntarAbajo = pathComun + "equipo" + equipo + "/player" + idPj + "/gunPointDown.png";
+        pathApuntarArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/gunPointUp.png";
+        pathDisparoAbajo = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShootDown.png";
+        pathDisparoArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShootUp.png";
+    }
+    else {
+        pathParado = pathComun + "player" + idPj + "/gunStill.png";
+        pathCorriendo = pathComun + "player" + idPj + "/gunRun.png";
+        pathSaltando = pathComun + "player" + idPj + "/gunJump.png";
+        pathDisparando = pathComun + "player" + idPj + "/gunShoot.png";
+        pathApuntarAbajo = pathComun + "player" + idPj + "/gunPointDown.png";
+        pathApuntarArriba = pathComun + "player" + idPj + "/gunPointUp.png";
+        pathDisparoAbajo = pathComun + "player" + idPj + "/gunShootDown.png";
+        pathDisparoArriba = pathComun + "player" + idPj + "/gunShootUp.png";
+    }
 
     cargarImagen(pathParado.c_str(),
                  pathCorriendo.c_str(),
@@ -241,14 +266,38 @@ void Arma::ponerShotgun(){
     ANIMACION_ACTUAL_DISPARANDO_ABAJO=ANIMACION_DISPARANDO_SHOTGUN_ABAJO;
     ANIMACION_ACTUAL_DISPARANDO_ARRIBA=ANIMACION_DISPARANDO_SHOTGUN_ARRIBA;
 
-    string pathParado = "imag/sprites/player" + idPj + "/shotgunStill.png";
-    string pathCorriendo = "imag/sprites/player" + idPj + "/shotgunRun.png";
-    string pathSaltando = "imag/sprites/player" + idPj + "/shotgunJump.png";
-    string pathDisparando = "imag/sprites/player" + idPj + "/shotgunShoot.png";
-    string pathApuntarAbajo = "imag/sprites/player" + idPj + "/shotgunPointDown.png";
-    string pathApuntarArriba = "imag/sprites/player" + idPj + "/shotgunPointUp.png";
-    string pathDisparoAbajo = "imag/sprites/player" + idPj + "/shotgunShootDown.png";
-    string pathDisparoArriba = "imag/sprites/player" + idPj + "/shotgunShootUp.png";
+    string pathComun = "imag/sprites/";
+    string pathParado;
+    string pathCorriendo;
+    string pathSaltando;
+    string pathDisparando;
+    string pathApuntarAbajo;
+    string pathApuntarArriba;
+    string pathDisparoAbajo;
+    string pathDisparoArriba;
+
+    if (gameMode == VistaPuntajes::MODO_GRUPAL){
+        string equipo = to_string((stoi(idPj) % VistaPuntajes::CANT_EQUIPOS) + 1);
+
+        pathParado = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunStill.png";
+        pathCorriendo = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunRun.png";
+        pathSaltando = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunJump.png";
+        pathDisparando = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunShoot.png";
+        pathApuntarAbajo = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunPointDown.png";
+        pathApuntarArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunPointUp.png";
+        pathDisparoAbajo = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunShootDown.png";
+        pathDisparoArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunShootUp.png";
+    }
+    else {
+        pathParado = pathComun + "player" + idPj + "/shotgunStill.png";
+        pathCorriendo = pathComun + "player" + idPj + "/shotgunRun.png";
+        pathSaltando = pathComun + "player" + idPj + "/shotgunJump.png";
+        pathDisparando = pathComun + "player" + idPj + "/shotgunShoot.png";
+        pathApuntarAbajo = pathComun + "player" + idPj + "/shotgunPointDown.png";
+        pathApuntarArriba = pathComun + "player" + idPj + "/shotgunPointUp.png";
+        pathDisparoAbajo = pathComun + "player" + idPj + "/shotgunShootDown.png";
+        pathDisparoArriba = pathComun + "player" + idPj + "/shotgunShootUp.png";
+    }
 
     cargarImagen(pathParado.c_str(),
                  pathCorriendo.c_str(),
@@ -270,14 +319,38 @@ void Arma::ponerGun(){
         ANIMACION_ACTUAL_DISPARANDO_ABAJO = ANIMACION_DISPARANDO_GUN_ABAJO;
         ANIMACION_ACTUAL_DISPARANDO_ARRIBA = ANIMACION_DISPARANDO_GUN_ARRIBA;
 
-        string pathParado = "imag/sprites/player" + idPj + "/gunStill.png";
-        string pathCorriendo = "imag/sprites/player" + idPj + "/gunRun.png";
-        string pathSaltando = "imag/sprites/player" + idPj + "/gunJump.png";
-        string pathDisparando = "imag/sprites/player" + idPj + "/gunShoot.png";
-        string pathApuntarAbajo = "imag/sprites/player" + idPj + "/gunPointDown.png";
-        string pathApuntarArriba = "imag/sprites/player" + idPj + "/gunPointUp.png";
-        string pathDisparoAbajo = "imag/sprites/player" + idPj + "/gunShootDown.png";
-        string pathDisparoArriba = "imag/sprites/player" + idPj + "/gunShootUp.png";
+        string pathComun = "imag/sprites/";
+        string pathParado;
+        string pathCorriendo;
+        string pathSaltando;
+        string pathDisparando;
+        string pathApuntarAbajo;
+        string pathApuntarArriba;
+        string pathDisparoAbajo;
+        string pathDisparoArriba;
+
+        if (gameMode == VistaPuntajes::MODO_GRUPAL){
+            string equipo = to_string((stoi(idPj) % VistaPuntajes::CANT_EQUIPOS) + 1);
+
+            pathParado = pathComun + "equipo" + equipo + "/player" + idPj + "/gunStill.png";
+            pathCorriendo = pathComun + "equipo" + equipo + "/player" + idPj + "/gunRun.png";
+            pathSaltando = pathComun + "equipo" + equipo + "/player" + idPj + "/gunJump.png";
+            pathDisparando = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShoot.png";
+            pathApuntarAbajo = pathComun + "equipo" + equipo + "/player" + idPj + "/gunPointDown.png";
+            pathApuntarArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/gunPointUp.png";
+            pathDisparoAbajo = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShootDown.png";
+            pathDisparoArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShootUp.png";
+        }
+        else {
+            pathParado = pathComun + "player" + idPj + "/gunStill.png";
+            pathCorriendo = pathComun + "player" + idPj + "/gunRun.png";
+            pathSaltando = pathComun + "player" + idPj + "/gunJump.png";
+            pathDisparando = pathComun + "player" + idPj + "/gunShoot.png";
+            pathApuntarAbajo = pathComun + "player" + idPj + "/gunPointDown.png";
+            pathApuntarArriba = pathComun + "player" + idPj + "/gunPointUp.png";
+            pathDisparoAbajo = pathComun + "player" + idPj + "/gunShootDown.png";
+            pathDisparoArriba = pathComun + "player" + idPj + "/gunShootUp.png";
+        }
 
         cargarImagen(pathParado.c_str(),
                      pathCorriendo.c_str(),
