@@ -10,7 +10,7 @@
 
 VistaPuntajes::VistaPuntajes(SDL_Renderer* renderer) {
 	this->renderer = renderer;
-	this->playerColorsById[1] = new SDL_Color{0, 0, 0, 0xFF};
+	this->playerColorsById[1] = new SDL_Color{0, 0, 0, 0xFF};	// ToDo fijarse en Photoshop los codigos de los colores
 	this->playerColorsById[2] = new SDL_Color{0, 0, 0, 0xFF};
 	this->playerColorsById[3] = new SDL_Color{0, 0, 0, 0xFF};
 	this->playerColorsById[4] = new SDL_Color{0, 0, 0, 0xFF};
