@@ -41,8 +41,8 @@ private:
 	int posFondo;
 	int screenWidth = 800;
 	int screenHeight = 600;
-	int levelWidth;
-	int levelHeight;
+	int cantidadUsuarios;
+	int modoJuego;
 	int idBonus;
 
 	// TEXUTRAS
@@ -60,7 +60,7 @@ private:
 	Textura* TEXTURA_BALA_RSHOBU;
 
 	// PROTOCOLO
-	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim, saltando;
+	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim, saltando, puntaje;
 	int miId;
 
 	// Atributos para sala de espera
@@ -753,10 +753,10 @@ public:
 
 		string ventanaAncho = "";
 		string ventanaAlto = "";
-		//string nivelAncho = "";
-		//string nivelAlto = "";
+		string cantUsers = "";
+		string gameMode = "";
 
-		string* variables[] = {&ventanaAncho, &ventanaAlto};
+		string* variables[] = {&ventanaAncho, &ventanaAlto, &cantUsers, &gameMode};
 
 		int j = 0;
 
@@ -774,8 +774,8 @@ public:
 
 		screenWidth = stoi(ventanaAncho);
 		screenHeight = stoi(ventanaAlto);
-		//levelWidth = stoi(nivelAncho);
-		//levelHeight = stoi(nivelAlto);
+		cantidadUsuarios = stoi(cantUsers);
+		modoJuego = stoi(gameMode);
 	}
 
 	void recibirCapas(){
@@ -1048,7 +1048,7 @@ public:
 	}
 
 	void parsearUpdateVista(string update){
-		ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posX, &posy, &posCam, &conectado, &spriteIdx, &aim, &saltando);
+		ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posX, &posy, &posCam, &conectado, &spriteIdx, &aim, &saltando, &puntaje);
 	}
 
 	int getTipoObjeto(){

@@ -122,6 +122,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 			if (!kv.second->existeBala() && (kv.second->getId() <= 50)) {
 				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 13, 13);
 				kv.second->setDanio(10);
+				kv.second->setPuntos(5);
 				return;
 			}
 		}
@@ -134,6 +135,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 				if (!kv.second->existeBala() && (kv.second->getId() > 100) && (kv.second->getId() < 151)) {
 					kv.second->crear(idEmisor, posxEmisor + offsetX, posyEmisor + offsetY, getDireccionById(idEmisor), 64, 11);
 					kv.second->setDanio(20);
+					kv.second->setPuntos(15);
 					break;
 				}
 			}
@@ -146,6 +148,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 			if (!kv.second->existeBala() && (kv.second->getId() > 150) && (kv.second->getId() < 201)) {
 				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 299, 137);
 				kv.second->setDanio(50);
+				kv.second->setPuntos(35);
 				kv.second->setShotgun(true);
 				return;
 			}
@@ -156,6 +159,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 			if (!kv.second->existeBala() && (kv.second->getId() > 200) && (kv.second->getId() < 251)) {
 				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 107, 17);
 				kv.second->setDanio(80);
+				kv.second->setPuntos(40);
 				return;
 			}
 		}
@@ -285,9 +289,9 @@ void ObjectManager::reinicializarEscenario() {
 	setPosX(0);
 }
 
-void ObjectManager::enviarEscenario(int FD) {
+void ObjectManager::enviarEscenario(int FD, int cantUsers, int modo) {
 
-	string msj = tamVentana[0] + "$" + tamVentana[1] + "\n";
+	string msj = tamVentana[0] + "$" + tamVentana[1] + "$" + to_string(cantUsers) + "$" + to_string(modo) +  "\n";
 	const char* mensajeChar = msj.c_str();
 
 	ssize_t bytesEscritos = write(FD, mensajeChar, msj.size());
@@ -452,7 +456,7 @@ void ObjectManager::agregarDropeable(Bonus* dropeable) {
 	update.setSpriteIndex(1);
 	update.setApuntando(0);
 	update.setSaltando(dropeable->getTipoDropeable());
-
+	update.setPuntaje(0);
 
 	int result;
 	string mensaje = update.toString();

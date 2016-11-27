@@ -57,7 +57,7 @@ void* balasManagerFunc(void* argKh) {
                         update.setSpriteIndex(kv.second->getDerecha());
                         update.setApuntando(kv.second->getIzquierda());
                         update.setSaltando(kv.second->getFrameShotgun());
-
+                        update.setPuntaje(0);
 
                         int result;
                         string mensaje = update.toString();

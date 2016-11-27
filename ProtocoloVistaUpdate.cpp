@@ -37,6 +37,10 @@ int ProtocoloVistaUpdate::getSaltando() {
     return saltando;
 }
 
+int ProtocoloVistaUpdate::getPuntaje() {
+    return puntaje;
+}
+
 void ProtocoloVistaUpdate::setTipoObjeto(int tipo) {
     this->tipoObjeto = tipo;
 }
@@ -77,6 +81,10 @@ void ProtocoloVistaUpdate::setSaltando(int aux) {
     saltando = aux;
 }
 
+void ProtocoloVistaUpdate::setPuntaje(int aux) {
+    puntaje = aux;
+}
+
 string ProtocoloVistaUpdate::toString(){
     string tipo = to_string(tipoObjeto);
     string id = to_string(object_id);
@@ -88,12 +96,13 @@ string ProtocoloVistaUpdate::toString(){
     string index = to_string(spriteIndex);
     string aim = to_string(apuntando);
     string salto = to_string(saltando);
+    string points = to_string(puntaje);
 
-    string msj = tipo + "$" + id + "$" + state + "$" + posx + "$" + posy + "$" + posCam + "$" + conexion + "$" + index + "$" + aim + "$" + salto + "\n";
+    string msj = tipo + "$" + id + "$" + state + "$" + posx + "$" + posy + "$" + posCam + "$" + conexion + "$" + index + "$" + aim + "$" + salto + "$" + points +  "\n";
     return msj;
 }
 
-void ProtocoloVistaUpdate::parse(string stream, int* tipo, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex, int* aim, int* salto) {
+void ProtocoloVistaUpdate::parse(string stream, int* tipo, int* id, int* state, int* posx, int* posy, int* posCamara, int* conectado, int* spriteIndex, int* aim, int* salto, int* points) {
 
     string tipo_s = "";
     string id_s = "";
@@ -105,8 +114,9 @@ void ProtocoloVistaUpdate::parse(string stream, int* tipo, int* id, int* state, 
     string index_s = "";
     string aim_s = "";
     string salto_s = "";
+    string points_s = "";
 
-    string* variables[] = {&tipo_s, &id_s, &state_s, &posx_s, &posy_s, &posCamara_s, &conectado_s, &index_s, &aim_s, &salto_s};
+    string* variables[] = {&tipo_s, &id_s, &state_s, &posx_s, &posy_s, &posCamara_s, &conectado_s, &index_s, &aim_s, &salto_s, &points_s};
 
     int j = 0;
 
@@ -132,4 +142,5 @@ void ProtocoloVistaUpdate::parse(string stream, int* tipo, int* id, int* state, 
     *spriteIndex = stoi(index_s);
     *aim = stoi(aim_s);
     *salto = stoi(salto_s);
+    *points = stoi(points_s);
 }

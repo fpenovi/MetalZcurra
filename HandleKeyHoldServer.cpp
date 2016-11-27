@@ -62,6 +62,7 @@ void* handleKeyHoldFunc(void* argKh) {
                         update.setSpriteIndex(personaje->getSprites());
                         update.setApuntando(personaje->getDireccion());
                         update.setSaltando(personaje->getSaltando());
+                        update.setPuntaje(personaje->getPuntaje());
                         break;
 
                     case SDLK_RIGHT:
@@ -84,6 +85,7 @@ void* handleKeyHoldFunc(void* argKh) {
                         update.setSpriteIndex(personaje->getSprites());
                         update.setApuntando(personaje->getDireccion());
                         update.setSaltando(personaje->getSaltando());
+                        update.setPuntaje(personaje->getPuntaje());
                         break;
 
                 }

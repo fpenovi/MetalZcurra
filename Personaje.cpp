@@ -385,6 +385,14 @@ bool Personaje::getCambioDeArma() {
     return cantidadBalas <= 0;
 }
 
+int Personaje::getPuntaje() {
+    return puntaje;
+}
+
+void Personaje::aumentarPuntos(int aux) {
+    puntaje += aux;
+}
+
 Personaje::~Personaje() {
     delete envolvente;
 }

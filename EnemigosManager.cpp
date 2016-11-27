@@ -59,6 +59,7 @@ void* enemigosManagerFunc(void* argKh) {
                             update.setSpriteIndex(kv.second->getSprite());
                             update.setApuntando(kv.second->isDisparando());
                             update.setSaltando(0);
+                            update.setPuntaje(0);
 
                             int result;
                             string mensaje = update.toString();
@@ -97,6 +98,7 @@ void* enemigosManagerFunc(void* argKh) {
                     update.setSpriteIndex(boss->getSprites());
                     update.setApuntando(0);
                     update.setSaltando(0);
+                    update.setPuntaje(0);
 
                     int result;
                     string mensaje = update.toString();

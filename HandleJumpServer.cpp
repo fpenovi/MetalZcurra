@@ -83,6 +83,7 @@ void* handleJumpFunc(void* argKh) {
                 update.setSpriteIndex(personaje->getSprites());
                 update.setApuntando(personaje->getDireccion());
                 update.setSaltando(personaje->getSaltando());
+                update.setPuntaje(personaje->getPuntaje());
 
                 int result;
                 string mensaje = update.toString();

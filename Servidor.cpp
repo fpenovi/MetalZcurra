@@ -61,7 +61,7 @@ private:
     static ObjectManager* objectManager;
     static unordered_map<string, list<Mensaje*>*> conectadosHash;
     static unordered_map<string, pthread_mutex_t> mutexesHash;
-    static string modoJuego;
+    static int modoJuego;
 
     static void *controlInput(void *serverStatus) {
 
@@ -252,6 +252,7 @@ private:
                     update.setSpriteIndex(0);
                     update.setApuntando(0);
                     update.setSaltando(0);
+                    update.setPuntaje(0);
                     enviar = true;
                     break;
 
@@ -441,7 +442,7 @@ private:
         objectManager->conectarPersonaje(userCon);
 
         // ENVIO DATOS
-        objectManager->enviarEscenario(sockNewFileDescrpt);
+        objectManager->enviarEscenario(sockNewFileDescrpt, cantidadUsuarios, modoJuego);
         objectManager->enviarPersonajes(sockNewFileDescrpt, userCon);
 
         int cant;
@@ -585,6 +586,7 @@ private:
         update.setConectado(personaje->getConectado());
         update.setApuntando(personaje->getDireccion());
         update.setSaltando(personaje->getSaltando());
+        update.setPuntaje(personaje->getPuntaje());
 
         int result;
         string mensaje = update.toString();
@@ -667,7 +669,7 @@ public:
         objectManager->setTamVentana(parser->tamVentana());
 
         vector<string> opciones = parser->opcionesJuego();
-        modoJuego = opciones[0];
+        modoJuego = stoi(opciones[0]);
         cantidadUsuarios = stoi(opciones[1]);
 
         NivelManager::getInstance()->setXmlNiveles(parser->xmlNiveles());
@@ -737,7 +739,7 @@ ObjectManager* Servidor::objectManager = ObjectManager::getInstance();
 unordered_map<string, list<Mensaje*>*> Servidor::conectadosHash;
 unordered_map<string, pthread_mutex_t> Servidor::mutexesHash;
 int Servidor::cantidadUsuarios;
-string Servidor::modoJuego;
+int Servidor::modoJuego;
 
 int main(int argc, char** argv) {
 

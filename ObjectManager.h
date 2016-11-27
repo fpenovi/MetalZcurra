@@ -60,7 +60,7 @@ public:
 	int* getPosX();
 	bool puedoAvanzar();
 	void moverCamara(int id);
-	void enviarEscenario(int FD);
+	void enviarEscenario(int FD, int cantUsers, int modo);
 	void conectarPersonaje(string user);
 	void desconectarPersonaje(string user);
 	void moverDesconectados();

@@ -15,15 +15,15 @@
 <!-- OPCIONES DE JUEGO
 
 	Modo: 
-		- INDIVIDUAL
-		- COLABORATIVO
-		- GRUPAL
+		- INDIVIDUAL = 0
+		- COLABORATIVO = 1
+		- GRUPAL = 2
 	Jugadores:
 		Min: 1
 		Max: 4			 -->
 		
 	<opciones>
-		<modo>INDIVIDUAL</modo>
+		<modo>0</modo>
 		<jugadores>1</jugadores>
 	</opciones>
 </juego>

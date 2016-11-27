@@ -58,7 +58,7 @@ void* bonusManagerFunc(void* argKh) {
                         update.setSpriteIndex(0);
                         update.setApuntando(0);
                         update.setSaltando(0);
-
+                        update.setPuntaje(0);
 
                         int result;
                         string mensaje = update.toString();
@@ -93,6 +93,7 @@ void* bonusManagerFunc(void* argKh) {
                         update.setSpriteIndex(0);
                         update.setApuntando(1);
                         update.setSaltando(kv.second->getTipoDropeable());
+                        update.setPuntaje(0);
 
                         int result;
                         string mensaje = update.toString();

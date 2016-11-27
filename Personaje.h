@@ -17,6 +17,7 @@ using namespace std;
 class Personaje {
 
 private:
+	int puntaje = 0;
     int posx = 0;
     int posy = 465;
     int ancho = 60;
@@ -188,6 +189,10 @@ public:
 	int getCantidadBalas();
 
 	bool getCambioDeArma();
+
+	int getPuntaje();
+
+	void aumentarPuntos(int aux);
 
 	~Personaje();
 };

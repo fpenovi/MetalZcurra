@@ -94,6 +94,7 @@ void* handleDisparoFunc(void* argKh) {
                     update.setSpriteIndex(personaje->getSprites());
                     update.setApuntando(personaje->getDireccion());
                     update.setSaltando(personaje->getCambioDeArma());
+                    update.setPuntaje(0);
 
                     int result;
                     string mensaje = update.toString();
