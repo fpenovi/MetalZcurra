@@ -667,7 +667,14 @@ class Personaje
 			abajo=false;
 			arriba=false;
 		}
-
+/* ESTOS HAY QUE HACERLOS BIEN
+		void titilar(){
+			TEXTURA_PERSONAJE_PARADO_PIES.setAlpha(90);
+		}
+		void destitilar(){
+			TEXTURA_PERSONAJE_PARADO_PIES.setAlpha(255);
+		}
+*/
 		void asignarID(int id2){
 			id=id2;
 			arma.asignarID(id);
@@ -2167,6 +2174,283 @@ class Helicoptero{
 		}
 };
 
+
+#define CERRADO 0
+#define CERRANDO 1
+#define ABRIENDO 2
+#define ABIERTO 3
+
+#define NODISPARANDO 0
+#define PREPARANDOSE 1
+#define PREPARADO 2
+#define DISPARANDO 3
+
+class Ovni{
+
+	private:
+		int puerta=CERRADO;
+		int laser=CERRADO;
+		int disparando=NODISPARANDO;
+
+		int posx;
+		int posy;
+		int alto;
+		int ancho;
+		Textura TEXTURA_CARGA_TIRO;
+		Textura TEXTURA_PUERTA;
+		Textura TEXTURA_SACANDO_LASER;
+		Textura TEXTURA_DISPARO;
+		Textura TEXTURA_MOVIMIENTO;
+
+		const static int ANIMACION_CARGA_TIRO=20;
+		SDL_Rect spriteCargandoTiro[ ANIMACION_CARGA_TIRO ];
+		int frameCarga;
+
+		const static int ANIMACION_PUERTA=23;
+		SDL_Rect spritePuerta[ ANIMACION_PUERTA ];
+		int framePuerta;
+
+		const static int ANIMACION_LASER=15;
+		SDL_Rect spriteSacandoLaser[ ANIMACION_LASER ];
+		int frameLaser;
+
+		const static int ANIMACION_DISPARO=20;
+		SDL_Rect spriteDisparo[ ANIMACION_DISPARO ];
+		int frameTiro;
+
+		const static int ANIMACION_MOVIMIENTO=24;
+		SDL_Rect spriteMovimiento[ ANIMACION_MOVIMIENTO ];
+		int frameMovimiento;
+
+		bool derecha;
+		int contador=0;
+		bool quieto=false;
+
+
+	public:
+		Ovni(int x, int y){
+			posx=x;
+			posy=y;
+			frameCarga=0;
+			framePuerta=0;
+			frameLaser=0;
+			frameTiro=0;
+			frameMovimiento=0;
+			derecha=false;
+			ancho=160;
+			alto=117;
+			int i;
+			bool success=true;
+
+			if( !TEXTURA_CARGA_TIRO.cargarImagen( "imag/sprites/Dai-Manji/chargeShot.png") )
+				{
+					printf( "Fallo cargar tiro\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_CARGA_TIRO;i++){
+						spriteCargandoTiro[ i ].x = i*170;
+						spriteCargandoTiro[ i ].y = 0;
+						spriteCargandoTiro[ i ].w = 170;
+						spriteCargandoTiro[ i ].h = 58;
+					}
+				}
+			if( !TEXTURA_PUERTA.cargarImagen( "imag/sprites/Dai-Manji/openLaserDoor.png") )
+				{
+					printf( "Fallo cargar puerta\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_PUERTA;i++){
+						spritePuerta[ i ].x = i*170;
+						spritePuerta[ i ].y = 0;
+						spritePuerta[ i ].w = 170;
+						spritePuerta[ i ].h = 11;
+					}
+				}
+			if( !TEXTURA_SACANDO_LASER.cargarImagen( "imag/sprites/Dai-Manji/sacandoLaser.png") )
+				{
+					printf( "Fallo cargar sacandoLaser\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_LASER;i++){
+						spriteSacandoLaser[ i ].x = i*170;
+						spriteSacandoLaser[ i ].y = 0;
+						spriteSacandoLaser[ i ].w = 170;
+						spriteSacandoLaser[ i ].h = 34;
+					}
+				}
+			if( !TEXTURA_DISPARO.cargarImagen( "imag/sprites/Dai-Manji/disparoLaser.png") )
+				{
+					printf( "Fallo cargar disparo\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_DISPARO;i++){
+						spriteDisparo[ i ].x = i*170;
+						spriteDisparo[ i ].y = 0;
+						spriteDisparo[ i ].w = 170;
+						spriteDisparo[ i ].h = 175;
+					}
+				}
+			if( !TEXTURA_MOVIMIENTO.cargarImagen( "imag/sprites/Dai-Manji/movimiento.png") )
+				{
+					printf( "Fallo cargar movimiento ovni\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_MOVIMIENTO;i++){
+						spriteMovimiento[ i ].x = i*170;
+						spriteMovimiento[ i ].y = 0;
+						spriteMovimiento[ i ].w = 170;
+						spriteMovimiento[ i ].h = 117;
+					}
+				}
+		}
+		void mover(){
+			if (quieto) return;
+			if (derecha) moverDerecha();
+			else moverIzquierda();
+		}
+		void moverDerecha(){
+			posx+=4;
+			if (posx+ancho>800) {
+				derecha=false;
+			}
+		}
+		void moverIzquierda(){
+			posx-=4;
+			if (posx<0) {
+				derecha=true;
+			}
+		}
+		void animacionMover(){
+			SDL_Rect* currentClip = &spriteMovimiento[ frameMovimiento];
+			TEXTURA_MOVIMIENTO.render(posx,posy,currentClip);
+			++frameMovimiento;
+
+			if( frameMovimiento>= ANIMACION_MOVIMIENTO )
+			{
+				frameMovimiento = 0;
+			}	
+		}
+		void animacionAbrirPuerta(){
+			SDL_Rect* currentClip = &spritePuerta[ framePuerta/3];
+			TEXTURA_PUERTA.render(posx,posy+alto-7,currentClip);//7 hardcodeado para qe qede bien
+			++framePuerta;
+
+			if( framePuerta/3>= ANIMACION_PUERTA )
+			{
+				framePuerta--;
+				puerta=ABIERTO;
+			}
+		}
+		void animacionCerrarPuerta(){
+			SDL_Rect* currentClip = &spritePuerta[ framePuerta/3];
+			TEXTURA_PUERTA.render(posx,posy+alto-7,currentClip); //7 hardcodeado para qe qede bien
+			--framePuerta;
+
+			if( framePuerta/3 <= 0 )
+			{
+				framePuerta=0;
+				puerta=CERRADO;
+			}
+		}
+		void animacionSacarLaser(){
+			SDL_Rect* currentClip = &spriteSacandoLaser[ frameLaser/3];
+			TEXTURA_SACANDO_LASER.render(posx,posy+alto-7,currentClip);//7 hardcodeado para qe qede bien
+			++frameLaser;
+
+			if( frameLaser/3>= ANIMACION_LASER )
+			{
+				frameLaser--;
+				laser=ABIERTO;
+				disparando=PREPARANDOSE;
+			}
+		}
+		void renderLaserFuera(){
+			SDL_Rect* currentClip = &spriteSacandoLaser[ frameLaser/3];
+			TEXTURA_SACANDO_LASER.render(posx,posy+alto-7,currentClip);//7 hardcodeado para qe qede bien
+		}
+		void renderLaserDentro(){
+			SDL_Rect* currentClip = &spriteSacandoLaser[0];
+			TEXTURA_SACANDO_LASER.render(posx,posy+alto-7,currentClip);//7 hardcodeado para qe qede bien
+		}
+		void animacionGuardarLaser(){
+			SDL_Rect* currentClip = &spriteSacandoLaser[ frameLaser/3];
+			TEXTURA_SACANDO_LASER.render(posx,posy+alto-7,currentClip);//7 hardcodeado para qe qede bien
+			--frameLaser;
+
+			if( frameLaser/3>= ANIMACION_LASER )
+			{
+				frameLaser=0;
+				laser=CERRADO;
+			}
+		}
+		void animacionCargarTiro(){
+			SDL_Rect* currentClip = &spriteCargandoTiro[ frameCarga/3];
+			TEXTURA_CARGA_TIRO.render(posx,posy+alto-7,currentClip);//7 hardcodeado para qe qede bien
+			++frameCarga;
+
+			if( frameCarga/3>= ANIMACION_CARGA_TIRO )
+			{
+				frameCarga=0;
+				disparando=PREPARADO;
+				//puerta=ABIERTO;
+				//laser=ABIERTO;
+			}
+		}
+		void animacionDisparo(){
+			SDL_Rect* currentClip = &spriteDisparo[ frameTiro/3];
+			TEXTURA_DISPARO.render(posx,posy+alto-7,currentClip);//7 hardcodeado para qe qede bien
+			++frameTiro;
+
+			if( frameTiro/3>= ANIMACION_DISPARO )
+			{
+				frameTiro=0;
+				disparando=NODISPARANDO;
+				laser=CERRANDO;
+				puerta=CERRANDO;
+			}
+		}
+		void renderPuertaCerrada(){
+			SDL_Rect* currentClip = &spritePuerta[0];    //ESTE ES PUERTA CERRADA
+			TEXTURA_PUERTA.render(posx,posy+alto-7,currentClip);//7 hardcodeado para qe qede bien
+		}
+		void renderPuertaAbierta(){
+ 			SDL_Rect* currentClip = &spritePuerta[ANIMACION_PUERTA-1]; //ESTE ES PUERTA ABIERTA
+			TEXTURA_PUERTA.render(posx,posy+alto-7,currentClip);//7 hardcodeado para qe qede bien
+		}
+		void render(){
+			animacionMover();
+
+			if (puerta==ABRIENDO) animacionAbrirPuerta();
+			else if (puerta==ABIERTO) renderPuertaAbierta();
+			else if (puerta==CERRANDO) animacionCerrarPuerta();
+			else if (puerta==CERRADO) renderPuertaCerrada();
+
+			if (laser==ABRIENDO) animacionSacarLaser();
+			else if (laser==ABIERTO) renderLaserFuera();
+			else if (laser==CERRANDO) animacionGuardarLaser();
+			else if (laser==CERRADO) renderLaserDentro();
+
+			if (disparando==PREPARANDOSE) animacionCargarTiro();
+			else if((disparando==PREPARADO) || (disparando==DISPARANDO)) animacionDisparo(); 
+		}
+		void disparar(){
+			puerta=ABRIENDO;
+			laser=ABRIENDO;
+			//disparando=PREPARANDOSE;
+		}
+};
+
+
 class Programa
 {
 	private:
@@ -2395,6 +2679,8 @@ class Programa
 		}
 };
 
+
+
 int main( int argc, char* args[] )
 {
 	//Start up SDL and create window
@@ -2411,7 +2697,8 @@ int main( int argc, char* args[] )
 		//Load mediaojo
 		Personaje personaje;
 		programa.asignarID(&personaje);
-		Helicoptero *helicoptero = new Helicoptero(800,50);
+		//Helicoptero *helicoptero = new Helicoptero(800,50);
+		Ovni ovni=Ovni(800,50);
 
 
 		if( !personaje.cargarImagen() || !fondo.agregar("imag/background/1200.png") || !fondo.agregar("imag/background/2400.png") || !fondo.agregar("imag/background/4800.png"))
@@ -2440,19 +2727,32 @@ int main( int argc, char* args[] )
 					personaje.handleEvent( e );
 
 				}
-				if (contador % 300 == 0) {
+				/*if (contador % 300 == 0) {
 					programa.agregarEnemigo();
 				}
-				if (contador %80 == 0) helicoptero->disparar();
+				//if (contador %80 == 0) helicoptero->disparar();
+				if (contador % 400 == 0) ovni.disparar();*/
+
+				if (contador % 100) {
+					personaje.titilar();
+					cout << 1 << endl;
+				}
+
+				if (contador % 120) {
+					personaje.destitilar();
+					cout << 2 << endl;
+				}
 
 				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear(renderizador);
 
-				helicoptero->mover();
+				//helicoptero->mover();
+				//ovni.mover();
 				//int scroll=fondo.render(personaje.getX());
 				//programa.ponerPuntajes();
 				programa.render();
-				helicoptero->render();
+				//helicoptero->render();
+				//ovni.render();
 				//programa.finNivel();
 				programa.manejarColisiones();
 				SDL_RenderPresent( renderizador );
