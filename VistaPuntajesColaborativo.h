@@ -11,7 +11,7 @@
 class VistaPuntajesColaborativo : public VistaPuntajes {
 
 private:
-	int puntos;
+	puntaje_t* puntos;
 
 public:
 	VistaPuntajesColaborativo(int cantPlayers, SDL_Renderer* renderer);

@@ -11,7 +11,7 @@
 class VistaPuntajesIndividual : public VistaPuntajes {
 
 private:
-	unordered_map<int, int> puntosById;
+	unordered_map<int, puntaje_t*> puntosById;
 
 public:
 	VistaPuntajesIndividual(int cantPlayers, SDL_Renderer* renderer);

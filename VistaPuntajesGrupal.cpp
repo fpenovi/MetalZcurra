@@ -4,8 +4,6 @@
 
 #include "VistaPuntajesGrupal.h"
 
-#define CANT_EQUIPOS 2
-
 
 VistaPuntajesGrupal::VistaPuntajesGrupal(int cantPlayers, SDL_Renderer* renderer) : VistaPuntajes(renderer) {
 
@@ -29,7 +27,7 @@ VistaPuntajesGrupal::VistaPuntajesGrupal(int cantPlayers, SDL_Renderer* renderer
 
 void VistaPuntajesGrupal::actualizarPuntaje(int id, int puntos) {
 	puntaje_t* pointsToUpdate = puntosEquiposById[getTeamNumberByPlayerId(id)];
-	pointsToUpdate->puntos = puntos + pointsToUpdate->puntos;
+	pointsToUpdate->puntos = puntos;
 	pointsToUpdate->s_puntos = to_string(pointsToUpdate->puntos);
 }
 
