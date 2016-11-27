@@ -96,6 +96,8 @@ public:
 
 	void close() {
 		//Free loaded images
+		delete puntajes;
+
 		for (auto kv : vistasPersonajes)
 			delete kv.second;
 
