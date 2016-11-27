@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCE_FILES Servidor.cpp Cliente.cpp Cliente.h Mensaje.cpp Mensaje.h Log.cpp Log.h auxiliares.cpp auxiliares.h
         Heartbeat.h Heartbeat.cpp Heartbeat.h Textura.cpp Textura.h VistaPersonaje.cpp VistaPersonaje.h
-        ProtocoloComando.cpp ProtocoloComando.h ProtocoloVistaUpdate.cpp GameObject.cpp GameObject.h
+        ProtocoloComando.cpp ProtocoloComando.h ProtocoloVistaUpdate.cpp
         ProtocoloVistaUpdate.h Personaje.cpp Personaje.h ObjectManager.cpp Juego.cpp ParserXML.cpp ParserXML.h
         ObjectManager.h ProtocoloNuevaVista.cpp ProtocoloNuevaVista.h Background.cpp Background.h Layer.cpp Layer.h
         HandleKeyHoldServer.cpp HandleKeyHoldServer.h HandleJumpServer.cpp HandleJumpServer.h HandleQuietoServer.cpp
@@ -18,4 +18,5 @@ set(SOURCE_FILES Servidor.cpp Cliente.cpp Cliente.h Mensaje.cpp Mensaje.h Log.cp
         VistaPuntajes.cpp VistaPuntajes.h VistaPuntajesIndividual.cpp VistaPuntajesIndividual.h
         VistaPuntajesColaborativo.cpp VistaPuntajesColaborativo.h VistaPuntajesGrupal.cpp VistaPuntajesGrupal.h
         BonusManager.cpp BonusManager.h VistaBonus.cpp VistaBonus.h VistaRshobu.cpp VistaRshobu.h VistaBoss.cpp VistaBoss.h)
+
 add_executable(MetalZcurra ${SOURCE_FILES})

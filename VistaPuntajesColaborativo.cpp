@@ -5,12 +5,12 @@
 #include "VistaPuntajesColaborativo.h"
 
 
-VistaPuntajesColaborativo::VistaPuntajesColaborativo(int cantPlayers) {
+VistaPuntajesColaborativo::VistaPuntajesColaborativo(int cantPlayers, SDL_Renderer* renderer) : VistaPuntajes(renderer) {
 	this->puntos = 0;
 }
 
 
-void VistaPuntajesColaborativo::actualizarPuntaje(string id, int puntos) {
+void VistaPuntajesColaborativo::actualizarPuntaje(int id, int puntos) {
 	this->puntos += puntos;
 }
 

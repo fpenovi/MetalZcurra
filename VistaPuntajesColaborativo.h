@@ -14,11 +14,10 @@ private:
 	int puntos;
 
 public:
-	VistaPuntajesColaborativo(int cantPlayers);
-	void actualizarPuntaje(string id, int puntos);
+	VistaPuntajesColaborativo(int cantPlayers, SDL_Renderer* renderer);
+	void actualizarPuntaje(int id, int puntos);
 	void render();
 	~VistaPuntajesColaborativo();
-
 };
 
 
