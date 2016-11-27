@@ -39,7 +39,10 @@ void Bonus::setId(int aux) {
 void Bonus::crear(){
 	ObjectManager* objectManager = ObjectManager::getInstance();
 	if ( envolvente->getX() + ANCHO_BONUS < 0 ) existe = false;
-	else if ((*(objectManager->getPosX()) + 800) > envolvente->getX() ) existe = true;
+	else if ((*(objectManager->getPosX()) + 800) > envolvente->getX() ) {
+		existe = true;
+		x = 800;
+	}
 }
 
 void Bonus::setPosicion(int x, int y) {

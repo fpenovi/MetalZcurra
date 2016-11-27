@@ -33,6 +33,7 @@ ObjectManager::~ObjectManager() {
 		delete kv.second;
 	for (auto kv : bonuses)
 		delete kv.second;
+	delete boss;
 }
 
 ObjectManager* ObjectManager::getInstance() {
@@ -254,11 +255,12 @@ void ObjectManager::moverCamara(int id){
 	}
 
 	for (auto kv : enemigos)
-		kv.second->setPosx(kv.second->getPosx()-7);
+		if (kv.second->getExiste())
+			kv.second->setPosx(kv.second->getPosx()-7);
 
 	for (auto kv : bonuses)
-		kv.second->setPosicion(kv.second->getPosx()-7, kv.second->getPosy());
-
+		if (kv.second->getExiste())
+			kv.second->setPosicion(kv.second->getPosx()-7, kv.second->getPosy());
 
 	NivelManager::getInstance()->moverPlataformas();
 }

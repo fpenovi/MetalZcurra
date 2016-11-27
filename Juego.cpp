@@ -1106,6 +1106,7 @@ public:
 		pj->setDisparar(state);
 		pj->setSpriteIndexTorso(spriteIdx);
 		pj->setSpriteIndexPies(spriteIdx);
+		if (saltando) pj->ponerGun();
 	}
 
 	void actualizarEnemigo(){

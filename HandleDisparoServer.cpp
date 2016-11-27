@@ -93,7 +93,7 @@ void* handleDisparoFunc(void* argKh) {
                     update.setConectado(1);
                     update.setSpriteIndex(personaje->getSprites());
                     update.setApuntando(personaje->getDireccion());
-                    update.setSaltando(0);
+                    update.setSaltando(personaje->getCambioDeArma());
 
                     int result;
                     string mensaje = update.toString();
@@ -112,6 +112,14 @@ void* handleDisparoFunc(void* argKh) {
                     }
 
                     usleep(40000);
+                }
+
+                personaje->restarBala();
+                if (tipoArma == 1){
+                    personaje->restarBala();
+                    personaje->restarBala();
+                    personaje->restarBala();
+                    personaje->restarBala();
                 }
 
                 *isKhPaused = true;

@@ -12,6 +12,7 @@ HMGun::HMGun(int x, int y) : Bonus(x, y) {
 }
 
 void HMGun::aplicarEfecto(Personaje *personaje) {
+    personaje->setCantidadBalas(199, 149, Personaje::HMGUN);
     personaje->setArmaActual(Personaje::HMGUN);
     personaje->setShotGunSprites();
 }

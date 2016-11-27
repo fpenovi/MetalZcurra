@@ -12,6 +12,7 @@ RLauncher::RLauncher(int x, int y) : Bonus(x, y) {
 }
 
 void RLauncher::aplicarEfecto(Personaje *personaje) {
+    personaje->setCantidadBalas(29, 14, Personaje::RLAUNCHER);
     personaje->setArmaActual(Personaje::RLAUNCHER);
     personaje->setShotGunSprites();
 }
