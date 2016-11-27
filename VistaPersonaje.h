@@ -42,12 +42,6 @@ private:
 	bool gris;
 	bool disparar;
 
-    unordered_map<int, vector<string>*> hashSprites;
-
-    string pathQuieto;
-    string pathCorriendo;
-    string pathSaltando;
-
 	SDL_RendererFlip flip;
 	SDL_Rect* currentClipPies;
 	SDL_Rect* currentClipTorso;

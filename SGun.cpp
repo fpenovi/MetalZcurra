@@ -12,6 +12,7 @@ SGun::SGun(int x, int y) : Bonus(x, y) {
 }
 
 void SGun::aplicarEfecto(Personaje *personaje) {
+    personaje->setCantidadBalas(29, 9, Personaje::SHOTGUN);
     personaje->setArmaActual(Personaje::SHOTGUN);
     personaje->setShotGunSprites();
 }

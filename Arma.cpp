@@ -263,30 +263,33 @@ void Arma::ponerShotgun(){
 }
 
 void Arma::ponerGun(){
-    liberar();
-    ANIMACION_ACTUAL = ANIMACION_DISPARANDO_GUN;
-    ANIMACION_ACTUAL_DISPARANDO_ABAJO=ANIMACION_DISPARANDO_GUN_ABAJO;
-    ANIMACION_ACTUAL_DISPARANDO_ARRIBA=ANIMACION_DISPARANDO_GUN_ARRIBA;
+    if (shotgun) {
 
-    string pathParado = "imag/sprites/player" + idPj + "/gunStill.png";
-    string pathCorriendo = "imag/sprites/player" + idPj + "/gunRun.png";
-    string pathSaltando = "imag/sprites/player" + idPj + "/gunJump.png";
-    string pathDisparando = "imag/sprites/player" + idPj + "/gunShoot.png";
-    string pathApuntarAbajo = "imag/sprites/player" + idPj + "/gunPointDown.png";
-    string pathApuntarArriba = "imag/sprites/player" + idPj + "/gunPointUp.png";
-    string pathDisparoAbajo = "imag/sprites/player" + idPj + "/gunShootDown.png";
-    string pathDisparoArriba = "imag/sprites/player" + idPj + "/gunShootUp.png";
+        liberar();
+        ANIMACION_ACTUAL = ANIMACION_DISPARANDO_GUN;
+        ANIMACION_ACTUAL_DISPARANDO_ABAJO = ANIMACION_DISPARANDO_GUN_ABAJO;
+        ANIMACION_ACTUAL_DISPARANDO_ARRIBA = ANIMACION_DISPARANDO_GUN_ARRIBA;
 
-    cargarImagen(pathParado.c_str(),
-                 pathCorriendo.c_str(),
-                 pathSaltando.c_str(),
-                 pathDisparando.c_str(),
-                 pathApuntarAbajo.c_str(),
-                 pathApuntarArriba.c_str(),
-                 pathDisparoAbajo.c_str(),
-                 pathDisparoArriba.c_str());
+        string pathParado = "imag/sprites/player" + idPj + "/gunStill.png";
+        string pathCorriendo = "imag/sprites/player" + idPj + "/gunRun.png";
+        string pathSaltando = "imag/sprites/player" + idPj + "/gunJump.png";
+        string pathDisparando = "imag/sprites/player" + idPj + "/gunShoot.png";
+        string pathApuntarAbajo = "imag/sprites/player" + idPj + "/gunPointDown.png";
+        string pathApuntarArriba = "imag/sprites/player" + idPj + "/gunPointUp.png";
+        string pathDisparoAbajo = "imag/sprites/player" + idPj + "/gunShootDown.png";
+        string pathDisparoArriba = "imag/sprites/player" + idPj + "/gunShootUp.png";
 
-    shotgun = false;
+        cargarImagen(pathParado.c_str(),
+                     pathCorriendo.c_str(),
+                     pathSaltando.c_str(),
+                     pathDisparando.c_str(),
+                     pathApuntarAbajo.c_str(),
+                     pathApuntarArriba.c_str(),
+                     pathDisparoAbajo.c_str(),
+                     pathDisparoArriba.c_str());
+
+        shotgun = false;
+    }
 }
 
 void Arma::ponerTexturaGris() {

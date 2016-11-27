@@ -105,7 +105,10 @@ int Enemigo::getExiste() {
 void Enemigo::crear() {
     ObjectManager* objectManager = ObjectManager::getInstance();
     if ( envolvente->getX() + ancho < 0 ) morir();
-    else if ((*(objectManager->getPosX()) + 800) > envolvente->getX() ) existe = true;
+    else if ((*(objectManager->getPosX()) + 800) > envolvente->getX() ) {
+        existe = true;
+        posx = 800;
+    }
 }
 
 bool Enemigo::disparar() {

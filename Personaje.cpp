@@ -201,7 +201,6 @@ int Personaje::getSpriteParado() {
 }
 
 void Personaje::setSpriteDisparando() {
-
     if (arriba) setSpriteDisparandoArriba();
 
     else if (abajo) setSpriteDisparandoAbajo();
@@ -360,6 +359,30 @@ void Personaje::setGunSprites() {
     ANIMACION_ACTUAL = ANIMACION_DISPARANDO_GUN;
     ANIMACION_ACTUAL_DISPARANDO_ABAJO = ANIMACION_DISPARANDO_GUN_ABAJO;
     ANIMACION_ACTUAL_DISPARANDO_ARRIBA = ANIMACION_DISPARANDO_GUN_ARRIBA;
+    armaActual = GUN;
+}
+
+void Personaje::setCantidadBalas(int nuevo, int extra, int tipo) {
+    if (tipo == armaActual) cantidadBalas += extra;
+    else cantidadBalas = nuevo;
+}
+
+void Personaje::restarBala() {
+    if (armaActual != GUN){
+        if (cantidadBalas <= 0) {
+            setGunSprites();
+            return;
+        }
+        cantidadBalas--;
+    }
+}
+
+int Personaje::getCantidadBalas() {
+    return cantidadBalas;
+}
+
+bool Personaje::getCambioDeArma() {
+    return cantidadBalas <= 0;
 }
 
 Personaje::~Personaje() {

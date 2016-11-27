@@ -65,6 +65,7 @@ private:
 	int ANIMACION_ACTUAL_DISPARANDO_ARRIBA = 10; // empieza siendo 10 por la gun
 	int ANIMACION_ACTUAL_DISPARANDO_ABAJO = 7;
 	int armaActual;
+	int cantidadBalas = 0;
 
 public:
 	const static int GUN = 0;
@@ -179,6 +180,14 @@ public:
 	void setShotGunSprites();
 
 	void setGunSprites();
+
+	void setCantidadBalas(int nuevas, int extra, int tipo);
+
+	void restarBala();
+
+	int getCantidadBalas();
+
+	bool getCambioDeArma();
 
 	~Personaje();
 };
