@@ -28,10 +28,13 @@ protected:
 	SDL_Renderer* renderer;
 	unordered_map<int, SDL_Color*> playerColorsById;
 	unordered_map<int, SDL_Color*> teamColorsByTeamId;
+	unordered_map<int, int> puntosPlayersById;
 	TTF_Font* gFont;
 
 	const int SCORE_X = 50;
-	const int SCORE_Y = 100;
+	const int SCORE_Y = 15;
+	const int RED_TEAM_X = 275;
+	const int GREEN_TEAM_X = 475;
 	int SCORE_X_SPACING = 175;
 
 	VistaPuntajes(SDL_Renderer* renderer);
@@ -46,7 +49,6 @@ public:
 	virtual void actualizarPuntaje(int idJugador, int puntos) = 0;
 	virtual void render() = 0;
 	virtual ~VistaPuntajes();
-
 };
 
 

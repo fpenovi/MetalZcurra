@@ -96,6 +96,8 @@ public:
 
 	void close() {
 		//Free loaded images
+		delete puntajes;
+
 		for (auto kv : vistasPersonajes)
 			delete kv.second;
 
@@ -419,7 +421,7 @@ public:
 			}
 
 			//VENTANA
-			ventana = SDL_CreateWindow( "PERSONAJE1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN );
+			ventana = SDL_CreateWindow( "Metal Slug", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN );
 			if ( ventana == NULL ) {
 				printf( "NO SE PUDO CREAR LA VENTANA! SDL Error: %s\n", SDL_GetError() );
 				success = false;
