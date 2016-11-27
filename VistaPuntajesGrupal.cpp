@@ -10,11 +10,11 @@
 VistaPuntajesGrupal::VistaPuntajesGrupal(int cantPlayers) {
 
 	for (int i = 1; i <= cantPlayers; i++)						// id 1 --> equipo 2, id 2 --> equipo 1,
-		puntosEquiposById[getTeamNumberByPlayerId(i)];			// id 3 --> equipo 2, id 4 --> equipo 1.
+		puntosEquiposById[getTeamNumberByPlayerId(i)] = 0;		// id 3 --> equipo 2, id 4 --> equipo 1.
 }
 
 
-void VistaPuntajesGrupal::actualizarPuntaje(string id, int puntos) {
+void VistaPuntajesGrupal::actualizarPuntaje(int id, int puntos) {
 
 }
 
@@ -24,8 +24,8 @@ void VistaPuntajesGrupal::render() {
 }
 
 
-string VistaPuntajesGrupal::getTeamNumberByPlayerId(int id) {
-	return to_string((id % CANT_EQUIPOS) + 1);
+int VistaPuntajesGrupal::getTeamNumberByPlayerId(int id) {
+	return (id % CANT_EQUIPOS) + 1;
 }
 
 

@@ -12,11 +12,11 @@
 class VistaPuntajesIndividual : public VistaPuntajes {
 
 private:
-	unordered_map<string, int> puntosById;
+	unordered_map<int, int> puntosById;
 
 public:
 	VistaPuntajesIndividual(int cantPlayers);
-	void actualizarPuntaje(string id, int puntos);
+	void actualizarPuntaje(int id, int puntos);
 	void render();
 	~VistaPuntajesIndividual();
 };

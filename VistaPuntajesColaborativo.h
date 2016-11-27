@@ -15,10 +15,9 @@ private:
 
 public:
 	VistaPuntajesColaborativo(int cantPlayers);
-	void actualizarPuntaje(string id, int puntos);
+	void actualizarPuntaje(int id, int puntos);
 	void render();
 	~VistaPuntajesColaborativo();
-
 };
 
 

@@ -8,14 +8,14 @@
 VistaPuntajesIndividual::VistaPuntajesIndividual(int cantPlayers) {
 
 	for (int i = 1; i <= cantPlayers; i++)
-		puntosById[to_string(i)] = 0;
+		puntosById[i] = 0;
 
 
 	// setear posiciones en donde se van a graficar los puntos en pantalla
 }
 
 
-void VistaPuntajesIndividual::actualizarPuntaje(string id, int puntos) {
+void VistaPuntajesIndividual::actualizarPuntaje(int id, int puntos) {
 	puntosById[id] = puntosById[id] + puntos;
 }
 

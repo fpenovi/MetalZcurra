@@ -10,7 +10,7 @@ VistaPuntajesColaborativo::VistaPuntajesColaborativo(int cantPlayers) {
 }
 
 
-void VistaPuntajesColaborativo::actualizarPuntaje(string id, int puntos) {
+void VistaPuntajesColaborativo::actualizarPuntaje(int id, int puntos) {
 	this->puntos += puntos;
 }
 

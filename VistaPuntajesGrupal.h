@@ -12,13 +12,13 @@
 class VistaPuntajesGrupal : public VistaPuntajes {
 
 private:
-	unordered_map<string, int> puntosEquiposById;
+	unordered_map<int, int> puntosEquiposById;
 
-	string getTeamNumberByPlayerId(int id);
+	int getTeamNumberByPlayerId(int id);
 
 public:
 	VistaPuntajesGrupal(int cantPlayers);
-	void actualizarPuntaje(string id, int puntos);
+	void actualizarPuntaje(int id, int puntos);
 	void render();
 	~VistaPuntajesGrupal();
 };

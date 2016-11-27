@@ -12,14 +12,14 @@ VistaPuntajes::VistaPuntajes() {
 	// setearle la pantalla para poder escribir
 }
 
-VistaPuntajes* VistaPuntajes::NewVistaPuntaje(int cantPlayers, string modoJuego) {
+VistaPuntajes* VistaPuntajes::NewVistaPuntaje(int cantPlayers, int modoJuego) {
 
-	if (modoJuego.compare(MODO_INDIVIDUAL) == 0)
+	if (modoJuego == MODO_INDIVIDUAL)
 		return new VistaPuntajesIndividual(cantPlayers);
 
-	if (modoJuego.compare(MODO_COLABORATIVO) == 0)
+	if (modoJuego == MODO_COLABORATIVO)
 		return new VistaPuntajesColaborativo(cantPlayers);
 
-	if (modoJuego.compare(MODO_GRUPAL) == 0)
+	if (modoJuego == MODO_GRUPAL)
 		return new VistaPuntajesGrupal(cantPlayers);
 }
