@@ -264,7 +264,7 @@ void Cliente::encolar_vistas() {
     }
 
     string mensaje(linea);
-    //cout << "ENCOLO NUEVA VISTA: " << mensaje;
+    cout << "ENCOLO NUEVA VISTA: " << mensaje;
 
     int result = pthread_mutex_lock(&mutex_envios);
     if (result != 0) perror("Fallo el pthread_mutex_lock en login");

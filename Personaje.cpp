@@ -33,16 +33,18 @@ void Personaje::moverX() {
     gravedad();
 
     //Que no salga de la pantalla
-    if( ( posCamara  < 0 ) || ( posCamara + ancho > SCREEN_WIDTH *3/4) )  {
+    if( (( posCamara  < 0 ) || ( posCamara + ancho > SCREEN_WIDTH *3/4)) && *posX < 7200 )  {
         posCamara  -= velx;
     }
+
+    if (posCamara + ancho > SCREEN_WIDTH) posCamara -= velx;
 
     if( ( *posX < 0 ) ) //|| ( *posX + ancho > SCREEN_WIDTH ) )
     {
         *posX -= velx;
     }
 
-    if (velx < 0 || posCamara + ancho + 1 != SCREEN_WIDTH *3/4 || !(objectManager->puedoAvanzar())){
+    if ( (velx < 0 || posCamara + ancho + 1 != SCREEN_WIDTH *3/4 || !(objectManager->puedoAvanzar())) && *posX < 7200){
         *posX -= velx;
     }
 
