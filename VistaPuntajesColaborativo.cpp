@@ -40,6 +40,11 @@ void VistaPuntajesColaborativo::render() {
 }
 
 
+void VistaPuntajesColaborativo::mostrarResumen() {
+
+}
+
+
 VistaPuntajesColaborativo::~VistaPuntajesColaborativo() {
 	delete puntos->puntajeColor;
 	delete puntos->puntajeTexture;

@@ -58,6 +58,11 @@ bool Textura::cargarImagen( std::string path){
 	}
 }
 
+void Textura::setAlpha(Uint8 alpha) {
+	//Modulate texture alpha
+	SDL_SetTextureAlphaMod( textura, alpha );
+}
+
 //Deallocates texture
 void Textura::free(){
 	//Libera textura si existe

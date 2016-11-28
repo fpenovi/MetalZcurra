@@ -53,6 +53,11 @@ void VistaPuntajesGrupal::render() {
 }
 
 
+void VistaPuntajesGrupal::mostrarResumen() {
+
+}
+
+
 int VistaPuntajesGrupal::getTeamNumberByPlayerId(int id) {
 	return (id % CANT_EQUIPOS) + 1;
 }
