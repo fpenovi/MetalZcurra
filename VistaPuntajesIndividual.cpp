@@ -52,11 +52,12 @@ void VistaPuntajesIndividual::mostrarResumen(Juego* juego) {
 	int posX;
 	int posY;
 
-	milliseconds velocidad(400);
+	milliseconds velocidad(20);		// 255 * 20 = segundos de fade
 
 	// Hace fade y vuelve gris la pantalla
-	if (transparenciaActual == LIMITE_SUPERIOR_TRANSPARENCIA) {
-		this->screenGrayer = new GrayOutHandler(juego, &transparenciaActual, &LIMITE_INFERIOR_TRANSPARENCIA, velocidad);
+	if (transparenciaActual == LIMITE_SUPERIOR_TRANSPARENCIA && !estaCorriendoGrayer) {		// Evita el lanzamiento de mas de un thread
+		estaCorriendoGrayer = true;
+		this->screenGrayer = new GrayOutHandler(juego, &transparenciaActual, &LIMITE_INFERIOR_TRANSPARENCIA, velocidad, &estaCorriendoGrayer);
 		this->screenGrayer->doWork();
 	}
 

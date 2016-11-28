@@ -18,6 +18,7 @@ typedef struct {
 	Uint8* transparenciaActual;
 	Uint8* transparenciaLimiteInferior;
 	milliseconds ms;
+	bool* isRunning;
 } arggrey_t;
 
 
@@ -28,7 +29,7 @@ private:
 	arggrey_t* argGrey;
 
 public:
-	GrayOutHandler(Juego* juego, Uint8* transparenciaMax, Uint8* transparenciaMin, milliseconds ms);
+	GrayOutHandler(Juego* juego, Uint8* transparenciaMax, Uint8* transparenciaMin, milliseconds ms, bool* isRunning);
 	void doWork();
 	~GrayOutHandler();
 

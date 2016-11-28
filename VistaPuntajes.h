@@ -37,6 +37,7 @@ protected:
 	Textura* temp;
 	TTF_Font* gFont;
 	GrayOutHandler* screenGrayer;
+	bool estaCorriendoGrayer = false;
 
 	Uint8 LIMITE_SUPERIOR_TRANSPARENCIA = 255;
 	Uint8 transparenciaActual = 255;
