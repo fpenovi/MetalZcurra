@@ -135,14 +135,14 @@ vector<string> Nivel::getCapas() {
 Bonus* Nivel::makeBonusOrNull() {
 
 	random_device randomGenerator;
-	// Ponderado 50% NULL, 25% Bonus1, 25% bonus2
+	// Ponderado 70% NULL, 15% KillAll, 15% Recover
 
 	int randomInt = randomGenerator() % 100;
 
-	if (randomInt > 75)
+	if (randomInt > 85)
 		return new KillAll(0, 0);
 
-	if (randomInt > 50)
+	if (randomInt > 70)
 		return new Recover(0, 0);
 
 	return NULL;
