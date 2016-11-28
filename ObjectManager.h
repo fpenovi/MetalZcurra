@@ -72,6 +72,7 @@ public:
 	void enviarNuevoBackground(string emisor);
 	void setTamVentana(vector<string> tamVentana);
 	unordered_map<int, Personaje*>* getPersonajesHash();
+	unordered_map<string, int>* getTablaUsuarios();
 
 	void setConectadosHash(unordered_map<string, list<Mensaje*>*>* conectadosHash);
 	void setMutexesHash(unordered_map<string, pthread_mutex_t>* mutexesHash);

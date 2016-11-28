@@ -20,6 +20,7 @@ private:
 	int ultimoPosx = 0;
 	bool saltando = false;
 	bool existe;
+	string nombre;
 
 	const static int ANIMACION_PARADO = 4;
 	const static int ANIMACION_CORRIENDO_PIES = 18;
@@ -59,7 +60,7 @@ public:
 
 	~VistaPersonaje();
 
-    void render(bool seMovio);
+    void render();
 
     void animacionParadoPiernas();
 
@@ -152,6 +153,10 @@ public:
 	void noTitilar();
 
 	bool getExiste();
+
+	void setNombre(string name);
+
+	string getNombre();
 };
 
 

@@ -549,4 +549,8 @@ int ObjectManager::getCantidadUsuarios() {
 	return cantidadUsuarios;
 }
 
+unordered_map<string, int>* ObjectManager::getTablaUsuarios() {
+	return &tablaUsuarios;
+}
+
 ObjectManager* ObjectManager::instancia;

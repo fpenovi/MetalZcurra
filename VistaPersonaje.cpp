@@ -28,9 +28,10 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2, int id, int modoJueg
 	existe = true;
 	muriendo = false;
 	transparente = false;
+	seMovio = false;
 }
 
-void VistaPersonaje::render(bool seMovio){
+void VistaPersonaje::render(){
 	if (existe) {
 		if (transparente) noTitilar();
 		if (muriendo) {
@@ -142,8 +143,8 @@ void VistaPersonaje::animacionMuriendo() {
 		x-=80;
 	}
 	frameMuriendo++;
-	arma->renderMuriendo(x, posy, frameMuriendo, flip);
-	if (frameMuriendo >= ANIMACION_MURIENDO) {
+	arma->renderMuriendo(x, posy, frameMuriendo / 2, flip);
+	if (frameMuriendo / 2 >= ANIMACION_MURIENDO) {
 		existe = false;
 		frameMuriendo = 0;
 		muriendo = false;
@@ -379,4 +380,12 @@ void VistaPersonaje::noTitilar() {
 
 bool VistaPersonaje::getExiste() {
 	return existe;
+}
+
+void VistaPersonaje::setNombre(string name) {
+	nombre = name;
+}
+
+string VistaPersonaje::getNombre() {
+	return nombre;
 }

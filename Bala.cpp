@@ -19,6 +19,8 @@ Bala::Bala(){
     danio = 0;
     puntos = 0;
     idDuenio = 0;
+    colisiono = false;
+    shotgun = false;
 }
 
 void Bala::mover(){
@@ -109,6 +111,7 @@ void Bala::desaparecer(){
     existe = false;
     idDuenio = 0;
     setDireccion(false, false, false, false);
+    cout << "DESAPARECE" << endl;
 }
 
 int Bala::getId() {
@@ -158,6 +161,7 @@ void Bala::handleColision(){
                     kv.second->morir();
                     (objectManager->getObject(idDuenio))->aumentarPuntos(puntos);
                     if (!shotgun) desaparecer();
+                    return;
                 }
             }
         }
@@ -169,6 +173,7 @@ void Bala::handleColision(){
                 boss->restarVida(danio);
                 (objectManager->getObject(idDuenio))->aumentarPuntos(puntos);
                 if (!shotgun) desaparecer();
+                return;
             }
         }
 
@@ -182,6 +187,7 @@ void Bala::handleColision(){
                     kv.second->restarVida(1);
                     objectManager->handleImpacto(kv.second, this);
                     desaparecer();
+                    return;
                 }
             }
         }
@@ -217,10 +223,10 @@ void Bala::setDanio(int aux){
     danio = aux;
 }
 
-Bala::~Bala() {
-    if (envolvente != NULL) delete envolvente;
-}
-
 void Bala::setPuntos(int aux) {
     puntos = aux;
+}
+
+Bala::~Bala() {
+    if (envolvente != NULL) delete envolvente;
 }
