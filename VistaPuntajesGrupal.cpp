@@ -54,7 +54,32 @@ void VistaPuntajesGrupal::render() {
 
 
 void VistaPuntajesGrupal::mostrarResumen() {
+	int idPlayer;
+	int puntajePlayer;
+	string namePlayer;
 
+	int posX;
+	int posY;
+
+	temp->loadFromText("EQUIPO: " + puntosEquiposById[2]->s_puntos, *(teamColorsByTeamId[2]), this->gFont);
+	temp->render(FINAL_SCORE_VIEW_X, FINAL_SCORE_VIEW_Y - 65);
+	temp->loadFromText("EQUIPO: " + puntosEquiposById[1]->s_puntos, *(teamColorsByTeamId[1]), this->gFont);
+	temp->render(FINAL_SCORE_VIEW_X + FINAL_SCORE_X_SPACING, FINAL_SCORE_VIEW_Y - 65);
+
+	for (int i=0; i<puntosPlayersById.size(); i++) {
+		idPlayer = i+1;
+		puntajePlayer = puntosPlayersById[idPlayer];
+		namePlayer = "Jugador " + to_string(idPlayer);
+		posX = FINAL_SCORE_VIEW_X + (i % 2) * FINAL_SCORE_X_SPACING;
+		posY = FINAL_SCORE_VIEW_Y + (i / 2) * FINAL_SCORE_SPACING_Y;
+
+		// RENDERIZO PRIMERO EL NOMBRE ARRIBA
+		temp->loadFromText(namePlayer, *(teamColorsByTeamId[getTeamNumberByPlayerId(idPlayer)]), this->gFont);
+		temp->render(posX, posY);
+		// RENDERIZO EL PUNTAJE DEBAJO Y CENTRADO
+		temp->loadFromText(to_string(puntajePlayer), *(teamColorsByTeamId[getTeamNumberByPlayerId(idPlayer)]), this->gFont);
+		temp->render(posX, posY + 40);
+	}
 }
 
 

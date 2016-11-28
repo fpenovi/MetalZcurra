@@ -724,7 +724,7 @@ public:
 
 		puntajes->render();
 
-		if (!bossActual->estaVivo())
+		if (bossActual->estaVivo())
 			puntajes->mostrarResumen();
 	}
 
