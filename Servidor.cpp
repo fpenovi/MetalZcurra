@@ -307,7 +307,7 @@ private:
                     break;
 
                 case SDLK_z:
-                    handleDisparo->Pause();
+                    //handleDisparo->Pause();
                     break;
 
             }
