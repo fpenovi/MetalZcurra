@@ -17,6 +17,7 @@ Personaje::Personaje() {
     envolvente->agregarComponente(rect);
 
     quieto = true;
+    colision = false;
 }
 
 void Personaje::moverX() {
@@ -60,9 +61,10 @@ void Personaje::moverX() {
 void Personaje::moverY() {
     int pos2 = posy;
 
-    if (NivelManager::getInstance()->hayColision(this)) {
+    if (NivelManager::getInstance()->hayColision(this) && posy != ultimaPosy) {
         seMovio = false;
         saltando = false;
+        colision = true;
         return;
     }
 
@@ -417,6 +419,14 @@ void Personaje::setQuieto(bool aux){
 
 bool Personaje::getQuieto(){
     return quieto;
+}
+
+bool Personaje::getColision() {
+    return colision;
+}
+
+void Personaje::setColision(bool aux) {
+    colision = aux;
 }
 
 Personaje::~Personaje() {
