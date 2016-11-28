@@ -215,3 +215,8 @@ VistaBala::~VistaBala() {
     if (TEXTURA_EXPLOSION != NULL)
         delete TEXTURA_EXPLOSION;
 }
+
+void VistaBala::transparentar(Uint8 alpha) {
+    this->TEXTURA_BALA->setAlpha(alpha);
+    // this->TEXTURA_EXPLOSION->setAlpha(alpha); es NULL explota sarpado esto...
+}

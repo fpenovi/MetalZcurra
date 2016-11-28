@@ -40,5 +40,7 @@ public:
 
     void asignarVelocidad(double anchomax);
 
+	void transparentar(Uint8 alpha);
+
 };
 #endif //METALZCURRA_LAYER_H

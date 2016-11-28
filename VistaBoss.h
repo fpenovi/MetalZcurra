@@ -5,6 +5,8 @@
 #ifndef METALZCURRA_VISTABOSS_H
 #define METALZCURRA_VISTABOSS_H
 
+#include <SDL2/SDL_stdinc.h>
+
 class VistaBoss
 {
 protected:
@@ -32,9 +34,11 @@ public:
 
     virtual void setPosy(int aux) = 0;
 
-	virtual bool estaVivo();
+	bool estaVivo();
 
-	virtual void setMuerto(bool muerto);
+	void setMuerto(bool muerto);
+
+	virtual void transparentar(Uint8 alpha) = 0;
 
     virtual void setExiste(bool aux) = 0;
 

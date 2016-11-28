@@ -49,6 +49,11 @@ int Background::anchoMaximo(){
     return anchoMax;
 }
 
+void Background::transparentar(Uint8 alpha) {
+    for (Layer* layer : this->capas)
+        layer->transparentar(alpha);
+}
+
 Background::~Background() {
     for (int i = 0; i < capas.size(); i++) {
         Layer *layer = capas[i];

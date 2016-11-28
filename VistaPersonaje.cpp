@@ -389,3 +389,10 @@ void VistaPersonaje::setNombre(string name) {
 string VistaPersonaje::getNombre() {
 	return nombre;
 }
+
+void VistaPersonaje::transparentar(Uint8 alpha) {
+	TEXTURA_PERSONAJE_PARADO_PIES->setAlpha(alpha);
+	TEXTURA_PERSONAJE_CORRIENDO_PIES->setAlpha(alpha);
+	TEXTURA_PERSONAJE_SALTANDO_PIES->setAlpha(alpha);
+	this->arma->transparentar(alpha);
+}

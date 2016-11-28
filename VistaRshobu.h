@@ -58,6 +58,8 @@ public:
 
     void morir();
 
+	void transparentar(Uint8 alpha);
+
     ~VistaRshobu();
 };
 

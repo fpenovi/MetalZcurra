@@ -35,7 +35,7 @@ public:
 
     int anchoMaximo();
 
-
+    void transparentar(Uint8 alpha);
 };
 
 #endif //METALZCURRA_BACKGROUND_H

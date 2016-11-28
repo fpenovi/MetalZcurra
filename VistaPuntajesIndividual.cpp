@@ -43,7 +43,7 @@ void VistaPuntajesIndividual::render() {
 }
 
 
-void VistaPuntajesIndividual::mostrarResumen() {
+void VistaPuntajesIndividual::mostrarResumen(Juego* juego) {
 
 	int idPlayer;
 	puntaje_t* puntajePlayer;
@@ -52,10 +52,18 @@ void VistaPuntajesIndividual::mostrarResumen() {
 	int posX;
 	int posY;
 
+	milliseconds velocidad(400);
+
+	// Hace fade y vuelve gris la pantalla
+	if (transparenciaActual == LIMITE_SUPERIOR_TRANSPARENCIA) {
+		this->screenGrayer = new GrayOutHandler(juego, &transparenciaActual, &LIMITE_INFERIOR_TRANSPARENCIA, velocidad);
+		this->screenGrayer->doWork();
+	}
+
 	for (int i=0; i<puntosById.size(); i++) {
 		idPlayer = i+1;
 		puntajePlayer = puntosById[idPlayer];
-		namePlayer = "Jugador " + to_string(idPlayer);
+		namePlayer = juego->getNombreUsuarioById(idPlayer);
 		posX = FINAL_SCORE_VIEW_X + (i % 2) * FINAL_SCORE_X_SPACING;
 		posY = FINAL_SCORE_VIEW_Y + (i / 2) * FINAL_SCORE_SPACING_Y;
 

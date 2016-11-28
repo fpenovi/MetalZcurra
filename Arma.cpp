@@ -436,25 +436,21 @@ void Arma::apuntarArriba(bool a){
 }
 
 void Arma::titilar() {
-    TEXTURA_ARMA_CORRIENDO->setAlpha(80);
-    TEXTURA_ARMA_DISPARANDO->setAlpha(80);
-    TEXTURA_ARMA_PARADO->setAlpha(80);
-    TEXTURA_ARMA_SALTANDO->setAlpha(80);
-    TEXTURA_ARMA_APUNTA_ABAJO->setAlpha(80);
-    TEXTURA_ARMA_APUNTA_ARRIBA->setAlpha(80);
-    TEXTURA_ARMA_DISPARANDO_ABAJO->setAlpha(80);
-    TEXTURA_ARMA_DISPARANDO_ARRIBA->setAlpha(80);
-    TEXTURA_MURIENDO->setAlpha(80);
+    this->transparentar(80);
 }
 
 void Arma::noTitilar() {
-    TEXTURA_ARMA_CORRIENDO->setAlpha(255);
-    TEXTURA_ARMA_DISPARANDO->setAlpha(255);
-    TEXTURA_ARMA_PARADO->setAlpha(255);
-    TEXTURA_ARMA_SALTANDO->setAlpha(255);
-    TEXTURA_ARMA_APUNTA_ABAJO->setAlpha(255);
-    TEXTURA_ARMA_APUNTA_ARRIBA->setAlpha(255);
-    TEXTURA_ARMA_DISPARANDO_ABAJO->setAlpha(255);
-    TEXTURA_ARMA_DISPARANDO_ARRIBA->setAlpha(255);
-    TEXTURA_MURIENDO->setAlpha(255);
+    this->transparentar(255);
+}
+
+void Arma::transparentar(Uint8 alpha) {
+    TEXTURA_ARMA_PARADO->setAlpha(alpha);
+    TEXTURA_ARMA_CORRIENDO->setAlpha(alpha);
+    TEXTURA_ARMA_SALTANDO->setAlpha(alpha);
+    TEXTURA_ARMA_DISPARANDO->setAlpha(alpha);
+    TEXTURA_ARMA_APUNTA_ABAJO->setAlpha(alpha);
+    TEXTURA_ARMA_APUNTA_ARRIBA->setAlpha(alpha);
+    TEXTURA_ARMA_DISPARANDO_ABAJO->setAlpha(alpha);
+    TEXTURA_ARMA_DISPARANDO_ARRIBA->setAlpha(alpha);
+    TEXTURA_MURIENDO->setAlpha(alpha);
 }

@@ -53,13 +53,16 @@ void VistaPuntajesGrupal::render() {
 }
 
 
-void VistaPuntajesGrupal::mostrarResumen() {
+void VistaPuntajesGrupal::mostrarResumen(Juego* juego) {
 	int idPlayer;
 	int puntajePlayer;
 	string namePlayer;
 
 	int posX;
 	int posY;
+
+	if (transparenciaActual > LIMITE_INFERIOR_TRANSPARENCIA)
+		juego->transparentar(--transparenciaActual);
 
 	temp->loadFromText("EQUIPO: " + puntosEquiposById[2]->s_puntos, *(teamColorsByTeamId[2]), this->gFont);
 	temp->render(FINAL_SCORE_VIEW_X, FINAL_SCORE_VIEW_Y - 65);

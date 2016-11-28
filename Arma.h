@@ -101,6 +101,8 @@ public:
     void titilar();
 
     void noTitilar();
+
+	void transparentar(Uint8 alpha);
 };
 
 

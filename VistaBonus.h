@@ -34,6 +34,8 @@ public:
     int getPosx();
 
     int reiniciar();
+
+	void transparentar(Uint8 alpha);
 };
 
 #endif //METALZCURRA_VISTABONUS_H

@@ -85,3 +85,7 @@ void Layer::asignarVelocidad(double anchomax){
 Layer::~Layer() {
     delete fondo;
 }
+
+void Layer::transparentar(Uint8 alpha) {
+    this->fondo->setAlpha(alpha);
+}

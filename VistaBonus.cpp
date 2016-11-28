@@ -41,3 +41,7 @@ int VistaBonus::getPosx() {
 int VistaBonus::reiniciar(){
     existe = false;
 }
+
+void VistaBonus::transparentar(Uint8 alpha) {
+    this->TEXTURA_BONUS->setAlpha(alpha);
+}

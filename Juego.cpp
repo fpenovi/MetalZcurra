@@ -1,803 +1,773 @@
-#include <SDL2/SDL_image.h>
-#include <stdio.h>
-#include <SDL2/SDL.h>
-#include <string>
-#include <iostream>
 #include <chrono>
-#include <vector>
-#include <SDL2/SDL_thread.h>
-#include "Cliente.h"
-#include "VistaPersonaje.h"
+#include "Juego.h"
 #include "ProtocoloComando.h"
-#include "ProtocoloVistaUpdate.h"
 #include "ProtocoloNuevaVista.h"
-#include "Background.h"
-#include "Texto.h"
-#include "Textura.h"
-#include "VistaBala.h"
-#include "VistaEnemigo.h"
-#include "VistaBonus.h"
-#include "VistaBoss.h"
 #include "VistaRshobu.h"
-#include "VistaPuntajes.h"
+#include "ProtocoloVistaUpdate.h"
 
 using namespace std;
 using namespace chrono;
 
-class Juego {
 
-private:
-	SDL_Renderer* renderizador;
-	SDL_Window* ventana;
-	SDL_Rect* camera;
-	Cliente* cliente;
-	unordered_map<int, VistaPersonaje*> vistasPersonajes;
-	unordered_map<int, VistaBala*> vistasBalas;
-	unordered_map<int, VistaEnemigo*> vistasEnemigos;
-	unordered_map<int, VistaBonus*> visitasBonuses;
-	unordered_map<int, VistaBoss*> vistasBoss;
-	VistaBoss* bossActual;
-	int lastKeyPressed;
-	Background* fondo;
-	int posFondo;
-	int screenWidth = 800;
-	int screenHeight = 600;
-	int cantidadUsuarios;
-	int modoJuego;
-	int idBonus;
-	VistaPuntajes* puntajes;
-	unordered_map<int, VistaBala*> vistasBalasVivas;
-	unordered_map<int, VistaEnemigo*> vistasEnemigosVivos;
+Juego::Juego() {
+	renderizador = NULL;
+	ventana = NULL;
+	lastKeyPressed = 0;
+}
 
-	// TEXUTRAS
-	Textura* TEXTURA_BALA;
-	Textura* TEXTURA_BALA_ENEMIGA;
-	Textura* TEXTURA_BALA_HMGUN;
-	Textura* TEXTURA_BALA_SHOTGUN;
-	Textura* TEXTURA_BALA_RLAUNCHER;
-	vector<Textura*> TEXTURAS_ENEMIGOS;
-	Textura* TEXTURA_HMGUN;
-	Textura* TEXTURA_SGUN;
-	Textura* TEXTURA_RLAUNCHER;
-	Textura* TEXTURA_KILLALL;
-	Textura* TEXTURA_RECOVER;
-	Textura* TEXTURA_BALA_RSHOBU;
+void Juego::close() {
+	//Free loaded images
+	delete puntajes;
 
-	// PROTOCOLO
-	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim, saltando, puntaje;
-	int miId;
+	for (auto kv : vistasPersonajes)
+		delete kv.second;
 
-	// Atributos para sala de espera
-	Texto* textoip;
-	Texto* textopuerto;
-	Texto* textonombre;
-	Texto* esperandoTexto;
-	Texto* puntitos;
-	Textura* neoGeo;
-	Textura* fondoInicial;
-	Textura* TEXTURA_EXPLOSION1;
-	Textura* TEXTURA_EXPLOSION2;
-	Textura* TEXTURA_EXPLOSION3;
-	Textura* TEXTURA_METAL;
-	SDL_Rect spriteEntrada1[ 10 ];
-	SDL_Rect spriteEntrada2[ 10 ];
-	SDL_Rect spriteEntrada3[ 10 ];
-	SDL_Rect spriteMetal[ 7 ];
-	string ip;
-	string puerto;
-	string nombre;
+	for (auto kv : vistasBalas)
+		delete kv.second;
 
+	for (auto kv : vistasEnemigos)
+		delete kv.second;
 
-public:
+	for (auto kv: visitasBonuses)
+		delete kv.second;
 
-	Juego() {
-		renderizador = NULL;
-		ventana = NULL;
-		lastKeyPressed = 0;
+	for (auto kv : vistasBoss)
+		delete kv.second;
+
+	for (auto text : TEXTURAS_ENEMIGOS)
+		delete text;
+
+	//Destroy window
+	SDL_DestroyRenderer( renderizador );
+	SDL_DestroyWindow( ventana );
+	ventana = NULL;
+	renderizador = NULL;
+	delete TEXTURA_BALA;
+	delete TEXTURA_BALA_ENEMIGA;
+	delete TEXTURA_BALA_HMGUN;
+	delete TEXTURA_BALA_SHOTGUN;
+	delete TEXTURA_BALA_RLAUNCHER;
+	delete TEXTURA_HMGUN;
+	delete TEXTURA_SGUN;
+	delete TEXTURA_RLAUNCHER;
+	delete TEXTURA_KILLALL;
+	delete TEXTURA_RECOVER;
+	delete TEXTURA_BALA_RSHOBU;
+	delete fondo;
+
+	//Quit SDL subsystems
+	IMG_Quit();
+	SDL_Quit();
+}
+
+void Juego::presentacion(){
+	//ESTE METODO ES EL QUE PIDE IP PUERTO Y NOMBRE
+	neoGeo = new Textura(renderizador);
+
+	Uint32 start = 0;
+	textoip = new Texto("IP: ", renderizador);
+	textoip->cargarTitulo();
+	textopuerto = new Texto("Puerto: ", renderizador);
+	textopuerto->cargarTitulo();
+	textonombre = new Texto("Nombre: ", renderizador);
+	textonombre->cargarTitulo();
+
+	SDL_Event e;
+	bool quit = false;
+
+	if( !neoGeo->cargarImagen("imag/entrada/neogeo.png"))
+	{
+		printf( "Failed to load presentacion!\n" );
 	}
+	else{
 
-	void close() {
-		//Free loaded images
-		delete puntajes;
-
-		for (auto kv : vistasPersonajes)
-			delete kv.second;
-
-		for (auto kv : vistasBalas)
-			delete kv.second;
-
-		for (auto kv : vistasEnemigos)
-			delete kv.second;
-
-		for (auto kv: visitasBonuses)
-			delete kv.second;
-
-		for (auto kv : vistasBoss)
-			delete kv.second;
-
-		for (auto text : TEXTURAS_ENEMIGOS)
-			delete text;
-
-		//Destroy window
-		SDL_DestroyRenderer( renderizador );
-		SDL_DestroyWindow( ventana );
-		ventana = NULL;
-		renderizador = NULL;
-		delete TEXTURA_BALA;
-		delete TEXTURA_BALA_ENEMIGA;
-		delete TEXTURA_BALA_HMGUN;
-		delete TEXTURA_BALA_SHOTGUN;
-		delete TEXTURA_BALA_RLAUNCHER;
-		delete TEXTURA_HMGUN;
-		delete TEXTURA_SGUN;
-		delete TEXTURA_RLAUNCHER;
-		delete TEXTURA_KILLALL;
-		delete TEXTURA_RECOVER;
-		delete TEXTURA_BALA_RSHOBU;
-		delete fondo;
-
-		//Quit SDL subsystems
-		IMG_Quit();
-		SDL_Quit();
-	}
-
-	void presentacion(){
-		//ESTE METODO ES EL QUE PIDE IP PUERTO Y NOMBRE
-		neoGeo = new Textura(renderizador);
-
-		Uint32 start = 0;
-		textoip = new Texto("IP: ", renderizador);
-		textoip->cargarTitulo();
-		textopuerto = new Texto("Puerto: ", renderizador);
-		textopuerto->cargarTitulo();
-		textonombre = new Texto("Nombre: ", renderizador);
-		textonombre->cargarTitulo();
-
-		SDL_Event e;
-		bool quit = false;
-
-		if( !neoGeo->cargarImagen("imag/entrada/neogeo.png"))
+		while(!quit)
 		{
-			printf( "Failed to load presentacion!\n" );
-		}
-		else{
-
-			while(!quit)
-			{
-				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
-				SDL_RenderClear( renderizador );
-				neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
-				quit=textoip->pedir();
-				SDL_RenderPresent( renderizador );
-			}
-			ip = textoip->getTexto();
-			quit=false;
-			while(!quit)
-			{
-				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
-				SDL_RenderClear( renderizador );
-				neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
-				quit=textopuerto->pedir();
-				SDL_RenderPresent( renderizador );
-			}
-			puerto = textopuerto->getTexto();
-			quit=false;
-			while(!quit)
-			{
-				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
-				SDL_RenderClear( renderizador );
-				neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
-				quit=textonombre->pedir();
-				SDL_RenderPresent( renderizador );
-			}
-			nombre = textonombre->getTexto();
-			quit=false;
-
-			while( !quit )
-			{
-				//MANEJA LA COLA DE EVENTOS
-				while( SDL_PollEvent( &e ) != 0 )
-				{
-					if( e.type == SDL_QUIT ){
-						quit = true;
-					}
-					if( e.type == SDL_KEYDOWN )
-					{
-						if (e.key.keysym.sym == SDLK_RETURN) quit = true;
-					}
-				}
-				SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
-				SDL_RenderClear( renderizador );
-
-				//Render background
-				neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
-
-				SDL_RenderPresent( renderizador );
-			}
-		}
-	}
-
-	void liberarPresentacion(){
-		delete neoGeo;
-		delete textoip;
-		delete textopuerto;
-		delete textonombre;
-	}
-
-	void cargarEntrada(){
-		fondoInicial = new Textura(renderizador);
-		TEXTURA_EXPLOSION1 = new Textura(renderizador);
-		TEXTURA_EXPLOSION2 = new Textura(renderizador);
-		TEXTURA_EXPLOSION3 = new Textura(renderizador);
-		TEXTURA_METAL = new Textura(renderizador);
-
-		//Loading success flag
-		int i;
-
-		//Load sprite sheet texture
-		if( !TEXTURA_EXPLOSION1->cargarImagen( "imag/entrada/entrada1.png") )
-		{
-			printf( "Fallo sprite EXPLOSION1\n" );
-		}
-		else
-		{
-			for (i = 0;i<10;i++){
-				spriteEntrada1[ i ].x = i*800;
-				spriteEntrada1[ i ].y = 0;
-				spriteEntrada1[ i ].w = 800;
-				spriteEntrada1[ i ].h = 600;
-			}
-		}
-
-		//Load sprite sheet texture
-		if( !TEXTURA_EXPLOSION2->cargarImagen( "imag/entrada/entrada2.png") )
-		{
-			printf( "Fallo sprite EXPLOSION2\n" );
-		}
-		else
-		{
-			for (i = 0;i<10;i++){
-				spriteEntrada2[ i ].x = i*800;
-				spriteEntrada2[ i ].y = 0;
-				spriteEntrada2[ i ].w = 800;
-				spriteEntrada2[ i ].h = 600;
-			}
-		}
-		if( !TEXTURA_EXPLOSION3->cargarImagen( "imag/entrada/entrada3.png") )
-		{
-			printf( "Fallo sprite EXPLOSION3\n" );
-		}
-		else
-		{
-			for (i = 0;i<10;i++){
-				spriteEntrada3[ i ].x = i*800;
-				spriteEntrada3[ i ].y = 0;
-				spriteEntrada3[ i ].w = 800;
-				spriteEntrada3[ i ].h = 600;
-			}
-		}
-
-		if (!fondoInicial->cargarImagen("imag/entrada/fondito.png")){
-			cout << "error cargando fondito"<<endl;
-		}
-		if (!TEXTURA_METAL->cargarImagen("imag/entrada/MetalSlug.png")){
-			cout << "error cargando metal slug"<<endl;
-		}
-		else
-		{
-			for (i = 0;i<7;i++){
-				spriteMetal[ i ].x = i*640;
-				spriteMetal[ i ].y = 0;
-				spriteMetal[ i ].w = 640;
-				spriteMetal[ i ].h = 377;
-			}
-		}
-	}
-
-	void entrada(){
-		//ESTE METODO HACE LA PRESENTACION Y LA SALA DE ESPERA
-		//PRIMERO HAY QUE LLAMAR A CARGARENTRADA()
-
-		SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
-		SDL_RenderClear( renderizador );
-		int frame=0;
-		int contador=0;
-		while (frame < 10){
-			//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
 			SDL_RenderClear( renderizador );
-			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
-			SDL_Rect* currentClip = &spriteEntrada1[ frame];
-			TEXTURA_EXPLOSION1->render( 0, 0,currentClip, 0.0, NULL, SDL_FLIP_NONE);
+			neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
+			quit=textoip->pedir();
 			SDL_RenderPresent( renderizador );
-			if (contador % 5 == 0) frame++;
-			contador++;
 		}
-		frame=0;
-		while (frame < 10){
-			//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+		ip = textoip->getTexto();
+		quit=false;
+		while(!quit)
+		{
+			SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
 			SDL_RenderClear( renderizador );
-			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
-			SDL_Rect* currentClip = &spriteEntrada2[ frame ];
-			TEXTURA_EXPLOSION2->render( 0, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+			neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
+			quit=textopuerto->pedir();
 			SDL_RenderPresent( renderizador );
-			if (contador % 5 == 0) frame++;
-			contador++;
 		}
-		frame=0;
-		while (frame < 10){
-			//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+		puerto = textopuerto->getTexto();
+		quit=false;
+		while(!quit)
+		{
+			SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
 			SDL_RenderClear( renderizador );
-			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
-			SDL_Rect* currentClip = &spriteEntrada3[ frame ];
-			TEXTURA_EXPLOSION3->render( 0, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+			neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
+			quit=textonombre->pedir();
 			SDL_RenderPresent( renderizador );
-			if (contador%5 == 0) frame++;
-			contador++;
 		}
+		nombre = textonombre->getTexto();
+		quit=false;
 
-		frame=0;
-		while (frame < 7){
-			//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
-			SDL_RenderClear( renderizador );
-			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
-			SDL_Rect* currentClip = &spriteMetal[ frame ];
-			TEXTURA_METAL->render( 150, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
-			SDL_RenderPresent( renderizador );
-			if (contador % 4 == 0) frame++;
-			contador++;
-		}
-
-		bool quit = false;
-		SDL_Event e;
-		esperandoTexto = new Texto("Esperando jugadores ", renderizador);
-		esperandoTexto->cargarTitulo();
-		puntitos = new Texto(".", renderizador);
-		puntitos->cargarTitulo();
-
-		int vueltas=0;
-
-		while (!quit){
+		while( !quit )
+		{
+			//MANEJA LA COLA DE EVENTOS
 			while( SDL_PollEvent( &e ) != 0 )
 			{
-				if( e.type == SDL_QUIT )
+				if( e.type == SDL_QUIT ){
+					quit = true;
+				}
+				if( e.type == SDL_KEYDOWN )
 				{
+					if (e.key.keysym.sym == SDLK_RETURN) quit = true;
+				}
+			}
+			SDL_SetRenderDrawColor( renderizador, 0, 0, 0, 0 );
+			SDL_RenderClear( renderizador );
+
+			//Render background
+			neoGeo->render( 100, 50,NULL, 0.0, NULL, SDL_FLIP_NONE);
+
+			SDL_RenderPresent( renderizador );
+		}
+	}
+}
+
+void Juego::liberarPresentacion(){
+	delete neoGeo;
+	delete textoip;
+	delete textopuerto;
+	delete textonombre;
+}
+
+void Juego::cargarEntrada(){
+	fondoInicial = new Textura(renderizador);
+	TEXTURA_EXPLOSION1 = new Textura(renderizador);
+	TEXTURA_EXPLOSION2 = new Textura(renderizador);
+	TEXTURA_EXPLOSION3 = new Textura(renderizador);
+	TEXTURA_METAL = new Textura(renderizador);
+
+	//Loading success flag
+	int i;
+
+	//Load sprite sheet texture
+	if( !TEXTURA_EXPLOSION1->cargarImagen( "imag/entrada/entrada1.png") )
+	{
+		printf( "Fallo sprite EXPLOSION1\n" );
+	}
+	else
+	{
+		for (i = 0;i<10;i++){
+			spriteEntrada1[ i ].x = i*800;
+			spriteEntrada1[ i ].y = 0;
+			spriteEntrada1[ i ].w = 800;
+			spriteEntrada1[ i ].h = 600;
+		}
+	}
+
+	//Load sprite sheet texture
+	if( !TEXTURA_EXPLOSION2->cargarImagen( "imag/entrada/entrada2.png") )
+	{
+		printf( "Fallo sprite EXPLOSION2\n" );
+	}
+	else
+	{
+		for (i = 0;i<10;i++){
+			spriteEntrada2[ i ].x = i*800;
+			spriteEntrada2[ i ].y = 0;
+			spriteEntrada2[ i ].w = 800;
+			spriteEntrada2[ i ].h = 600;
+		}
+	}
+	if( !TEXTURA_EXPLOSION3->cargarImagen( "imag/entrada/entrada3.png") )
+	{
+		printf( "Fallo sprite EXPLOSION3\n" );
+	}
+	else
+	{
+		for (i = 0;i<10;i++){
+			spriteEntrada3[ i ].x = i*800;
+			spriteEntrada3[ i ].y = 0;
+			spriteEntrada3[ i ].w = 800;
+			spriteEntrada3[ i ].h = 600;
+		}
+	}
+
+	if (!fondoInicial->cargarImagen("imag/entrada/fondito.png")){
+		cout << "error cargando fondito"<<endl;
+	}
+	if (!TEXTURA_METAL->cargarImagen("imag/entrada/MetalSlug.png")){
+		cout << "error cargando metal slug"<<endl;
+	}
+	else
+	{
+		for (i = 0;i<7;i++){
+			spriteMetal[ i ].x = i*640;
+			spriteMetal[ i ].y = 0;
+			spriteMetal[ i ].w = 640;
+			spriteMetal[ i ].h = 377;
+		}
+	}
+}
+
+void Juego::entrada(){
+	//ESTE METODO HACE LA PRESENTACION Y LA SALA DE ESPERA
+	//PRIMERO HAY QUE LLAMAR A CARGARENTRADA()
+
+	SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+	SDL_RenderClear( renderizador );
+	int frame=0;
+	int contador=0;
+	while (frame < 10){
+		//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+		SDL_RenderClear( renderizador );
+		fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+		SDL_Rect* currentClip = &spriteEntrada1[ frame];
+		TEXTURA_EXPLOSION1->render( 0, 0,currentClip, 0.0, NULL, SDL_FLIP_NONE);
+		SDL_RenderPresent( renderizador );
+		if (contador % 5 == 0) frame++;
+		contador++;
+	}
+	frame=0;
+	while (frame < 10){
+		//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+		SDL_RenderClear( renderizador );
+		fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+		SDL_Rect* currentClip = &spriteEntrada2[ frame ];
+		TEXTURA_EXPLOSION2->render( 0, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+		SDL_RenderPresent( renderizador );
+		if (contador % 5 == 0) frame++;
+		contador++;
+	}
+	frame=0;
+	while (frame < 10){
+		//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+		SDL_RenderClear( renderizador );
+		fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+		SDL_Rect* currentClip = &spriteEntrada3[ frame ];
+		TEXTURA_EXPLOSION3->render( 0, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+		SDL_RenderPresent( renderizador );
+		if (contador%5 == 0) frame++;
+		contador++;
+	}
+
+	frame=0;
+	while (frame < 7){
+		//SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+		SDL_RenderClear( renderizador );
+		fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+		SDL_Rect* currentClip = &spriteMetal[ frame ];
+		TEXTURA_METAL->render( 150, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+		SDL_RenderPresent( renderizador );
+		if (contador % 4 == 0) frame++;
+		contador++;
+	}
+
+	bool quit = false;
+	SDL_Event e;
+	esperandoTexto = new Texto("Esperando jugadores ", renderizador);
+	esperandoTexto->cargarTitulo();
+	puntitos = new Texto(".", renderizador);
+	puntitos->cargarTitulo();
+
+	int vueltas=0;
+
+	while (!quit){
+		while( SDL_PollEvent( &e ) != 0 )
+		{
+			if( e.type == SDL_QUIT )
+			{
+				quit = true;
+				continue;
+			}
+			else if( e.type == SDL_KEYDOWN )
+			{
+				if (e.key.keysym.sym == SDLK_RETURN){
 					quit = true;
 					continue;
 				}
-				else if( e.type == SDL_KEYDOWN )
-				{
-					if (e.key.keysym.sym == SDLK_RETURN){
-						quit = true;
-						continue;
-					}
-				}
 			}
-
-			SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
-			SDL_RenderClear( renderizador );
-			fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
-			SDL_Rect* currentClip = &spriteMetal[ frame-1 ];
-			TEXTURA_METAL->render( 115, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
-			//esperando.render(180,400);
-			esperandoTexto->renderTitulo(180,400);
-			//puntitos.renderTitulo(550,400);
-			if (vueltas % 100 <= 33) puntitos->renderTitulo(550,400);
-			else if (vueltas % 100<= 66){
-				puntitos->renderTitulo(550,400);
-				puntitos->renderTitulo(560,400);
-			}
-			else {
-				puntitos->renderTitulo(550,400);
-				puntitos->renderTitulo(560,400);
-				puntitos->renderTitulo(570,400);
-			}
-			SDL_RenderPresent( renderizador );
-			vueltas++;
 		}
 
-	}
-
-	void liberarEntrada(){
-		delete esperandoTexto;
-		delete puntitos;
-		delete fondoInicial;
-		delete TEXTURA_EXPLOSION1;
-		delete TEXTURA_EXPLOSION2;
-		delete TEXTURA_EXPLOSION3;
-		delete TEXTURA_METAL;
-	}
-
-	bool iniciar() {
-		//flag
-		bool success = true;
-
-		//SDL
-		if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
-			printf( "NO SE INICIALIZO SDL! SDL Error: %s\n", SDL_GetError() );
-			success = false;
+		SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+		SDL_RenderClear( renderizador );
+		fondoInicial->render(0,0,NULL, 0.0, NULL, SDL_FLIP_NONE);
+		SDL_Rect* currentClip = &spriteMetal[ frame-1 ];
+		TEXTURA_METAL->render( 115, 0, currentClip, 0.0, NULL, SDL_FLIP_NONE);
+		//esperando.render(180,400);
+		esperandoTexto->renderTitulo(180,400);
+		//puntitos.renderTitulo(550,400);
+		if (vueltas % 100 <= 33) puntitos->renderTitulo(550,400);
+		else if (vueltas % 100<= 66){
+			puntitos->renderTitulo(550,400);
+			puntitos->renderTitulo(560,400);
 		}
 		else {
-			//Set texture filtering to linear
-			if ( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) ) {
-				printf( "Warning: Linear texture filtering not enabled!" );
-			}
+			puntitos->renderTitulo(550,400);
+			puntitos->renderTitulo(560,400);
+			puntitos->renderTitulo(570,400);
+		}
+		SDL_RenderPresent( renderizador );
+		vueltas++;
+	}
 
-			//VENTANA
-			ventana = SDL_CreateWindow( "Metal Slug", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN );
-			if ( ventana == NULL ) {
-				printf( "NO SE PUDO CREAR LA VENTANA! SDL Error: %s\n", SDL_GetError() );
+}
+
+void Juego::liberarEntrada(){
+	delete esperandoTexto;
+	delete puntitos;
+	delete fondoInicial;
+	delete TEXTURA_EXPLOSION1;
+	delete TEXTURA_EXPLOSION2;
+	delete TEXTURA_EXPLOSION3;
+	delete TEXTURA_METAL;
+}
+
+bool Juego::iniciar() {
+	//flag
+	bool success = true;
+
+	//SDL
+	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
+		printf( "NO SE INICIALIZO SDL! SDL Error: %s\n", SDL_GetError() );
+		success = false;
+	}
+	else {
+		//Set texture filtering to linear
+		if ( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) ) {
+			printf( "Warning: Linear texture filtering not enabled!" );
+		}
+
+		//VENTANA
+		ventana = SDL_CreateWindow( "Metal Slug", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN );
+		if ( ventana == NULL ) {
+			printf( "NO SE PUDO CREAR LA VENTANA! SDL Error: %s\n", SDL_GetError() );
+			success = false;
+		}
+
+		else {
+			//Create vsynced renderer for window
+			renderizador = SDL_CreateRenderer( ventana, -1, SDL_RENDERER_ACCELERATED);
+			if ( renderizador == NULL ) {
+				printf( "NO SE PUDO HACER EL RENDER! SDL Error: %s\n", SDL_GetError() );
 				success = false;
 			}
 
 			else {
-				//Create vsynced renderer for window
-				renderizador = SDL_CreateRenderer( ventana, -1, SDL_RENDERER_ACCELERATED);
-				if ( renderizador == NULL ) {
-					printf( "NO SE PUDO HACER EL RENDER! SDL Error: %s\n", SDL_GetError() );
+				//DRAWCOLOR ASI PONE TODO EN BLANCO
+				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
+
+				//Initialize PNG loading
+				int imgFlags = IMG_INIT_PNG;
+				if( !( IMG_Init( imgFlags ) & imgFlags ) ) {
+					printf( "NO SE PUDO INICIARLIZAR LA IMAGEN! SDL_image Error: %s\n", IMG_GetError() );
 					success = false;
 				}
-
-				else {
-					//DRAWCOLOR ASI PONE TODO EN BLANCO
-					SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
-
-					//Initialize PNG loading
-					int imgFlags = IMG_INIT_PNG;
-					if( !( IMG_Init( imgFlags ) & imgFlags ) ) {
-						printf( "NO SE PUDO INICIARLIZAR LA IMAGEN! SDL_image Error: %s\n", IMG_GetError() );
-						success = false;
-					}
-					if( TTF_Init() == -1 ) {
-						printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
-						success = false;
-					}
+				if( TTF_Init() == -1 ) {
+					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+					success = false;
 				}
 			}
 		}
-
-		return success;
 	}
 
-	SDL_Renderer* getRenderer() {
-		return renderizador;
-	}
+	return success;
+}
 
-	SDL_Window* getVentana() {
-		return ventana;
-	}
+void Juego::transparentar(Uint8 alpha) {
 
-	SDL_Rect* getCamera(){
-		return camera;
-	}
+	this->bossActual->transparentar(alpha);
+	this->fondo->transparentar(alpha);
 
-	Cliente* getCliente(){
-		return cliente;
-	}
+	/*for (auto kv : this->vistasPersonajes)
+		kv.second->transparentar(alpha);*/
 
-	Background* getBackground(){
-		return fondo;
-	}
+	/*for (auto kv : this->vistasBalas)
+		kv.second->transparentar(alpha);*/
 
-	int getPosX(){
-		return posFondo;
-	}
+	for (auto kv : this->visitasBonuses)
+		kv.second->transparentar(alpha);
 
-	VistaPersonaje* getPersonajeById(int id){
-		return vistasPersonajes[id];
-	}
+	for (auto kv : this->vistasEnemigos)
+		kv.second->transparentar(alpha);
+}
 
-	VistaBala* getBalaById(int id){
-		return vistasBalas[id];
-	}
+SDL_Renderer* Juego::getRenderer() {
+	return renderizador;
+}
 
-	VistaEnemigo* getEnemigoById(int id){
-		return vistasEnemigos[id];
-	}
+SDL_Window* Juego::getVentana() {
+	return ventana;
+}
 
-	VistaBonus* getBonusById(int id){
-		return visitasBonuses[id];
-	}
+SDL_Rect* Juego::getCamera(){
+	return camera;
+}
 
-	VistaBoss* getBossById(int id){
-		return vistasBoss[id];
-	}
+Cliente* Juego::getCliente(){
+	return cliente;
+}
 
-	string getIp(){
-		return ip;
-	}
+Background* Juego::getBackground(){
+	return fondo;
+}
 
-	string getPuerto(){
-		return puerto;
-	}
+int Juego::getPosX(){
+	return posFondo;
+}
 
-	string getNombre(){
-		return nombre;
-	}
+VistaPersonaje* Juego::getPersonajeById(int id){
+	return vistasPersonajes[id];
+}
 
-	void setPosX(int x){
-		this->posFondo = x;
-	}
+VistaBala* Juego::getBalaById(int id){
+	return vistasBalas[id];
+}
 
-	void setBackground(Background* fondo){
-		this->fondo = fondo;
-	}
+VistaEnemigo* Juego::getEnemigoById(int id){
+	return vistasEnemigos[id];
+}
 
-	void setCliente(Cliente* client){
-		cliente = client;
-	}
+VistaBonus* Juego::getBonusById(int id){
+	return visitasBonuses[id];
+}
 
-	void setCamara(SDL_Rect* camara){
-		camera = camara;
-	}
+VistaBoss* Juego::getBossById(int id){
+	return vistasBoss[id];
+}
 
-	void addPersonaje(int id, VistaPersonaje* pj){
-		vistasPersonajes[id] = pj;
-	}
+string Juego::getIp(){
+	return ip;
+}
 
-	void addBala(int id, VistaBala* bala){
-		vistasBalas[id] = bala;
-	}
+string Juego::getPuerto(){
+	return puerto;
+}
 
-	void addEnemigo(int id, VistaEnemigo* enemigo){
-		vistasEnemigos[id] = enemigo;
-	}
+string Juego::getNombre(){
+	return nombre;
+}
 
-	void addBonus(int id, VistaBonus* bonus){
-		visitasBonuses[id] = bonus;
-	}
+void Juego::setPosX(int x){
+	this->posFondo = x;
+}
 
-	void addBoss(int id, VistaBoss* boss){
-		vistasBoss[id] = boss;
-	}
+void Juego::setBackground(Background* fondo){
+	this->fondo = fondo;
+}
 
-	void addBalaViva(int id, VistaBala* bala){
-		vistasBalasVivas[id] = bala;
-	}
+void Juego::setCliente(Cliente* client){
+	cliente = client;
+}
 
-	void addEnemigoVivo(int id, VistaEnemigo* enemigo){
-		vistasEnemigosVivos[id] = enemigo;
-	}
+void Juego::setCamara(SDL_Rect* camara){
+	camera = camara;
+}
 
-	void removeBala(int id){
-		vistasBalasVivas.erase(id);
-	}
+void Juego::addPersonaje(int id, VistaPersonaje* pj){
+	vistasPersonajes[id] = pj;
+}
 
-	void removeEnemigo(int id){
-		vistasEnemigosVivos.erase(id);
-	}
+void Juego::addBala(int id, VistaBala* bala){
+	vistasBalas[id] = bala;
+}
 
-	bool existeBala(int id){
-		auto it = vistasBalasVivas.find(id);
-		return it != vistasBalasVivas.end();
-	}
+void Juego::addEnemigo(int id, VistaEnemigo* enemigo){
+	vistasEnemigos[id] = enemigo;
+}
 
-	bool existeEnemigo(int id){
-		auto it = vistasEnemigosVivos.find(id);
-		return it != vistasEnemigosVivos.end();
-	}
+void Juego::addBonus(int id, VistaBonus* bonus){
+	visitasBonuses[id] = bonus;
+}
 
-	void conectar(){
-		cliente->conectar(nombre);
-	}
+void Juego::addBoss(int id, VistaBoss* boss){
+	vistasBoss[id] = boss;
+}
 
-	void handleEvent( SDL_Event& e) {
+void Juego::addBalaViva(int id, VistaBala* bala){
+	vistasBalasVivas[id] = bala;
+}
 
-		VistaPersonaje* miPj = getPersonajeById(miId);
-		if (!miPj->getExiste())
-			return;
+void Juego::addEnemigoVivo(int id, VistaEnemigo* enemigo){
+	vistasEnemigosVivos[id] = enemigo;
+}
 
-		ProtocoloComando comando;
-		string msj;
+void Juego::removeBala(int id){
+	vistasBalasVivas.erase(id);
+}
 
-		// Si toco una tecla por la primera vez
-		if ( e.type == SDL_KEYDOWN && e.key.repeat == 0 ) {
+void Juego::removeEnemigo(int id){
+	vistasEnemigosVivos.erase(id);
+}
 
-			switch( e.key.keysym.sym ) {
+bool Juego::existeBala(int id){
+	auto it = vistasBalasVivas.find(id);
+	return it != vistasBalasVivas.end();
+}
 
-				case SDLK_LEFT:
-					comando.setScancode(SDLK_LEFT);
-					comando.setType(1);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+bool Juego::existeEnemigo(int id){
+	auto it = vistasEnemigosVivos.find(id);
+	return it != vistasEnemigosVivos.end();
+}
 
-				case SDLK_RIGHT:
-					comando.setScancode(SDLK_RIGHT);
-					comando.setType(1);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+void Juego::conectar(){
+	cliente->conectar(nombre);
+}
 
-				case SDLK_UP:
-					comando.setScancode(SDLK_UP);
-					comando.setType(1);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+void Juego::handleEvent( SDL_Event& e) {
 
-				case SDLK_DOWN:
-					comando.setScancode(SDLK_DOWN);
-					comando.setType(1);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+	VistaPersonaje* miPj = getPersonajeById(miId);
+	if (!miPj->getExiste())
+		return;
 
-				case SDLK_x:
-					comando.setScancode(SDLK_x);
-					comando.setType(1);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+	ProtocoloComando comando;
+	string msj;
 
-				case SDLK_r:
-					comando.setScancode(SDLK_r);
-					comando.setType(1);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+	// Si toco una tecla por la primera vez
+	if ( e.type == SDL_KEYDOWN && e.key.repeat == 0 ) {
 
-				case SDLK_z:
-					comando.setScancode(SDLK_z);
-					comando.setType(1);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
-			}
-		}
+		switch( e.key.keysym.sym ) {
 
-		// Si suelto la tecla
-		else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
+			case SDLK_LEFT:
+				comando.setScancode(SDLK_LEFT);
+				comando.setType(1);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
 
-			switch( e.key.keysym.sym ) {
+			case SDLK_RIGHT:
+				comando.setScancode(SDLK_RIGHT);
+				comando.setType(1);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
 
-				case SDLK_LEFT:
-					comando.setScancode(SDLK_LEFT);
-					comando.setType(0);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+			case SDLK_UP:
+				comando.setScancode(SDLK_UP);
+				comando.setType(1);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
 
-				case SDLK_RIGHT:
-					comando.setScancode(SDLK_RIGHT);
-					comando.setType(0);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+			case SDLK_DOWN:
+				comando.setScancode(SDLK_DOWN);
+				comando.setType(1);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
 
-				case SDLK_UP:
-					comando.setScancode(SDLK_UP);
-					comando.setType(0);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+			case SDLK_x:
+				comando.setScancode(SDLK_x);
+				comando.setType(1);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
 
-				case SDLK_DOWN:
-					comando.setScancode(SDLK_DOWN);
-					comando.setType(0);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
+			case SDLK_r:
+				comando.setScancode(SDLK_r);
+				comando.setType(1);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
 
-				case SDLK_x:
-					comando.setScancode(SDLK_x);
-					comando.setType(0);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
-
-				case SDLK_r:
-					break;
-
-				case SDLK_z:
-					comando.setScancode(SDLK_z);
-					comando.setType(0);
-					msj = comando.toString();
-					cliente->enviarAusuario("TODOS", msj, false);
-					break;
-			}
+			case SDLK_z:
+				comando.setScancode(SDLK_z);
+				comando.setType(1);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
 		}
 	}
 
-	void moverCamara(int id){
+	// Si suelto la tecla
+	else if( e.type == SDL_KEYUP && e.key.repeat == 0 ) {
 
-		for (auto kv : vistasPersonajes){
-			if (kv.second->getId() != id){
+		switch( e.key.keysym.sym ) {
 
-				if (kv.second->getConectado() && kv.second->getPosCamara() != 0) {
-					kv.second->setPosCamara(kv.second->getPosCamara() - 7);
-				}
-				else if (kv.second->getPosCamara() == 0 && !(kv.second->getConectado())){
-					kv.second->setPosCamara(kv.second->getPosCamara()+7);
-				}
-				if (!(kv.second->getConectado()) && kv.second->getPosCamara() != 7 && kv.second->getPosCamara() != 0){
-					kv.second->setPosCamara(kv.second->getPosCamara()-7);
-				}
+			case SDLK_LEFT:
+				comando.setScancode(SDLK_LEFT);
+				comando.setType(0);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
+
+			case SDLK_RIGHT:
+				comando.setScancode(SDLK_RIGHT);
+				comando.setType(0);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
+
+			case SDLK_UP:
+				comando.setScancode(SDLK_UP);
+				comando.setType(0);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
+
+			case SDLK_DOWN:
+				comando.setScancode(SDLK_DOWN);
+				comando.setType(0);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
+
+			case SDLK_x:
+				comando.setScancode(SDLK_x);
+				comando.setType(0);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
+
+			case SDLK_r:
+				break;
+
+			case SDLK_z:
+				comando.setScancode(SDLK_z);
+				comando.setType(0);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
+		}
+	}
+}
+
+void Juego::moverCamara(int id){
+
+	for (auto kv : vistasPersonajes){
+		if (kv.second->getId() != id){
+
+			if (kv.second->getConectado() && kv.second->getPosCamara() != 0) {
+				kv.second->setPosCamara(kv.second->getPosCamara() - 7);
+			}
+			else if (kv.second->getPosCamara() == 0 && !(kv.second->getConectado())){
+				kv.second->setPosCamara(kv.second->getPosCamara()+7);
+			}
+			if (!(kv.second->getConectado()) && kv.second->getPosCamara() != 7 && kv.second->getPosCamara() != 0){
+				kv.second->setPosCamara(kv.second->getPosCamara()-7);
 			}
 		}
-
-		for (auto kv : vistasEnemigosVivos)
-			if (kv.second->existeEnemigo())
-				kv.second->setPosX(kv.second->getPosx()-7);
-
-		for (auto kv : visitasBonuses)
-			if (kv.second->getExiste())
-				kv.second->setPosx(kv.second->getPosx()-7);
 	}
 
-	void renderizar() {
-		for (auto kv : visitasBonuses)
+	for (auto kv : vistasEnemigosVivos)
+		if (kv.second->existeEnemigo())
+			kv.second->setPosX(kv.second->getPosx()-7);
+
+	for (auto kv : visitasBonuses)
+		if (kv.second->getExiste())
+			kv.second->setPosx(kv.second->getPosx()-7);
+}
+
+void Juego::renderizar() {
+	for (auto kv : visitasBonuses)
+		kv.second->render();
+
+	for (auto kv : vistasEnemigosVivos)
+		kv.second->render();
+
+	bossActual->render();
+
+	for (auto kv : vistasPersonajes) {
+		if (kv.second->getId() != miId) {
+
+			if (!(kv.second->getConectado()) && !(kv.second->getGris())) kv.second->ponerTexturaGris();
+
+			else if (kv.second->getConectado() && kv.second->getGris()) kv.second->sacarTexturaGris();
+
 			kv.second->render();
-
-		for (auto kv : vistasEnemigosVivos)
-			kv.second->render();
-
-		bossActual->render();
-
-		for (auto kv : vistasPersonajes) {
-			if (kv.second->getId() != miId) {
-
-				if (!(kv.second->getConectado()) && !(kv.second->getGris())) kv.second->ponerTexturaGris();
-
-				else if (kv.second->getConectado() && kv.second->getGris()) kv.second->sacarTexturaGris();
-
-				kv.second->render();
-			}
 		}
-
-		VistaPersonaje* miPj = vistasPersonajes[miId];
-		miPj->render();
-
-		for (auto kv : vistasBalasVivas)
-			kv.second->render();
-
-		puntajes->render();
-
-		if (!bossActual->estaVivo())
-			puntajes->mostrarResumen();
 	}
 
-	int getPersonajeMasMovido(){
-		int aux = 0;
-		for (auto kv : vistasPersonajes){
-			int x = kv.second->getX();
-			if (x > aux) aux = x;
+	VistaPersonaje* miPj = vistasPersonajes[miId];
+	miPj->render();
+
+	for (auto kv : vistasBalasVivas)
+		kv.second->render();
+
+	puntajes->render();
+
+	if (!bossActual->estaVivo())
+		puntajes->mostrarResumen(this);
+}
+
+int Juego::getPersonajeMasMovido(){
+	int aux = 0;
+	for (auto kv : vistasPersonajes){
+		int x = kv.second->getX();
+		if (x > aux) aux = x;
+	}
+	return aux;
+}
+
+void Juego::jugadoresInicio(){
+	for ( auto kv : vistasPersonajes){
+		kv.second->setPosCamara(0);
+		kv.second->setPosx(0);
+		kv.second->setPosy(465);
+		kv.second->setSeMovio(false);
+		kv.second->setDerecha(true);
+	}
+	setPosX(0);
+
+	for (auto kv : vistasEnemigos)
+		kv.second->revivir();
+
+	for (auto kv : visitasBonuses)
+		kv.second->reiniciar();
+}
+
+void Juego::salaDeEspera(){
+	cout << "ESPERANDO A TODOS LOS USUARIOS" << endl;
+	string stream = cliente->recibir_nueva_vista();
+}
+
+void Juego::recibirEscenario(){
+	string stream = cliente->recibir_nueva_vista();
+
+	cout << stream;
+
+	string ventanaAncho = "";
+	string ventanaAlto = "";
+	string cantUsers = "";
+	string gameMode = "";
+
+	string* variables[] = {&ventanaAncho, &ventanaAlto, &cantUsers, &gameMode};
+
+	int j = 0;
+
+	for (int i=0; i<stream.size() - 1; i++) {
+
+		char actual = stream[i];
+
+		if (actual == '$') {
+			j++;
+			continue;
 		}
-		return aux;
+
+		*(variables[j]) += actual;
 	}
 
-	void jugadoresInicio(){
-		for ( auto kv : vistasPersonajes){
-			kv.second->setPosCamara(0);
-			kv.second->setPosx(0);
-			kv.second->setPosy(465);
-			kv.second->setSeMovio(false);
-			kv.second->setDerecha(true);
-		}
-		setPosX(0);
+	screenWidth = stoi(ventanaAncho);
+	screenHeight = stoi(ventanaAlto);
+	cantidadUsuarios = stoi(cantUsers);
+	modoJuego = stoi(gameMode);
+}
 
-		for (auto kv : vistasEnemigos)
-			kv.second->revivir();
+void Juego::recibirCapas(){
+	cout <<"RECIBIENDO BACKGROUND"<< endl;
 
-		for (auto kv : visitasBonuses)
-			kv.second->reiniciar();
-	}
+	while (true) {
 
-	void salaDeEspera(){
-		cout << "ESPERANDO A TODOS LOS USUARIOS" << endl;
 		string stream = cliente->recibir_nueva_vista();
-	}
 
-	void recibirEscenario(){
-		string stream = cliente->recibir_nueva_vista();
+		if (stream == "$\n") break;
 
-		cout << stream;
+		string path = "";
 
-		string ventanaAncho = "";
-		string ventanaAlto = "";
-		string cantUsers = "";
-		string gameMode = "";
-
-		string* variables[] = {&ventanaAncho, &ventanaAlto, &cantUsers, &gameMode};
+		string* variables[] = {&path};
 
 		int j = 0;
 
@@ -813,479 +783,448 @@ public:
 			*(variables[j]) += actual;
 		}
 
-		screenWidth = stoi(ventanaAncho);
-		screenHeight = stoi(ventanaAlto);
-		cantidadUsuarios = stoi(cantUsers);
-		modoJuego = stoi(gameMode);
-	}
+		char *path_c = new char[path.length() + 1];
+		strcpy(path_c, path.c_str());
 
-	void recibirCapas(){
-		cout <<"RECIBIENDO BACKGROUND"<< endl;
-
-		while (true) {
-
-			string stream = cliente->recibir_nueva_vista();
-
-			if (stream == "$\n") break;
-
-			string path = "";
-
-			string* variables[] = {&path};
-
-			int j = 0;
-
-			for (int i=0; i<stream.size() - 1; i++) {
-
-				char actual = stream[i];
-
-				if (actual == '$') {
-					j++;
-					continue;
-				}
-
-				*(variables[j]) += actual;
-			}
-
-			char *path_c = new char[path.length() + 1];
-			strcpy(path_c, path.c_str());
-
-			if(!(fondo->agregar(path_c)) ){
-				printf( "Failed to load media!\n" );
-			}
-
+		if(!(fondo->agregar(path_c)) ){
+			printf( "Failed to load media!\n" );
 		}
+
 	}
+}
 
-	void recibirPersonajes(){
+void Juego::recibirPersonajes(){
 
-		while (true) {
+	while (true) {
 
-			string nuevaVista = cliente->recibir_nueva_vista();
+		string nuevaVista = cliente->recibir_nueva_vista();
 
-			if (nuevaVista == "$\n") break;
+		if (nuevaVista == "$\n") break;
 
-			cout << "NUEVO PERSONAJE: " << nuevaVista << endl;
+		cout << "NUEVO PERSONAJE: " << nuevaVista << endl;
 
-			int id, sprite, posx, posy, cam, conectado, idUser;
+		int id, sprite, posx, posy, cam, conectado, idUser;
 
-			ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado, &idUser);
+		ProtocoloNuevaVista::parse(nuevaVista, &id, &sprite, &posx, &posy, &cam, &conectado, &idUser);
 
-			VistaPersonaje *personaje = new VistaPersonaje(getRenderer(), id, modoJuego);
+		VistaPersonaje *personaje = new VistaPersonaje(getRenderer(), id, modoJuego);
 
-			setPosX(posx);
-			//personaje->setearSprites(sprite);
-			personaje->setId(id);
-			personaje->setPosCamara(cam);
-			personaje->setPosx(posx);
-			personaje->setPosy(posy);
-			personaje->setSeMovio(false);
-			personaje->setConectado(conectado);
-			addPersonaje(id, personaje);
+		setPosX(posx);
+		//personaje->setearSprites(sprite);
+		personaje->setId(id);
+		personaje->setPosCamara(cam);
+		personaje->setPosx(posx);
+		personaje->setPosy(posy);
+		personaje->setSeMovio(false);
+		personaje->setConectado(conectado);
+		addPersonaje(id, personaje);
 
-			miId = idUser;
+		miId = idUser;
 
-			if (!personaje->cargarImagen()) {
-				printf("Failed to load media!\n");
-				exit(1);
-			}
-
+		if (!personaje->cargarImagen()) {
+			printf("Failed to load media!\n");
+			exit(1);
 		}
 
 	}
 
-	void recibirNuevoBackground(){
+}
 
-		delete fondo;
+void Juego::recibirNuevoBackground(){
 
-		// Seteo el fondo
-		Background* fondo = new Background(getRenderer());
-		setBackground(fondo);
-		recibirNuevasCapas();
-		fondo->prepararEscenario();
+	delete fondo;
 
-		SDL_RenderClear( getRenderer() );
-		fondo->render(getPosX());
-		renderizar();
-		SDL_RenderPresent( getRenderer() );
+	// Seteo el fondo
+	Background* fondo = new Background(getRenderer());
+	setBackground(fondo);
+	recibirNuevasCapas();
+	fondo->prepararEscenario();
 
-	}
+	SDL_RenderClear( getRenderer() );
+	fondo->render(getPosX());
+	renderizar();
+	SDL_RenderPresent( getRenderer() );
 
-	void recibirNuevasCapas(){
-		cout <<"RECIBIENDO BACKGROUND"<< endl;
+}
 
-		while (true) {
+void Juego::recibirNuevasCapas(){
+	cout <<"RECIBIENDO BACKGROUND"<< endl;
 
-			string stream = cliente->desencolar_vista();
+	while (true) {
 
-			if (stream == "$\n") break;
+		string stream = cliente->desencolar_vista();
 
-			string path = "";
-			string ancho = "";
-			string zindex = "";
+		if (stream == "$\n") break;
 
-			string* variables[] = {&path, &ancho, &zindex};
+		string path = "";
+		string ancho = "";
+		string zindex = "";
 
-			int j = 0;
+		string* variables[] = {&path, &ancho, &zindex};
 
-			for (int i=0; i<stream.size() - 1; i++) {
-
-				char actual = stream[i];
-
-				if (actual == '$') {
-					j++;
-					continue;
-				}
-
-				*(variables[j]) += actual;
-			}
-
-
-			char *path_c = new char[path.length() + 1];
-			strcpy(path_c, path.c_str());
-
-			if(!(fondo->agregar(path_c)) ){
-				printf( "Failed to load media!\n" );
-			}
-
-		}
-	}
-
-	void crearBalas(){
-		int i = 1;
-		for (i ; i < 51 ; i++) {
-			VistaBala* bala = new VistaBala(TEXTURA_BALA);
-			bala->cargarImagen();
-			addBala(i, bala);
-		}
-		for (i ; i < 101 ; i++) {
-			VistaBala* bala = new VistaBala(TEXTURA_BALA_ENEMIGA);
-			bala->cargarImagen();
-			addBala(i, bala);
-		}
-		for (i ; i < 151 ; i++) {
-			VistaBala* bala = new VistaBala(TEXTURA_BALA_HMGUN);
-			bala->cargarImagen();
-			addBala(i, bala);
-		}
-		for (i ; i < 201 ; i++) {
-			VistaBala* bala = new VistaBala(TEXTURA_BALA_SHOTGUN);
-			bala->cargarImagen();
-			bala->cargarImagenShotgun();
-			bala->setShotgun(true);
-			addBala(i, bala);
-		}
-		for (i ; i < 251 ; i++) {
-			VistaBala* bala = new VistaBala(TEXTURA_BALA_RLAUNCHER);
-			bala->cargarImagen();
-			addBala(i, bala);
-		}
-		for (i ; i < 256 ; i++) {
-			VistaBala* bala = new VistaBala(TEXTURA_BALA_RSHOBU);
-			bala->cargarImagen();
-			bala->setBomba(true);
-			bala->cargarExplosion(renderizador);
-			addBala(i, bala);
-		}
-	}
-
-	void crearEnemigos(){
-		int i = 1;
-		for (i ; i < 21 ; i++){
-			VistaEnemigo* enemigo = new VistaEnemigo(TEXTURAS_ENEMIGOS);
-			enemigo->cargarImagen();
-			addEnemigo(i, enemigo);
-		}
-	}
-
-	void crearBonuses(){
-		idBonus = 1;
-		VistaBonus* bonus = new VistaBonus(TEXTURA_HMGUN);
-		addBonus(idBonus, bonus);
-		idBonus++;
-
-		bonus = new VistaBonus(TEXTURA_SGUN);
-		addBonus(idBonus, bonus);
-		idBonus++;
-
-		bonus = new VistaBonus(TEXTURA_RLAUNCHER);
-		addBonus(idBonus, bonus);
-		idBonus++;
-	}
-
-	void crearBoss(){
-		int id = 1;
-		VistaBoss* rshobu = new VistaRshobu(renderizador);
-		rshobu->cargarImagen();
-		addBoss(id, rshobu);
-		id++;
-	}
-
-	void seleccionarBoss(int nivel){
-		bossActual = getBossById(nivel);
-	}
-
-	void cargarTexturaBala(){
-		TEXTURA_BALA = new Textura(renderizador);
-		if( !TEXTURA_BALA->cargarImagen( "imag/sprites/sfx/gunBullet.png") ) printf( "Fallo imagen bala\n" );
-
-		TEXTURA_BALA_ENEMIGA = new Textura(renderizador);
-		if( !TEXTURA_BALA_ENEMIGA->cargarImagen( "imag/sprites/sfx/soldierBullet.png") ) printf( "Fallo imagen bala enemiga\n" );
-
-		TEXTURA_BALA_HMGUN = new Textura(renderizador);
-		if( !TEXTURA_BALA_HMGUN->cargarImagen( "imag/sprites/sfx/disparoHMGun.png") ) printf( "Fallo imagen bala HMGUN\n" );
-
-		TEXTURA_BALA_SHOTGUN = new Textura(renderizador);
-		if( !TEXTURA_BALA_SHOTGUN->cargarImagen( "imag/sprites/sfx/disparoSgun.png") ) printf( "Fallo imagen bala SHOTGUN\n" );
-
-		TEXTURA_BALA_RLAUNCHER = new Textura(renderizador);
-		if( !TEXTURA_BALA_RLAUNCHER->cargarImagen( "imag/sprites/sfx/disparoRLauncher.png") ) printf( "Fallo imagen bala RLAUNCHER\n" );
-
-		TEXTURA_BALA_RSHOBU = new Textura(renderizador);
-		if( !TEXTURA_BALA_RSHOBU->cargarImagen( "imag/sprites/R-Shobu/disparo.png") ) printf( "Fallo imagen rshobu disparo\n" );
-
-	}
-
-	void cargarTexturaEnemigo(){
-		Textura* TEXTURA_ENEMIGO_MUERTE1 = new Textura(renderizador);
-		if( !TEXTURA_ENEMIGO_MUERTE1->cargarImagen( "imag/sprites/soldier/death1.png") ) printf( "Fallo imagen enemigo\n" );
-		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_MUERTE1);
-
-		Textura* TEXTURA_ENEMIGO_MUERTE2 = new Textura(renderizador);
-		if( !TEXTURA_ENEMIGO_MUERTE2->cargarImagen( "imag/sprites/soldier/death2.png") ) printf( "Fallo imagen enemigo\n" );
-		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_MUERTE2);
-
-		Textura* TEXTURA_ENEMIGO_MIRANDO = new Textura(renderizador);
-		if( !TEXTURA_ENEMIGO_MIRANDO->cargarImagen( "imag/sprites/soldier/looking.png") ) printf( "Fallo imagen enemigo\n" );
-		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_MIRANDO);
-
-		Textura* TEXTURA_ENEMIGO_CORRIENDO = new Textura(renderizador);
-		if( !TEXTURA_ENEMIGO_CORRIENDO->cargarImagen( "imag/sprites/soldier/run.png") ) printf( "Fallo imagen enemigo\n" );
-		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_CORRIENDO);
-
-		Textura* TEXTURA_ENEMIGO_DISPARANDO = new Textura(renderizador);
-		if( !TEXTURA_ENEMIGO_DISPARANDO->cargarImagen( "imag/sprites/soldier/shoot.png") ) printf( "Fallo imagen enemigo\n" );
-		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_DISPARANDO);
-
-		Textura* TEXTURA_ENEMIGO_QUIETO = new Textura(renderizador);
-		if( !TEXTURA_ENEMIGO_QUIETO->cargarImagen( "imag/sprites/soldier/toying.png") ) printf( "Fallo imagen enemigo\n" );
-		TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_QUIETO);
-	}
-
-	void cargarTexturaBonus(){
-		TEXTURA_HMGUN = new Textura(renderizador);
-		if( !TEXTURA_HMGUN->cargarImagen( "imag/sprites/sfx/HMGun.png") ) printf( "Fallo imagen hmgun\n" );
-
-		TEXTURA_SGUN = new Textura(renderizador);
-		if( !TEXTURA_SGUN->cargarImagen( "imag/sprites/sfx/Sgun.png") ) printf( "Fallo imagen sgun\n" );
-
-		TEXTURA_RLAUNCHER = new Textura(renderizador);
-		if( !TEXTURA_RLAUNCHER->cargarImagen( "imag/sprites/sfx/RLauncher.png") ) printf( "Fallo imagen rlauncher\n" );
-
-		TEXTURA_KILLALL = new Textura(renderizador);
-		if( !TEXTURA_KILLALL->cargarImagen( "imag/sprites/sfx/KillAll.png") ) printf( "Fallo imagen kill all\n" );
-
-		TEXTURA_RECOVER = new Textura(renderizador);
-		if( !TEXTURA_RECOVER->cargarImagen( "imag/sprites/sfx/Recover.png") ) printf( "Fallo imagen recover\n" );
-	}
-
-	void parsearUpdateVista(string update){
-		ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posX, &posy, &posCam, &conectado, &spriteIdx, &aim, &saltando, &puntaje);
-	}
-
-	int getTipoObjeto(){
-		return tipoObjeto;
-	}
-
-	void actualizarPersonaje(){
-		puntajes->actualizarPuntaje(id, puntaje);
-
-		VistaPersonaje* pj = getPersonajeById(id);
-
-		if (pj->getPosCamara() < posCam || pj->getPosCamara() > 539){
-			pj->setDerecha(true);
-		}
-		else if (pj->getPosCamara() > posCam){
-			pj->setDerecha(false);
-		}
-
-		if (getPosX() < posX){
-			moverCamara(id);
-			setPosX(posX);
-		}
-
-		pj->setSaltando(saltando);
-		pj->apuntar(aim);
-		if (!(pj->getDisparar())) pj->setSpriteIndexTorso(spriteIdx);
-		pj->setSpriteIndexPies(spriteIdx);
-		pj->setConectado(conectado);
-		pj->setPosCamara(posCam);
-		pj->setPosy(posy);
-		pj->setSeMovio(state);
-	}
-
-	void actualizarBala(){
-		int derecha, arriba, abajo, izquierda, frame;
-		derecha = spriteIdx;
-		izquierda = aim;
-		arriba = posCam;
-		abajo = conectado;
-		frame = saltando;
-
-		VistaBala* bala = getBalaById(id);
-
-		if (state && !existeBala(id)) addBalaViva(id, bala);
-		else if (!state && existeBala(id) && !bala->isBomba()) removeBala(id);
-
-		bala->setExiste(state);
-		bala->setPosX(posX);
-		bala->setPosY(posy);
-		bala->setDerecha(derecha);
-		bala->setArriba(arriba);
-		bala->setAbajo(abajo);
-		bala->setIzquierda(izquierda);
-		if (bala->isShotgun()) bala->setFrame(frame);
-
-	}
-
-	void actualizarSpriteDisparo(){
-		VistaPersonaje* pj = getPersonajeById(id);
-
-		pj->setDisparar(state);
-		pj->setSpriteIndexTorso(spriteIdx);
-		pj->setSpriteIndexPies(spriteIdx);
-		if (saltando) pj->ponerGun();
-	}
-
-	void actualizarEnemigo(){
-		VistaEnemigo* enemigo = getEnemigoById(id);
-
-		if (state && !existeEnemigo(id)) addEnemigoVivo(id, enemigo);
-		else if (!state && existeEnemigo(id)) removeEnemigo(id);
-
-		if (!conectado) enemigo->setExiste(state);
-		enemigo->setPosX(posX);
-		enemigo->setPosY(posy);
-		enemigo->setFrame(spriteIdx);
-		enemigo->setDisparando(aim);
-		enemigo->setCantPasos(posCam);
-		if (conectado) enemigo->morir();
-	}
-
-	void actualizarBonus(){
-		if (spriteIdx == 1){
-			nuevoBonus();
-			return;
-		}
-
-		VistaBonus* bonus = getBonusById(id);
-
-		bonus->setPosx(posX);
-		bonus->setPosy(posy);
-		bonus->setExiste(state);
-
-		if (aim && saltando == 0){
-			VistaPersonaje* pj = getPersonajeById(conectado);
-			pj->ponerShotgun();
-		}
-	}
-
-	void nuevoBonus(){
-		VistaBonus* bonus;
-
-		if (saltando == 1)
-			bonus = new VistaBonus(TEXTURA_KILLALL);
-		else if (saltando == 2)
-			bonus = new VistaBonus(TEXTURA_RECOVER);
-
-		addBonus(id, bonus);
-	}
-
-	void actualizarBoss(){
-		bossActual->setDireccion(posX);
-		bossActual->setExiste(state);
-		bossActual->setPosx(posX);
-		bossActual->setPosy(posy);
-		bossActual->setFrame(spriteIdx);
-		if (!conectado) {
-			bossActual->morir();
-			bossActual->setMuerto(!conectado);
-		}
-	}
-
-	void crearVistaPuntajes(){
-		puntajes = VistaPuntajes::NewVistaPuntaje(cantidadUsuarios, modoJuego, renderizador);
-	}
-
-	void actualizarImpacto(){
-		VistaPersonaje* pj = getPersonajeById(id);
-
-		if (state) pj->titilar();
-		else pj->morir();
-
-		if (puntaje != 0) {
-			VistaBala* bala = getBalaById(puntaje);
-			bala->setExplotando(true);
-		}
-	}
-
-	void actualizarQuietos(){
-
-		int i = 0;
 		int j = 0;
-		int sprite = id;
-		int datos[8] = {state, posX, posy, posCam, conectado, spriteIdx, aim, saltando};
 
-		for (i ; i < cantidadUsuarios ; i++){
+		for (int i=0; i<stream.size() - 1; i++) {
 
-			VistaPersonaje* pj = getPersonajeById(i+1);
+			char actual = stream[i];
 
-			if (datos[j]){
-				pj->setSeMovio(!datos[j]);
-				pj->apuntar(datos[j+1]);
-				pj->setSpriteIndexTorso(sprite);
-				pj->setSpriteIndexPies(sprite);
+			if (actual == '$') {
+				j++;
+				continue;
 			}
-			j += 2;
+
+			*(variables[j]) += actual;
+		}
+
+
+		char *path_c = new char[path.length() + 1];
+		strcpy(path_c, path.c_str());
+
+		if(!(fondo->agregar(path_c)) ){
+			printf( "Failed to load media!\n" );
 		}
 
 	}
+}
 
-	void recibirUsuarios() {
-		cout << "RECIBO USUARIOS" << endl;
+void Juego::crearBalas(){
+	int i = 1;
+	for (i ; i < 51 ; i++) {
+		VistaBala* bala = new VistaBala(TEXTURA_BALA);
+		bala->cargarImagen();
+		addBala(i, bala);
+	}
+	for (i ; i < 101 ; i++) {
+		VistaBala* bala = new VistaBala(TEXTURA_BALA_ENEMIGA);
+		bala->cargarImagen();
+		addBala(i, bala);
+	}
+	for (i ; i < 151 ; i++) {
+		VistaBala* bala = new VistaBala(TEXTURA_BALA_HMGUN);
+		bala->cargarImagen();
+		addBala(i, bala);
+	}
+	for (i ; i < 201 ; i++) {
+		VistaBala* bala = new VistaBala(TEXTURA_BALA_SHOTGUN);
+		bala->cargarImagen();
+		bala->cargarImagenShotgun();
+		bala->setShotgun(true);
+		addBala(i, bala);
+	}
+	for (i ; i < 251 ; i++) {
+		VistaBala* bala = new VistaBala(TEXTURA_BALA_RLAUNCHER);
+		bala->cargarImagen();
+		addBala(i, bala);
+	}
+	for (i ; i < 256 ; i++) {
+		VistaBala* bala = new VistaBala(TEXTURA_BALA_RSHOBU);
+		bala->cargarImagen();
+		bala->setBomba(true);
+		bala->cargarExplosion(renderizador);
+		addBala(i, bala);
+	}
+}
 
-		while (true) {
+void Juego::crearEnemigos(){
+	int i = 1;
+	for (i ; i < 21 ; i++){
+		VistaEnemigo* enemigo = new VistaEnemigo(TEXTURAS_ENEMIGOS);
+		enemigo->cargarImagen();
+		addEnemigo(i, enemigo);
+	}
+}
 
-			string stream = cliente->recibir_nueva_vista();
+void Juego::crearBonuses(){
+	idBonus = 1;
+	VistaBonus* bonus = new VistaBonus(TEXTURA_HMGUN);
+	addBonus(idBonus, bonus);
+	idBonus++;
 
-			if (stream == "$\n") break;
+	bonus = new VistaBonus(TEXTURA_SGUN);
+	addBonus(idBonus, bonus);
+	idBonus++;
 
-			string nombre = "";
-			string id = "";
+	bonus = new VistaBonus(TEXTURA_RLAUNCHER);
+	addBonus(idBonus, bonus);
+	idBonus++;
+}
 
-			string* variables[] = {&nombre, &id};
+void Juego::crearBoss(){
+	int id = 1;
+	VistaBoss* rshobu = new VistaRshobu(renderizador);
+	rshobu->cargarImagen();
+	addBoss(id, rshobu);
+	id++;
+}
 
-			int j = 0;
+void Juego::seleccionarBoss(int nivel){
+	bossActual = getBossById(nivel);
+}
 
-			for (int i = 0; i < stream.size() - 1; i++) {
+void Juego::cargarTexturaBala(){
+	TEXTURA_BALA = new Textura(renderizador);
+	if( !TEXTURA_BALA->cargarImagen( "imag/sprites/sfx/gunBullet.png") ) printf( "Fallo imagen bala\n" );
 
-				char actual = stream[i];
+	TEXTURA_BALA_ENEMIGA = new Textura(renderizador);
+	if( !TEXTURA_BALA_ENEMIGA->cargarImagen( "imag/sprites/sfx/soldierBullet.png") ) printf( "Fallo imagen bala enemiga\n" );
 
-				if (actual == '$') {
-					j++;
-					continue;
-				}
+	TEXTURA_BALA_HMGUN = new Textura(renderizador);
+	if( !TEXTURA_BALA_HMGUN->cargarImagen( "imag/sprites/sfx/disparoHMGun.png") ) printf( "Fallo imagen bala HMGUN\n" );
 
-				*(variables[j]) += actual;
-			}
+	TEXTURA_BALA_SHOTGUN = new Textura(renderizador);
+	if( !TEXTURA_BALA_SHOTGUN->cargarImagen( "imag/sprites/sfx/disparoSgun.png") ) printf( "Fallo imagen bala SHOTGUN\n" );
 
-			int idPj = stoi(id);
-			getPersonajeById(idPj)->setNombre(nombre);
+	TEXTURA_BALA_RLAUNCHER = new Textura(renderizador);
+	if( !TEXTURA_BALA_RLAUNCHER->cargarImagen( "imag/sprites/sfx/disparoRLauncher.png") ) printf( "Fallo imagen bala RLAUNCHER\n" );
 
-		}
+	TEXTURA_BALA_RSHOBU = new Textura(renderizador);
+	if( !TEXTURA_BALA_RSHOBU->cargarImagen( "imag/sprites/R-Shobu/disparo.png") ) printf( "Fallo imagen rshobu disparo\n" );
 
+}
+
+void Juego::cargarTexturaEnemigo(){
+	Textura* TEXTURA_ENEMIGO_MUERTE1 = new Textura(renderizador);
+	if( !TEXTURA_ENEMIGO_MUERTE1->cargarImagen( "imag/sprites/soldier/death1.png") ) printf( "Fallo imagen enemigo\n" );
+	TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_MUERTE1);
+
+	Textura* TEXTURA_ENEMIGO_MUERTE2 = new Textura(renderizador);
+	if( !TEXTURA_ENEMIGO_MUERTE2->cargarImagen( "imag/sprites/soldier/death2.png") ) printf( "Fallo imagen enemigo\n" );
+	TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_MUERTE2);
+
+	Textura* TEXTURA_ENEMIGO_MIRANDO = new Textura(renderizador);
+	if( !TEXTURA_ENEMIGO_MIRANDO->cargarImagen( "imag/sprites/soldier/looking.png") ) printf( "Fallo imagen enemigo\n" );
+	TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_MIRANDO);
+
+	Textura* TEXTURA_ENEMIGO_CORRIENDO = new Textura(renderizador);
+	if( !TEXTURA_ENEMIGO_CORRIENDO->cargarImagen( "imag/sprites/soldier/run.png") ) printf( "Fallo imagen enemigo\n" );
+	TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_CORRIENDO);
+
+	Textura* TEXTURA_ENEMIGO_DISPARANDO = new Textura(renderizador);
+	if( !TEXTURA_ENEMIGO_DISPARANDO->cargarImagen( "imag/sprites/soldier/shoot.png") ) printf( "Fallo imagen enemigo\n" );
+	TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_DISPARANDO);
+
+	Textura* TEXTURA_ENEMIGO_QUIETO = new Textura(renderizador);
+	if( !TEXTURA_ENEMIGO_QUIETO->cargarImagen( "imag/sprites/soldier/toying.png") ) printf( "Fallo imagen enemigo\n" );
+	TEXTURAS_ENEMIGOS.push_back(TEXTURA_ENEMIGO_QUIETO);
+}
+
+void Juego::cargarTexturaBonus(){
+	TEXTURA_HMGUN = new Textura(renderizador);
+	if( !TEXTURA_HMGUN->cargarImagen( "imag/sprites/sfx/HMGun.png") ) printf( "Fallo imagen hmgun\n" );
+
+	TEXTURA_SGUN = new Textura(renderizador);
+	if( !TEXTURA_SGUN->cargarImagen( "imag/sprites/sfx/Sgun.png") ) printf( "Fallo imagen sgun\n" );
+
+	TEXTURA_RLAUNCHER = new Textura(renderizador);
+	if( !TEXTURA_RLAUNCHER->cargarImagen( "imag/sprites/sfx/RLauncher.png") ) printf( "Fallo imagen rlauncher\n" );
+
+	TEXTURA_KILLALL = new Textura(renderizador);
+	if( !TEXTURA_KILLALL->cargarImagen( "imag/sprites/sfx/KillAll.png") ) printf( "Fallo imagen kill all\n" );
+
+	TEXTURA_RECOVER = new Textura(renderizador);
+	if( !TEXTURA_RECOVER->cargarImagen( "imag/sprites/sfx/Recover.png") ) printf( "Fallo imagen recover\n" );
+}
+
+void Juego::parsearUpdateVista(string update){
+	ProtocoloVistaUpdate::parse(update, &tipoObjeto, &id, &state, &posX, &posy, &posCam, &conectado, &spriteIdx, &aim, &saltando, &puntaje);
+}
+
+int Juego::getTipoObjeto(){
+	return tipoObjeto;
+}
+
+void Juego::actualizarPersonaje(){
+	puntajes->actualizarPuntaje(id, puntaje);
+
+	VistaPersonaje* pj = getPersonajeById(id);
+
+	if (pj->getPosCamara() < posCam || pj->getPosCamara() > 539){
+		pj->setDerecha(true);
+	}
+	else if (pj->getPosCamara() > posCam){
+		pj->setDerecha(false);
 	}
 
-};
+	if (getPosX() < posX){
+		moverCamara(id);
+		setPosX(posX);
+	}
+
+	pj->setSaltando(saltando);
+	pj->apuntar(aim);
+	if (!(pj->getDisparar())) pj->setSpriteIndexTorso(spriteIdx);
+	pj->setSpriteIndexPies(spriteIdx);
+	pj->setConectado(conectado);
+	pj->setPosCamara(posCam);
+	pj->setPosy(posy);
+	pj->setSeMovio(state);
+}
+
+void Juego::actualizarBala(){
+	int derecha, arriba, abajo, izquierda, frame;
+	derecha = spriteIdx;
+	izquierda = aim;
+	arriba = posCam;
+	abajo = conectado;
+	frame = saltando;
+
+	VistaBala* bala = getBalaById(id);
+
+	if (state && !existeBala(id)) addBalaViva(id, bala);
+	else if (!state && existeBala(id) && !bala->isBomba()) removeBala(id);
+
+	bala->setExiste(state);
+	bala->setPosX(posX);
+	bala->setPosY(posy);
+	bala->setDerecha(derecha);
+	bala->setArriba(arriba);
+	bala->setAbajo(abajo);
+	bala->setIzquierda(izquierda);
+	if (bala->isShotgun()) bala->setFrame(frame);
+
+}
+
+void Juego::actualizarSpriteDisparo(){
+	VistaPersonaje* pj = getPersonajeById(id);
+
+	pj->setDisparar(state);
+	pj->setSpriteIndexTorso(spriteIdx);
+	pj->setSpriteIndexPies(spriteIdx);
+	if (saltando) pj->ponerGun();
+}
+
+void Juego::actualizarEnemigo(){
+	VistaEnemigo* enemigo = getEnemigoById(id);
+
+	if (state && !existeEnemigo(id)) addEnemigoVivo(id, enemigo);
+	else if (!state && existeEnemigo(id)) removeEnemigo(id);
+
+	if (!conectado) enemigo->setExiste(state);
+	enemigo->setPosX(posX);
+	enemigo->setPosY(posy);
+	enemigo->setFrame(spriteIdx);
+	enemigo->setDisparando(aim);
+	enemigo->setCantPasos(posCam);
+	if (conectado) enemigo->morir();
+}
+
+void Juego::actualizarBonus(){
+	if (spriteIdx == 1){
+		nuevoBonus();
+		return;
+	}
+
+	VistaBonus* bonus = getBonusById(id);
+
+	bonus->setPosx(posX);
+	bonus->setPosy(posy);
+	bonus->setExiste(state);
+
+	if (aim && saltando == 0){
+		VistaPersonaje* pj = getPersonajeById(conectado);
+		pj->ponerShotgun();
+	}
+}
+
+void Juego::nuevoBonus(){
+	VistaBonus* bonus;
+
+	if (saltando == 1)
+		bonus = new VistaBonus(TEXTURA_KILLALL);
+	else if (saltando == 2)
+		bonus = new VistaBonus(TEXTURA_RECOVER);
+
+	addBonus(id, bonus);
+}
+
+void Juego::actualizarBoss(){
+	bossActual->setDireccion(posX);
+	bossActual->setExiste(state);
+	bossActual->setPosx(posX);
+	bossActual->setPosy(posy);
+	bossActual->setFrame(spriteIdx);
+	if (!conectado) {
+		bossActual->morir();
+		bossActual->setMuerto(!conectado);
+	}
+}
+
+void Juego::crearVistaPuntajes(){
+	puntajes = VistaPuntajes::NewVistaPuntaje(cantidadUsuarios, modoJuego, renderizador);
+}
+
+void Juego::actualizarImpacto(){
+	VistaPersonaje* pj = getPersonajeById(id);
+
+	if (state) pj->titilar();
+	else pj->morir();
+
+	if (puntaje != 0) {
+		VistaBala* bala = getBalaById(puntaje);
+		bala->setExplotando(true);
+	}
+}
+
+void Juego::actualizarQuietos(){
+
+	int i = 0;
+	int j = 0;
+	int sprite = id;
+	int datos[8] = {state, posX, posy, posCam, conectado, spriteIdx, aim, saltando};
+
+	for (i ; i < cantidadUsuarios ; i++){
+
+		VistaPersonaje* pj = getPersonajeById(i+1);
+
+		if (datos[j]){
+			pj->setSeMovio(!datos[j]);
+			pj->apuntar(datos[j+1]);
+			pj->setSpriteIndexTorso(sprite);
+			pj->setSpriteIndexPies(sprite);
+		}
+		j += 2;
+	}
+
+}
+
+void Juego::recibirUsuarios() {
+	cout << "RECIBO USUARIOS" << endl;
+
+	while (true) {
+
+		string stream = cliente->recibir_nueva_vista();
+
+		if (stream == "$\n") break;
+
+		string nombre = "";
+		string id = "";
+
+		string *variables[] = {&nombre, &id};
+
+		int j = 0;
+
+		for (int i = 0; i < stream.size() - 1; i++) {
+
+			char actual = stream[i];
+
+			if (actual == '$') {
+				j++;
+				continue;
+			}
+
+			*(variables[j]) += actual;
+		}
+
+		int idPj = stoi(id);
+		getPersonajeById(idPj)->setNombre(nombre);
+
+	}
+}
+
+string Juego::getNombreUsuarioById(int id) {
+	return vistasPersonajes[id]->getNombre();
+}
+
 
 typedef struct {
 	Juego* juego;

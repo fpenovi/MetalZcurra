@@ -219,4 +219,14 @@ void VistaEnemigo::revivir(){
     muerto = false;
 }
 
+void VistaEnemigo::transparentar(Uint8 alpha) {
+    TEXTURA_ENEMIGO_MUERTE1->setAlpha(alpha);
+    TEXTURA_ENEMIGO_MUERTE2->setAlpha(alpha);
+    TEXTURA_ENEMIGO_MIRANDO->setAlpha(alpha);
+    TEXTURA_ENEMIGO_CORRIENDO->setAlpha(alpha);
+    TEXTURA_ENEMIGO_DISPARANDO->setAlpha(alpha);
+    TEXTURA_ENEMIGO_QUIETO->setAlpha(alpha);
+}
+
 VistaEnemigo::~VistaEnemigo() {}
+

@@ -157,6 +157,8 @@ public:
 	void setNombre(string name);
 
 	string getNombre();
+
+	void transparentar(Uint8 alpha);
 };
 
 

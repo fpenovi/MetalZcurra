@@ -97,6 +97,8 @@ public:
 
     void setExplotando(bool aux);
 
+	void transparentar(Uint8 alpha);
+
     ~VistaBala();
 };
 

@@ -141,3 +141,10 @@ void VistaRshobu::setDireccion(int posNueva){
 void VistaRshobu::morir() {
     existe = false;
 }
+
+void VistaRshobu::transparentar(Uint8 alpha) {
+    TEXTURA_HELICOPTERO_DERECHA->setAlpha(alpha);
+    TEXTURA_HELICOPTERO_IZQUIERDA->setAlpha(alpha);
+    TEXTURA_HELICE_DERECHA->setAlpha(alpha);
+    TEXTURA_HELICE_IZQUIERDA->setAlpha(alpha);
+}

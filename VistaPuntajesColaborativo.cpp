@@ -41,7 +41,7 @@ void VistaPuntajesColaborativo::render() {
 }
 
 
-void VistaPuntajesColaborativo::mostrarResumen() {
+void VistaPuntajesColaborativo::mostrarResumen(Juego* juego) {
 
 	int idPlayer;
 	int puntajePlayer;
@@ -49,6 +49,9 @@ void VistaPuntajesColaborativo::mostrarResumen() {
 
 	int posX;
 	int posY;
+
+	if (transparenciaActual > LIMITE_INFERIOR_TRANSPARENCIA)
+		juego->transparentar(--transparenciaActual);
 
 	for (int i=0; i<puntosPlayersById.size(); i++) {
 		idPlayer = i+1;

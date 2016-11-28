@@ -17,7 +17,7 @@ public:
 	VistaPuntajesIndividual(int cantPlayers, SDL_Renderer* renderer);
 	void actualizarPuntaje(int id, int puntos);
 	void render();
-	void mostrarResumen();
+	void mostrarResumen(Juego* juego);
 	~VistaPuntajesIndividual();
 };
 
