@@ -1226,6 +1226,16 @@ string Juego::getNombreUsuarioById(int id) {
 }
 
 
+bool Juego::puedePasarDeNivel() {
+	return this->enterHabilitado;
+}
+
+
+void Juego::setPuedePasarDeNivel(bool aux) {
+	this->enterHabilitado = aux;
+}
+
+
 typedef struct {
 	Juego* juego;
 	bool* quit;
@@ -1272,6 +1282,7 @@ int escucharEventos( void* arg ) {
 	}
 	return 0;
 }
+
 
 
 int main( int argc, char** argv) {
@@ -1446,4 +1457,3 @@ int main( int argc, char** argv) {
 
 	return 0;
 }
-

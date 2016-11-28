@@ -41,6 +41,7 @@ private:
 	int cantidadUsuarios;
 	int modoJuego;
 	int idBonus;
+	bool enterHabilitado = false;
 	VistaPuntajes* puntajes;
 	unordered_map<int, VistaBala *> vistasBalasVivas;
 	unordered_map<int, VistaEnemigo *> vistasEnemigosVivos;
@@ -226,6 +227,10 @@ public:
 	void recibirUsuarios();
 
 	string getNombreUsuarioById(int id);
+
+	bool puedePasarDeNivel();
+
+	void setPuedePasarDeNivel(bool aux);
 };
 
 #endif //METALZCURRA_JUEGO_H

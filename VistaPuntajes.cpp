@@ -44,6 +44,12 @@ void VistaPuntajes::greyOutIfNeeded(Juego* juego) {
 		this->screenGrayer = new GrayOutHandler(juego, &transparenciaActual, &LIMITE_INFERIOR_TRANSPARENCIA, velocidad, &estaCorriendoGrayer);
 		this->screenGrayer->doWork();
 	}
+
+	else if (transparenciaActual == LIMITE_INFERIOR_TRANSPARENCIA && !estaCorriendoGrayer && this->screenGrayer != NULL) {
+		delete this->screenGrayer;
+		this->screenGrayer = NULL;
+		juego->setPuedePasarDeNivel(true);
+	}
 }
 
 
