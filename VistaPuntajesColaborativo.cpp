@@ -3,6 +3,7 @@
 //
 
 #include "VistaPuntajesColaborativo.h"
+#include "VistaPuntajes.h"
 
 
 VistaPuntajesColaborativo::VistaPuntajesColaborativo(int cantPlayers, SDL_Renderer* renderer) : VistaPuntajes(renderer) {
@@ -42,6 +43,31 @@ void VistaPuntajesColaborativo::render() {
 
 void VistaPuntajesColaborativo::mostrarResumen() {
 
+	int idPlayer;
+	int puntajePlayer;
+	string namePlayer;
+
+	int posX;
+	int posY;
+
+	for (int i=0; i<puntosPlayersById.size(); i++) {
+		idPlayer = i+1;
+		puntajePlayer = puntosPlayersById[idPlayer];
+		namePlayer = "Jugador " + to_string(idPlayer);
+		posX = FINAL_SCORE_VIEW_X + (i % 2) * FINAL_SCORE_X_SPACING;
+		posY = FINAL_SCORE_VIEW_Y + (i / 2) * FINAL_SCORE_SPACING_Y;
+
+		// RENDERIZO PRIMERO EL NOMBRE ARRIBA
+		temp->loadFromText(namePlayer, *(playerColorsById[idPlayer]), this->gFont);
+		temp->render(posX, posY);
+		// RENDERIZO EL PUNTAJE DEBAJO Y CENTRADO
+		temp->loadFromText(to_string(puntajePlayer), *(playerColorsById[idPlayer]), this->gFont);
+		temp->render(posX, posY + 40);
+	}
+	temp->loadFromText("Total: ", *(puntos->puntajeColor), this->gFont);
+	temp->render(FINAL_SCORE_VIEW_X + FINAL_SCORE_X_SPACING, 450);
+	temp->loadFromText(puntos->s_puntos, *(puntos->puntajeColor), this->gFont);
+	temp->render(FINAL_SCORE_VIEW_X + FINAL_SCORE_X_SPACING + 160, 450);
 }
 
 

@@ -29,6 +29,7 @@ protected:
 	unordered_map<int, SDL_Color*> playerColorsById;
 	unordered_map<int, SDL_Color*> teamColorsByTeamId;
 	unordered_map<int, int> puntosPlayersById;
+	Textura* temp;
 	TTF_Font* gFont;
 
 

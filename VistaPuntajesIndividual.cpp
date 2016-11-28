@@ -48,7 +48,6 @@ void VistaPuntajesIndividual::mostrarResumen() {
 	int idPlayer;
 	puntaje_t* puntajePlayer;
 	string namePlayer;
-	Textura* temp;
 
 	int posX;
 	int posY;
@@ -60,15 +59,12 @@ void VistaPuntajesIndividual::mostrarResumen() {
 		posX = FINAL_SCORE_VIEW_X + (i % 2) * FINAL_SCORE_X_SPACING;
 		posY = FINAL_SCORE_VIEW_Y + (i / 2) * FINAL_SCORE_SPACING_Y;
 
-		temp = new Textura(this->renderer);
-
 		// RENDERIZO PRIMERO EL NOMBRE ARRIBA
 		puntajePlayer->puntajeTexture->loadFromText(namePlayer, *(puntajePlayer->puntajeColor), this->gFont);
 		puntajePlayer->puntajeTexture->render(posX, posY);
 		// RENDERIZO EL PUNTAJE DEBAJO Y CENTRADO
 		temp->loadFromText(puntajePlayer->s_puntos, *(puntajePlayer->puntajeColor), this->gFont);
 		temp->render(posX, posY + 40);
-		delete temp;
 	}
 }
 
