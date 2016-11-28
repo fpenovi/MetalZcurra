@@ -1179,7 +1179,7 @@ void Juego::actualizarQuietos(){
 		if (datos[j]){
 			pj->setSeMovio(!datos[j]);
 			pj->apuntar(datos[j+1]);
-			if (!pj->getDisparar()) {
+			if (!pj->getDisparar() && !pj->estaSaltando()) {
 				pj->setSpriteIndexTorso(sprite);
 				pj->setSpriteIndexPies(sprite);
 			}
