@@ -231,6 +231,8 @@ public:
 	bool puedePasarDeNivel();
 
 	void setPuedePasarDeNivel(bool aux);
+
+	void actualizarPuntaje();
 };
 
 #endif //METALZCURRA_JUEGO_H

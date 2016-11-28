@@ -160,6 +160,7 @@ void Bala::handleColision(){
                 if ((kv.second->getEnvolvente())->hayColision(envolvente)) {
                     kv.second->morir();
                     (objectManager->getObject(idDuenio))->aumentarPuntos(puntos);
+                    objectManager->enviarPuntaje(idDuenio);
                     if (!shotgun) desaparecer();
                     return;
                 }
@@ -172,6 +173,7 @@ void Bala::handleColision(){
             if (boss->getEnvolvente()->hayColision(envolvente)){
                 boss->restarVida(danio);
                 (objectManager->getObject(idDuenio))->aumentarPuntos(puntos);
+                objectManager->enviarPuntaje(idDuenio);
                 if (!shotgun) desaparecer();
                 return;
             }

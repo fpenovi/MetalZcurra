@@ -27,7 +27,7 @@ void* handleDisparoFunc(void* argKh) {
 
     time_point<high_resolution_clock> start;
     start = high_resolution_clock::now();
-    microseconds intervalo(100000);	// 100ms
+    microseconds intervalo(50000);	// 50ms
 
     while (*isKhOn) {
         time_point<high_resolution_clock> actual;

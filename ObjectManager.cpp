@@ -553,4 +553,39 @@ unordered_map<string, int>* ObjectManager::getTablaUsuarios() {
 	return &tablaUsuarios;
 }
 
+void ObjectManager::enviarPuntaje(int idPj){
+	Personaje* pj = getObject(idPj);
+
+	ProtocoloVistaUpdate update;
+
+	update.setTipoObjeto(9);
+	update.setEstado(0);
+	update.setX(0);
+	update.setY(0);
+	update.setObject_id(pj->getId());
+	update.setPosCamara(0);
+	update.setConectado(0);
+	update.setSpriteIndex(0);
+	update.setApuntando(0);
+	update.setSaltando(0);
+	update.setPuntaje(pj->getPuntaje());
+
+
+	int result;
+	string mensaje = update.toString();
+
+	for (auto kv : *conectadosHash) {
+
+		Mensaje* mensajeNuevo = new Mensaje("Server", kv.first, mensaje);
+
+		result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+		kv.second->push_back(mensajeNuevo);
+
+		result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+	}
+}
+
 ObjectManager* ObjectManager::instancia;

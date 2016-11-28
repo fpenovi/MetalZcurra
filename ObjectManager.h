@@ -114,6 +114,7 @@ public:
 	void handleImpacto(Personaje *personaje, Bala* bala);
 	int getCantidadUsuarios();
 	void crearPersonajesManager(int cantUsers);
+	void enviarPuntaje(int idPj);
 };
 
 

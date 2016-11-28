@@ -1236,6 +1236,10 @@ void Juego::setPuedePasarDeNivel(bool aux) {
 }
 
 
+void Juego::actualizarPuntaje() {
+	puntajes->actualizarPuntaje(id, puntaje);
+}
+
 typedef struct {
 	Juego* juego;
 	bool* quit;
@@ -1282,8 +1286,6 @@ int escucharEventos( void* arg ) {
 	}
 	return 0;
 }
-
-
 
 int main( int argc, char** argv) {
 
@@ -1431,6 +1433,10 @@ int main( int argc, char** argv) {
 			// Tipo de objeto 8 = PERSONAJE QUIETO
 			else if (tipoObjeto == 8)
 				juego.actualizarQuietos();
+
+			// Tipo de objeto 9 = PUNTAJE
+			else if (tipoObjeto == 9)
+				juego.actualizarPuntaje();
 
 			SDL_RenderClear( juego.getRenderer() );
 
