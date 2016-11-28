@@ -1101,7 +1101,7 @@ public:
 
 		VistaPersonaje* pj = getPersonajeById(id);
 
-		if (pj->getPosCamara() < posCam || pj->getPosCamara() > 539){
+		if (pj->getPosCamara() < posCam){
 			pj->setDerecha(true);
 		}
 		else if (pj->getPosCamara() > posCam){
@@ -1494,7 +1494,7 @@ int main( int argc, char** argv) {
 			auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
 			auto time = elapsed_ms.count()/1000000.0;
 
-			cout << "Elapsed ms: " << time << endl;
+			//cout << "Elapsed ms: " << time << endl;
 
 		}
 	}
