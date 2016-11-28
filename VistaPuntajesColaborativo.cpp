@@ -50,8 +50,7 @@ void VistaPuntajesColaborativo::mostrarResumen(Juego* juego) {
 	int posX;
 	int posY;
 
-	if (transparenciaActual > LIMITE_INFERIOR_TRANSPARENCIA)
-		juego->transparentar(--transparenciaActual);
+	this->greyOutIfNeeded(juego);
 
 	for (int i=0; i<puntosPlayersById.size(); i++) {
 		idPlayer = i+1;

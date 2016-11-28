@@ -35,6 +35,18 @@ VistaPuntajes* VistaPuntajes::NewVistaPuntaje(int cantPlayers, int modoJuego, SD
 		return new VistaPuntajesGrupal(cantPlayers, renderer);
 }
 
+
+void VistaPuntajes::greyOutIfNeeded(Juego* juego) {
+	// Hace fade y vuelve gris la pantalla
+	if (transparenciaActual == LIMITE_SUPERIOR_TRANSPARENCIA && !estaCorriendoGrayer) {		// Evita el lanzamiento de mas de un thread
+		estaCorriendoGrayer = true;
+		milliseconds velocidad(20);		// 255 * 20 = segundos de fade
+		this->screenGrayer = new GrayOutHandler(juego, &transparenciaActual, &LIMITE_INFERIOR_TRANSPARENCIA, velocidad, &estaCorriendoGrayer);
+		this->screenGrayer->doWork();
+	}
+}
+
+
 VistaPuntajes::~VistaPuntajes() {
 	for (auto kv : this->playerColorsById) {
 		SDL_Color* color = kv.second;

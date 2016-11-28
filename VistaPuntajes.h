@@ -53,6 +53,7 @@ protected:
 	const int FINAL_SCORE_SPACING_Y = 100;
 
 	VistaPuntajes(SDL_Renderer* renderer);
+	void greyOutIfNeeded(Juego* juego);
 
 public:
 	const static int MODO_INDIVIDUAL = 0;

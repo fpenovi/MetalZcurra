@@ -61,8 +61,7 @@ void VistaPuntajesGrupal::mostrarResumen(Juego* juego) {
 	int posX;
 	int posY;
 
-	if (transparenciaActual > LIMITE_INFERIOR_TRANSPARENCIA)
-		juego->transparentar(--transparenciaActual);
+	this->greyOutIfNeeded(juego);
 
 	temp->loadFromText("EQUIPO: " + puntosEquiposById[2]->s_puntos, *(teamColorsByTeamId[2]), this->gFont);
 	temp->render(FINAL_SCORE_VIEW_X, FINAL_SCORE_VIEW_Y - 65);
