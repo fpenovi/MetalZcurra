@@ -17,7 +17,7 @@
 	Modo: 
 		- INDIVIDUAL = 0
 		- COLABORATIVO = 1
-		- GRUPAL = 2
+		- GRUPAL = 2		(4 players)
 	Jugadores:
 		Min: 1
 		Max: 4			 -->

@@ -24,6 +24,9 @@
 
 
 #define MAX_CLIENTS 6
+#define INDIVIDUAL 0
+#define COLABORATIVO 1
+#define GRUPAL 2
 
 using namespace std;
 
@@ -38,9 +41,15 @@ struct argthread {
 class NoSePudoCrearServidorException : public runtime_error {
 
 public:
-    NoSePudoCrearServidorException() : runtime_error("No se pudo crear el servidor") {
+    NoSePudoCrearServidorException(string error) : runtime_error(error) {
     }
+};
 
+
+class XmlModoDeJuegoException: public runtime_error {
+
+public:
+    XmlModoDeJuegoException(string error) : runtime_error(error) {}
 };
 
 
@@ -645,7 +654,7 @@ public:
         if (pthread_create(&threadControl, &attr, controlInput, &serverOn) != 0) {
             cerr << "ERROR --> No se pudo crear thread de control" << endl;
             pthread_attr_destroy(&attr);
-            throw NoSePudoCrearServidorException();
+            throw NoSePudoCrearServidorException("ERROR: No se pudo crear el Thread de Control");
         }
 
 
@@ -658,7 +667,7 @@ public:
             logger.error("no se pudo abrir el socket");
             cerr << "ERROR --> No se pudo abrir socket" << endl;
             pthread_attr_destroy(&attr);
-            throw NoSePudoCrearServidorException();
+            throw NoSePudoCrearServidorException("ERROR: No se pudo abrir el socket");
         }
 
         serv_addr.sin_family = AF_INET;
@@ -670,7 +679,7 @@ public:
             logger.error("no se pudo crear servidor");
             close(fileDescrpt);
             pthread_attr_destroy(&attr);
-            throw NoSePudoCrearServidorException();
+            throw NoSePudoCrearServidorException("ERROR: No se pudo hacer bind con el socket");
         }
 
         // Comienza a escuchar a los clientes que se quieren conectar y los va encolando
@@ -679,7 +688,7 @@ public:
             cerr << "ERROR --> Falla en listen" << endl;
             close(fileDescrpt);
             pthread_attr_destroy(&attr);
-            throw NoSePudoCrearServidorException();
+            throw NoSePudoCrearServidorException("ERROR: No se pudieron aceptar clientes");
         }
 
         serverOn = true;
@@ -696,6 +705,16 @@ public:
         vector<string> opciones = parser->opcionesJuego();
         modoJuego = stoi(opciones[0]);
         cantidadUsuarios = stoi(opciones[1]);
+
+        if (modoJuego != INDIVIDUAL && modoJuego != COLABORATIVO && modoJuego != GRUPAL)
+            throw XmlModoDeJuegoException("XML ERROR: Modo de Juego inexistente. Opciones: \n0.INDIVIDUAL\n1.COLABORATIVO\n2.GRUPAL");
+
+        if (cantidadUsuarios < 1 || cantidadUsuarios > 4)
+            throw XmlModoDeJuegoException("XML ERROR: La cantidad de jugadores debe ser entre 1 y 4");
+
+        if (modoJuego == GRUPAL && cantidadUsuarios < 4)
+            throw XmlModoDeJuegoException("XML ERROR: Modo de Juego GRUPAL solo puede jugarse de a 4 jugadores");
+
 
         NivelManager::getInstance()->setXmlNiveles(parser->xmlNiveles());
 
@@ -778,7 +797,14 @@ int main(int argc, char** argv) {
     unsigned short int numPuerto = (unsigned short) strtoull(argv[1], NULL, 0);
 
     Servidor server = Servidor(numPuerto);
-    server.initJuego(argv[2]);
+
+    try {
+        server.initJuego(argv[2]);
+    } catch (XmlModoDeJuegoException& e) {
+        cout << e.what() << endl;
+        exit(EXIT_FAILURE);
+    }
+
     server.aceptarClientes();
     return 0;
 }
