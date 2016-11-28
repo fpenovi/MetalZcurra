@@ -41,15 +41,8 @@ void* handleJumpFunc(void* argKh) {
         int aux = sin(i) * 8.178825396319478;
         if (aux == 0) aux = 1;
         seno.insert(seno.begin(), aux);
-        //seno.push_back(sin(i) * 8.453156831418694);
         i += 0.065447917;
     }
-
-    for (i = 0; i < 48; i++){
-        cout << "POS " << i << ": " << seno[i] << endl;
-        if (i < 24) contador += seno[i];
-    }
-    cout << "CONTADOR: " << contador;
 
     while (*isKhOn) {
 
@@ -72,9 +65,9 @@ void* handleJumpFunc(void* argKh) {
             personaje->setGravity(false);
 
             for (int i = 0 ; i < 48 ; i++){
+                if (personaje->getColision()) break;
 
                 if (personaje->getPosy() <= posFinal){
-                    cout << "TRABO SUBIDA" << endl;
                     personaje->setVely((int) seno[i]);
                     personaje->moverY();
                     personaje->setVely(0);
@@ -82,7 +75,6 @@ void* handleJumpFunc(void* argKh) {
                     personaje->setSprites();
                 }
                 else if (personaje->getPosy() >= posActual){
-                    cout << "TRABO BAJADA" << endl;
                     personaje->setUltimaPosy(personaje->getPosy());
                     personaje->setVely((int) -(seno[i]));
                     personaje->moverY();
@@ -91,14 +83,12 @@ void* handleJumpFunc(void* argKh) {
                     personaje->setSaltando(false);
                 }
                 else if (personaje->getBajando()){
-                    cout << "BAJANDO" << endl;
                     personaje->setVely((int) seno[i]);
                     personaje->moverY();
                     personaje->setSprites();
                 }
 
                 else if(!(personaje->getBajando())) {
-                    cout << "SUBIENDO" << endl;
                     personaje->setVely((int) -(seno[i]));
                     personaje->moverY();
                     personaje->setSprites();
@@ -114,6 +104,7 @@ void* handleJumpFunc(void* argKh) {
                 update.setSpriteIndex(personaje->getSprites());
                 update.setApuntando(personaje->getDireccion());
                 update.setSaltando(personaje->getSaltando());
+                if (i == 47) update.setSaltando(0);
                 update.setPuntaje(personaje->getPuntaje());
 
                 int result;
@@ -121,7 +112,7 @@ void* handleJumpFunc(void* argKh) {
 
                 for (auto kv : *conectadosHash) {
 
-                    Mensaje* mensajeNuevo = new Mensaje(*emisor, kv.first, mensaje);
+                    Mensaje *mensajeNuevo = new Mensaje(*emisor, kv.first, mensaje);
 
                     result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
                     if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
@@ -134,6 +125,7 @@ void* handleJumpFunc(void* argKh) {
 
                 usleep(30000);
             }
+            personaje->setColision(false);
             personaje->setGravity(true);
             *isKhPaused = true;
         }

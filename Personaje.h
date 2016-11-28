@@ -69,6 +69,7 @@ private:
 	int cantidadBalas = 0;
 	int vida = 5;
 	bool quieto;
+	bool colision;
 
 public:
 	const static int GUN = 0;
@@ -205,6 +206,10 @@ public:
 	void setQuieto(bool aux);
 
 	bool getQuieto();
+
+	bool getColision();
+
+	void setColision(bool aux);
 
 	~Personaje();
 };
