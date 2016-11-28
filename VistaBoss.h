@@ -13,6 +13,7 @@ protected:
     bool existe;
     bool derecha;
     bool disparando = false;
+	bool muerto = false;
 
 public:
     virtual bool cargarImagen() = 0;
@@ -30,6 +31,10 @@ public:
     virtual void setPosx(int aux) = 0;
 
     virtual void setPosy(int aux) = 0;
+
+	virtual bool estaVivo();
+
+	virtual void setMuerto(bool muerto);
 
     virtual void setExiste(bool aux) = 0;
 

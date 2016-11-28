@@ -10,6 +10,7 @@
 
 VistaPuntajes::VistaPuntajes(SDL_Renderer* renderer) {
 	this->renderer = renderer;
+
 	this->playerColorsById[1] = new SDL_Color{161, 65, 29, 0xFF};
 	this->playerColorsById[2] = new SDL_Color{217, 219, 73, 0xFF};
 	this->playerColorsById[3] = new SDL_Color{90, 81, 76, 0xFF};

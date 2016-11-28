@@ -751,6 +751,9 @@ public:
 			kv.second->render();
 
 		puntajes->render();
+
+		if (!bossActual->estaVivo())
+			puntajes->mostrarResumen();
 	}
 
 	int getPersonajeMasMovido(){
@@ -1203,7 +1206,10 @@ public:
 		bossActual->setPosx(posX);
 		bossActual->setPosy(posy);
 		bossActual->setFrame(spriteIdx);
-		if (!conectado) bossActual->morir();
+		if (!conectado) {
+			bossActual->morir();
+			bossActual->setMuerto(!conectado);
+		}
 	}
 
 	void crearVistaPuntajes(){

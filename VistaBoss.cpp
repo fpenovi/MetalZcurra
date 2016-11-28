@@ -3,3 +3,11 @@
 //
 
 #include "VistaBoss.h"
+
+bool VistaBoss::estaVivo() {
+	return !muerto;
+}
+
+void VistaBoss::setMuerto(bool muerto) {
+	this->muerto = muerto;
+}
