@@ -68,7 +68,7 @@ void VistaBala::render(){
             if (frame == 11) desaparecer();
         }
         else if (bomba){
-            if (posx > 800 || posx < 0 || posy < 0 || posy > 520) {
+            if ((posx > 800 || posx < 0 || posy < 0 || posy > 520) && !explotando) {
                 explotando = true;
                 posxExp = posx;
                 posyExp = posy;
@@ -203,6 +203,12 @@ void VistaBala::explotar() {
         frameExplosion = 0;
         explotando = false;
     }
+}
+
+void VistaBala::setExplotando(bool aux){
+    explotando = aux;
+    posxExp = posx;
+    posyExp = posy + 50;
 }
 
 VistaBala::~VistaBala() {

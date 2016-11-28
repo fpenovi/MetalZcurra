@@ -95,6 +95,8 @@ public:
 
     void explotar();
 
+    void setExplotando(bool aux);
+
     ~VistaBala();
 };
 

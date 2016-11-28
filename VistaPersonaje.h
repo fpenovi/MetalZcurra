@@ -19,10 +19,12 @@ private:
 	int ultimoPosy = 465;
 	int ultimoPosx = 0;
 	bool saltando = false;
+	bool existe;
 
 	const static int ANIMACION_PARADO = 4;
 	const static int ANIMACION_CORRIENDO_PIES = 18;
 	const static int ANIMACION_SALTANDO = 12;
+	const static int ANIMACION_MURIENDO = 19;
 
 	Textura* TEXTURA_PERSONAJE_PARADO_PIES;
 	SDL_Rect spriteParadoPies[ ANIMACION_PARADO ];
@@ -41,12 +43,16 @@ private:
     bool seMovio;
 	bool gris;
 	bool disparar;
+	bool muriendo;
+	bool transparente;
 
 	SDL_RendererFlip flip;
 	SDL_Rect* currentClipPies;
 	SDL_Rect* currentClipTorso;
 	int indexTorso = 0;
 	int indexPies = 0;
+	int frameMuriendo = 0;
+	int alan;
 
 public:
     VistaPersonaje(SDL_Renderer *renderizador2, int id, int modoJuego);
@@ -136,6 +142,16 @@ public:
 	int getUltimaPosy();
 
 	void setSaltando(bool aux);
+
+	void morir();
+
+	void animacionMuriendo();
+
+	void titilar();
+
+	void noTitilar();
+
+	bool getExiste();
 };
 
 

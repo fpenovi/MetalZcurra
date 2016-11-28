@@ -14,6 +14,7 @@ Arma::Arma(SDL_Renderer* render, int id, int modoJuego){
     TEXTURA_ARMA_APUNTA_ARRIBA = new Textura(render);
     TEXTURA_ARMA_DISPARANDO_ABAJO = new Textura(render);
     TEXTURA_ARMA_DISPARANDO_ARRIBA = new Textura(render);
+    TEXTURA_MURIENDO = new Textura(render);
 
     gameMode = modoJuego;
     idPj = to_string(id);
@@ -26,6 +27,7 @@ Arma::Arma(SDL_Renderer* render, int id, int modoJuego){
     string pathApuntarArriba;
     string pathDisparoAbajo;
     string pathDisparoArriba;
+    string pathMuriendo;
 
     if (modoJuego == VistaPuntajes::MODO_GRUPAL){
         string equipo = to_string((id % VistaPuntajes::CANT_EQUIPOS) + 1);
@@ -38,6 +40,7 @@ Arma::Arma(SDL_Renderer* render, int id, int modoJuego){
         pathApuntarArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/gunPointUp.png";
         pathDisparoAbajo = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShootDown.png";
         pathDisparoArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShootUp.png";
+        pathMuriendo = pathComun + "equipo" + equipo + "/player" + idPj + "/death.png";
     }
     else {
         pathParado = pathComun + "player" + idPj + "/gunStill.png";
@@ -48,6 +51,7 @@ Arma::Arma(SDL_Renderer* render, int id, int modoJuego){
         pathApuntarArriba = pathComun + "player" + idPj + "/gunPointUp.png";
         pathDisparoAbajo = pathComun + "player" + idPj + "/gunShootDown.png";
         pathDisparoArriba = pathComun + "player" + idPj + "/gunShootUp.png";
+        pathMuriendo = pathComun + "player" + idPj + "/death.png";
     }
 
     cargarImagen(pathParado.c_str(),
@@ -57,7 +61,8 @@ Arma::Arma(SDL_Renderer* render, int id, int modoJuego){
                  pathApuntarAbajo.c_str(),
                  pathApuntarArriba.c_str(),
                  pathDisparoAbajo.c_str(),
-                 pathDisparoArriba.c_str());
+                 pathDisparoArriba.c_str(),
+                 pathMuriendo.c_str());
 }
 
 void Arma::renderParado(int x, int y, int frame, SDL_RendererFlip flip){
@@ -118,7 +123,13 @@ void Arma::renderDispararAbajo(int x, int y, int frame, SDL_RendererFlip flip){
     TEXTURA_ARMA_DISPARANDO_ABAJO->render(x,y,currentClip,0,NULL,flip );
 }
 
-bool Arma::cargarImagen(const char *const pathParado, const char *const pathCorriendo, const char *const pathSaltando, const char *const pathDisparando, const char *const pathApuntarAbajo, const char *const pathApuntarArriba, const char *const pathDisparoAbajo, const char *const pathDisparoArriba){
+void Arma::renderMuriendo(int x, int y, int frame, SDL_RendererFlip flip) {
+
+    currentClip = &spriteMuriendo[ frame ];
+    TEXTURA_MURIENDO->render(x, y, currentClip, 0, NULL, flip);
+}
+
+bool Arma::cargarImagen(const char *const pathParado, const char *const pathCorriendo, const char *const pathSaltando, const char *const pathDisparando, const char *const pathApuntarAbajo, const char *const pathApuntarArriba, const char *const pathDisparoAbajo, const char *const pathDisparoArriba, const char *const pathMuriendo){
     bool success = true;
     int i;
 
@@ -237,7 +248,20 @@ bool Arma::cargarImagen(const char *const pathParado, const char *const pathCorr
             spriteDisparandoAbajo[ i ].h = 135;
         }
     }
+    if( !TEXTURA_MURIENDO->cargarImagen( pathMuriendo) )
+    {
+        printf( "Fallo sprite muriendo\n" );
+        success = false;
+    }
+    else{
 
+        for (i = 0; i < ANIMACION_MURIENDO; i++){
+            spriteMuriendo[ i ].x = i*149;
+            spriteMuriendo[ i ].y = 0;
+            spriteMuriendo[ i ].w = 149;
+            spriteMuriendo[ i ].h = 86;
+        }
+    }
 
     return success;
 }
@@ -247,6 +271,11 @@ void Arma::liberar(){
     TEXTURA_ARMA_CORRIENDO->free();
     TEXTURA_ARMA_SALTANDO->free();
     TEXTURA_ARMA_PARADO->free();
+    TEXTURA_ARMA_APUNTA_ABAJO->free();
+    TEXTURA_ARMA_APUNTA_ARRIBA->free();
+    TEXTURA_ARMA_DISPARANDO_ABAJO->free();
+    TEXTURA_ARMA_DISPARANDO_ARRIBA->free();
+    TEXTURA_MURIENDO->free();
 }
 
 Arma::~Arma() {
@@ -258,6 +287,7 @@ Arma::~Arma() {
     delete TEXTURA_ARMA_APUNTA_ARRIBA;
     delete TEXTURA_ARMA_DISPARANDO_ABAJO;
     delete TEXTURA_ARMA_DISPARANDO_ARRIBA;
+    delete TEXTURA_MURIENDO;
 }
 
 void Arma::ponerShotgun(){
@@ -275,6 +305,7 @@ void Arma::ponerShotgun(){
     string pathApuntarArriba;
     string pathDisparoAbajo;
     string pathDisparoArriba;
+    string pathMuriendo;
 
     if (gameMode == VistaPuntajes::MODO_GRUPAL){
         string equipo = to_string((stoi(idPj) % VistaPuntajes::CANT_EQUIPOS) + 1);
@@ -287,6 +318,7 @@ void Arma::ponerShotgun(){
         pathApuntarArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunPointUp.png";
         pathDisparoAbajo = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunShootDown.png";
         pathDisparoArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/shotgunShootUp.png";
+        pathMuriendo = pathComun + "equipo" + equipo + "/player" + idPj + "/death.png";
     }
     else {
         pathParado = pathComun + "player" + idPj + "/shotgunStill.png";
@@ -297,6 +329,7 @@ void Arma::ponerShotgun(){
         pathApuntarArriba = pathComun + "player" + idPj + "/shotgunPointUp.png";
         pathDisparoAbajo = pathComun + "player" + idPj + "/shotgunShootDown.png";
         pathDisparoArriba = pathComun + "player" + idPj + "/shotgunShootUp.png";
+        pathMuriendo = pathComun + "player" + idPj + "/death.png";
     }
 
     cargarImagen(pathParado.c_str(),
@@ -306,7 +339,8 @@ void Arma::ponerShotgun(){
                  pathApuntarAbajo.c_str(),
                  pathApuntarArriba.c_str(),
                  pathDisparoAbajo.c_str(),
-                 pathDisparoArriba.c_str());
+                 pathDisparoArriba.c_str(),
+                 pathMuriendo.c_str());
 
     shotgun = true;
 }
@@ -328,6 +362,7 @@ void Arma::ponerGun(){
         string pathApuntarArriba;
         string pathDisparoAbajo;
         string pathDisparoArriba;
+        string pathMuriendo;
 
         if (gameMode == VistaPuntajes::MODO_GRUPAL){
             string equipo = to_string((stoi(idPj) % VistaPuntajes::CANT_EQUIPOS) + 1);
@@ -340,6 +375,7 @@ void Arma::ponerGun(){
             pathApuntarArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/gunPointUp.png";
             pathDisparoAbajo = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShootDown.png";
             pathDisparoArriba = pathComun + "equipo" + equipo + "/player" + idPj + "/gunShootUp.png";
+            pathMuriendo = pathComun + "equipo" + equipo + "/player" + idPj + "/death.png";
         }
         else {
             pathParado = pathComun + "player" + idPj + "/gunStill.png";
@@ -350,6 +386,7 @@ void Arma::ponerGun(){
             pathApuntarArriba = pathComun + "player" + idPj + "/gunPointUp.png";
             pathDisparoAbajo = pathComun + "player" + idPj + "/gunShootDown.png";
             pathDisparoArriba = pathComun + "player" + idPj + "/gunShootUp.png";
+            pathMuriendo = pathComun + "player" + idPj + "/death.png";
         }
 
         cargarImagen(pathParado.c_str(),
@@ -359,11 +396,13 @@ void Arma::ponerGun(){
                      pathApuntarAbajo.c_str(),
                      pathApuntarArriba.c_str(),
                      pathDisparoAbajo.c_str(),
-                     pathDisparoArriba.c_str());
+                     pathDisparoArriba.c_str(),
+                     pathMuriendo.c_str());
 
         shotgun = false;
     }
 }
+
 
 void Arma::ponerTexturaGris() {
     TEXTURA_ARMA_CORRIENDO->setColor(128,128,128);
@@ -374,8 +413,8 @@ void Arma::ponerTexturaGris() {
     TEXTURA_ARMA_APUNTA_ARRIBA->setColor(128,128,128);
     TEXTURA_ARMA_DISPARANDO_ABAJO->setColor(128,128,128);
     TEXTURA_ARMA_DISPARANDO_ARRIBA->setColor(128,128,128);
+    TEXTURA_MURIENDO->setColor(128,128,128);
 }
-
 
 void Arma::sacarTexturaGris() {
     TEXTURA_ARMA_CORRIENDO->setColor(255,255,255);
@@ -386,11 +425,36 @@ void Arma::sacarTexturaGris() {
     TEXTURA_ARMA_APUNTA_ARRIBA->setColor(255,255,255);
     TEXTURA_ARMA_DISPARANDO_ABAJO->setColor(255,255,255);
     TEXTURA_ARMA_DISPARANDO_ARRIBA->setColor(255,255,255);
+    TEXTURA_MURIENDO->setColor(255,255,255);
 }
-
 void Arma::apuntarAbajo(bool a){
     abajo = a;
 }
+
 void Arma::apuntarArriba(bool a){
     arriba = a;
+}
+
+void Arma::titilar() {
+    TEXTURA_ARMA_CORRIENDO->setAlpha(80);
+    TEXTURA_ARMA_DISPARANDO->setAlpha(80);
+    TEXTURA_ARMA_PARADO->setAlpha(80);
+    TEXTURA_ARMA_SALTANDO->setAlpha(80);
+    TEXTURA_ARMA_APUNTA_ABAJO->setAlpha(80);
+    TEXTURA_ARMA_APUNTA_ARRIBA->setAlpha(80);
+    TEXTURA_ARMA_DISPARANDO_ABAJO->setAlpha(80);
+    TEXTURA_ARMA_DISPARANDO_ARRIBA->setAlpha(80);
+    TEXTURA_MURIENDO->setAlpha(80);
+}
+
+void Arma::noTitilar() {
+    TEXTURA_ARMA_CORRIENDO->setAlpha(255);
+    TEXTURA_ARMA_DISPARANDO->setAlpha(255);
+    TEXTURA_ARMA_PARADO->setAlpha(255);
+    TEXTURA_ARMA_SALTANDO->setAlpha(255);
+    TEXTURA_ARMA_APUNTA_ABAJO->setAlpha(255);
+    TEXTURA_ARMA_APUNTA_ARRIBA->setAlpha(255);
+    TEXTURA_ARMA_DISPARANDO_ABAJO->setAlpha(255);
+    TEXTURA_ARMA_DISPARANDO_ARRIBA->setAlpha(255);
+    TEXTURA_MURIENDO->setAlpha(255);
 }

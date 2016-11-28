@@ -36,7 +36,7 @@ public:
     void free();
     void setColor( Uint8 red, Uint8 green, Uint8 blue );
     bool loadFromText( string texto, SDL_Color colorTexto, TTF_Font* gFont);
-    void setAlpha(Uint8);
+    void setAlpha(Uint8 alpha);
 };
 
 

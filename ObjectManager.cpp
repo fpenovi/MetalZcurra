@@ -22,6 +22,8 @@ ObjectManager::~ObjectManager() {
 	delete enemigosManager;
 	bonusManager->Off();
 	delete bonusManager;
+	personajesManager->Off();
+	delete personajesManager;
 
 	for (auto kv : personajes)
 		delete kv.second;
@@ -160,6 +162,7 @@ void ObjectManager::inicializarBala(int idEmisor, int posxEmisor, int posyEmisor
 				kv.second->crear(idEmisor, posxEmisor, posyEmisor, getDireccionById(idEmisor), 107, 17);
 				kv.second->setDanio(80);
 				kv.second->setPuntos(40);
+				kv.second->setRlauncher(true);
 				return;
 			}
 		}
@@ -380,6 +383,13 @@ void ObjectManager::crearBonusManager() {
 	bonusManager->On();
 }
 
+void ObjectManager::crearPersonajesManager(int cantUsers) {
+	cantidadUsuarios = cantUsers;
+
+	personajesManager = new PersonajesManager();
+	personajesManager->On();
+}
+
 Boss* ObjectManager::getBoss() {
 	return this->boss;
 }
@@ -479,6 +489,41 @@ void ObjectManager::agregarDropeable(Bonus* dropeable) {
 	idBonus++;
 }
 
+void ObjectManager::handleImpacto(Personaje* personaje, Bala* bala){
+	ProtocoloVistaUpdate update;
+
+	update.setTipoObjeto(7);
+	update.setEstado(personaje->estaVivo());
+	update.setX(0);
+	update.setY(0);
+	update.setObject_id(personaje->getId());
+	update.setPosCamara(0);
+	update.setConectado(0);
+	update.setSpriteIndex(0);
+	update.setApuntando(0);
+	update.setSaltando(0);
+
+	if (bala->getId() > 250) update.setPuntaje(bala->getId());
+	else update.setPuntaje(0);
+
+
+	int result;
+	string mensaje = update.toString();
+
+	for (auto kv : *conectadosHash) {
+
+		Mensaje* mensajeNuevo = new Mensaje("Server", kv.first, mensaje);
+
+		result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+		kv.second->push_back(mensajeNuevo);
+
+		result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+	}
+}
+
 void ObjectManager::killAll(){
 	for (auto kv : enemigos){
 		if (kv.second->getExiste())
@@ -490,12 +535,18 @@ void ObjectManager::pausarManagers() {
 	balasManager->Pause();
 	enemigosManager->Pause();
 	bonusManager->Pause();
+	personajesManager->Pause();
 }
 
 void ObjectManager::reanudarManagers() {
 	balasManager->Resume();
 	enemigosManager->Resume();
 	bonusManager->Resume();
+	personajesManager->Resume();
+}
+
+int ObjectManager::getCantidadUsuarios() {
+	return cantidadUsuarios;
 }
 
 ObjectManager* ObjectManager::instancia;

@@ -25,26 +25,35 @@ VistaPersonaje::VistaPersonaje(SDL_Renderer* renderizador2, int id, int modoJueg
 	gris = false;
 	flip = SDL_FLIP_NONE;
 	disparar = false;
+	existe = true;
+	muriendo = false;
+	transparente = false;
 }
 
 void VistaPersonaje::render(bool seMovio){
-	if (estaSaltando()) {
-		animacionSaltandoPiernas();
-		if (disparar) animacionDisparar();
-		else animacionSaltandoTorso();
-		return;
+	if (existe) {
+		if (transparente) noTitilar();
+		if (muriendo) {
+			animacionMuriendo();
+			return;
+		}
+		if (estaSaltando()) {
+			animacionSaltandoPiernas();
+			if (disparar) animacionDisparar();
+			else animacionSaltandoTorso();
+			return;
+		}
+		if (seMovio) {
+			animacionCorrerPiernas();
+			if (disparar) animacionDisparar();
+			else animacionCorrerTorso();
+		}
+		else {
+			animacionParadoPiernas();
+			if (disparar) animacionDisparar();
+			else animacionParadoTorso();
+		}
 	}
-	if (seMovio){
-		animacionCorrerPiernas();
-		if (disparar) animacionDisparar();
-		else animacionCorrerTorso();
-	}
-	else {
-		animacionParadoPiernas();
-		if (disparar) animacionDisparar();
-		else animacionParadoTorso();
-	}
-
 }
 
 void VistaPersonaje::animacionParadoPiernas(){
@@ -125,6 +134,23 @@ void VistaPersonaje::animacionDisparar(){
 }
 
 
+void VistaPersonaje::animacionMuriendo() {
+	flip = SDL_FLIP_NONE;
+	int x = posCamara;
+	if (!derecha) {
+		flip = SDL_FLIP_HORIZONTAL;
+		x-=80;
+	}
+	frameMuriendo++;
+	arma->renderMuriendo(x, posy, frameMuriendo, flip);
+	if (frameMuriendo >= ANIMACION_MURIENDO) {
+		existe = false;
+		frameMuriendo = 0;
+		muriendo = false;
+		conectado = false;
+	}
+}
+
 bool VistaPersonaje::cargarImagen(){
 	//Loading success flag
 	bool success = true;
@@ -192,7 +218,6 @@ VistaPersonaje::~VistaPersonaje() {
 	delete TEXTURA_PERSONAJE_SALTANDO_PIES;
 	delete arma;
 }
-
 bool VistaPersonaje::estaSaltando(){
 	return saltando;
 }
@@ -205,6 +230,7 @@ int VistaPersonaje::getY(){
 int VistaPersonaje::getAncho(){
 	return ancho;
 }
+
 int VistaPersonaje::getAlto(){
 	return alto;
 }
@@ -324,4 +350,33 @@ int VistaPersonaje::getUltimaPosy(){
 
 void VistaPersonaje::setSaltando(bool aux) {
 	saltando = aux;
+}
+
+void VistaPersonaje::morir() {
+	muriendo = true;
+}
+
+void VistaPersonaje::titilar() {
+	TEXTURA_PERSONAJE_PARADO_PIES->setAlpha(80);
+	TEXTURA_PERSONAJE_CORRIENDO_PIES->setAlpha(80);
+	TEXTURA_PERSONAJE_SALTANDO_PIES->setAlpha(80);
+	arma->titilar();
+	transparente = true;
+	alan = 3;
+}
+
+void VistaPersonaje::noTitilar() {
+	if (alan == 0) {
+		TEXTURA_PERSONAJE_PARADO_PIES->setAlpha(255);
+		TEXTURA_PERSONAJE_CORRIENDO_PIES->setAlpha(255);
+		TEXTURA_PERSONAJE_SALTANDO_PIES->setAlpha(255);
+		arma->noTitilar();
+		transparente = false;
+		return;
+	}
+	alan--;
+}
+
+bool VistaPersonaje::getExiste() {
+	return existe;
 }

@@ -10,7 +10,7 @@ Recover::Recover(int x, int y) : Bonus(x, y) {
 }
 
 void Recover::aplicarEfecto(Personaje *personaje) {
-    // TODO recuperar la vida del personaje...
+    personaje->sumarVida(1);
 }
 
 Recover::~Recover() {

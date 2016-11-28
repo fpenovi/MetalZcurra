@@ -554,6 +554,10 @@ public:
 
 	void handleEvent( SDL_Event& e) {
 
+		VistaPersonaje* miPj = getPersonajeById(miId);
+		if (!miPj->getExiste())
+			return;
+
 		ProtocoloComando comando;
 		string msj;
 
@@ -1177,6 +1181,40 @@ public:
 	void crearVistaPuntajes(){
 		puntajes = VistaPuntajes::NewVistaPuntaje(cantidadUsuarios, modoJuego, renderizador);
 	}
+
+	void actualizarImpacto(){
+		VistaPersonaje* pj = getPersonajeById(id);
+
+		if (state) pj->titilar();
+		else pj->morir();
+
+		if (puntaje != 0) {
+			VistaBala* bala = getBalaById(puntaje);
+			bala->setExplotando(true);
+		}
+	}
+
+	void actualizarQuietos(){
+
+		int i = 0;
+		int j = 0;
+		int sprite = id;
+		int datos[8] = {state, posX, posy, posCam, conectado, spriteIdx, aim, saltando};
+
+		for (i ; i < cantidadUsuarios ; i++){
+
+			VistaPersonaje* pj = getPersonajeById(i+1);
+
+			if (datos[j]){
+				pj->setSeMovio(!datos[j]);
+				pj->apuntar(datos[j+1]);
+				pj->setSpriteIndexTorso(sprite);
+				pj->setSpriteIndexPies(sprite);
+			}
+			j += 2;
+		}
+
+	}
 };
 
 typedef struct {
@@ -1365,6 +1403,14 @@ int main( int argc, char** argv) {
 			// Tipo de objeto 6 = BOSS
 			else if (tipoObjeto == 6)
 				juego.actualizarBoss();
+
+			// Tipo de objeto 7 = IMPACTO BALA
+			else if (tipoObjeto == 7)
+				juego.actualizarImpacto();
+
+			// Tipo de objeto 8 = PERSONAJE QUIETO
+			else if (tipoObjeto == 8)
+				juego.actualizarQuietos();
 
 			SDL_RenderClear( juego.getRenderer() );
 

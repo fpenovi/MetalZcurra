@@ -22,6 +22,7 @@
 #include "Boss.h"
 #include "Bonus.h"
 #include "BonusManager.h"
+#include "PersonajesManager.h"
 
 using namespace std;
 
@@ -46,6 +47,8 @@ private:
 	unordered_map<int, Bonus*> bonuses;
 	BonusManager* bonusManager;
 	int idBonus;
+	int cantidadUsuarios;
+	PersonajesManager* personajesManager;
 
 public:
 	~ObjectManager();
@@ -96,7 +99,6 @@ public:
 	Boss* getBoss();
 	void setBoss(Boss* boss);
 
-	void killAll();
 	// Bonuses
 	unordered_map<int, Bonus*>* getBonusesHash();
 	void setBonuses(vector<Bonus*> bonuses);
@@ -105,8 +107,12 @@ public:
 	void agregarDropeable(Bonus* dropeable);
 	int getIdBonus();
 	void setIdBonus(int aux);
-
+	void killAll();
 	void reiniciarBonuses();
+
+	void handleImpacto(Personaje *personaje, Bala* bala);
+	int getCantidadUsuarios();
+	void crearPersonajesManager(int cantUsers);
 };
 
 
