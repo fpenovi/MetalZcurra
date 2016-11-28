@@ -429,11 +429,15 @@ void ObjectManager::setTamVentana(vector<string> tamVentana) {
 void ObjectManager::liberarEnemigos() {
 	for (auto kv : enemigos)
 		delete kv.second;
+	enemigos.clear();
+	delete boss;
+	boss = NULL;
 }
 
 void ObjectManager::reiniciarBonuses() {
 	for (auto kv : bonuses)
 		delete kv.second;
+	bonuses.clear();
 	idBonus = 1;
 }
 

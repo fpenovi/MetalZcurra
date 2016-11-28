@@ -36,7 +36,6 @@ Nivel::Nivel(string xmlPath) {
 	OM->setBonuses(crearBonuses(bonuses));
 	OM->setBoss(crearBoss(boss));
 	OM->crearEnemigos(crearEnemigos(enemigos));
-	this->boss = crearBoss(boss);
 }
 
 vector<Plataforma*> Nivel::crearPlataformas(vector<string> platformsS) {
@@ -89,7 +88,7 @@ vector<Enemigo*> Nivel::crearEnemigos(vector<string> enemigosStr) {
 
 Boss* Nivel::crearBoss(vector<string> bossStr) {
 
-	Boss* boss;
+	Boss* boss = NULL;
 	int x = stoi(bossStr[0]);
 	int y = stoi(bossStr[1]);
 	int delta = stoi(bossStr[2]);

@@ -99,7 +99,7 @@ private:
         size_t len = 0;
         char* user = NULL;
         char* pass = NULL;
-        ssize_t bytesLeidos=0;
+        ssize_t bytesLeidos = 0;
 
         // Pido el usuario al cliente
         bytesLeidos = getline(&user, &len, mensajeCliente);
@@ -120,7 +120,7 @@ private:
         if (result != 0) perror("Fallo el pthread_mutex_lock en login");
 
         // Chequeo si el user ya esta conectado
-        vector<argthread_t *>::iterator it;
+/*        vector<argthread_t *>::iterator it;
         for (it = conectados.begin(); it != conectados.end();) {
             if (it.operator*()->user != NULL){
                 if (strcmp(it.operator*()->user,user) == 0){
@@ -132,6 +132,18 @@ private:
                 }
             }
             it++;
+        }*/
+
+        for (argthread_t* cliente : conectados){
+            if (cliente->user != NULL){
+                if (strcmp(cliente->user, user) == 0) {
+                    cout << user << "Ya esta conectado" << endl;
+                    free(user);
+                    result = pthread_mutex_unlock(&mutex_login);
+                    if (result != 0) perror("Fallo el pthread_mutex_unlock en login");
+                    return false;
+                }
+            }
         }
 
         result = pthread_mutex_unlock(&mutex_login);
@@ -143,7 +155,6 @@ private:
     }
 
     static void kickearUsuario(argthread_t* arg) {
-
         vector<argthread_t*>::iterator it;
 
         int result = pthread_mutex_lock(&mutex_login);
@@ -167,7 +178,6 @@ private:
                     return;
                 }
             }
-
             it++;
         }
 
@@ -340,6 +350,8 @@ private:
                 objectManager->enviarNuevoBackground(emisor);
 
                 objectManager->reanudarManagers();
+
+                cout << "REINICIO LVL" << endl;
             }
 
             //else ToDo TERMINAR JUEGO
@@ -556,20 +568,30 @@ private:
 
         }
 
-        pthread_join(*recibirThread, NULL);
-        handleDisparoServer->Off();
-        delete handleDisparoServer;
-        handleKeyHoldServer->Off();
-        delete handleKeyHoldServer;
-        handleJumpServer->Off();
-        delete handleJumpServer;
-        close(sockNewFileDescrpt);
         kickearUsuario((argthread_t*) arg);
         *(((argthread_t *) arg)->quit) = true;
+        pthread_join(*recibirThread, NULL);
+
+        close(sockNewFileDescrpt);
         free(arg);
         free(thread);
         free(recibirThread);
         fclose(mensajeCliente);
+
+        handleDisparoServer->Off();
+        delete handleDisparoServer;
+
+        cout << "FALLA DISPARO" << endl;
+
+        handleKeyHoldServer->Off();
+        delete handleKeyHoldServer;
+
+        cout << "FALLA KEY HOLD" << endl;
+
+        handleJumpServer->Off();
+        delete handleJumpServer;
+
+        cout << "FALLA JUMP" << endl;
         return NULL;
     }
 

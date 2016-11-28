@@ -21,7 +21,6 @@ void* enemigosManagerFunc(void* argKh) {
     unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
     unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
     unordered_map<int, Enemigo*>* enemigos = objectManager->getEnemigosHash();
-    Boss* boss = objectManager->getBoss();
 
     time_point<high_resolution_clock> start;
     start = high_resolution_clock::now();
@@ -79,6 +78,8 @@ void* enemigosManagerFunc(void* argKh) {
                         }
                     }
                 }
+
+                Boss* boss = objectManager->getBoss();
 
                 if (!boss->getExiste() && boss->estaVivo())
                     boss->crear();

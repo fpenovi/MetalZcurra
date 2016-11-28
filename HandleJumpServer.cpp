@@ -3,6 +3,7 @@
 //
 
 #include "HandleJumpServer.h"
+#include <cmath>
 
 using namespace chrono;
 
@@ -23,6 +24,32 @@ void* handleJumpFunc(void* argKh) {
     string* emisor = ( (argjump_t*) argKh)->emisor;
     unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
     unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
+
+    vector<int> seno;
+
+    double contador = 0;
+    double i = 0.065449847;
+    for (int j = 0; j < 24 ; j++){
+        int aux = sin(i) * 8.178825396319478;
+        if (aux == 0) aux = 1;
+        seno.push_back(aux);
+        i += 0.065447917;
+    }
+
+    i = 0.065449847;
+    for (int j = 0; j < 24 ; j++){
+        int aux = sin(i) * 8.178825396319478;
+        if (aux == 0) aux = 1;
+        seno.insert(seno.begin(), aux);
+        //seno.push_back(sin(i) * 8.453156831418694);
+        i += 0.065447917;
+    }
+
+    for (i = 0; i < 48; i++){
+        cout << "POS " << i << ": " << seno[i] << endl;
+        if (i < 24) contador += seno[i];
+    }
+    cout << "CONTADOR: " << contador;
 
     while (*isKhOn) {
 
@@ -47,28 +74,32 @@ void* handleJumpFunc(void* argKh) {
             for (int i = 0 ; i < 48 ; i++){
 
                 if (personaje->getPosy() <= posFinal){
-                    personaje->setVely(personaje->getPersonaje_VEL_Y());
+                    cout << "TRABO SUBIDA" << endl;
+                    personaje->setVely((int) seno[i]);
                     personaje->moverY();
                     personaje->setVely(0);
                     personaje->setBajando(true);
                     personaje->setSprites();
                 }
                 else if (personaje->getPosy() >= posActual){
+                    cout << "TRABO BAJADA" << endl;
                     personaje->setUltimaPosy(personaje->getPosy());
-                    personaje->setVely(-personaje->getPersonaje_VEL_Y());
+                    personaje->setVely((int) -(seno[i]));
                     personaje->moverY();
                     personaje->setVely(0);
                     personaje->setBajando(false);
                     personaje->setSaltando(false);
                 }
                 else if (personaje->getBajando()){
-                    personaje->setVely(personaje->getPersonaje_VEL_Y());
+                    cout << "BAJANDO" << endl;
+                    personaje->setVely((int) seno[i]);
                     personaje->moverY();
                     personaje->setSprites();
                 }
 
                 else if(!(personaje->getBajando())) {
-                    personaje->setVely(-personaje->getPersonaje_VEL_Y());
+                    cout << "SUBIENDO" << endl;
+                    personaje->setVely((int) -(seno[i]));
                     personaje->moverY();
                     personaje->setSprites();
                 }
@@ -101,7 +132,7 @@ void* handleJumpFunc(void* argKh) {
                     if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
                 }
 
-                usleep(40000);
+                usleep(30000);
             }
             personaje->setGravity(true);
             *isKhPaused = true;

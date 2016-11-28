@@ -27,7 +27,6 @@ private:
 	int ancho;
 	vector<Plataforma*> plataformas;
 	vector<string> capas;
-	Boss* boss;
 
 	vector<Plataforma*> crearPlataformas(vector<string> platformsStr);
 	vector<Bonus*> crearBonuses(vector<string> bonusesStr);
