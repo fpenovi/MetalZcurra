@@ -71,7 +71,7 @@ void Rshobu::crear() {
 }
 
 bool Rshobu::disparar() {
-	microseconds intervalo(3000000);	// 3s
+	microseconds intervalo(2000000);	// 2s
 	actual = high_resolution_clock::now();
 
 	auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();

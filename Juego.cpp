@@ -46,6 +46,8 @@ private:
 	int modoJuego;
 	int idBonus;
 	VistaPuntajes* puntajes;
+	unordered_map<int, VistaBala*> vistasBalasVivas;
+	unordered_map<int, VistaEnemigo*> vistasEnemigosVivos;
 
 	// TEXUTRAS
 	Textura* TEXTURA_BALA;
@@ -548,6 +550,32 @@ public:
 		vistasBoss[id] = boss;
 	}
 
+	void addBalaViva(int id, VistaBala* bala){
+		vistasBalasVivas[id] = bala;
+	}
+
+	void addEnemigoVivo(int id, VistaEnemigo* enemigo){
+		vistasEnemigosVivos[id] = enemigo;
+	}
+
+	void removeBala(int id){
+		vistasBalasVivas.erase(id);
+	}
+
+	void removeEnemigo(int id){
+		vistasEnemigosVivos.erase(id);
+	}
+
+	bool existeBala(int id){
+		auto it = vistasBalasVivas.find(id);
+		return it != vistasBalasVivas.end();
+	}
+
+	bool existeEnemigo(int id){
+		auto it = vistasEnemigosVivos.find(id);
+		return it != vistasEnemigosVivos.end();
+	}
+
 	void conectar(){
 		cliente->conectar(nombre);
 	}
@@ -687,7 +715,7 @@ public:
 			}
 		}
 
-		for (auto kv : vistasEnemigos)
+		for (auto kv : vistasEnemigosVivos)
 			if (kv.second->existeEnemigo())
 				kv.second->setPosX(kv.second->getPosx()-7);
 
@@ -700,7 +728,7 @@ public:
 		for (auto kv : visitasBonuses)
 			kv.second->render();
 
-		for (auto kv : vistasEnemigos)
+		for (auto kv : vistasEnemigosVivos)
 			kv.second->render();
 
 		bossActual->render();
@@ -712,14 +740,14 @@ public:
 
 				else if (kv.second->getConectado() && kv.second->getGris()) kv.second->sacarTexturaGris();
 
-				kv.second->render(kv.second->getSeMovio());
+				kv.second->render();
 			}
 		}
 
 		VistaPersonaje* miPj = vistasPersonajes[miId];
-		miPj->render(miPj->getSeMovio());
+		miPj->render();
 
-		for (auto kv : vistasBalas)
+		for (auto kv : vistasBalasVivas)
 			kv.second->render();
 
 		puntajes->render();
@@ -1102,6 +1130,9 @@ public:
 
 		VistaBala* bala = getBalaById(id);
 
+		if (state && !existeBala(id)) addBalaViva(id, bala);
+		else if (!state && existeBala(id) && !bala->isBomba()) removeBala(id);
+
 		bala->setExiste(state);
 		bala->setPosX(posX);
 		bala->setPosY(posy);
@@ -1124,6 +1155,9 @@ public:
 
 	void actualizarEnemigo(){
 		VistaEnemigo* enemigo = getEnemigoById(id);
+
+		if (state && !existeEnemigo(id)) addEnemigoVivo(id, enemigo);
+		else if (!state && existeEnemigo(id)) removeEnemigo(id);
 
 		if (!conectado) enemigo->setExiste(state);
 		enemigo->setPosX(posX);
@@ -1209,6 +1243,42 @@ public:
 		}
 
 	}
+
+	void recibirUsuarios() {
+		cout << "RECIBO USUARIOS" << endl;
+
+		while (true) {
+
+			string stream = cliente->recibir_nueva_vista();
+
+			if (stream == "$\n") break;
+
+			string nombre = "";
+			string id = "";
+
+			string* variables[] = {&nombre, &id};
+
+			int j = 0;
+
+			for (int i = 0; i < stream.size() - 1; i++) {
+
+				char actual = stream[i];
+
+				if (actual == '$') {
+					j++;
+					continue;
+				}
+
+				*(variables[j]) += actual;
+			}
+
+			int idPj = stoi(id);
+			getPersonajeById(idPj)->setNombre(nombre);
+
+		}
+
+	}
+
 };
 
 typedef struct {
@@ -1307,6 +1377,10 @@ int main( int argc, char** argv) {
 	juego.crearBoss();
 	juego.seleccionarBoss(1);
 
+	juego.cargarEntrada();
+	juego.entrada();
+	juego.recibirUsuarios();
+
 	//Main loop flag
 	bool quit = false;
 	bool pauseRecibir = false;
@@ -1327,10 +1401,6 @@ int main( int argc, char** argv) {
 		pthread_attr_destroy(&attr);
 		exit(1);
 	}
-
-	juego.cargarEntrada();
-	juego.entrada();
-	juego.salaDeEspera();
 
 	// Dibujo por primera vez (es necesario)
 	SDL_RenderClear( juego.getRenderer() );
@@ -1418,7 +1488,7 @@ int main( int argc, char** argv) {
 			auto elapsed_ms = duration_cast<nanoseconds>(deltaTiempo);
 			auto time = elapsed_ms.count()/1000000.0;
 
-			//cout << "Elapsed ms: " << time << endl;
+			cout << "Elapsed ms: " << time << endl;
 
 		}
 	}

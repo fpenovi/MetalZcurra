@@ -450,6 +450,16 @@ private:
             cout << "USUARIOS CONECTADOS: " << conectados.size() << " / NECESARIOS: " << cantidadUsuarios << endl;
         }
         usleep(100000);
+
+        // ENVIO USUARIOS
+        unordered_map<string, int>* usuarios = objectManager->getTablaUsuarios();
+        for (auto kv : *usuarios){
+            string nombre = kv.first;
+            string id = to_string(kv.second);
+            string msj = nombre + "$" + id + "\n";
+            ssize_t bytes = write(sockNewFileDescrpt, msj.c_str(), msj.size());
+        }
+
         write(sockNewFileDescrpt, "$\n", 2);
 
         // Creo thread para enviar mensajes al cliente

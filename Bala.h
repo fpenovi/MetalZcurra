@@ -33,9 +33,10 @@ private:
     bool rlauncher = false;
 
     // Shotgun
-    bool shotgun = false;
+    bool shotgun;
     const static int ANIMACION_BALA_SHOTGUN = 12;
     int frameShotgun = 0;
+    bool colisiono;
 
 public:
     Bala();
@@ -93,6 +94,8 @@ public:
     void setDanio(int aux);
 
     void setPuntos(int aux);
+
+    bool getColisiono();
 
     ~Bala();
 };
