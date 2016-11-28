@@ -16,13 +16,6 @@
 	</capas>
 	<plataformas>
 		<plataforma>
-			<x>0</x>
-			<y>545</y>
-			<ancho>8000</ancho>
-			<alto>1</alto>
-		</plataforma>
-
-		<plataforma>
 			<x>606</x>
 			<y>443</y>
 			<ancho>895</ancho>

@@ -16,6 +16,7 @@ Personaje::Personaje() {
     rect->setOffset(7, 76); // Centro el rectangulo
     envolvente->agregarComponente(rect);
 
+    quieto = true;
 }
 
 void Personaje::moverX() {
@@ -406,6 +407,14 @@ void Personaje::sumarVida(int aux) {
 
 bool Personaje::estaVivo() {
     return vida > 0;
+}
+
+void Personaje::setQuieto(bool aux){
+    quieto = aux;
+}
+
+bool Personaje::getQuieto(){
+    return quieto;
 }
 
 Personaje::~Personaje() {

@@ -19,7 +19,6 @@
 #include "ParserXML.h"
 #include "HandleKeyHoldServer.h"
 #include "HandleJumpServer.h"
-#include "HandleQuietoServer.h"
 #include "HandleDisparoServer.h"
 #include "NivelManager.h"
 
@@ -176,7 +175,7 @@ private:
         if (result != 0) perror("Fallo el pthread_mutex_unlock en kick");
     }
 
-    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo, HandleKeyHoldServer* handleKeyHold, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto, int FD, HandleDisparoServer* handleDisparo) {
+    static void agregarMensaje(char* emisorChar, char *textoInicial, ssize_t largo, HandleKeyHoldServer* handleKeyHold, HandleJumpServer* handleJump, int FD, HandleDisparoServer* handleDisparo) {
 
         if (textoInicial == NULL){
             printf("ERROR");
@@ -206,7 +205,7 @@ private:
             switch( key ) {
 
                 case SDLK_LEFT:
-                    handleQuieto->Pause();
+                    personaje->setQuieto(false);
                     handleKeyHold->setKeyPressed(SDLK_LEFT);
                     handleKeyHold->Resume();
 
@@ -214,7 +213,7 @@ private:
                     break;
 
                 case SDLK_RIGHT:
-                    handleQuieto->Pause();
+                    personaje->setQuieto(false);
                     handleKeyHold->setKeyPressed(SDLK_RIGHT);
                     handleKeyHold->Resume();
 
@@ -234,12 +233,12 @@ private:
                     break;
 
                 case SDLK_x:
-                    handleQuieto->Pause();
+                    personaje->setQuieto(false);
                     handleJump->Resume();
                     break;
 
                 case SDLK_r:
-                    handleQuieto->Pause();
+                    personaje->setQuieto(false);
                     objectManager->reinicializarEscenario();
 
                     update.setTipoObjeto(10);
@@ -271,7 +270,7 @@ private:
                     if (handleKeyHold->getKeyPressed() == SDLK_LEFT) {
                         handleKeyHold->Pause();
                         handleKeyHold->setKeyPressed(0);
-                        handleQuieto->Resume();
+                        personaje->setQuieto(true);
                         direccion->setSolte(true);
                     }
                     if (direccion->isArriba() || direccion->isAbajo()) direccion->setIzquierda(false);
@@ -281,7 +280,7 @@ private:
                     if (handleKeyHold->getKeyPressed() == SDLK_RIGHT) {
                         handleKeyHold->Pause();
                         handleKeyHold->setKeyPressed(0);
-                        handleQuieto->Resume();
+                        personaje->setQuieto(true);
                         direccion->setSolte(true);
                     }
                     if (direccion->isArriba() || direccion->isAbajo()) direccion->setDerecha(false);
@@ -301,7 +300,7 @@ private:
 
                 case SDLK_x:
                     handleJump->Pause();
-                    if (direccion->isSolte()) handleQuieto->Resume();
+                    if (direccion->isSolte()) personaje->setQuieto(true);;
                     break;
 
                 case SDLK_r:
@@ -347,7 +346,7 @@ private:
         }
     }
 
-    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos, HandleKeyHoldServer* handler, HandleJumpServer* handleJump, HandleQuietoServer* handleQuieto, int FD, HandleDisparoServer* handleDisparo) {
+    static bool enviarMensaje(argthread_t* arg, char* linea, ssize_t* bytesLeidos, HandleKeyHoldServer* handler, HandleJumpServer* handleJump, int FD, HandleDisparoServer* handleDisparo) {
 
         if (*bytesLeidos < 0) {
             cout << " SE DESCONECTÓ " << arg->user << endl;
@@ -355,7 +354,7 @@ private:
             return false;
         }
 
-        agregarMensaje(arg->user, linea, *bytesLeidos, handler, handleJump, handleQuieto, FD, handleDisparo);
+        agregarMensaje(arg->user, linea, *bytesLeidos, handler, handleJump, FD, handleDisparo);
         return true;
 
     }
@@ -472,11 +471,6 @@ private:
         handleJumpServer->On();
         handleJumpServer->Pause();
 
-        // Creo thread de personaje quieto
-        HandleQuietoServer* handleQuietoServer = new HandleQuietoServer();
-        handleQuietoServer->setEmisor(userCon);
-        handleQuietoServer->On();
-
         // Creo thread de disparo
         HandleDisparoServer* handleDisparoServer = new HandleDisparoServer();
         handleDisparoServer->setEmisor(userCon);
@@ -509,7 +503,7 @@ private:
                 bytesLeidos = getline(&linea, &len, mensajeCliente);
 
                 // ENVIO MENSAJE
-                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos, handleKeyHoldServer, handleJumpServer, handleQuietoServer, sockNewFileDescrpt, handleDisparoServer) )
+                if ( !enviarMensaje((argthread_t*) arg, linea, &bytesLeidos, handleKeyHoldServer, handleJumpServer, sockNewFileDescrpt, handleDisparoServer) )
                     break;
             }
 
@@ -555,8 +549,6 @@ private:
         pthread_join(*recibirThread, NULL);
         handleDisparoServer->Off();
         delete handleDisparoServer;
-        handleQuietoServer->Off();
-        delete handleQuietoServer;
         handleKeyHoldServer->Off();
         delete handleKeyHoldServer;
         handleJumpServer->Off();
@@ -578,6 +570,7 @@ private:
         int* posX = objectManager->getPosX();
 
         ProtocoloVistaUpdate update;
+        update.setTipoObjeto(1);
         update.setEstado(personaje->getSeMovio());
         update.setX(*posX);
         update.setY(personaje->getPosy());
@@ -681,6 +674,7 @@ public:
         objectManager->crearBalasManager();
         objectManager->crearEnemigosManager();
         objectManager->crearBonusManager();
+        objectManager->crearPersonajesManager(cantidadUsuarios);
     }
 
     void aceptarClientes() {

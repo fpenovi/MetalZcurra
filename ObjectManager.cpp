@@ -22,6 +22,8 @@ ObjectManager::~ObjectManager() {
 	delete enemigosManager;
 	bonusManager->Off();
 	delete bonusManager;
+	personajesManager->Off();
+	delete personajesManager;
 
 	for (auto kv : personajes)
 		delete kv.second;
@@ -381,6 +383,13 @@ void ObjectManager::crearBonusManager() {
 	bonusManager->On();
 }
 
+void ObjectManager::crearPersonajesManager(int cantUsers) {
+	cantidadUsuarios = cantUsers;
+
+	personajesManager = new PersonajesManager();
+	personajesManager->On();
+}
+
 Boss* ObjectManager::getBoss() {
 	return this->boss;
 }
@@ -480,7 +489,7 @@ void ObjectManager::agregarDropeable(Bonus* dropeable) {
 	idBonus++;
 }
 
-void ObjectManager::handleImpacto(Personaje* personaje){
+void ObjectManager::handleImpacto(Personaje* personaje, Bala* bala){
 	ProtocoloVistaUpdate update;
 
 	update.setTipoObjeto(7);
@@ -493,7 +502,10 @@ void ObjectManager::handleImpacto(Personaje* personaje){
 	update.setSpriteIndex(0);
 	update.setApuntando(0);
 	update.setSaltando(0);
-	update.setPuntaje(0);
+
+	if (bala->getId() > 250) update.setPuntaje(bala->getId());
+	else update.setPuntaje(0);
+
 
 	int result;
 	string mensaje = update.toString();
@@ -523,12 +535,18 @@ void ObjectManager::pausarManagers() {
 	balasManager->Pause();
 	enemigosManager->Pause();
 	bonusManager->Pause();
+	personajesManager->Pause();
 }
 
 void ObjectManager::reanudarManagers() {
 	balasManager->Resume();
 	enemigosManager->Resume();
 	bonusManager->Resume();
+	personajesManager->Resume();
+}
+
+int ObjectManager::getCantidadUsuarios() {
+	return cantidadUsuarios;
 }
 
 ObjectManager* ObjectManager::instancia;

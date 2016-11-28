@@ -108,8 +108,6 @@ int Bala::getAlto(){
 void Bala::desaparecer(){
     existe = false;
     idDuenio = 0;
-    posy = 0;
-    posx = 0;
     setDireccion(false, false, false, false);
 }
 
@@ -182,7 +180,7 @@ void Bala::handleColision(){
             if (kv.second->getConectado() && kv.second->estaVivo()){
                 if ((kv.second->getEnvolvente())->hayColision(envolvente)) {
                     kv.second->restarVida(1);
-                    objectManager->handleImpacto(kv.second);
+                    objectManager->handleImpacto(kv.second, this);
                     desaparecer();
                 }
             }

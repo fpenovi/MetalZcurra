@@ -68,6 +68,7 @@ private:
 	int armaActual;
 	int cantidadBalas = 0;
 	int vida = 5;
+	bool quieto;
 
 public:
 	const static int GUN = 0;
@@ -200,6 +201,10 @@ public:
 	void sumarVida(int aux);
 
 	bool estaVivo();
+
+	void setQuieto(bool aux);
+
+	bool getQuieto();
 
 	~Personaje();
 };
