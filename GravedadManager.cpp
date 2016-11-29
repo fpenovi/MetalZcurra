@@ -77,7 +77,6 @@ void* gravedadManagerFunc(void* argKh) {
             start = chrono::system_clock::now();
         }
     }
-
     return NULL;
 }
 
