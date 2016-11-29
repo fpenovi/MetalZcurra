@@ -724,7 +724,6 @@ void Juego::jugadoresInicio(){
 
 	transparentar(255);
 
-	delete bossActual;
 	seleccionarBossSiguiente();
 }
 
