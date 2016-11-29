@@ -396,3 +396,7 @@ void VistaPersonaje::transparentar(Uint8 alpha) {
 	TEXTURA_PERSONAJE_SALTANDO_PIES->setAlpha(alpha);
 	this->arma->transparentar(alpha);
 }
+
+void VistaPersonaje::setExiste(bool aux) {
+	existe = aux;
+}

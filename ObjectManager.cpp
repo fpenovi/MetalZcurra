@@ -208,7 +208,7 @@ void ObjectManager::enviarPersonajes(int FD, string user) {
 		ProtocoloNuevaVista protocolo;
 
 		protocolo.setObject_id(kv.first);
-		protocolo.setSpriteId(kv.first);
+		protocolo.setSpriteId(kv.second->estaVivo());
 		protocolo.setX(posx);
 		protocolo.setY(kv.second->getPosy());
 		protocolo.setCam(kv.second->getPosCamara());

@@ -810,7 +810,7 @@ void Juego::recibirPersonajes(){
 		VistaPersonaje *personaje = new VistaPersonaje(getRenderer(), id, modoJuego);
 
 		setPosX(posx);
-		//personaje->setearSprites(sprite);
+		personaje->setExiste(sprite);
 		personaje->setId(id);
 		personaje->setPosCamara(cam);
 		personaje->setPosx(posx);

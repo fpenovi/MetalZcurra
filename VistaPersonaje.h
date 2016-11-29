@@ -154,6 +154,8 @@ public:
 
 	bool getExiste();
 
+	void setExiste(bool aux);
+
 	void setNombre(string name);
 
 	string getNombre();
