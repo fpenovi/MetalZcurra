@@ -457,7 +457,11 @@ private:
         // REGISTRO EL USUARIO Y LE ASIGNO UN ID VINCULADO A UN PERSONAJE
         cout << userCon << endl;
         objectManager->registerUser(userCon);
-        conectadosHash[userCon] = new list<Mensaje*>;
+
+        auto it = conectadosHash.find(userCon);
+        if (it == conectadosHash.end())
+            conectadosHash[userCon] = new list<Mensaje*>;
+
         mutexesHash[userCon] = PTHREAD_MUTEX_INITIALIZER;
         objectManager->conectarPersonaje(userCon);
 

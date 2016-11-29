@@ -52,6 +52,9 @@ void VistaPuntajes::greyOutIfNeeded(Juego* juego) {
 	}
 }
 
+void VistaPuntajes::resetTransparenciaActual(){
+	transparenciaActual = LIMITE_SUPERIOR_TRANSPARENCIA;
+}
 
 VistaPuntajes::~VistaPuntajes() {
 	for (auto kv : this->playerColorsById) {

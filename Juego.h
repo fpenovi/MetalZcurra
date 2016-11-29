@@ -45,6 +45,7 @@ private:
 	VistaPuntajes* puntajes;
 	unordered_map<int, VistaBala *> vistasBalasVivas;
 	unordered_map<int, VistaEnemigo *> vistasEnemigosVivos;
+	int nivelActual;
 
 	// TEXUTRAS
 	Textura *TEXTURA_BALA;
@@ -192,7 +193,7 @@ public:
 
 	void crearBoss();
 
-	void seleccionarBoss(int nivel);
+	void seleccionarBossSiguiente();
 
 	void cargarTexturaBala();
 

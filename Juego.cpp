@@ -13,6 +13,7 @@ Juego::Juego() {
 	renderizador = NULL;
 	ventana = NULL;
 	lastKeyPressed = 0;
+	nivelActual = 1;
 }
 
 void Juego::close() {
@@ -717,6 +718,14 @@ void Juego::jugadoresInicio(){
 
 	for (auto kv : visitasBonuses)
 		kv.second->reiniciar();
+
+	vistasBalasVivas.clear();
+	vistasEnemigosVivos.clear();
+
+	seleccionarBossSiguiente();
+
+	transparentar(255);
+	puntajes->resetTransparenciaActual();
 }
 
 void Juego::salaDeEspera(){
@@ -955,10 +964,16 @@ void Juego::crearBoss(){
 	rshobu->cargarImagen();
 	addBoss(id, rshobu);
 	id++;
+
+	VistaBoss* rshobu2 = new VistaRshobu(renderizador);
+	rshobu2->cargarImagen();
+	addBoss(id, rshobu2);
+	id++;
+
 }
 
-void Juego::seleccionarBoss(int nivel){
-	bossActual = getBossById(nivel);
+void Juego::seleccionarBossSiguiente(){
+	bossActual = getBossById(nivelActual++);
 }
 
 void Juego::cargarTexturaBala(){
@@ -1335,7 +1350,7 @@ int main( int argc, char** argv) {
 
 	// Creo Boss
 	juego.crearBoss();
-	juego.seleccionarBoss(1);
+	juego.seleccionarBossSiguiente();
 
 	juego.cargarEntrada();
 	juego.entrada();

@@ -115,6 +115,7 @@ public:
 	int getCantidadUsuarios();
 	void crearPersonajesManager(int cantUsers);
 	void enviarPuntaje(int idPj);
+	bool existeDireccion(int id);
 };
 
 

@@ -111,7 +111,8 @@ void Bala::desaparecer(){
     existe = false;
     idDuenio = 0;
     setDireccion(false, false, false, false);
-    cout << "DESAPARECE" << endl;
+    if (envolvente != NULL) delete envolvente;
+    envolvente = NULL;
 }
 
 int Bala::getId() {
@@ -151,6 +152,7 @@ int Bala::getIzquierda() {
 
 void Bala::handleColision(){
     ObjectManager* objectManager = ObjectManager::getInstance();
+    if (envolvente == NULL) return;
 
     if (id <= 50 || (id > 100 && id < 251)){
         unordered_map<int, Enemigo*>* enemigosHash = objectManager->getEnemigosHash();
@@ -175,6 +177,10 @@ void Bala::handleColision(){
                 (objectManager->getObject(idDuenio))->aumentarPuntos(puntos);
                 objectManager->enviarPuntaje(idDuenio);
                 if (!shotgun) desaparecer();
+                else {
+                    delete envolvente;
+                    envolvente = NULL;
+                }
                 return;
             }
         }

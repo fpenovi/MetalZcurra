@@ -60,6 +60,7 @@ public:
 	const static int MODO_COLABORATIVO = 1;
 	const static int MODO_GRUPAL = 2;
 	const static int CANT_EQUIPOS = 2;
+	void resetTransparenciaActual();
 
 	static VistaPuntajes* NewVistaPuntaje(int cantPlayers, int modoJuego, SDL_Renderer* renderer);
 	virtual void actualizarPuntaje(int idJugador, int puntos) = 0;

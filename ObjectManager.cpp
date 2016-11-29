@@ -70,8 +70,15 @@ void ObjectManager::registerUser(string username) {
 	if (!(tablaUsuarios.find(username) == tablaUsuarios.end()))
 		return;
 
-	direccionBalas[idActual] = new Direccion();
+	if (!existeDireccion(idActual))
+		direccionBalas[idActual] = new Direccion();
+
 	tablaUsuarios[username] = idActual++;
+}
+
+bool ObjectManager::existeDireccion(int id){
+	auto it = direccionBalas.find(id);
+	return it != direccionBalas.end();
 }
 
 int ObjectManager::getIdByUsername(string username) {
@@ -320,6 +327,7 @@ void ObjectManager::enviarEscenario(int FD, int cantUsers, int modo) {
 }
 
 void ObjectManager::enviarNuevoBackground(string emisor) {
+	cout << "ENVIO NUEVO BACKGROUND" << endl;
 
 	string msj;
 	int result;
@@ -427,6 +435,7 @@ void ObjectManager::setTamVentana(vector<string> tamVentana) {
 }
 
 void ObjectManager::liberarEnemigos() {
+	cout << "LIBERO ENEMIGOS" << endl;
 	for (auto kv : enemigos)
 		delete kv.second;
 	enemigos.clear();
@@ -435,6 +444,7 @@ void ObjectManager::liberarEnemigos() {
 }
 
 void ObjectManager::reiniciarBonuses() {
+	cout << "REINICIO BONUS" << endl;
 	for (auto kv : bonuses)
 		delete kv.second;
 	bonuses.clear();

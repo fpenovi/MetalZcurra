@@ -66,6 +66,7 @@ void* handleJumpFunc(void* argKh) {
 
             for (int i = 0 ; i < 48 ; i++){
                 if (personaje->getColision()) break;
+                personaje->setSaltando(true);
 
                 if (personaje->getPosy() <= posFinal){
                     personaje->setVely((int) seno[i]);
@@ -80,7 +81,6 @@ void* handleJumpFunc(void* argKh) {
                     personaje->moverY();
                     personaje->setVely(0);
                     personaje->setBajando(false);
-                    personaje->setSaltando(false);
                 }
                 else if (personaje->getBajando()){
                     personaje->setVely((int) seno[i]);
@@ -127,6 +127,8 @@ void* handleJumpFunc(void* argKh) {
             }
             personaje->setColision(false);
             personaje->setGravity(true);
+            personaje->setBajando(false);
+            personaje->setSaltando(false);
             *isKhPaused = true;
         }
     }
