@@ -70,8 +70,15 @@ void ObjectManager::registerUser(string username) {
 	if (!(tablaUsuarios.find(username) == tablaUsuarios.end()))
 		return;
 
-	direccionBalas[idActual] = new Direccion();
+	if (!existeDireccion(idActual))
+		direccionBalas[idActual] = new Direccion();
+
 	tablaUsuarios[username] = idActual++;
+}
+
+bool ObjectManager::existeDireccion(int id){
+	auto it = direccionBalas.find(id);
+	return it != direccionBalas.end();
 }
 
 int ObjectManager::getIdByUsername(string username) {
