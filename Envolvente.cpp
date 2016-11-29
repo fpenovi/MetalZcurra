@@ -34,6 +34,14 @@ bool Envolvente::hayColisionConPlataforma(Envolvente *otra) {
 
 }
 
+bool Envolvente::hayColisionConPlataformaSalto(Envolvente* otra) {
+
+	Rectangulo* pies = getComponentes()[1];
+	Rectangulo* otroRect = otra->getComponentes()[0];
+
+	return pies->hayColisionSalto(otroRect);
+}
+
 vector<Rectangulo*> Envolvente::getComponentes(){
 	return componentes;
 }
@@ -61,4 +69,3 @@ int Envolvente::getAlto(){
 Envolvente::~Envolvente() {
 	// TODO Auto-generated destructor stub
 }
-

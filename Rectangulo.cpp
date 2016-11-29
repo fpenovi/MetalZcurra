@@ -5,6 +5,7 @@
  *      Author: franch
  */
 
+#include <iostream>
 #include "Rectangulo.h"
 
 Rectangulo::Rectangulo(int* x, int* y, int ancho, int alto) {
@@ -55,3 +56,17 @@ int Rectangulo::getAlto() {
 }
 
 Rectangulo::~Rectangulo() { }
+
+bool Rectangulo::hayColisionSalto(Rectangulo* otro) {
+	int thisX = *(this->x) + this->offsetX;
+	int thisY = *(this->y) + this->offsetY;
+	int otroX = *(otro->x) + otro->offsetX;
+	int otroY = *(otro->y) + otro->offsetY;
+
+	int anchoNuevo = otro->ancho * 15 / 100;
+	int finalNuevo = otro->ancho * 85 / 100;
+
+	bool result = ((thisX + this->ancho) < otroX || (otroX + anchoNuevo) < thisX || (thisY + this->alto) < otroY || (otroY + otro->alto) < thisY);
+	bool result2 = ((thisX + this->ancho) < (otroX + finalNuevo)  || (otroX + finalNuevo + anchoNuevo) < thisX || (thisY + this->alto) < otroY || (otroY + otro->alto) < thisY);
+	return (!result || !result2);
+}

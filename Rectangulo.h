@@ -8,6 +8,8 @@
 #ifndef RECTANGULO_H_
 #define RECTANGULO_H_
 
+using namespace std;
+
 class Rectangulo {
 
 private:
@@ -22,6 +24,7 @@ public:
 	Rectangulo(int* x, int* y, int ancho, int alto);
 	void setOffset(int x, int y);
 	bool hayColision(Rectangulo* otro);
+	bool hayColisionSalto(Rectangulo *pRectangulo);
 	int getX();
 	int getY();
 	int getAncho();

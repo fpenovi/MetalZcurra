@@ -18,7 +18,7 @@
 		<plataforma>
 			<x>606</x>
 			<y>443</y>
-			<ancho>895</ancho>
+			<ancho>836</ancho>
 			<alto>10</alto>
 		</plataforma>
 
@@ -46,7 +46,7 @@
 		<plataforma>
 			<x>5119</x>
 			<y>443</y>
-			<ancho>477</ancho>
+			<ancho>412</ancho>
 			<alto>10</alto>
 		</plataforma>
 
@@ -65,9 +65,9 @@
 		</plataforma>
 
 		<plataforma>
-			<x>6311</x>
+			<x>6355</x>
 			<y>443</y>
-			<ancho>867</ancho>
+			<ancho>823</ancho>
 			<alto>10</alto>
 		</plataforma>
 	</plataformas>

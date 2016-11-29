@@ -39,8 +39,8 @@ public:
 	~Nivel();
 	bool haFinalizado();
 	bool hayColision(Personaje* personaje);
+	bool hayColisionSalto(Personaje *pPersonaje);
 	vector<string> getCapas();
-
 	void moverPlataformas();
 };
 

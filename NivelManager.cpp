@@ -43,10 +43,14 @@ bool NivelManager::hayColision(Personaje *personaje) {
 }
 
 
+bool NivelManager::hayColisionSalto(Personaje* personaje) {
+	return nivel->hayColisionSalto(personaje);
+}
+
+
 bool NivelManager::hayMasNiveles() {
 	return this->nivelActual < xmlNiveles.size();
 }
-
 
 bool NivelManager::haFinalizadoNivel() {
 	return this->nivel->haFinalizado();

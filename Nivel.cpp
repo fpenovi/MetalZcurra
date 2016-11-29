@@ -146,3 +146,14 @@ Bonus* Nivel::makeBonusOrNull() {
 
 	return NULL;
 }
+
+bool Nivel::hayColisionSalto(Personaje* personaje) {
+
+	Envolvente* envolvente = personaje->getEnvolvente();
+
+	for (Plataforma* plataforma : plataformas){
+		if (envolvente->hayColisionConPlataformaSalto(plataforma->getEnvolvente())) return true;
+	}
+	return false;
+
+}

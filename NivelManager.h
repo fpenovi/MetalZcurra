@@ -29,6 +29,7 @@ public:
 	static NivelManager* getInstance();
 	void setXmlNiveles(vector<string> niveles);
 	bool hayColision(Personaje* personaje);
+	bool hayColisionSalto(Personaje *pPersonaje);
 	bool haFinalizadoNivel();
 	bool hayMasNiveles();
 	void siguienteNivel();

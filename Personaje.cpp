@@ -55,7 +55,15 @@ void Personaje::moverX() {
 void Personaje::moverY() {
     int pos2 = posy;
 
-    if (NivelManager::getInstance()->hayColision(this) && posy != ultimaPosy) {
+    if (NivelManager::getInstance()->hayColisionSalto(this) && posy != ultimaPosy) {
+        if (bajando) {
+            seMovio = false;
+            saltando = false;
+            colision = true;
+            return;
+        }
+    }
+    else if (NivelManager::getInstance()->hayColision(this) && posy != ultimaPosy && ultimaPosy < 465){
         if (bajando) {
             seMovio = false;
             saltando = false;
