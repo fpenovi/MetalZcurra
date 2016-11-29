@@ -24,6 +24,8 @@ ObjectManager::~ObjectManager() {
 	delete bonusManager;
 	personajesManager->Off();
 	delete personajesManager;
+	gravedadManager->Off();
+	delete gravedadManager;
 
 	for (auto kv : personajes)
 		delete kv.second;
@@ -398,6 +400,12 @@ void ObjectManager::crearPersonajesManager(int cantUsers) {
 	personajesManager->On();
 }
 
+void ObjectManager::crearGravedadManager() {
+
+	gravedadManager = new GravedadManager();
+	gravedadManager->On();
+}
+
 Boss* ObjectManager::getBoss() {
 	return this->boss;
 }
@@ -550,6 +558,7 @@ void ObjectManager::pausarManagers() {
 	enemigosManager->Pause();
 	bonusManager->Pause();
 	personajesManager->Pause();
+	gravedadManager->Pause();
 }
 
 void ObjectManager::reanudarManagers() {
@@ -557,6 +566,7 @@ void ObjectManager::reanudarManagers() {
 	enemigosManager->Resume();
 	bonusManager->Resume();
 	personajesManager->Resume();
+	gravedadManager->Resume();
 }
 
 int ObjectManager::getCantidadUsuarios() {

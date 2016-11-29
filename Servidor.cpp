@@ -730,6 +730,7 @@ public:
         objectManager->crearEnemigosManager();
         objectManager->crearBonusManager();
         objectManager->crearPersonajesManager(cantidadUsuarios);
+        objectManager->crearGravedadManager();
     }
 
     void aceptarClientes() {

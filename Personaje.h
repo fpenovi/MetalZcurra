@@ -173,7 +173,7 @@ public:
 
 	bool getSaltando();
 
-	void gravedad();
+	bool gravedad();
 
 	void setGravity(bool aux);
 

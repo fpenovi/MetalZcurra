@@ -31,8 +31,6 @@ void Personaje::moverX() {
     *posX += velx;
     posCamara += velx;
 
-    gravedad();
-
     //Que no salga de la pantalla
     if( (posCamara + ancho > SCREEN_WIDTH *3/4) && *posX < 7200 ) posCamara  -= velx;
 
@@ -332,12 +330,13 @@ bool Personaje::getSaltando() {
     return saltando;
 }
 
-void Personaje::gravedad() {
+bool Personaje::gravedad() {
     if (!NivelManager::getInstance()->hayColision(this) && posy < 465 && gravity) {
-        setVely(15);
-        moverY();
+        posy += 15;
         saltando = false;
+        return true;
     }
+    return false;
 }
 
 void Personaje::setGravity(bool aux) {

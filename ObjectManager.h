@@ -23,6 +23,7 @@
 #include "Bonus.h"
 #include "BonusManager.h"
 #include "PersonajesManager.h"
+#include "GravedadManager.h"
 
 using namespace std;
 
@@ -49,6 +50,7 @@ private:
 	int idBonus;
 	int cantidadUsuarios;
 	PersonajesManager* personajesManager;
+	GravedadManager* gravedadManager;
 
 public:
 	~ObjectManager();
@@ -116,6 +118,7 @@ public:
 	void crearPersonajesManager(int cantUsers);
 	void enviarPuntaje(int idPj);
 	bool existeDireccion(int id);
+	void crearGravedadManager();
 };
 
 
