@@ -722,9 +722,10 @@ void Juego::jugadoresInicio(){
 	vistasBalasVivas.clear();
 	vistasEnemigosVivos.clear();
 
-	transparentar(255);
-
 	seleccionarBossSiguiente();
+
+	transparentar(255);
+	puntajes->resetTransparenciaActual();
 }
 
 void Juego::salaDeEspera(){

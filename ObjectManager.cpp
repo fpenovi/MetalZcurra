@@ -327,6 +327,7 @@ void ObjectManager::enviarEscenario(int FD, int cantUsers, int modo) {
 }
 
 void ObjectManager::enviarNuevoBackground(string emisor) {
+	cout << "ENVIO NUEVO BACKGROUND" << endl;
 
 	string msj;
 	int result;
@@ -434,6 +435,7 @@ void ObjectManager::setTamVentana(vector<string> tamVentana) {
 }
 
 void ObjectManager::liberarEnemigos() {
+	cout << "LIBERO ENEMIGOS" << endl;
 	for (auto kv : enemigos)
 		delete kv.second;
 	enemigos.clear();
@@ -442,6 +444,7 @@ void ObjectManager::liberarEnemigos() {
 }
 
 void ObjectManager::reiniciarBonuses() {
+	cout << "REINICIO BONUS" << endl;
 	for (auto kv : bonuses)
 		delete kv.second;
 	bonuses.clear();

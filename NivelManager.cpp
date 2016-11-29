@@ -39,8 +39,7 @@ vector<string> NivelManager::getCapas() {
 
 
 bool NivelManager::hayColision(Personaje *personaje) {
-	if (!personaje->getBajando()) return false;
-	nivel->hayColision(personaje);
+	return nivel->hayColision(personaje);
 }
 
 
