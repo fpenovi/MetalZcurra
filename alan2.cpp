@@ -667,14 +667,14 @@ class Personaje
 			abajo=false;
 			arriba=false;
 		}
-/* ESTOS HAY QUE HACERLOS BIEN
+
 		void titilar(){
 			TEXTURA_PERSONAJE_PARADO_PIES.setAlpha(90);
 		}
 		void destitilar(){
 			TEXTURA_PERSONAJE_PARADO_PIES.setAlpha(255);
 		}
-*/
+
 		void asignarID(int id2){
 			id=id2;
 			arma.asignarID(id);
@@ -2184,6 +2184,7 @@ class Helicoptero{
 #define PREPARANDOSE 1
 #define PREPARADO 2
 #define DISPARANDO 3
+#define TERMINADO 4
 
 class Ovni{
 
@@ -2450,6 +2451,367 @@ class Ovni{
 		}
 };
 
+#define NOGIRO 0
+#define IZQUIERDA 1
+#define DERECHA 2
+
+class BalaTanque{
+	private:
+		int posx;
+		int posy;
+		Textura TEXTURA_BALA;
+		Textura TEXTURA_EXPLOSION;
+		const static int ANIMACION_EXPLOSION=6;
+		SDL_Rect spriteExplosion[ ANIMACION_EXPLOSION ];
+		int frameExplosion;
+		bool explotar;
+		bool existe;
+		int ancho;
+		int alto;
+		bool derecha;
+	public:
+		BalaTanque(int x, int y, bool der){
+			derecha=der;
+			posx=x;
+			posy=y;
+			explotar=false;
+			ancho=98; //TAMANIO DE LAF OTO DE LA BOMBA
+			alto=47;
+			frameExplosion=0;
+			existe=true;
+			if( !TEXTURA_BALA.cargarImagen( "imag/sprites/Di-Cokka/bala.png") )
+			{
+				printf( "Fallo imagen bomba\n" );
+			}
+
+			if( !TEXTURA_EXPLOSION.cargarImagen( "imag/sprites/Di-Cokka/colision.png") )
+			{
+				printf( "Fallo sprite colision\n" );
+			}
+			else
+			{	
+				for (int i = 0;i<ANIMACION_EXPLOSION;i++){
+					spriteExplosion[ i ].x = i*363;
+					spriteExplosion[ i ].y = 0;
+					spriteExplosion[ i ].w = 363;
+					spriteExplosion[ i ].h = 86;
+				}
+			}
+		}
+		bool mover(bool der){
+			derecha=der;
+			if (!existe) return false;
+			if (explotar) return true;
+			if (derecha) posx+=7;
+			else posx-=7;
+			if (posx>=800 || posx<0) explotar=true;
+			return true;
+		}
+		void render(){
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x=posx;
+			if (derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x-=(364-ancho+50);
+			}
+			if (!explotar) TEXTURA_BALA.render(posx,posy,NULL,0,NULL,flip);
+			else{
+				SDL_Rect* currentClip = &spriteExplosion[ frameExplosion / 4];
+				TEXTURA_EXPLOSION.render(x,posy,currentClip,0,NULL,flip);
+				++frameExplosion;
+
+				if( frameExplosion / 4 >= ANIMACION_EXPLOSION )
+				{
+					existe=false;
+				}	
+			}
+		}
+};
+
+class Tanque{
+	private:
+		int posx;
+		int posy;
+		int alto;
+		int ancho;
+
+		bool derecha;
+		int girando;
+		int disparando;
+
+		Textura TEXTURA_MUERTE;
+		Textura TEXTURA_MOVER;
+		Textura TEXTURA_SALIDA_TIRO;
+		Textura TEXTURA_DISPARAR;
+		Textura TEXTURA_GIRAR;
+
+		const static int ANIMACION_MUERTE=16;
+		SDL_Rect spriteMuerte[ ANIMACION_MUERTE ];
+		int frameMuerte;
+
+		const static int ANIMACION_MOVER=8;
+		SDL_Rect spriteMover[ ANIMACION_MOVER ];
+		int frameMover;
+
+		const static int ANIMACION_SALIDA_TIRO=9;
+		SDL_Rect spriteSalidaTiro[ ANIMACION_SALIDA_TIRO ];
+		int frameSalidaTiro;
+
+		const static int ANIMACION_DISPARAR=7;
+		SDL_Rect spriteDisparar[ ANIMACION_DISPARAR ];
+		int frameDisparar;
+
+		const static int ANIMACION_GIRAR=11;
+		SDL_Rect spriteGirar[ ANIMACION_GIRAR ];
+		int frameGirar;
+
+		deque<BalaTanque*> balas;
+		int cantBalas=0;
+
+	public:
+		Tanque(int x, int y){
+			frameMuerte=0;
+			frameMover=0;
+			frameSalidaTiro=0;
+			frameDisparar=0;
+			frameGirar=0;
+			posx=x;
+			posy=y;
+			derecha=false;
+			ancho=152;
+			alto=122;
+			girando=NOGIRO;
+			disparando=NODISPARANDO;
+			cantBalas=0;
+
+			int i;
+			bool success=true;
+
+			if( !TEXTURA_MUERTE.cargarImagen( "imag/sprites/Di-Cokka/death.png") )
+				{
+					printf( "Fallo muerte tanque\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_MUERTE;i++){
+						spriteMuerte[ i ].x = i*363;
+						spriteMuerte[ i ].y = 0;
+						spriteMuerte[ i ].w = 363;
+						spriteMuerte[ i ].h = 146;
+					}
+				}
+			if( !TEXTURA_MOVER.cargarImagen( "imag/sprites/Di-Cokka/moving.png") )
+				{
+					printf( "Fallo mover tanque\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_MOVER;i++){
+						spriteMover[ i ].x = i*363;
+						spriteMover[ i ].y = 0;
+						spriteMover[ i ].w = 363;
+						spriteMover[ i ].h = 122;
+					}
+				}
+			if( !TEXTURA_SALIDA_TIRO.cargarImagen( "imag/sprites/Di-Cokka/salidaDelCanon.png") )
+				{
+					printf( "Fallo salida del tiro tanque\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_SALIDA_TIRO;i++){
+						spriteSalidaTiro[ i ].x = i*363;
+						spriteSalidaTiro[ i ].y = 0;
+						spriteSalidaTiro[ i ].w = 363;
+						spriteSalidaTiro[ i ].h = 90;
+					}
+				}
+			if( !TEXTURA_DISPARAR.cargarImagen( "imag/sprites/Di-Cokka/shooting.png") )
+				{
+					printf( "Fallo disparo tanque\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_DISPARAR;i++){
+						spriteDisparar[ i ].x = i*363;
+						spriteDisparar[ i ].y = 0;
+						spriteDisparar[ i ].w = 363;
+						spriteDisparar[ i ].h = 133;
+					}
+				}
+			if( !TEXTURA_GIRAR.cargarImagen( "imag/sprites/Di-Cokka/turning.png") )
+				{
+					printf( "Fallo girar tanque\n" );
+					success = false;
+				}
+			else
+				{	
+					for (i = 0;i<ANIMACION_GIRAR;i++){
+						spriteGirar[ i ].x = i*363;
+						spriteGirar[ i ].y = 0;
+						spriteGirar[ i ].w = 363;
+						spriteGirar[ i ].h = 122;
+					}
+				}
+		}
+		void animacionMover(){
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x=posx;
+			if (derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x-=(364-ancho);
+			}
+			SDL_Rect* currentClip = &spriteMover[ frameMover];
+			TEXTURA_MOVER.render(x,posy,currentClip,0,NULL,flip);
+			++frameMover;
+
+			if( frameMover>= ANIMACION_MOVER )
+			{
+				frameMover = 0;
+			}	
+		}
+		void animacionMuerte(){
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x=posx;
+			if (derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x-=(364-ancho);
+			}
+			SDL_Rect* currentClip = &spriteMuerte[ frameMuerte/5];
+			TEXTURA_MUERTE.render(x,posy,currentClip,0,NULL,flip);
+			++frameMuerte;
+
+			if( frameMuerte/5>= ANIMACION_MUERTE )
+			{
+				frameMuerte = 0;
+			}	
+		}
+		void animacionSalidaTiro(){
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x=posx-50;
+			if (derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x= x-364+ancho+100;
+			}
+			SDL_Rect* currentClip = &spriteSalidaTiro[ frameSalidaTiro];
+			TEXTURA_SALIDA_TIRO.render(x,posy-10,currentClip,0,NULL,flip);
+			++frameSalidaTiro;
+
+			if( frameSalidaTiro>= ANIMACION_SALIDA_TIRO )
+			{
+				frameSalidaTiro = 0;
+				disparando=NODISPARANDO;
+			}	
+		}
+		void animacionDisparar(){
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+			int x=posx;
+			if (derecha) {
+				flip = SDL_FLIP_HORIZONTAL;
+				x-=(364-ancho);
+			}
+			SDL_Rect* currentClip = &spriteDisparar[ frameDisparar/4];
+			TEXTURA_DISPARAR.render(x,posy-10,currentClip,0,NULL,flip);
+			++frameDisparar;
+
+			if( frameDisparar/4>= ANIMACION_DISPARAR )
+			{
+				frameDisparar = 0;
+				disparando=TERMINADO;
+			}
+		}
+		void animacionGirarADerecha(){
+			SDL_Rect* currentClip = &spriteGirar[ frameGirar/6];
+			TEXTURA_GIRAR.render(posx,posy,currentClip);
+			++frameGirar;
+
+			if( frameGirar/6>= ANIMACION_GIRAR )
+			{
+				frameGirar--;
+				girando=NOGIRO;
+			}
+		}
+		void animacionGirarAIzquierda(){
+			SDL_Rect* currentClip = &spriteGirar[ frameGirar/6];
+			TEXTURA_GIRAR.render(posx,posy,currentClip);
+			--frameGirar;
+
+			if( frameGirar/6<= 0 )
+			{
+				frameGirar=0;
+				girando=NOGIRO;
+			}
+		}
+		void animacionGirar(){
+			if (girando==DERECHA) {
+				animacionGirarADerecha();
+			}
+			if (girando==IZQUIERDA) {
+				animacionGirarAIzquierda();
+			}
+		}
+		void mover(){
+			if (girando!=NOGIRO || disparando==DISPARANDO) return;
+			if (derecha) moverDerecha();
+			else moverIzquierda();
+		}
+		void moverDerecha(){
+			posx+=4;
+			if (posx+ancho>800) {
+				derecha=false;
+				cout << "tengo que girar a la izquierda" << endl;
+				girando=IZQUIERDA;
+			}
+		}
+		void moverIzquierda(){
+			posx-=4;
+			if (posx<0) {
+				derecha=true;
+				cout << "tengo que girar a la derecha" << endl;
+				girando=DERECHA;
+			}
+		}
+		void disparar(){
+			disparando=DISPARANDO;
+			BalaTanque *bala = new BalaTanque(posx,posy,derecha);
+			balas.push_front(bala);
+			cantBalas++;
+		}
+		void render(){
+			if (girando==NOGIRO) {
+				if (disparando==DISPARANDO) animacionDisparar();
+				else if (disparando==TERMINADO) {
+					animacionSalidaTiro();
+					animacionMover();
+				}
+				else animacionMover();
+			}
+			else animacionGirar();
+
+			renderBalas();
+		}
+		void renderBalas(){
+			//NO ME ANDA
+			bool vive;
+			if (cantBalas==0) return;
+			for(int i = 0; i < cantBalas; i++){
+        		BalaTanque *bala=balas[i];
+        		vive=bala->mover(derecha);
+        		if (vive) {
+        			bala->render();
+        		}
+			}
+			if (!vive) {
+				balas.pop_back();
+				cantBalas--;
+			}
+		}
+
+};
 
 class Programa
 {
@@ -2680,7 +3042,6 @@ class Programa
 };
 
 
-
 int main( int argc, char* args[] )
 {
 	//Start up SDL and create window
@@ -2698,7 +3059,9 @@ int main( int argc, char* args[] )
 		Personaje personaje;
 		programa.asignarID(&personaje);
 		//Helicoptero *helicoptero = new Helicoptero(800,50);
-		Ovni ovni=Ovni(800,50);
+		//Ovni ovni=Ovni(800,50);
+		Tanque tanque=Tanque(800,400);
+		//BalaTanque bala=BalaTanque(0,300,true);
 
 
 		if( !personaje.cargarImagen() || !fondo.agregar("imag/background/1200.png") || !fondo.agregar("imag/background/2400.png") || !fondo.agregar("imag/background/4800.png"))
@@ -2732,27 +3095,22 @@ int main( int argc, char* args[] )
 				}
 				//if (contador %80 == 0) helicoptero->disparar();
 				if (contador % 400 == 0) ovni.disparar();*/
-
-				if (contador % 100) {
-					personaje.titilar();
-					cout << 1 << endl;
-				}
-
-				if (contador % 120) {
-					personaje.destitilar();
-					cout << 2 << endl;
-				}
+				if (contador % 100 == 0) tanque.disparar();
 
 				SDL_SetRenderDrawColor( renderizador, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear(renderizador);
 
 				//helicoptero->mover();
 				//ovni.mover();
+				tanque.mover();
+				//bala.mover();
 				//int scroll=fondo.render(personaje.getX());
 				//programa.ponerPuntajes();
 				programa.render();
 				//helicoptero->render();
 				//ovni.render();
+				tanque.render();
+				//bala.render();
 				//programa.finNivel();
 				programa.manejarColisiones();
 				SDL_RenderPresent( renderizador );
