@@ -7,12 +7,13 @@
 WinScreen::WinScreen(SDL_Renderer* renderer) : FinalScreen(renderer) {
     // ToDo Cargar imagen en vez de un texto si quiero mostrar una imagen piola
     this->colorFuente = new SDL_Color{0xFF, 0xFF, 0xFF, 0xFF };
-    this->fuente = TTF_OpenFont("imag/sprites/letras/MetalSlug.ttf", 40);
+    this->fuente = TTF_OpenFont("imag/sprites/letras/MetalSlug.ttf", 100);
+    this->textura->loadFromText("YOU WIN!", *(this->colorFuente), this->fuente);
 }
 
 
 void WinScreen::render() {
-    cout << "YOU WIN!!!" << endl;
+    this->textura->render(MENSAJE_X, MENSAJE_Y);
 }
 
 
