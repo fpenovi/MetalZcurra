@@ -29,6 +29,10 @@ void* handleDisparoFunc(void* argKh) {
     start = high_resolution_clock::now();
     microseconds intervalo(50000);	// 50ms
 
+    time_point<high_resolution_clock> start_sprite;
+    start_sprite = high_resolution_clock::now();
+    microseconds intervalo_sprite(40000);	// 40ms
+
     while (*isKhOn) {
         time_point<high_resolution_clock> actual;
         actual = high_resolution_clock::now();
@@ -80,39 +84,48 @@ void* handleDisparoFunc(void* argKh) {
                 else cant = 10;
 
                 personaje->setDisparando(true);
-                for (int i = 0; i < cant; i++){
-                    ProtocoloVistaUpdate update;
-                    personaje->setSprites();
+                for (int i = 0; i < cant;){
+                    time_point<high_resolution_clock> actual_sprite;
+                    actual_sprite = high_resolution_clock::now();
 
-                    update.setTipoObjeto(3);
-                    update.setEstado(personaje->getDisparando());
-                    update.setX(0);
-                    update.setY(0);
-                    update.setObject_id(idEmisor);
-                    update.setPosCamara(0);
-                    update.setConectado(1);
-                    update.setSpriteIndex(personaje->getSprites());
-                    update.setApuntando(personaje->getDireccion());
-                    update.setSaltando(personaje->getCambioDeArma());
-                    update.setPuntaje(0);
+                    auto deltaTiempo_sprite = actual_sprite.time_since_epoch() - start_sprite.time_since_epoch();
+                    auto elapsed_ms_sprite = duration_cast<microseconds>(deltaTiempo_sprite);
 
-                    int result;
-                    string mensaje = update.toString();
+                    if (elapsed_ms_sprite.count() >= intervalo_sprite.count()) {
 
-                    for (auto kv : *conectadosHash) {
+                        ProtocoloVistaUpdate update;
+                        personaje->setSprites();
 
-                        Mensaje* mensajeNuevo = new Mensaje(*emisor, kv.first, mensaje);
+                        update.setTipoObjeto(3);
+                        update.setEstado(personaje->getDisparando());
+                        update.setX(0);
+                        update.setY(0);
+                        update.setObject_id(idEmisor);
+                        update.setPosCamara(0);
+                        update.setConectado(1);
+                        update.setSpriteIndex(personaje->getSprites());
+                        update.setApuntando(personaje->getDireccion());
+                        update.setSaltando(personaje->getCambioDeArma());
+                        update.setPuntaje(0);
 
-                        result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
-                        if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                        int result;
+                        string mensaje = update.toString();
 
-                        kv.second->push_back(mensajeNuevo);
+                        for (auto kv : *conectadosHash) {
 
-                        result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
-                        if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                            Mensaje *mensajeNuevo = new Mensaje(*emisor, kv.first, mensaje);
+
+                            result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+                            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+                            kv.second->push_back(mensajeNuevo);
+
+                            result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+                            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                        }
+                        i++;
+                        start_sprite = system_clock::now();
                     }
-
-                    usleep(40000);
                 }
 
                 personaje->restarBala();
