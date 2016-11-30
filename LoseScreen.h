@@ -14,6 +14,9 @@ private:
     TTF_Font* fuente;
     SDL_Color* colorFuente;
 
+    const int MENSAJE_X = 70;
+    const int MENSAJE_Y = 150;
+
 public:
     LoseScreen(SDL_Renderer* renderer);
     void render();

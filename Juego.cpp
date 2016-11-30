@@ -5,6 +5,8 @@
 #include "VistaRshobu.h"
 #include "ProtocoloVistaUpdate.h"
 #include "VistaDaiManji.h"
+#include "WinScreen.h"
+#include "LoseScreen.h"
 #include "VistaDiCokka.h"
 
 using namespace std;
@@ -59,6 +61,9 @@ void Juego::close() {
 	delete TEXTURA_BALA_TANQUE;
 	delete fondo;
 	delete grayOutHandler;
+
+	if (pantallaFinal != NULL)
+		delete pantallaFinal;
 
 	//Quit SDL subsystems
 	IMG_Quit();
@@ -1338,13 +1343,32 @@ bool Juego::puedePasarDeNivel() {
 
 
 bool Juego::haFinalizadoJuego() {
-	// ToDo Implementar bien!
-	/*
-	 * si termino el juego, (y todavia no cree ninguna pantalla final) dependiendo
-	 * de que forma termine (si murieron todos o ganaron)
-	 * creo alguna de las 2 pantallas finales y se la asigno a this->pantallaFinal
-	 * la pantalla solo debe crearse 1 vez!!!!!
-	 */
+
+	// ya finalizo el juego y tengo una pantalla creada
+	if (this->pantallaFinal != NULL)
+		return true;
+
+	// CASO GANO
+	if (!bossActual->estaVivo() && nivelActual > 2) {
+		this->pantallaFinal = new WinScreen(this->renderizador);
+		return true;
+	}
+
+	// CASO PERDIO
+	int playersJugando = vistasPersonajes.size();
+	int i = 0;
+
+	for (auto kv : vistasPersonajes) {
+		if (!kv.second->getExiste() || !kv.second->getConectado())
+			i++;
+	}
+
+	if (i == playersJugando) {
+		this->pantallaFinal = new LoseScreen(this->renderizador);
+		return true;
+	}
+
+
 	return false;
 }
 

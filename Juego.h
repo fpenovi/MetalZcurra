@@ -44,7 +44,7 @@ private:
 	int idBonus;
 	bool enterHabilitado = false;
 	VistaPuntajes* puntajes;
-	FinalScreen* pantallaFinal;
+	FinalScreen* pantallaFinal = NULL;
 	unordered_map<int, VistaBala *> vistasBalasVivas;
 	unordered_map<int, VistaEnemigo *> vistasEnemigosVivos;
 	int nivelActual;

@@ -14,6 +14,9 @@ private:
     TTF_Font* fuente;
     SDL_Color* colorFuente;
 
+    const int MENSAJE_X = 200;
+    const int MENSAJE_Y = 150;
+
 public:
     WinScreen(SDL_Renderer* renderer);
     void render();
