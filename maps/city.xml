@@ -1,0 +1,172 @@
+<!DOCTYPE CITY SYSTEM "city.dtd">
+
+<nivel>
+	<nombre>city</nombre>
+	<ancho>8006</ancho>
+	<alto>600</alto>
+
+	<capas>
+		<capa>
+			<path>imag/background/maps/city/BGcity.png</path>
+		</capa>
+
+		<capa>
+			<path>imag/background/maps/city/city.png</path>
+		</capa>
+	</capas>
+	<plataformas>
+		<plataforma>
+			<x>521</x>
+			<y>472</y>
+			<ancho>305</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>930</x>
+			<y>405</y>
+			<ancho>141</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>1222</x>
+			<y>411</y>
+			<ancho>143</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>1946</x>
+			<y>433</y>
+			<ancho>103</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>2155</x>
+			<y>411</y>
+			<ancho>143</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x></x>
+			<y></y>
+			<ancho></ancho>
+			<alto></alto>
+		</plataforma>
+
+		<plataforma>
+			<x></x>
+			<y></y>
+			<ancho></ancho>
+			<alto></alto>
+		</plataforma>
+
+		<plataforma>
+			<x>2506</x>
+			<y>472</y>
+			<ancho>262</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>2921</x>
+			<y>405</y>
+			<ancho>290</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>3267</x>
+			<y>411</y>
+			<ancho>143</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>3510</x>
+			<y>433</y>
+			<ancho>103</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>4386</x>
+			<y>472</y>
+			<ancho>351</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>4839</x>
+			<y>428</y>
+			<ancho>351</ancho>
+			<alto>10</alto>
+		</plataforma>
+
+		<plataforma>
+			<x>5317</x>
+			<y>384</y>
+			<ancho>351</ancho>
+			<alto>10</alto>
+		</plataforma>
+	</plataformas>
+
+	<!-- AGUS CLAVALE ENEMIGOS Y ALGUNOS BONUSES ARRIBA DE LAS PLATAFORMAS
+			ME DA PAJA A MI PONERME CON ESO, BESIS -->
+
+	<bonuses>
+		<bonus>
+			<x>900</x>
+			<y>500</y>
+			<tipo>HMGun</tipo>
+		</bonus>
+
+		<bonus>
+			<x>1400</x>
+			<y>500</y>
+			<tipo>SGun</tipo>
+		</bonus>
+
+		<bonus>
+			<x>1800</x>
+			<y>500</y>
+			<tipo>RLauncher</tipo>
+		</bonus>
+	</bonuses>
+
+	<enemigos>
+		<enemigo>
+			<x>900</x>
+			<y>465</y>
+			<delta>50</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1100</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1300</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<boss>
+			<x>7500</x>
+			<y>50</y>
+			<delta>600</delta>
+		</boss>
+	</enemigos>
+
+</nivel>
