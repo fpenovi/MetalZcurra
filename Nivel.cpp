@@ -15,6 +15,7 @@
 #include "Recover.h"
 #include "KillAll.h"
 #include "DaiManji.h"
+#include "DiCokka.h"
 #include <random>
 
 Nivel::Nivel(string xmlPath) {
@@ -101,7 +102,7 @@ Boss* Nivel::crearBoss(vector<string> bossStr) {
 		boss = new DaiManji(x, y, delta);
 
 	if (this->nombre.compare("hangar") == 0)
-		boss = new DaiManji(x, y, delta);
+		boss = new DiCokka(x, y, delta);
 
 	return boss;
 }

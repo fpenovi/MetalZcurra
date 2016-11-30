@@ -62,6 +62,7 @@ private:
 	Textura *TEXTURA_KILLALL;
 	Textura *TEXTURA_RECOVER;
 	Textura *TEXTURA_BALA_RSHOBU;
+	Textura *TEXTURA_BALA_TANQUE;
 
 	// PROTOCOLO
 	int tipoObjeto, id, state, posX, posy, posCam, conectado, spriteIdx, aim, saltando, puntaje;

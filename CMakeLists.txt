@@ -19,6 +19,7 @@ set(SOURCE_FILES Servidor.cpp Cliente.cpp Cliente.h Mensaje.cpp Mensaje.h Log.cp
         VistaPuntajesColaborativo.cpp VistaPuntajesColaborativo.h VistaPuntajesGrupal.cpp VistaPuntajesGrupal.h
         BonusManager.cpp BonusManager.h VistaBonus.cpp VistaBonus.h VistaRshobu.cpp VistaRshobu.h VistaBoss.cpp VistaBoss.h
         PersonajesManager.cpp PersonajesManager.h GrayOutHandler.cpp GrayOutHandler.h GravedadManager.cpp GravedadManager.h
-        VistaDaiManji.cpp VistaDaiManji.h DaiManji.cpp DaiManji.h FinalScreen.cpp FinalScreen.h WinScreen.cpp WinScreen.h LoseScreen.cpp LoseScreen.h)
+        VistaDaiManji.cpp VistaDaiManji.h DaiManji.cpp DaiManji.h VistaDiCokka.cpp VistaDiCokka.h DiCokka.cpp DiCokka.h
+        FinalScreen.cpp FinalScreen.h WinScreen.cpp WinScreen.h LoseScreen.cpp LoseScreen.h)
 
 add_executable(MetalZcurra ${SOURCE_FILES})

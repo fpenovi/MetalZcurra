@@ -91,7 +91,7 @@ public:
 	void crearBalasManager();
 	unordered_map<int, Bala*>* getBalasHash();
 	void inicializarBalaBoss(int posx, int posy);
-	void inicializarBalaRayo(int posx, int posy);
+	void inicializarBalaTanque(int posx, int posy, bool derecha);
 
 	// Enemigos
 	void addEnemigo(int id, Enemigo* enemigo);

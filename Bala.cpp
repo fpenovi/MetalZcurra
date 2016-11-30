@@ -91,6 +91,20 @@ void Bala::crearBalaBoss(int x, int y, int ancho, int alto){
     setDireccion(false, false, false, true);
 }
 
+void Bala::crearBalaTanque(int x, int y, int ancho, int alto, bool derecha){
+    existe = true;
+    posx = x;
+    posy = y;
+
+    if (envolvente != NULL) delete envolvente;
+    envolvente = new Envolvente();
+    Rectangulo* rect = new Rectangulo(&posx, &posy, ancho, alto);
+    rect->setOffset(7, 0);
+    envolvente->agregarComponente(rect);
+
+    setDireccion(derecha, !derecha, false, false);
+}
+
 int Bala::getPosx(){
     return posx;
 }

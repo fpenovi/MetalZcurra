@@ -193,12 +193,22 @@ void ObjectManager::inicializarBalaEnemiga(int posx, int posy) {
 void ObjectManager::inicializarBalaBoss(int posx, int posy){
 
 	for (auto kv : balas){
-		if (!kv.second->existeBala() && (kv.second->getId() > 250)){
+		if (!kv.second->existeBala() && (kv.second->getId() > 250 && kv.second->getId() <= 255)){
 			kv.second->crearBalaBoss(posx, posy, 26, 54);
 			return;
 		}
 	}
 
+}
+
+void ObjectManager::inicializarBalaTanque(int posx, int posy, bool derecha) {
+
+	for (auto kv : balas){
+		if (!kv.second->existeBala() && (kv.second->getId() > 255)){
+			kv.second->crearBalaTanque(posx, posy, 40, 47, derecha);
+			return;
+		}
+	}
 }
 
 void ObjectManager::inicializarEnemigo() {

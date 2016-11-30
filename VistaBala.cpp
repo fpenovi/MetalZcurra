@@ -196,7 +196,7 @@ void VistaBala::cargarExplosion(SDL_Renderer* renderer) {
 
 void VistaBala::explotar() {
     frameExplosion++;
-    currentClip = &spriteExplosion[frameExplosion / 4];
+    currentClip = &spriteExplosion[ (frameExplosion / 4) % 10];
     TEXTURA_EXPLOSION->render(posxExp, posyExp, currentClip);
     if (frameExplosion / 4 >= ANIMACION_EXPLOSION) {
         desaparecer();
