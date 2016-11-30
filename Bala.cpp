@@ -98,7 +98,9 @@ void Bala::crearBalaTanque(int x, int y, int ancho, int alto, bool derecha){
 
     if (envolvente != NULL) delete envolvente;
     envolvente = new Envolvente();
-    envolvente->agregarComponente(new Rectangulo(&posx, &posy, ancho, alto));
+    Rectangulo* rect = new Rectangulo(&posx, &posy, ancho, alto);
+    rect->setOffset(7, 0);
+    envolvente->agregarComponente(rect);
 
     setDireccion(derecha, !derecha, false, false);
 }

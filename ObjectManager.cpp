@@ -205,7 +205,7 @@ void ObjectManager::inicializarBalaTanque(int posx, int posy, bool derecha) {
 
 	for (auto kv : balas){
 		if (!kv.second->existeBala() && (kv.second->getId() > 255)){
-			kv.second->crearBalaTanque(posx, posy, 98, 47, derecha);
+			kv.second->crearBalaTanque(posx, posy, 40, 47, derecha);
 			return;
 		}
 	}

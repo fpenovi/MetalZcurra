@@ -84,19 +84,44 @@
 
 	<bonuses>
 		<bonus>
-			<x>900</x>
+			<x>567</x>
 			<y>500</y>
 			<tipo>HMGun</tipo>
 		</bonus>
 
 		<bonus>
-			<x>1400</x>
+			<x>987</x>
 			<y>500</y>
 			<tipo>SGun</tipo>
 		</bonus>
 
 		<bonus>
-			<x>1800</x>
+			<x>1234</x>
+			<y>500</y>
+			<tipo>RLauncher</tipo>
+		</bonus>
+
+		<bonus>
+			<x>2000</x>
+			<y>500</y>
+			<tipo>HMGun</tipo>
+		</bonus>
+
+
+		<bonus>
+			<x>1453</x>
+			<y>500</y>
+			<tipo>RLauncher</tipo>
+		</bonus>
+
+		<bonus>
+			<x>6549</x>
+			<y>500</y>
+			<tipo>HMGun</tipo>
+		</bonus>
+
+		<bonus>
+			<x>7000</x>
 			<y>500</y>
 			<tipo>RLauncher</tipo>
 		</bonus>
@@ -123,6 +148,186 @@
 
 		<enemigo>
 			<x>1500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1700</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1780</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1900</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>1900</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>2000</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>2100</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>2500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>2600</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>2700</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>3000</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>3100</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>3200</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>3500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>3700</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>3900</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>4100</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>4200</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>4500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>4700</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>4900</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>5100</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>5200</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>5500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>5700</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>5900</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>6500</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>6700</x>
+			<y>465</y>
+			<delta>55</delta>
+		</enemigo>
+
+		<enemigo>
+			<x>6900</x>
 			<y>465</y>
 			<delta>55</delta>
 		</enemigo>
