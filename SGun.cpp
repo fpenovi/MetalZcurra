@@ -9,6 +9,7 @@
 
 SGun::SGun(int x, int y) : Bonus(x, y) {
     this->tipoDropeable = 0;
+    this->tipoArma = 2;
 }
 
 void SGun::aplicarEfecto(Personaje *personaje) {

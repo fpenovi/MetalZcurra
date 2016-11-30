@@ -9,6 +9,7 @@
 
 RLauncher::RLauncher(int x, int y) : Bonus(x, y) {
     this->tipoDropeable = 0;
+    this->tipoArma = 3;
 }
 
 void RLauncher::aplicarEfecto(Personaje *personaje) {

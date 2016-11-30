@@ -24,6 +24,7 @@ protected:
 	bool renderizado;
 	int idColisionado;
 	int tipoDropeable;
+	int tipoArma;
 	Envolvente* envolvente;
 
 public:
@@ -49,6 +50,8 @@ public:
 	bool hayColision();
 	virtual void aplicarEfecto(Personaje* personaje) = 0;
 	virtual ~Bonus();
+
+	int getTipoArma();
 };
 
 #endif /* BONUS_H_ */

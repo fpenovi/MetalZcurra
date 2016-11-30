@@ -308,7 +308,7 @@ void ObjectManager::enviarEscenario(int FD, int cantUsers, int modo) {
 
 	ssize_t bytesEscritos = write(FD, mensajeChar, msj.size());
 	if (bytesEscritos < 0)
-		perror("ERROR --> No se pudo envair personaje");
+		perror("ERROR --> No se pudo envair tam");
 
 	vector<string> capas = NivelManager::getInstance()->getCapas();
 
@@ -320,12 +320,32 @@ void ObjectManager::enviarEscenario(int FD, int cantUsers, int modo) {
 		bytesEscritos = write(FD, mensaje, msj.size());
 
 		if (bytesEscritos < 0)
-			perror("ERROR --> No se pudo envair personaje");
+			perror("ERROR --> No se pudo envair capa");
 
 	}
 
 	write(FD, "$\n", 2);
 
+	for (auto kv : bonuses){
+		msj = "";
+		msj = to_string(kv.second->getId()) + "$" + to_string(kv.second->getTipoArma()) + "\n";
+		const char* mensaje = msj.c_str();
+
+		bytesEscritos = write(FD, mensaje, msj.size());
+
+		if (bytesEscritos < 0)
+			perror("ERROR --> No se pudo envair bonus");
+	}
+	write(FD, "$\n", 2);
+
+	msj = "";
+	msj = to_string(enemigos.size()) + "\n";
+	const char* mensaje = msj.c_str();
+
+	bytesEscritos = write(FD, mensaje, msj.size());
+
+	if (bytesEscritos < 0)
+		perror("ERROR --> No se pudo envair bonus");
 }
 
 void ObjectManager::enviarNuevoBackground(string emisor) {
