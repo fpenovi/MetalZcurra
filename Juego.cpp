@@ -935,8 +935,10 @@ void Juego::crearBalas(){
 }
 
 void Juego::crearEnemigos(){
+	string stream = cliente->recibir_nueva_vista();
+	int cantidadEnemigos = stoi(stream);
 	int i = 1;
-	for (i ; i < 21 ; i++){
+	for (i ; i < cantidadEnemigos+1 ; i++){
 		VistaEnemigo* enemigo = new VistaEnemigo(TEXTURAS_ENEMIGOS);
 		enemigo->cargarImagen();
 		addEnemigo(i, enemigo);
@@ -944,18 +946,50 @@ void Juego::crearEnemigos(){
 }
 
 void Juego::crearBonuses(){
+	cout << "RECIBO BONUSES" << endl;
 	idBonus = 1;
-	VistaBonus* bonus = new VistaBonus(TEXTURA_HMGUN);
-	addBonus(idBonus, bonus);
-	idBonus++;
 
-	bonus = new VistaBonus(TEXTURA_SGUN);
-	addBonus(idBonus, bonus);
-	idBonus++;
+	while (true) {
 
-	bonus = new VistaBonus(TEXTURA_RLAUNCHER);
-	addBonus(idBonus, bonus);
-	idBonus++;
+		string stream = cliente->recibir_nueva_vista();
+
+		if (stream == "$\n") break;
+
+		string id_s = "";
+		string tipo_s = "";
+
+		string* variables[] = {&id_s, &tipo_s};
+
+		int j = 0;
+
+		for (int i=0; i<stream.size() - 1; i++) {
+
+			char actual = stream[i];
+
+			if (actual == '$') {
+				j++;
+				continue;
+			}
+
+			*(variables[j]) += actual;
+		}
+
+		int tipo = stoi(tipo_s);
+		int idBn = stoi(id_s);
+		VistaBonus* bonus;
+
+		if (tipo == 1)
+			bonus = new VistaBonus(TEXTURA_HMGUN);
+
+		else if (tipo == 2)
+			bonus = new VistaBonus(TEXTURA_SGUN);
+
+		else if (tipo == 3)
+			bonus = new VistaBonus(TEXTURA_RLAUNCHER);
+
+		addBonus(idBn, bonus);
+		idBonus++;
+	}
 }
 
 void Juego::crearBoss(){
@@ -1330,6 +1364,14 @@ int main( int argc, char** argv) {
 	juego.recibirCapas();
 	fondo->prepararEscenario();
 
+	// Creo bonuses
+	juego.cargarTexturaBonus();
+	juego.crearBonuses();
+
+	// Creo enemigos
+	juego.cargarTexturaEnemigo();
+	juego.crearEnemigos();
+
 	// Creo los puntajes
 	juego.crearVistaPuntajes();
 
@@ -1339,14 +1381,6 @@ int main( int argc, char** argv) {
 	// Creo la pool de balas
 	juego.cargarTexturaBala();
 	juego.crearBalas();
-
-	// Creo enemigos
-	juego.cargarTexturaEnemigo();
-	juego.crearEnemigos();
-
-	// Creo bonuses
-	juego.cargarTexturaBonus();
-	juego.crearBonuses();
 
 	// Creo Boss
 	juego.crearBoss();

@@ -9,6 +9,7 @@
 
 HMGun::HMGun(int x, int y) : Bonus(x, y) {
     this->tipoDropeable = 0;
+    this->tipoArma = 1;
 }
 
 void HMGun::aplicarEfecto(Personaje *personaje) {

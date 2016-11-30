@@ -44,6 +44,10 @@ void* handleJumpFunc(void* argKh) {
         i += 0.065447917;
     }
 
+    time_point<high_resolution_clock> start;
+    start = high_resolution_clock::now();
+    microseconds intervalo(30000);	// 30ms
+
     while (*isKhOn) {
 
         if (*isKhOn && !(*isKhPaused)) {
@@ -64,66 +68,76 @@ void* handleJumpFunc(void* argKh) {
             posFinal = posActual - 120;
             personaje->setGravity(false);
 
-            for (int i = 0 ; i < 48 ; i++){
-                if (personaje->getColision()) break;
-                personaje->setSaltando(true);
+            for (int i = 0 ; i < 48 ;){
 
-                if (personaje->getPosy() <= posFinal){
-                    personaje->setVely((int) seno[i]);
-                    personaje->moverY();
-                    personaje->setVely(0);
-                    personaje->setBajando(true);
-                    personaje->setSprites();
+                time_point<high_resolution_clock> actual;
+                actual = high_resolution_clock::now();
+
+                auto deltaTiempo = actual.time_since_epoch() - start.time_since_epoch();
+                auto elapsed_ms = duration_cast<microseconds>(deltaTiempo);
+
+                if (elapsed_ms.count() >= intervalo.count()) {
+
+                    if (personaje->getColision()) break;
+                    personaje->setSaltando(true);
+
+                    if (personaje->getPosy() <= posFinal) {
+                        personaje->setVely((int) seno[i]);
+                        personaje->moverY();
+                        personaje->setVely(0);
+                        personaje->setBajando(true);
+                        personaje->setSprites();
+                    }
+                    else if (personaje->getPosy() >= posActual) {
+                        personaje->setUltimaPosy(personaje->getPosy());
+                        personaje->setVely((int) -(seno[i]));
+                        personaje->moverY();
+                        personaje->setVely(0);
+                        personaje->setBajando(false);
+                    }
+                    else if (personaje->getBajando()) {
+                        personaje->setVely((int) seno[i]);
+                        personaje->moverY();
+                        personaje->setSprites();
+                    }
+
+                    else if (!(personaje->getBajando())) {
+                        personaje->setVely((int) -(seno[i]));
+                        personaje->moverY();
+                        personaje->setSprites();
+                    }
+
+                    update.setTipoObjeto(1);
+                    update.setEstado(personaje->getSeMovio());
+                    update.setX(*posX);
+                    update.setY(personaje->getPosy());
+                    update.setObject_id(idEmisor);
+                    update.setPosCamara(personaje->getPosCamara());
+                    update.setConectado(personaje->getConectado());
+                    update.setSpriteIndex(personaje->getSprites());
+                    update.setApuntando(personaje->getDireccion());
+                    update.setSaltando(personaje->getSaltando());
+                    if (i == 47) update.setSaltando(0);
+                    update.setPuntaje(personaje->getPuntaje());
+
+                    int result;
+                    string mensaje = update.toString();
+
+                    for (auto kv : *conectadosHash) {
+
+                        Mensaje *mensajeNuevo = new Mensaje(*emisor, kv.first, mensaje);
+
+                        result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+                        if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+                        kv.second->push_back(mensajeNuevo);
+
+                        result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+                        if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                    }
+                    i++;
+                    start = system_clock::now();
                 }
-                else if (personaje->getPosy() >= posActual){
-                    personaje->setUltimaPosy(personaje->getPosy());
-                    personaje->setVely((int) -(seno[i]));
-                    personaje->moverY();
-                    personaje->setVely(0);
-                    personaje->setBajando(false);
-                }
-                else if (personaje->getBajando()){
-                    personaje->setVely((int) seno[i]);
-                    personaje->moverY();
-                    personaje->setSprites();
-                }
-
-                else if(!(personaje->getBajando())) {
-                    personaje->setVely((int) -(seno[i]));
-                    personaje->moverY();
-                    personaje->setSprites();
-                }
-
-                update.setTipoObjeto(1);
-                update.setEstado(personaje->getSeMovio());
-                update.setX(*posX);
-                update.setY(personaje->getPosy());
-                update.setObject_id(idEmisor);
-                update.setPosCamara(personaje->getPosCamara());
-                update.setConectado(personaje->getConectado());
-                update.setSpriteIndex(personaje->getSprites());
-                update.setApuntando(personaje->getDireccion());
-                update.setSaltando(personaje->getSaltando());
-                if (i == 47) update.setSaltando(0);
-                update.setPuntaje(personaje->getPuntaje());
-
-                int result;
-                string mensaje = update.toString();
-
-                for (auto kv : *conectadosHash) {
-
-                    Mensaje *mensajeNuevo = new Mensaje(*emisor, kv.first, mensaje);
-
-                    result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
-                    if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-
-                    kv.second->push_back(mensajeNuevo);
-
-                    result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
-                    if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
-                }
-
-                usleep(30000);
             }
             personaje->setColision(false);
             personaje->setGravity(true);

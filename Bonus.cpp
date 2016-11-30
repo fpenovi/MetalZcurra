@@ -91,6 +91,10 @@ int Bonus::getTipoDropeable() {
 	return tipoDropeable;
 }
 
+int Bonus::getTipoArma(){
+	return tipoArma;
+}
+
 Bonus::~Bonus() {
 	delete this->envolvente;
 }
