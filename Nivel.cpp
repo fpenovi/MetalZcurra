@@ -14,6 +14,7 @@
 #include "ObjectManager.h"
 #include "Recover.h"
 #include "KillAll.h"
+#include "DaiManji.h"
 #include <random>
 
 Nivel::Nivel(string xmlPath) {
@@ -95,6 +96,9 @@ Boss* Nivel::crearBoss(vector<string> bossStr) {
 
 	if (this->nombre.compare("train") == 0)
 		boss = new Rshobu(x, y, delta);
+
+	if (this->nombre.compare("city") == 0)
+		boss = new DaiManji(x, y, delta);
 
 	// ToDo agregar restantes
 	return boss;

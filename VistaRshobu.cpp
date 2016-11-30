@@ -118,10 +118,6 @@ void VistaRshobu::setFrame(int aux) {
     frame = aux;
 }
 
-void VistaRshobu::setDisparando(bool aux) {
-    disparando = aux;
-}
-
 void VistaRshobu::setPosx(int aux) {
     posx = aux;
 }

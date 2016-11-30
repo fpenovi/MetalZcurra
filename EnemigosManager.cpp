@@ -4,6 +4,7 @@
 
 #include "ObjectManager.h"
 #include "EnemigosManager.h"
+#include "DaiManji.h"
 
 using namespace chrono;
 
@@ -89,17 +90,33 @@ void* enemigosManagerFunc(void* argKh) {
 
                     ProtocoloVistaUpdate update;
 
-                    update.setTipoObjeto(6);
-                    update.setEstado(boss->getExiste());
-                    update.setX(boss->getPosx());
-                    update.setY(boss->getPosy());
-                    update.setObject_id(boss->getId());
-                    update.setPosCamara(0);
-                    update.setConectado(boss->estaVivo());
-                    update.setSpriteIndex(boss->getSprites());
-                    update.setApuntando(0);
-                    update.setSaltando(0);
-                    update.setPuntaje(0);
+                    if (boss->getId() == 1) {
+                        update.setTipoObjeto(6);
+                        update.setEstado(boss->getExiste());
+                        update.setX(boss->getPosx());
+                        update.setY(boss->getPosy());
+                        update.setObject_id(boss->getId());
+                        update.setPosCamara(0);
+                        update.setConectado(boss->estaVivo());
+                        update.setSpriteIndex(boss->getSprites());
+                        update.setApuntando(0);
+                        update.setSaltando(0);
+                        update.setPuntaje(0);
+                    }
+                    else if (boss->getId() == 2){
+                        DaiManji* dai = dynamic_cast<DaiManji*>(boss);
+                        update.setTipoObjeto(6);
+                        update.setEstado(boss->getExiste());
+                        update.setX(boss->getPosx());
+                        update.setY(boss->getPosy());
+                        update.setObject_id(boss->getId());
+                        update.setPosCamara(0);
+                        update.setConectado(boss->estaVivo());
+                        update.setSpriteIndex(dai->getSpriteMovimiento());
+                        update.setApuntando(dai->getPuerta());
+                        update.setSaltando(dai->getLaser());
+                        update.setPuntaje(dai->getDisparando());
+                    }
 
                     int result;
                     string mensaje = update.toString();

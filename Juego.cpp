@@ -4,6 +4,7 @@
 #include "ProtocoloNuevaVista.h"
 #include "VistaRshobu.h"
 #include "ProtocoloVistaUpdate.h"
+#include "VistaDaiManji.h"
 
 using namespace std;
 using namespace chrono;
@@ -999,7 +1000,7 @@ void Juego::crearBoss(){
 	addBoss(id, rshobu);
 	id++;
 
-	VistaBoss* rshobu2 = new VistaRshobu(renderizador);
+	VistaBoss* rshobu2 = new VistaDaiManji(renderizador);
 	rshobu2->cargarImagen();
 	addBoss(id, rshobu2);
 	id++;
@@ -1110,7 +1111,7 @@ void Juego::actualizarPersonaje(){
 }
 
 void Juego::actualizarBala(){
-	int derecha, arriba, abajo, izquierda, frame;
+	int derecha, arriba, abajo, izquierda, frame, rayo;
 	derecha = spriteIdx;
 	izquierda = aim;
 	arriba = posCam;
@@ -1195,6 +1196,12 @@ void Juego::actualizarBoss(){
 	if (!conectado) {
 		bossActual->morir();
 		bossActual->setMuerto(!conectado);
+	}
+	if (id == 2){
+		VistaDaiManji* dai = dynamic_cast<VistaDaiManji*>(bossActual);
+		dai->setPuerta(aim);
+		dai->setLaser(saltando);
+		dai->setDisparando(puntaje);
 	}
 }
 
