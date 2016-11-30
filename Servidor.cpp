@@ -598,17 +598,13 @@ private:
         handleDisparoServer->Off();
         delete handleDisparoServer;
 
-        cout << "FALLA DISPARO" << endl;
-
+       
         handleKeyHoldServer->Off();
         delete handleKeyHoldServer;
 
-        cout << "FALLA KEY HOLD" << endl;
 
         handleJumpServer->Off();
         delete handleJumpServer;
-
-        cout << "FALLA JUMP" << endl;
         return NULL;
     }
 

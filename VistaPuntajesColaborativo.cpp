@@ -55,7 +55,7 @@ void VistaPuntajesColaborativo::mostrarResumen(Juego* juego) {
 	for (int i=0; i<puntosPlayersById.size(); i++) {
 		idPlayer = i+1;
 		puntajePlayer = puntosPlayersById[idPlayer];
-		namePlayer = "Jugador " + to_string(idPlayer);
+		namePlayer = juego->getNombreUsuarioById(idPlayer);
 		posX = FINAL_SCORE_VIEW_X + (i % 2) * FINAL_SCORE_X_SPACING;
 		posY = FINAL_SCORE_VIEW_Y + (i / 2) * FINAL_SCORE_SPACING_Y;
 

@@ -118,7 +118,7 @@ void ObjectManager::crearEnemigos(vector<Enemigo*> enemigos) {
 }
 
 void ObjectManager::setBonuses(vector<Bonus*> bonuses) {
-	cout << "CREO NUEVOS BONUSES" << endl;
+
 	for (int i = 0; i < bonuses.size(); i++){
 		Bonus* bonus = bonuses[i];
 		bonus->setId(idBonus);

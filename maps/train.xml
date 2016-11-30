@@ -121,7 +121,7 @@
 	<enemigos>
 		<enemigo>
 			<x>1000</x>
-			<y>368</y>
+			<y>367</y>
 			<delta>50</delta>
 		</enemigo>
 
@@ -132,8 +132,8 @@
 		</enemigo>
 
 		<enemigo>
-			<x>1300</x>
-			<y>465</y>
+			<x>2403</x>
+			<y>295</y>
 			<delta>55</delta>
 		</enemigo>
 
@@ -144,8 +144,8 @@
 		</enemigo>
 
 		<enemigo>
-			<x>1700</x>
-			<y>465</y>
+			<x>6107</x>
+			<y>295</y>
 			<delta>55</delta>
 		</enemigo>
 
@@ -166,6 +166,12 @@
 			<y>465</y>
 			<delta>55</delta>
 		</enemigo>
+		<enemigo>
+			<x>6855</x>
+			<y>367</y>
+			<delta>55</delta>
+		</enemigo>
+
 
 		<enemigo>
 			<x>1500</x>
