@@ -705,6 +705,9 @@ void Juego::renderizar() {
 
 	if (!bossActual->estaVivo())
 		puntajes->mostrarResumen(this);
+
+	if (haFinalizadoJuego())
+		pantallaFinal->render();
 }
 
 int Juego::getPersonajeMasMovido(){
@@ -1315,6 +1318,18 @@ string Juego::getNombreUsuarioById(int id) {
 
 bool Juego::puedePasarDeNivel() {
 	return this->enterHabilitado;
+}
+
+
+bool Juego::haFinalizadoJuego() {
+	// ToDo Implementar bien!
+	/*
+	 * si termino el juego, (y todavia no cree ninguna pantalla final) dependiendo
+	 * de que forma termine (si murieron todos o ganaron)
+	 * creo alguna de las 2 pantallas finales y se la asigno a this->pantallaFinal
+	 * la pantalla solo debe crearse 1 vez!!!!!
+	 */
+	return false;
 }
 
 

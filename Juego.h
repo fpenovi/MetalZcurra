@@ -15,6 +15,7 @@
 #include "Background.h"
 #include "Texto.h"
 #include "VistaPuntajes.h"
+#include "FinalScreen.h"
 
 
 class VistaPuntajes;	// Para que pueda compilar al estar una clase incluida en la otra
@@ -43,6 +44,7 @@ private:
 	int idBonus;
 	bool enterHabilitado = false;
 	VistaPuntajes* puntajes;
+	FinalScreen* pantallaFinal;
 	unordered_map<int, VistaBala *> vistasBalasVivas;
 	unordered_map<int, VistaEnemigo *> vistasEnemigosVivos;
 	int nivelActual;
@@ -247,6 +249,8 @@ public:
 	void setTransparenciaActual(Uint8 aux);
 
 	Uint8* getTransparenciaActual();
+
+	bool haFinalizadoJuego();
 };
 
 #endif //METALZCURRA_JUEGO_H
