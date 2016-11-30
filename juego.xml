@@ -9,6 +9,8 @@
 	<niveles>
 		<nivel>maps/train.xml</nivel>
 		<nivel>maps/train2.xml</nivel>
+		<nivel>maps/city.xml</nivel>
+		<nivel>maps/hangar.xml</nivel>
 	</niveles>
 	
 	
