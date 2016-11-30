@@ -1,114 +1,86 @@
-<!DOCTYPE CITY SYSTEM "city.dtd">
+<!DOCTYPE HANGAR SYSTEM "hangar.dtd">
 
 <nivel>
-	<nombre>city</nombre>
-	<ancho>8186</ancho>
+	<nombre>hangar</nombre>
+	<ancho>8191</ancho>
 	<alto>600</alto>
 
 	<capas>
 		<capa>
-			<path>imag/background/maps/city/BGcity.png</path>
+			<path>imag/background/maps/hangar/hangarBG.png</path>
 		</capa>
 
 		<capa>
-			<path>imag/background/maps/city/city.png</path>
+			<path>imag/background/maps/hangar/hangar.png</path>
 		</capa>
 	</capas>
 	<plataformas>
 		<plataforma>
-			<x>521</x>
-			<y>472</y>
-			<ancho>305</ancho>
+			<x>1289</x>
+			<y>452</y>
+			<ancho>485</ancho>
 			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
-			<x>930</x>
-			<y>405</y>
-			<ancho>141</ancho>
+			<x>1840</x>
+			<y>380</y>
+			<ancho>327</ancho>
 			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
-			<x>1222</x>
-			<y>411</y>
-			<ancho>143</ancho>
+			<x>2289</x>
+			<y>333</y>
+			<ancho>178</ancho>
 			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
-			<x>1946</x>
-			<y>433</y>
-			<ancho>103</ancho>
+			<x>2601</x>
+			<y>452</y>
+			<ancho>160</ancho>
 			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
-			<x>2155</x>
-			<y>411</y>
-			<ancho>143</ancho>
+			<x>2838</x>
+			<y>376</y>
+			<ancho>260</ancho>
 			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
-			<x>5807</x>
-			<y>339</y>
-			<ancho>351</ancho>
+			<x>3421</x>
+			<y>452</y>
+			<ancho>160</ancho>
 			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
-			<x>2506</x>
-			<y>472</y>
-			<ancho>262</ancho>
+			<x>3682</x>
+			<y>380</y>
+			<ancho>160</ancho>
 			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
-			<x>2921</x>
-			<y>405</y>
-			<ancho>290</ancho>
+			<x>3931</x>
+			<y>290</y>
+			<ancho>260</ancho>
 			<alto>10</alto>
 		</plataforma>
 
 		<plataforma>
-			<x>3267</x>
-			<y>411</y>
-			<ancho>143</ancho>
-			<alto>10</alto>
-		</plataforma>
-
-		<plataforma>
-			<x>3510</x>
-			<y>433</y>
-			<ancho>103</ancho>
-			<alto>10</alto>
-		</plataforma>
-
-		<plataforma>
-			<x>4386</x>
-			<y>472</y>
-			<ancho>351</ancho>
-			<alto>10</alto>
-		</plataforma>
-
-		<plataforma>
-			<x>4839</x>
-			<y>428</y>
-			<ancho>351</ancho>
-			<alto>10</alto>
-		</plataforma>
-
-		<plataforma>
-			<x>5317</x>
-			<y>384</y>
-			<ancho>351</ancho>
+			<x>4292</x>
+			<y>247</y>
+			<ancho>102</ancho>
 			<alto>10</alto>
 		</plataforma>
 	</plataformas>
 
-	<!-- AGUS CLAVALE ENEMIGOS Y ALGUNOS BONUSES ARRIBA DE LAS PLATAFORMAS
-			ME DA PAJA A MI PONERME CON ESO, BESIS -->
+	<!-- AGUS PONE LOS BONUSES Y ENEMIGOS!
+			PONE UN BONUS PIOLA EN LA TUBERIA! JAJAJ :D -->
 
 	<bonuses>
 		<bonus>
