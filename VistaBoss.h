@@ -14,7 +14,6 @@ protected:
     int posy;
     bool existe;
     bool derecha;
-    bool disparando = false;
 	bool muerto = false;
 
 public:
@@ -22,13 +21,7 @@ public:
 
     virtual void render() = 0;
 
-    virtual void animacionDerecha() = 0;
-
-    virtual void animacionIzquierda() = 0;
-
     virtual void setFrame(int aux) = 0;
-
-    virtual void setDisparando(bool aux) = 0;
 
     virtual void setPosx(int aux) = 0;
 

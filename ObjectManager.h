@@ -91,6 +91,7 @@ public:
 	void crearBalasManager();
 	unordered_map<int, Bala*>* getBalasHash();
 	void inicializarBalaBoss(int posx, int posy);
+	void inicializarBalaRayo(int posx, int posy);
 
 	// Enemigos
 	void addEnemigo(int id, Enemigo* enemigo);
@@ -119,6 +120,7 @@ public:
 	void enviarPuntaje(int idPj);
 	bool existeDireccion(int id);
 	void crearGravedadManager();
+
 };
 
 
