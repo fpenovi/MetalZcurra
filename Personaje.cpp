@@ -18,6 +18,7 @@ Personaje::Personaje() {
 
     quieto = true;
     colision = false;
+    modoInvencible = false;
 }
 
 void Personaje::moverX() {
@@ -432,6 +433,18 @@ bool Personaje::getColision() {
 
 void Personaje::setColision(bool aux) {
     colision = aux;
+}
+
+void Personaje::setVida(int aux) {
+    vida = aux;
+}
+
+void Personaje::setModoInvencible(bool aux) {
+    modoInvencible = aux;
+}
+
+bool Personaje::getModoInvencible() {
+    return modoInvencible;
 }
 
 Personaje::~Personaje() {

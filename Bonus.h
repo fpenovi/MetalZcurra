@@ -25,7 +25,7 @@ protected:
 	int idColisionado;
 	int tipoDropeable;
 	int tipoArma;
-	Envolvente* envolvente;
+	Envolvente* envolvente = NULL;
 
 public:
 	static string HMGun;

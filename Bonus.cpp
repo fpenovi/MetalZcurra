@@ -96,7 +96,7 @@ int Bonus::getTipoArma(){
 }
 
 Bonus::~Bonus() {
-	delete this->envolvente;
+	if (envolvente != NULL) delete envolvente;
 }
 
 string Bonus::HMGun = "HMGun";

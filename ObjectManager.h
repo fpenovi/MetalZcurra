@@ -113,6 +113,7 @@ public:
 	void setIdBonus(int aux);
 	void killAll();
 	void reiniciarBonuses();
+	void removeBonus(int i);
 
 	void handleImpacto(Personaje *personaje, Bala* bala);
 	int getCantidadUsuarios();
@@ -121,6 +122,7 @@ public:
 	bool existeDireccion(int id);
 	void crearGravedadManager();
 
+	void modoInvencible();
 };
 
 

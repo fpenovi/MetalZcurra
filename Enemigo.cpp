@@ -21,6 +21,7 @@ Enemigo::Enemigo(int x, int y, int delta) {
     Rectangulo* componente = new Rectangulo(&posx, &posy, ancho, alto);
     componente->setOffset(92, 6);
     envolvente->agregarComponente(componente);
+    dropee = false;
 
     start = high_resolution_clock::now();
 }
@@ -62,7 +63,8 @@ bool Enemigo::mover() {
 
 void Enemigo::morir(){
     muerto = true;
-    droppearBonus();
+    if (!dropee) droppearBonus();
+    dropee = true;
 }
 
 int Enemigo::getAncho(){

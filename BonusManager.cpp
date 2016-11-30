@@ -79,6 +79,7 @@ void* bonusManagerFunc(void* argKh) {
 
                     if (kv.second->getExiste() && kv.second->hayColision()){
 
+                        cout << "COLISIONO CON BONUS: " << kv.second->getId() << endl;
                         kv.second->setExiste(false);
 
                         ProtocoloVistaUpdate update;

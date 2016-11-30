@@ -23,7 +23,7 @@ private:
     int velocidad;
     int cantidadPasos;
     int delta;
-	Bonus* bonus;
+	Bonus* bonus = NULL;
 	Envolvente* envolvente;
 
     bool disparando;
@@ -48,6 +48,7 @@ private:
     int frameQuieto = 0;
 
 	void droppearBonus();
+	bool dropee;
 
 
 public:

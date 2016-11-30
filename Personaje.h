@@ -70,6 +70,7 @@ private:
 	int vida = 5;
 	bool quieto;
 	bool colision;
+	bool modoInvencible;
 
 public:
 	const static int GUN = 0;
@@ -210,6 +211,12 @@ public:
 	bool getColision();
 
 	void setColision(bool aux);
+
+	void setVida(int aux);
+
+	void setModoInvencible(bool aux);
+
+	bool getModoInvencible();
 
 	~Personaje();
 };

@@ -586,6 +586,13 @@ void Juego::handleEvent( SDL_Event& e) {
 				msj = comando.toString();
 				cliente->enviarAusuario("TODOS", msj, false);
 				break;
+
+			case SDLK_i:
+				comando.setScancode(SDLK_i);
+				comando.setType(1);
+				msj = comando.toString();
+				cliente->enviarAusuario("TODOS", msj, false);
+				break;
 		}
 	}
 

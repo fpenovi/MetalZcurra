@@ -277,6 +277,10 @@ private:
                 case SDLK_z:
                     handleDisparo->Resume();
                     break;
+
+                case SDLK_i:
+                    objectManager->modoInvencible();
+                    break;
             }
         }
 

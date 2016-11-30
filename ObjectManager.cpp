@@ -118,6 +118,7 @@ void ObjectManager::crearEnemigos(vector<Enemigo*> enemigos) {
 }
 
 void ObjectManager::setBonuses(vector<Bonus*> bonuses) {
+	cout << "CREO NUEVOS BONUSES" << endl;
 	for (int i = 0; i < bonuses.size(); i++){
 		Bonus* bonus = bonuses[i];
 		bonus->setId(idBonus);
@@ -474,7 +475,7 @@ void ObjectManager::liberarEnemigos() {
 void ObjectManager::reiniciarBonuses() {
 	cout << "REINICIO BONUS" << endl;
 	for (auto kv : bonuses)
-		delete kv.second;
+		if (kv.second != NULL) delete kv.second;
 	bonuses.clear();
 	idBonus = 1;
 }
@@ -496,6 +497,9 @@ void ObjectManager::setIdBonus(int aux) {
 }
 
 void ObjectManager::agregarDropeable(Bonus* dropeable) {
+	dropeable->setId(idBonus);
+	addBonus(idBonus, dropeable);
+
 	ProtocoloVistaUpdate update;
 
 	update.setTipoObjeto(5);
@@ -525,9 +529,6 @@ void ObjectManager::agregarDropeable(Bonus* dropeable) {
 		result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
 		if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
 	}
-
-	dropeable->setId(idBonus);
-	addBonus(idBonus, dropeable);
 	idBonus++;
 }
 
@@ -632,4 +633,21 @@ void ObjectManager::enviarPuntaje(int idPj){
 	}
 }
 
+void ObjectManager::modoInvencible(){
+	for (auto kv : personajes){
+		if (!kv.second->getModoInvencible()){
+			kv.second->setModoInvencible(true);
+			kv.second->setVida(100000);
+		}
+		else {
+			kv.second->setModoInvencible(false);
+			kv.second->setVida(5);
+		}
+	}
+}
+
 ObjectManager* ObjectManager::instancia;
+
+void ObjectManager::removeBonus(int id) {
+	bonuses.erase(id);
+}
