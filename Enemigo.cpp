@@ -15,7 +15,7 @@ Enemigo::Enemigo(int x, int y, int delta) {
     muerto = false;
     disparando = false;
     velocidad = 7;
-    cantidadPasos = 40;
+    cantidadPasos = 17;
     alan = 0;
     envolvente = new Envolvente();
     Rectangulo* componente = new Rectangulo(&posx, &posy, ancho, alto);

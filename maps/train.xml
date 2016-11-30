@@ -120,8 +120,8 @@
 
 	<enemigos>
 		<enemigo>
-			<x>900</x>
-			<y>465</y>
+			<x>1000</x>
+			<y>368</y>
 			<delta>50</delta>
 		</enemigo>
 
