@@ -56,6 +56,7 @@ void Juego::close() {
 	delete TEXTURA_RECOVER;
 	delete TEXTURA_BALA_RSHOBU;
 	delete fondo;
+	delete grayOutHandler;
 
 	//Quit SDL subsystems
 	IMG_Quit();
@@ -380,6 +381,7 @@ bool Juego::iniciar() {
 }
 
 void Juego::transparentar(Uint8 alpha) {
+	this->transparenciaActual = alpha;
 
 	this->bossActual->transparentar(alpha);
 	this->fondo->transparentar(alpha);
@@ -568,11 +570,14 @@ void Juego::handleEvent( SDL_Event& e) {
 				cliente->enviarAusuario("TODOS", msj, false);
 				break;
 
-			case SDLK_r:
-				comando.setScancode(SDLK_r);
-				comando.setType(1);
-				msj = comando.toString();
-				cliente->enviarAusuario("TODOS", msj, false);
+			case SDLK_RETURN:
+				cout << "TOCO ENTER" << endl;
+				if (puedePasarDeNivel()) {
+					comando.setScancode(SDLK_RETURN);
+					comando.setType(1);
+					msj = comando.toString();
+					cliente->enviarAusuario("TODOS", msj, false);
+				}
 				break;
 
 			case SDLK_z:
@@ -624,7 +629,7 @@ void Juego::handleEvent( SDL_Event& e) {
 				cliente->enviarAusuario("TODOS", msj, false);
 				break;
 
-			case SDLK_r:
+			case SDLK_RETURN:
 				break;
 
 			case SDLK_z:
@@ -842,6 +847,8 @@ void Juego::recibirPersonajes(){
 
 void Juego::recibirNuevoBackground(){
 
+	setPuedePasarDeNivel(false);
+
 	delete fondo;
 
 	// Seteo el fondo
@@ -850,11 +857,22 @@ void Juego::recibirNuevoBackground(){
 	recibirNuevasCapas();
 	fondo->prepararEscenario();
 
+	transparentar(0);
+
 	SDL_RenderClear( getRenderer() );
 	fondo->render(getPosX());
 	renderizar();
 	SDL_RenderPresent( getRenderer() );
 
+	milliseconds velocidad(20);
+
+	if (grayOutHandler != NULL) {
+		delete grayOutHandler;
+		grayOutHandler = NULL;
+	}
+
+	grayOutHandler = new GrayOutHandler(this, &transparenciaActual, &LIMITE_SUPERIOR_TRANSPARENCIA_NEGATIVA, velocidad, 1, &isRunning);
+	grayOutHandler->doWork();
 }
 
 void Juego::recibirNuevasCapas(){
@@ -1000,11 +1018,15 @@ void Juego::crearBoss(){
 	addBoss(id, rshobu);
 	id++;
 
+	VistaBoss* daiManji = new VistaDaiManji(renderizador);
+	daiManji->cargarImagen();
+	addBoss(id, daiManji);
+	id++;
+
 	VistaBoss* rshobu2 = new VistaDaiManji(renderizador);
 	rshobu2->cargarImagen();
 	addBoss(id, rshobu2);
 	id++;
-
 }
 
 void Juego::seleccionarBossSiguiente(){
@@ -1298,6 +1320,14 @@ void Juego::actualizarPuntaje() {
 	puntajes->actualizarPuntaje(id, puntaje);
 }
 
+void Juego::setTransparenciaActual(Uint8 aux) {
+	transparenciaActual = aux;
+}
+
+Uint8* Juego::getTransparenciaActual() {
+	return &transparenciaActual;
+}
+
 typedef struct {
 	Juego* juego;
 	bool* quit;
@@ -1320,7 +1350,6 @@ void* recibirVistas( void* arg){
 	}
 	return NULL;
 }
-
 int escucharEventos( void* arg ) {
 
 	controlador_t* arg2 = (controlador_t*) arg;
@@ -1520,4 +1549,10 @@ int main( int argc, char** argv) {
 	juego.close();
 
 	return 0;
+
 }
+
+Uint8 Juego::LIMITE_SUPERIOR_TRANSPARENCIA = 255;
+int Juego::LIMITE_SUPERIOR_TRANSPARENCIA_NEGATIVA = -255;
+Uint8 Juego::transparenciaActual = 255;
+Uint8 Juego::LIMITE_INFERIOR_TRANSPARENCIA = 0;

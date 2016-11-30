@@ -38,14 +38,14 @@ VistaPuntajes* VistaPuntajes::NewVistaPuntaje(int cantPlayers, int modoJuego, SD
 
 void VistaPuntajes::greyOutIfNeeded(Juego* juego) {
 	// Hace fade y vuelve gris la pantalla
-	if (transparenciaActual == LIMITE_SUPERIOR_TRANSPARENCIA && !estaCorriendoGrayer) {		// Evita el lanzamiento de mas de un thread
+	if (Juego::transparenciaActual == Juego::LIMITE_SUPERIOR_TRANSPARENCIA && !estaCorriendoGrayer) {		// Evita el lanzamiento de mas de un thread
 		estaCorriendoGrayer = true;
 		milliseconds velocidad(20);		// 255 * 20 = segundos de fade
-		this->screenGrayer = new GrayOutHandler(juego, &transparenciaActual, &LIMITE_INFERIOR_TRANSPARENCIA, velocidad, &estaCorriendoGrayer);
+		this->screenGrayer = new GrayOutHandler(juego, &Juego::transparenciaActual,(int*) &Juego::LIMITE_INFERIOR_TRANSPARENCIA, velocidad, -1, &estaCorriendoGrayer);
 		this->screenGrayer->doWork();
 	}
 
-	else if (transparenciaActual == LIMITE_INFERIOR_TRANSPARENCIA && !estaCorriendoGrayer && this->screenGrayer != NULL) {
+	else if (Juego::transparenciaActual == Juego::LIMITE_INFERIOR_TRANSPARENCIA && !estaCorriendoGrayer && this->screenGrayer != NULL) {
 		delete this->screenGrayer;
 		this->screenGrayer = NULL;
 		juego->setPuedePasarDeNivel(true);
@@ -53,7 +53,7 @@ void VistaPuntajes::greyOutIfNeeded(Juego* juego) {
 }
 
 void VistaPuntajes::resetTransparenciaActual(){
-	transparenciaActual = LIMITE_SUPERIOR_TRANSPARENCIA;
+	Juego::transparenciaActual = Juego::LIMITE_SUPERIOR_TRANSPARENCIA;
 }
 
 VistaPuntajes::~VistaPuntajes() {

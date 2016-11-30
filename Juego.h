@@ -85,10 +85,19 @@ private:
 	string puerto;
 	string nombre;
 
+	GrayOutHandler* grayOutHandler = NULL;
+	bool isRunning = false;
 
 public:
+	static Uint8 LIMITE_SUPERIOR_TRANSPARENCIA;
+	static int LIMITE_SUPERIOR_TRANSPARENCIA_NEGATIVA;
+	static Uint8 transparenciaActual;
+	static Uint8 LIMITE_INFERIOR_TRANSPARENCIA;
+
 	Juego();
+
 	void close();
+
 	void presentacion();
 
 	void liberarPresentacion();
@@ -234,6 +243,10 @@ public:
 	void setPuedePasarDeNivel(bool aux);
 
 	void actualizarPuntaje();
+
+	void setTransparenciaActual(Uint8 aux);
+
+	Uint8* getTransparenciaActual();
 };
 
 #endif //METALZCURRA_JUEGO_H

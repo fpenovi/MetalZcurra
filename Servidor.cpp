@@ -256,7 +256,7 @@ private:
                     handleJump->Resume();
                     break;
 
-                case SDLK_r:
+                case SDLK_RETURN:
                     personaje->setQuieto(false);
                     objectManager->reinicializarEscenario();
 
@@ -322,7 +322,7 @@ private:
                     if (direccion->isSolte()) personaje->setQuieto(true);;
                     break;
 
-                case SDLK_r:
+                case SDLK_RETURN:
                     break;
 
                 case SDLK_z:

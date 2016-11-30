@@ -10,8 +10,9 @@ void* grayOutScreen(void* _argGrey) {
 	arggrey_t* argGrey = (arggrey_t*) _argGrey;
 
 	Uint8* transparenciaActualptr = argGrey->transparenciaActual;
-	Uint8* transparenciaLimiteInferior = argGrey->transparenciaLimiteInferior;
+	int* transparenciaLimiteInferior = argGrey->transparenciaLimiteInferior;
 	bool* isRunning = argGrey->isRunning;
+	int decremento = argGrey->decremento;
 
 	chrono::time_point<high_resolution_clock > start;
 	time_point<high_resolution_clock> actual;
@@ -25,21 +26,23 @@ void* grayOutScreen(void* _argGrey) {
 		auto elapsed_ms = duration_cast<milliseconds>(deltaTiempo);
 
 		if (elapsed_ms.count() >= argGrey->ms.count()) {
-			*transparenciaActualptr -= 1;
+			*transparenciaActualptr += decremento;
 			argGrey->juego->transparentar(*transparenciaActualptr);
+			if (*transparenciaActualptr == 255) break;
 			start = high_resolution_clock::now();
 		}
 	}
 
+	cout << "TRANSPARENCIA: " << (int)*transparenciaActualptr << endl;
 	*isRunning = false;
 
 	return NULL;
 }
 
 
-GrayOutHandler::GrayOutHandler(Juego* juego, Uint8* transparenciaMax, Uint8* transparenciaMin, milliseconds ms, bool* isRunning) {
+GrayOutHandler::GrayOutHandler(Juego* juego, Uint8* transparenciaMax, int* transparenciaMin, milliseconds ms, int decremento, bool* isRunning) {
 
-	this->argGrey = new arggrey_t{juego, transparenciaMax, transparenciaMin, ms, isRunning};
+	this->argGrey = new arggrey_t{juego, transparenciaMax, transparenciaMin, ms, decremento, isRunning};
 	this->grayOutTH = new pthread_t;
 }
 

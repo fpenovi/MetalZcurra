@@ -100,7 +100,9 @@ Boss* Nivel::crearBoss(vector<string> bossStr) {
 	if (this->nombre.compare("city") == 0)
 		boss = new DaiManji(x, y, delta);
 
-	// ToDo agregar restantes
+	if (this->nombre.compare("hangar") == 0)
+		boss = new DaiManji(x, y, delta);
+
 	return boss;
 }
 

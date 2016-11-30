@@ -7,7 +7,7 @@
 
 DaiManji::DaiManji(int x, int y, int delta) : Boss(x, y, delta) {
     this->velocidad = 7;
-    this->vida = 1000;
+    this->vida = 2000;
     this->id = 2;
     this->envolvente->agregarComponente(new Rectangulo(&this->x, &this->y, 160, 117));
 }

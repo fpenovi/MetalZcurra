@@ -39,9 +39,6 @@ protected:
 	GrayOutHandler* screenGrayer;
 	bool estaCorriendoGrayer = false;
 
-	Uint8 LIMITE_SUPERIOR_TRANSPARENCIA = 255;
-	Uint8 transparenciaActual = 255;
-	Uint8 LIMITE_INFERIOR_TRANSPARENCIA = 0;
 	const int SCORE_X = 50;
 	const int SCORE_Y = 15;
 	const int RED_TEAM_X = 275;

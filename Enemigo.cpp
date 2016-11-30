@@ -200,7 +200,7 @@ void Enemigo::setBonus(Bonus* bonus) {
 
 void Enemigo::droppearBonus() {
     if (this->bonus != NULL) {
-        this->bonus->setPosicion(posx + 30, posy + 35);
+        this->bonus->setPosicion(posx + 60, posy + 35);
         this->bonus->setExiste(true);
         ObjectManager* objectManager = ObjectManager::getInstance();
         objectManager->agregarDropeable(this->bonus);

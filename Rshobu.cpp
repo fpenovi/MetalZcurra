@@ -10,7 +10,7 @@
 
 Rshobu::Rshobu(int x, int y, int delta) : Boss(x, y, delta) {
 	this->velocidad = 7;
-	this->vida = 1000;
+	this->vida = 1500;
 	this->id = 1;
 	this->envolvente->agregarComponente(new Rectangulo(&this->x, &this->y, 181, 100));
 }
