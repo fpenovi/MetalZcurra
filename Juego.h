@@ -252,6 +252,10 @@ public:
 	Uint8* getTransparenciaActual();
 
 	bool haFinalizadoJuego();
+
+	void aumentarNivel();
+
+	int nivel;
 };
 
 #endif //METALZCURRA_JUEGO_H

@@ -18,6 +18,7 @@ Juego::Juego() {
 	ventana = NULL;
 	lastKeyPressed = 0;
 	nivelActual = 1;
+	nivel = 0;
 }
 
 void Juego::close() {
@@ -1349,7 +1350,7 @@ bool Juego::haFinalizadoJuego() {
 		return true;
 
 	// CASO GANO
-	if (!bossActual->estaVivo() && nivelActual > 2) {
+	if (!bossActual->estaVivo() && nivel > 2) {
 		this->pantallaFinal = new WinScreen(this->renderizador);
 		return true;
 	}
@@ -1390,12 +1391,15 @@ Uint8* Juego::getTransparenciaActual() {
 	return &transparenciaActual;
 }
 
+void Juego::aumentarNivel() {
+	nivel++;
+}
+
 typedef struct {
 	Juego* juego;
 	bool* quit;
 	bool* pauseRecibir;
 } controlador_t;
-
 void* recibirVistas( void* arg){
 
 	controlador_t* arg2 = (controlador_t*) arg;
@@ -1412,6 +1416,7 @@ void* recibirVistas( void* arg){
 	}
 	return NULL;
 }
+
 int escucharEventos( void* arg ) {
 
 	controlador_t* arg2 = (controlador_t*) arg;
@@ -1613,8 +1618,8 @@ int main( int argc, char** argv) {
 	return 0;
 
 }
-
 Uint8 Juego::LIMITE_SUPERIOR_TRANSPARENCIA = 255;
 int Juego::LIMITE_SUPERIOR_TRANSPARENCIA_NEGATIVA = -255;
 Uint8 Juego::transparenciaActual = 255;
+
 Uint8 Juego::LIMITE_INFERIOR_TRANSPARENCIA = 0;

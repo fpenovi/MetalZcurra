@@ -128,7 +128,7 @@ bool Textura::loadFromText( string texto, SDL_Color colorTexto, TTF_Font* gFont)
 	}
 	else
 	{
-		printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+		//printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
 	}
 
 

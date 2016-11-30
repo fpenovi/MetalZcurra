@@ -43,6 +43,7 @@ void VistaPuntajes::greyOutIfNeeded(Juego* juego) {
 		milliseconds velocidad(20);		// 255 * 20 = segundos de fade
 		this->screenGrayer = new GrayOutHandler(juego, &Juego::transparenciaActual,(int*) &Juego::LIMITE_INFERIOR_TRANSPARENCIA, velocidad, -1, &estaCorriendoGrayer);
 		this->screenGrayer->doWork();
+		juego->aumentarNivel();
 	}
 
 	else if (Juego::transparenciaActual == Juego::LIMITE_INFERIOR_TRANSPARENCIA && !estaCorriendoGrayer && this->screenGrayer != NULL) {
