@@ -5,6 +5,7 @@
 #include "VistaRshobu.h"
 #include "ProtocoloVistaUpdate.h"
 #include "VistaDaiManji.h"
+#include "VistaDiCokka.h"
 
 using namespace std;
 using namespace chrono;
@@ -55,6 +56,7 @@ void Juego::close() {
 	delete TEXTURA_KILLALL;
 	delete TEXTURA_RECOVER;
 	delete TEXTURA_BALA_RSHOBU;
+	delete TEXTURA_BALA_TANQUE;
 	delete fondo;
 	delete grayOutHandler;
 
@@ -958,6 +960,13 @@ void Juego::crearBalas(){
 		bala->cargarExplosion(renderizador);
 		addBala(i, bala);
 	}
+	for (i ; i < 261 ; i++) {
+		VistaBala* bala = new VistaBala(TEXTURA_BALA_TANQUE);
+		bala->cargarImagen();
+		bala->setBomba(true);
+		bala->cargarExplosion(renderizador);
+		addBala(i, bala);
+	}
 }
 
 void Juego::crearEnemigos(){
@@ -1030,7 +1039,7 @@ void Juego::crearBoss(){
 	addBoss(id, daiManji);
 	id++;
 
-	VistaBoss* rshobu2 = new VistaDaiManji(renderizador);
+	VistaBoss* rshobu2 = new VistaDiCokka(renderizador);
 	rshobu2->cargarImagen();
 	addBoss(id, rshobu2);
 	id++;
@@ -1059,6 +1068,8 @@ void Juego::cargarTexturaBala(){
 	TEXTURA_BALA_RSHOBU = new Textura(renderizador);
 	if( !TEXTURA_BALA_RSHOBU->cargarImagen( "imag/sprites/R-Shobu/disparo.png") ) printf( "Fallo imagen rshobu disparo\n" );
 
+	TEXTURA_BALA_TANQUE = new Textura(renderizador);
+	if( !TEXTURA_BALA_TANQUE->cargarImagen( "imag/sprites/Di-Cokka/bala.png") ) printf( "Fallo imagen tanque disparo\n" );
 }
 
 void Juego::cargarTexturaEnemigo(){
@@ -1231,6 +1242,11 @@ void Juego::actualizarBoss(){
 		dai->setPuerta(aim);
 		dai->setLaser(saltando);
 		dai->setDisparando(puntaje);
+	}
+	else if (id == 3){
+		VistaDiCokka* diCokka = dynamic_cast<VistaDiCokka*>(bossActual);
+		diCokka->setGirando(aim);
+		diCokka->setDisparando(puntaje);
 	}
 }
 

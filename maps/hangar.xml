@@ -129,7 +129,7 @@
 
 		<boss>
 			<x>7500</x>
-			<y>50</y>
+			<y>425</y>
 			<delta>600</delta>
 		</boss>
 	</enemigos>

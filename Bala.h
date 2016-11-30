@@ -53,6 +53,8 @@ public:
 
     void crearBalaBoss(int x, int y, int ancho, int alto);
 
+    void crearBalaTanque(int x, int y, int ancho, int alto, bool derecha);
+
     int getPosx();
 
     int getPosy();

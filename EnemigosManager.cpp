@@ -5,6 +5,7 @@
 #include "ObjectManager.h"
 #include "EnemigosManager.h"
 #include "DaiManji.h"
+#include "DiCokka.h"
 
 using namespace chrono;
 
@@ -116,6 +117,20 @@ void* enemigosManagerFunc(void* argKh) {
                         update.setApuntando(dai->getPuerta());
                         update.setSaltando(dai->getLaser());
                         update.setPuntaje(dai->getDisparando());
+                    }
+                    else if (boss->getId() == 3){
+                        DiCokka* diCokka = dynamic_cast<DiCokka*>(boss);
+                        update.setTipoObjeto(6);
+                        update.setEstado(boss->getExiste());
+                        update.setX(boss->getPosx());
+                        update.setY(boss->getPosy());
+                        update.setObject_id(boss->getId());
+                        update.setPosCamara(0);
+                        update.setConectado(boss->estaVivo());
+                        update.setSpriteIndex(diCokka->getSpriteMover());
+                        update.setApuntando(diCokka->getGirando());
+                        update.setSaltando(0);
+                        update.setPuntaje(diCokka->getDisparando());
                     }
 
                     int result;

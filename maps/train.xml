@@ -142,7 +142,7 @@
 		</enemigo>
 
 		<enemigo>
-			<x>2000</x>
+			<x>1500</x>
 			<y>465</y>
 			<delta>55</delta>
 		</enemigo>
