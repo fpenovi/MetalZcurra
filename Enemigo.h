@@ -106,6 +106,10 @@ public:
 
 	void setBonus(Bonus* bonus);
 
+	void inicializarEnemigo(int x, int y);
+
+	bool gravedad();
+
 	~Enemigo();
 };
 

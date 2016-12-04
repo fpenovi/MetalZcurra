@@ -656,8 +656,17 @@ void ObjectManager::modoInvencible(){
 	}
 }
 
-ObjectManager* ObjectManager::instancia;
-
 void ObjectManager::removeBonus(int id) {
 	bonuses.erase(id);
 }
+
+void ObjectManager::tirarEnemigo(int x, int y) {
+	for (auto kv : enemigos){
+		if (!(kv.second->getExiste())){
+			kv.second->inicializarEnemigo(x, y);
+			return;
+		}
+	}
+}
+
+ObjectManager* ObjectManager::instancia;

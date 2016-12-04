@@ -102,6 +102,7 @@ public:
 	void liberarEnemigos();
 	Boss* getBoss();
 	void setBoss(Boss* boss);
+	void tirarEnemigo(int i, int i1);
 
 	// Bonuses
 	unordered_map<int, Bonus*>* getBonusesHash();

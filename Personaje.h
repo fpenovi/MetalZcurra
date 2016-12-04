@@ -71,6 +71,7 @@ private:
 	bool quieto;
 	bool colision;
 	bool modoInvencible;
+	bool existe;
 
 public:
 	const static int GUN = 0;

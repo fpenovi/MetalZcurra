@@ -149,6 +149,7 @@ void VistaEnemigo::morir(){
 }
 
 void VistaEnemigo::setExiste(bool exist){
+    if (exist) muerto = false;
     existe = exist;
 }
 

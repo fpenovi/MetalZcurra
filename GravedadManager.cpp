@@ -22,6 +22,7 @@ void* gravedadManagerFunc(void* argKh) {
     unordered_map<string, list<Mensaje*>*>* conectadosHash = objectManager->getConectadosHash();
     unordered_map<string, pthread_mutex_t>* mutexesHash = objectManager->getMutexesHash();
     unordered_map<int, Personaje*>* personajes = objectManager->getPersonajesHash();
+    unordered_map<int, Enemigo*>* enemigos = objectManager->getEnemigosHash();
     int* posX = objectManager->getPosX();
 
     time_point<high_resolution_clock> start;
@@ -72,6 +73,42 @@ void* gravedadManagerFunc(void* argKh) {
                             if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
                         }
                     }
+                }
+
+                for (auto kv : *enemigos) {
+
+                    if (kv.second->getExiste() && kv.second->gravedad()){
+                        ProtocoloVistaUpdate update;
+
+                        update.setTipoObjeto(4);
+                        update.setEstado(true);
+                        update.setX(kv.second->getPosx());
+                        update.setY(kv.second->getPosy());
+                        update.setObject_id(kv.second->getId());
+                        update.setPosCamara(kv.second->getCantidadPasos());
+                        update.setConectado(kv.second->estaMuerto());
+                        update.setSpriteIndex(kv.second->getSprite());
+                        update.setApuntando(kv.second->isDisparando());
+                        update.setSaltando(0);
+                        update.setPuntaje(0);
+
+                        int result;
+                        string mensaje = update.toString();
+
+                        for (auto kv : *conectadosHash) {
+
+                            Mensaje* mensajeNuevo = new Mensaje("Server", kv.first, mensaje);
+
+                            result = pthread_mutex_lock(&((*mutexesHash)[kv.first]));
+                            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+
+                            kv.second->push_back(mensajeNuevo);
+
+                            result = pthread_mutex_unlock(&((*mutexesHash)[kv.first]));
+                            if (result != 0) perror("Fallo el pthread_mutex_lock en agregar msjs (a todos)");
+                        }
+                    }
+
                 }
             }
             start = chrono::system_clock::now();
