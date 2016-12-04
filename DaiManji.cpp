@@ -84,9 +84,7 @@ bool DaiManji::disparar() {
     if (elapsed_ms.count() >= intervalo.count() && estaVivo()) {
         spriteDisparar();
         ObjectManager* objectManager = ObjectManager::getInstance();
-        objectManager->inicializarBalaBoss(x + 50, y + 117);
-        objectManager->inicializarBalaBoss(x + 80, y + 117);
-        objectManager->inicializarBalaBoss(x + 110, y + 117);
+        objectManager->tirarEnemigo(x - 50, y + 117);
         start = chrono::system_clock::now();
     }
 }

@@ -79,7 +79,9 @@ bool Rshobu::disparar() {
 
 	if (elapsed_ms.count() >= intervalo.count() && estaVivo()) {
 		ObjectManager* objectManager = ObjectManager::getInstance();
+		objectManager->inicializarBalaBoss(x + 20, y + 100);
 		objectManager->inicializarBalaBoss(x + 50, y + 100);
+		objectManager->inicializarBalaBoss(x + 80, y + 100);
 		start = chrono::system_clock::now();
 	}
 }

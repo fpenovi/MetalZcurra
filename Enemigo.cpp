@@ -4,6 +4,7 @@
 
 #include "ObjectManager.h"
 #include "Enemigo.h"
+#include "NivelManager.h"
 
 Enemigo::Enemigo(int x, int y, int delta) {
     posx = x;
@@ -207,6 +208,23 @@ void Enemigo::droppearBonus() {
         ObjectManager* objectManager = ObjectManager::getInstance();
         objectManager->agregarDropeable(this->bonus);
     }
+}
+
+void Enemigo::inicializarEnemigo(int x, int y){
+    posx = x;
+    posy = y;
+    cantidadPasos = 20;
+    muerto = false;
+    existe = true;
+}
+
+bool Enemigo::gravedad() {
+    if (posy < 465) {
+        posy += 15;
+        return true;
+    }
+    return false;
+
 }
 
 Enemigo::~Enemigo() {
