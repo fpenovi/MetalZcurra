@@ -15,7 +15,7 @@ private:
     SDL_Color* colorFuente;
 
     const int MENSAJE_X = 200;
-    const int MENSAJE_Y = 90;
+    const int MENSAJE_Y = 30;
 
 public:
     WinScreen(SDL_Renderer* renderer);

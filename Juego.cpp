@@ -709,9 +709,10 @@ void Juego::renderizar() {
 	for (auto kv : vistasBalasVivas)
 		kv.second->render();
 
-	puntajes->render();
+	if (bossActual->estaVivo())
+		puntajes->render();
 
-	if (!bossActual->estaVivo())
+	else
 		puntajes->mostrarResumen(this);
 
 	if (haFinalizadoJuego())
