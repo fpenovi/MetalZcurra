@@ -32,7 +32,7 @@ void DaiManji::moverDerecha(){
 
 void DaiManji::mover(){
     if (!estaVivo()) existe = false;
-    if (!disparando) disparar();
+    if (disparando == NODISPARANDO) disparar();
     if (derecha) moverDerecha();
     else moverIzquierda();
 }
